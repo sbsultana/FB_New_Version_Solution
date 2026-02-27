@@ -1,0 +1,393 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="white" type="ball-clip-rotate">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+<main>
+  <div>
+    <div class="container-fluid">
+
+      <div class="report-bar">
+        <div class="filter-dropdowns">
+
+          <!-- Store Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+              {{storedisplayname}} )
+              <span class="arrow"></span></button>
+            <app-stores  [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+              [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+          </div>
+          <!-- Time Frame Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(1)">
+              <span> {{displaytime}}</span>
+              <span class="arrow"></span></button>
+            <div class="timeframe" *ngIf="activePopover === 1">
+              <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types:
+              ( {{ Teams == 'S' ? 'All Labor Types W/O Details' : Teams == 'A' ? 'All Labor Types' :
+              (selectedlabortypevalues.length > 0 ? selectedlabortypevalues.join(', ') : 'SELECT') }} )
+              <span class="arrow"></span></button>
+            <div class="reportstores-card my-3" *ngIf="activePopover ===8">
+              <div class="row h-100">
+                <div class="groups pe-2 d-flex flex-column">
+                  <div class="groups-wrapper flex-grow-1">
+                    <div class="group-columns">
+                      <button class="outline-button" [ngClass]="{'active': Teams == 'A', 'inactive': Teams != 'A'}"
+                        (click)="teamsselection('A')">
+                        All Labor Types
+                      </button>
+
+                      <button class="outline-button" [ngClass]="{'active': Teams == 'S', 'inactive': Teams != 'S'}"
+                        (click)="teamsselection('S')">
+                        All Labor Types W/O Details
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="stores d-flex flex-column ps-0">
+                  <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                    <div class="allstores text-start">
+                      <a class="text-primary text-decoration-none cursor-pointer me-2"
+                        (click)="alllabortypes('Y')">Select
+                        All</a> |
+                      <a class="text-primary text-decoration-none cursor-pointer ms-2"
+                        (click)="alllabortypes('N')">Clear
+                        All</a>
+                    </div>
+                    <div class="store-columns flex-grow-1">
+                      <ng-container *ngFor="let s of labortypes;let i=index">
+                        <button class="btn btn-outline-primary store-button" (click)="individualLabortypes(s)"
+                          [ngClass]="{  'active': selectedlabortypevalues.indexOf(s.ASD_labortype) >= 0,'inactive': selectedlabortypevalues.indexOf(s.ASD_labortype) < 0}">
+                          <span> {{ s.ASD_labortype}}</span>
+                        </button>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <!-- Deal Status Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(3)">Zero Hours:
+              {{zeroro== 'E' ?
+              'Exclude' : 'Include'
+              }}
+              <span class="arrow"></span>
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 3">
+              <div class="date-filter-card">
+                <button class="outline-button inactive" (click)="zeroros('I','I')"
+                  [ngClass]="{'active':zeroro.indexOf('I')>=0, 'inactive':zeroro.indexOf('I')<0}">
+                  Include</button>
+                <button class="outline-button inactive" (click)="zeroros('E','E')"
+                  [ngClass]="{'active':zeroro.indexOf('E')>=0, 'inactive':zeroro.indexOf('E')<0}">
+                  Exclude</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(4)">Rank By:
+              {{storeorgrp== 'S' ?
+              'Store' : 'Group'
+              }}
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 4">
+              <div class="date-filter-card">
+
+                <button class="outline-button" (click)="storeorgroups('S','S')"
+                  [ngClass]="{'active':storeorgrp.indexOf('S')>=0, 'inactive':storeorgrp.indexOf('S')<0}">
+                  Store</button>
+                <button class="outline-button" (click)="storeorgroups('G','G')"
+                  [ngClass]="{'active':storeorgrp.indexOf('G')>=0, 'inactive':storeorgrp.indexOf('G')<0}">
+                  Group</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(5)">
+              Pay Type:
+
+              {{
+              Paytype.length < 1 ? 'SELECT PAY TYPE' : Paytype.length==1 ? (Paytype[0]=='C' ? 'Customer Pay' :
+                Paytype[0]=='W' ? 'Warranty' : Paytype[0]=='I' ? 'Internal' : Paytype[0]=='S' ? 'Sublet Gross' :
+                Paytype[0]=='M' ? 'Misc' : Paytype[0]) : 'Selected (' + Paytype.length + ')' }} <span class="arrow">
+                </span>
+            </button>
+
+            <div class="timeframe" *ngIf="activePopover === 5">
+
+
+              <div class="date-filter-card">
+                <button class="outline-button" (click)="multipleorsingle('PT','C')" [ngClass]="{
+                    active: Paytype.indexOf('C') >= 0,
+                    inactive: Paytype.indexOf('C') < 0
+                  }">
+                  Customer Pay
+                </button>
+
+                <button class="outline-button" (click)="multipleorsingle('PT','W')" [ngClass]="{
+                    active: Paytype.indexOf('W') >= 0,
+                    inactive: Paytype.indexOf('W') < 0
+                  }">
+                  Warranty
+                </button>
+
+                <button class="outline-button" (click)="multipleorsingle('PT','I')" [ngClass]="{
+                    active: Paytype.indexOf('I') >= 0,
+                    inactive: Paytype.indexOf('I') < 0
+                  }">
+                  Internal
+                </button>
+
+                <button class="outline-button" (click)="multipleorsingle('PT','S')" [ngClass]="{
+                    active: Paytype.indexOf('S') >= 0,
+                    inactive: Paytype.indexOf('S') < 0
+                  }">
+                  Sublet Gross
+                </button>
+
+                <button class="outline-button" (click)="multipleorsingle('PT','M')" [ngClass]="{
+                    active: Paytype.indexOf('M') >= 0,
+                    inactive: Paytype.indexOf('M') < 0
+                  }">
+                  Misc
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <div class="dropdown">
+            <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+          </div>
+
+        </div>
+      </div>
+      <div class="performance-scorecard" id="scrollcent" #scrollcent (scroll)="updateVerticalScroll($event)">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <!-- <th></th> -->
+
+
+              <th class="text-center bg-white" colspan="4" *ngIf="dateType==''"
+                style="border-right: 0px solid #e0e1e2;">
+                <!-- {{FromDate
+                  |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
+                  {{FromDate | date:'yyyy'}}) -->
+              </th>
+              <th colspan="4" *ngIf="dateType!=''" style="border-right: 0px solid #e0e1e2;">
+                &nbsp;
+                <!-- {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
+                  dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
+                  ToDate}} -->
+              </th>
+              <!-- <th class="spacer"></th> -->
+
+              <th colspan="12"></th>
+              <th colspan="1" *ngIf="Paytype.includes('S')"></th>
+              <th colspan="1" *ngIf="Paytype.includes('M')"></th>
+            </tr>
+            <tr>
+              <!-- <th class="bdr-rt"></th> -->
+              <th>&nbsp;</th>
+
+              <th class="bdr-rt" (click)="tabClick('Rank',columnState)" style="cursor: pointer;
+              white-space: nowrap; ">Rank</th>
+              <th class="bdr-rt" (click)="tabClick('ServiceAdvisor',columnState)" style="cursor: pointer; ">Service
+                Advisor</th>
+              <th class="bdr-rt" (click)="tabClick('StoreName',columnState)" style=" cursor: pointer;">Store Name</th>
+              <!-- <th class="spacer"></th> -->
+
+              <th (click)="tabClick('RO',columnState)" style="cursor: pointer;">#ROs
+              </th>
+              <th (click)="tabClick('ROPerDay',columnState)" style=" cursor: pointer;">
+                ROs/Day</th>
+              <th (click)="tabClick('ActualHours',columnState)" style="cursor: pointer;text-align: right;">Hours</th>
+              <th (click)="tabClick('HoursPerRo',columnState)" style="cursor: pointer;">
+                Hours/Ro</th>
+              <th (click)="tabClick('LaborSale',columnState)" style="cursor: pointer">Labor Sales</th>
+              <th (click)="tabClick('LaborGross',columnState)" style="cursor: pointer;">
+                Labor Gross</th>
+              <th (click)="tabClick('PartsSale',columnState)" style="cursor: pointer">Parts Sales</th>
+              <th (click)="tabClick('PartsGross',columnState)" style="cursor: pointer">
+                Parts Gross</th>
+              <th (click)="tabClick('TotalGross',columnState)" style="cursor: pointer">
+                Total Gross</th>
+
+              <th (click)="tabClick('SubletGross',columnState)" style="cursor: pointer" *ngIf="Paytype.includes('S')">
+                Sublet Gross</th>
+              <th (click)="tabClick('MiscGross',columnState)" style="cursor: pointer" *ngIf="Paytype.includes('M')">
+                Misc</th>
+
+              <th (click)="tabClick('GP',columnState)" style="cursor: pointer">GP%</th>
+              <th (click)="tabClick('Discount',columnState)" style="cursor: pointer">
+                Discounts</th>
+              <th (click)="tabClick('ELR',columnState)" style="cursor: pointer">ELR
+              </th>
+
+              <!-- <th>Points</th>
+              <th (click)="tabClick('',columnState)" style=" text-align: right;padding-right: 2vw;">
+                  Sales/Ro</th>
+              <th>Points</th>
+              <th (click)="tabClick('',columnState)" style=" text-align: right;padding-right: 2vw;">Upsell
+              </th>
+              <th>Points</th>
+              <th (click)="tabClick('',columnState)" style=" text-align: right;padding-right: 2vw;">Total
+                  Points</th> -->
+            </tr>
+          </thead>
+          <!-- highlite_col: spdata.index != index && index != '' -->
+          <tbody *ngFor="let spdata of ServiceAdvisorData; let i=index;'index+1' as j">
+            <tr
+              [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' ,  'divBold': spdata.ServiceAdvisor === 'Total'}"
+              [id]="'DV_'+j">
+              <td>
+                <!--  *ngIf="spdata.CommentsStatus == 'N'" -->
+                <!-- <div class="Tooltip">
+
+                      <div style="cursor:pointer">
+                          <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'Y'" width="17px"
+                              src="../../../../../assets/images/unread-comments.png "
+                              (click)="commentopen(spdata,j)">
+
+                          <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'N'" width="17px"
+                              src="../../../../../assets/images/no-comments.png "
+                              (click)="commentopen(spdata,j)">
+
+                      </div>
+
+                      <span class="Tooltip_chat_bottom"
+                      [ngClass]="{'Tooltip_chat_top' : (screenheight-divheight)-trposition <25 ,'Tooltip_chat_bottom': (screenheight-divheight)-trposition >= 25 }"
+                          
+                          *ngIf="j.toString()==index">
+                          <app-comments [SFComments]="commentobj" (onClose)="close($event)"
+                              (onLoad)="addcmt($event)">
+                          </app-comments>
+                      </span>
+                  </div> -->
+              </td>
+              <td *ngIf="spdata.data1 === 'Reports Total'"></td>
+              <td *ngIf="spdata.data1 === 'Reports Total'" style="text-align: left;"></td>
+              <td *ngIf="spdata.data1 === 'Reports Total'" style="text-align: left;"><span>Reports
+                  Total</span></td>
+              <td id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'">
+                <span>{{spdata.Rank=='1000'?'':spdata.Rank}}</span>
+              </td>
+              <!-- (click)="openDetails(spdata.Data2)" -->
+              <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'"
+                style="width: 10%;text-align: left !important;">
+                <span>{{spdata.ServiceAdvisor}}</span>
+              </td>
+              <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'"
+                style="width: 15%;text-align: left !important;">
+                <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>                         -->
+                <span [id]="'D_'+i" title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">
+                  {{spdata.StoreName }} </span>
+              </td>
+              <!-- <td class="spacer"></td> -->
+
+
+              <td id="DataBody4" style="text-align: right;"
+                [ngClass]="[spdata.RO != 0 && spdata.RO != null && spdata.RO != undefined && spdata.RO != '' && spdata.RO != '-' ? 'popuppointer' : 'popupdisable']"
+                (click)="openDetails(spdata)">{{spdata.RO=='' || spdata.RO==null ||
+                spdata.RO==undefined ? '-' :spdata.RO| number:'1.0-0'}} </td>
+              <td id="DataBody6" style="text-align: right;">{{spdata.ROPerDay=='' || spdata.ROPerDay==null
+                || spdata.ROPerDay==undefined ? '-' :spdata.ROPerDay| number:'1.2-2'}}</td>
+
+              <td id="DataBody4" style="text-align: right;">{{spdata.ActualHours=='' ||
+                spdata.ActualHours==null || spdata.ActualHours==undefined ? '-' :spdata.ActualHours|
+                number:'1.2-2'}} </td>
+              <td id="DataBody5" style="text-align: right;">{{spdata.HoursPerRO=='' ||
+                spdata.HoursPerRO==null || spdata.HoursPerRO==undefined ? '-' :spdata.HoursPerRO|
+                number:'1.2-2'}}</td>
+
+              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborSale)}">
+                {{spdata.LaborSale=='' ||
+                spdata.LaborSale==null || spdata.LaborSale==undefined ? '-' :spdata.LaborSale|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborGross)}">
+                {{spdata.LaborGross=='' ||
+                spdata.LaborGross==null || spdata.LaborGross==undefined ? '-' :spdata.LaborGross|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+
+              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsSale)}">
+                {{spdata.PartsSale=='' ||
+                spdata.PartsSale==null || spdata.PartsSale==undefined ? '-' :spdata.PartsSale|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsGross)}">
+                {{spdata.PartsGross=='' ||
+                spdata.PartsGross==null || spdata.PartsGross==undefined ? '-' :spdata.PartsGross|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+
+              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.TotalGross)}">
+                {{spdata.TotalGross=='' ||
+                spdata.TotalGross==null || spdata.TotalGross==undefined ? '-' :spdata.TotalGross|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+
+              <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('S')">{{spdata.SubletGross=='' ||
+                spdata.SubletGross==null || spdata.SubletGross==undefined ? '-' :spdata.SubletGross|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+              <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('M')">{{spdata.MiscGross=='' ||
+                spdata.MiscGross==null || spdata.MiscGross==undefined ? '-' :spdata.MiscGross|
+                currency:'USD':'symbol':'1.0-0'}}</td>
+
+              <td id="DataBody4" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.GP)}">
+                {{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '-' : spdata.GP |
+                number:'1.1-1')}}{{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '' :
+                '%')}}
+              </td>
+              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.Discount)}">
+                {{spdata.Discount=='' || spdata.Discount==null
+                || spdata.Discount==undefined ? '-' :spdata.Discount| currency:'USD':'symbol':'1.0-0'}}
+              </td>
+              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.ELR)}">
+                {{spdata.ELR=='' || spdata.ELR==null ||
+                spdata.ELR==undefined ? '-' :spdata.ELR| currency:'USD':'symbol':'1.1-1'}}</td>
+
+            </tr>
+            <!-- <tr *ngIf="spdata.Data2.length>0" [id]="'DNS_'+i"
+              [ngClass]="{'hidden': spdata.Dealerx === '+'  }">
+              <td colspan="8" style="background: #363b4f;">
+                  <ng-container>
+                      <table style="width: 100%;" style="visibility: hidden;">
+                          <thead>
+                              <tr>
+                                  <th>Deal</th>
+                                  <th>Customer</th>
+                                  <th>Vehicle</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let dt2 of spdata.Data2">
+                                  <td><span>{{dt2.Deal}}</span></td>
+                                  <td><span>{{dt2.Customer}}</span></td>
+                                  <td><span>{{dt2.Vehicle}}</span></td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </ng-container>
+              </td>
+          </tr> -->
+          </tbody>
+          <tbody *ngIf="NoData">
+            <tr>
+              <td colspan="17" style="text-align: center;">No Records Found!!!</td>
+              <td colspan="1" *ngIf="Paytype.includes('S')"></td>
+              <td colspan="1" *ngIf="Paytype.includes('M')"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>

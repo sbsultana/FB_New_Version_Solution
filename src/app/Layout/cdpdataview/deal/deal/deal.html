@@ -1,0 +1,586 @@
+<div class="" *ngIf="!isLoading">
+    <div class="cc_recap position-relative">
+        <div class="row d-flex w-100 m-0">
+            <div class="col-lg-12" style="overflow: auto;max-height: calc(100vh - 80px);">
+                <div class="row">
+                    <div class="col-lg-5 col-12">
+                        <div class="m-3 mb-0 p-2">
+                            <div class="row align-items-center justify-content-between mb-3 cc_store_logo">
+                                <div class="col-lg-3 col-12 text-center">
+                                    <img [src]="storedata[0]?.grouplogo" alt="">
+                                </div>
+                                <div class="col-lg-9 col-12">
+                                    <div class="d-flex align-items-center justify-content-end">
+                                        <!-- <img [src]="storedata[0]?.storelogo" alt=""> -->
+                                        <h1>{{storedata[0]?.store}}</h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-center ">
+                                <div class="col-md-3 col-xl-3 p-0">
+                                    <h2 class="m-0 p-0">deal: <span>{{data?.dealno}}</span></h2>
+
+                                </div>
+                                <div class="col-md-4 col-xl-4 p-0 text-start">
+                                    <h2 class="m-0 p-0">stock: <span>{{storedata[0]?.stock}}</span></h2>
+
+                                </div>
+                                <div class="col-md-5 col-xl-5 p-0">
+                                    <h3 class="m-0 p-0">contract date:
+                                        <span
+                                            style="font-size: 0.9rem;">{{storedata[0]?.contractdate==''?'--':storedata[0]?.contractdate}}</span>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12  cc_details" *ngIf="storedata[0]?.showuserdetails=='Y'">
+                            <div class="cc_head align-items-center">Customer Details</div>
+                            <div class="row px-3 p-2">
+                                <div class="col-lg-6 col-12">
+                                    <h6 class="m-0 p-0">name:</h6>
+                                    <h4 class="m-0 p-0">{{userDetails[0]?.customername}}</h4>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <h6 class="m-0 p-0">customer ID:</h6>
+                                    <h4 class="m-0 p-0 text-uppercase">UC{{userDetails[0]?.customerid}}</h4>
+                                </div>
+                                <div class="col-lg-3 col-12">
+                                    <h6 class="m-0 p-0">{{userDetails[0]?.source}} ID:</h6>
+                                    <h4 class="m-0 p-0 text-uppercase">{{userDetails[0]?.custno}}</h4>
+                                </div>
+                            </div>
+                            <div class="row px-3 py-1">
+                                <div class="col-lg-5 col-12">
+                                    <h6 class="m-0 p-0">address:</h6>
+                                    <h5 class="m-0 p-0">{{userDetails[0]?.address}}</h5>
+                                    <h5 class="m-0 p-0">{{userDetails[0]?.cityzip}}</h5>
+                                </div>
+                                <div class="col-lg-7 col-12">
+                                    <div class="row">
+                                        <div class="col-lg-5 col-12 text-end">
+                                            <h6 class="m-0 p-0 justify-content-end">Home:</h6>
+                                        </div>
+                                        <div class="col-lg-7 col-12 text-start ps-0">
+                                            <h5 class="m-0 p-0">{{
+                                                formatPhoneNumber(userDetails[0]?.homephone)}}
+                                            </h5>
+                                        </div>
+                                        <div class="col-lg-5 col-12 text-end">
+                                            <h6 class="m-0 p-0 justify-content-end">Mobile:</h6>
+                                        </div>
+                                        <div class="col-lg-7 col-12 text-start ps-0">
+                                            <h5 class="m-0 p-0">
+                                                {{formatPhoneNumber(userDetails[0]?.mobilephone)}} </h5>
+                                        </div>
+                                        <div class="col-lg-5 col-12 text-end">
+                                            <h6 class="m-0 p-0 justify-content-end">Work:</h6>
+                                        </div>
+                                        <div class="col-lg-7 col-12 text-start ps-0">
+                                            <h5 class="m-0 p-0">{{formatPhoneNumber(userDetails[0]?.workphone)}}
+                                            </h5>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="row px-3 py-1">
+                                <div class="col-12 ">
+                                    <h6 class="m-0 p-0 pe-2">Email:</h6>
+                                    <h4>{{userDetails[0]?.email}}</h4>
+                                </div>
+
+                            </div>
+                            <div class="row px-3 pb-3">
+                                <div class="mt-1 d-flex justify-content-between">
+                                    <h6 class="m-0 p-0 fsize">opt out selling pll:<span
+                                            class="m-0 p-0 text-uppercase fsize">{{userDetails[0]?.optoutsellingpiibuyer}}</span>
+                                    </h6>
+                                    <div class="cc_bd-left"></div>
+                                    <h6 class="m-0 p-0 fsize">delete pll:<span
+                                            class="m-0 p-0 text-uppercase fsize">{{userDetails[0]?.deletepii}}</span>
+                                    </h6>
+                                    <div class="cc_bd-left"></div>
+                                    <h6 class="m-0 p-0 fsize">opt out sharing pll:<span
+                                            class="m-0 p-0 text-uppercase fsize">{{userDetails[0]?.optoutsharingpii}}</span>
+                                    </h6>
+                                    <div class="cc_bd-left"></div>
+                                    <h6 class="m-0 p-0 fsize">limit spi use:<span
+                                            class="m-0 p-0 text-uppercase fsize">{{userDetails[0]?.limitspiuse}}</span>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12  cc_details">
+                            <div class="cc_head text-capitalize">vehicle details</div>
+                            <div class="row px-3 py-3">
+                                <div class="col-lg-12">
+                                    <div class="cc_veh-card">
+                                        <div class="cc_card-body p-0">
+                                            <div class="row pb-2">
+                                                <div class="col-12 mb-2"><span
+                                                        style="font-weight: 700;">{{sales[0]?.leasetype}} VEHICLE</span>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0">vehicle: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{sales[0]?.vehiclename}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Type:</h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="text-uppercase">
+                                                                        {{sales[0]?.dealtype}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0 text-uppercase">VIN: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{sales[0]?.vin}} </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Stock #:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4>{{sales[0]?.stock}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <h6 class="mb-1 p-0">Mileage: </h6>
+                                                                </div>
+                                                                <div class="col-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{sales[0]?.mileage}} </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">License:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4>{{sales[0]?.license}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <h6 class="mb-1 p-0">Color: </h6>
+                                                                </div>
+                                                                <div class="col-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{sales[0]?.color}} </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Age:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4>{{sales[0]?.age}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row pb-2 mt-2" *ngIf="trade1.length>0">
+                                                <div class="col-12 mb-2 pt-2" style="
+    border-top: 1px solid #e1e1e1;
+"><span class="cc_font_weight">TRADE1 VEHICLE</span></div>
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0">vehicle: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade1[0]?.vehiclename}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Type:</h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="text-uppercase">
+                                                                        {{trade1[0]?.dealtype}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0 text-uppercase">VIN: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade1[0]?.vin}} </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Stock #:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4>{{trade1[0]?.stock}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <h6 class="mb-1 p-0">Mileage: </h6>
+                                                                </div>
+                                                                <div class="col-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade1[0]?.mileage}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                            <div class="row pb-2 mt-2" *ngIf="trade2.length>0">
+                                                <div class="col-12 mb-2 pt-2" style="
+    border-top: 1px solid #e1e1e1;
+"><span class="cc_font_weight">TRADE2 VEHICLE</span></div>
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0">vehicle: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade2[0]?.vehiclename}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Type:</h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="text-uppercase">
+                                                                        {{trade2[0]?.dealtype}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12">
+                                                                    <h6 class="mb-1 p-0 text-uppercase">VIN: </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade2[0]?.vin}} </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-lg-4 col-12 ps-0">
+                                                                    <h6 class="mb-1 p-0">Stock #:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-lg-8 col-12 ps-0">
+                                                                    <h4>{{trade2[0]?.stock}}</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-12">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <h6 class="mb-1 p-0">Mileage: </h6>
+                                                                </div>
+                                                                <div class="col-8 ps-0">
+                                                                    <h4 class="mb-1 p-0">{{trade2[0]?.mileage}}
+                                                                    </h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12  cc_details">
+                            <div class="cc_head text-capitalize">Managers, Sales persons details</div>
+                            <div class="row px-3 py-3">
+                                <div class="col-lg-12">
+                                    <div class="veh-card">
+                                        <div class="cc_card-body p-0">
+                                            <div class="row">
+                                                <div class="col-6" *ngFor="let smembers of salesMembers">
+                                                    <h6 class="mb-1 p-0">{{ smembers?.datatitle }}:</h6>
+                                                    <h4 class="mb-1 p-0">
+                                                        {{ smembers?.datavalue || '-' }}
+                                                        <span *ngIf="smembers?.dataid" class="ms-1">
+                                                            ({{ smembers.dataid }})
+                                                        </span>
+                                                    </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12  cc_details">
+                            <div class="cc_head text-capitalize">Deal details</div>
+                            <div class="row px-3 py-3">
+                                <div class="col-lg-12">
+                                    <div class="veh-card">
+                                        <div class="cc_card-body p-0">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="row">
+                                                        <div class="col-12" *ngFor="let amount of amountDetails">
+                                                            <div class="row">
+                                                                <div class="col-5">
+                                                                    <h6 class="mb-1 p-0">{{amount?.datatitle}}:
+                                                                    </h6>
+                                                                </div>
+                                                                <div class="col-7 ps-0">
+                                                                    <h4 class="mb-1 p-0" [ngStyle]="{
+                                                                            'color': (checkSymbols(amount?.datavalue) && 
+                                                                                      ['Lien Holder / Payoff Amount', 'Amount Financed', 'Total Cash Down'].includes(amount?.datatitle)) ? 'red' : 'black'
+                                                                        }">
+                                                                        {{ amount?.datavalue }}
+                                                                    </h4>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-12 p-0 ">
+                        <div class="row mt-1 float-end m-0 position-absolute" style="right:0;">
+                            <div class="col-lg-12 ">
+                                <!-- <button class="btn btn-view btn-sm cc_printBtn" (click)="print()">Print</button> -->
+                                 <span class="cc_close " (click)="closeModal()"><i class="bi bi-x" ></i></span> 
+                                <!-- <i class="fa-solid fa-xmark mx-2 close" (click)="closeModal()"></i> -->
+                            </div>
+                        </div>
+                        <div class="float-start w-100 ">
+                            <div class="table-responsive px-3 py-4">
+                                <table class="table cc_recap-table float-start w-100 mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-start" style="width: 35%;">rebate detail</th>
+                                            <th style="width: 20%;"></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="cc_head">ID</td>
+                                            <td class="cc_head">description</td>
+                                            <td class="cc_head">code</td>
+                                            <td class="cc_head"></td>
+                                            <td class="cc_head">amount</td>
+                                        </tr>
+                                        <tr *ngFor="let rebate of rebateDetails ">
+                                            <td [ngStyle]="{'font-family': 'Roboto',
+                                                'font-weight': rebate?.datatype === 'Y' ? '700' : '400',
+                                                }">
+                                                {{rebate.id}}</td>
+                                            <td [ngStyle]="{'font-family': 'Roboto',
+                                                'font-weight': rebate?.datatype === 'Y' ? '700' : '400',
+                                                }">
+                                                {{rebate.description}}</td>
+                                            <td [ngStyle]="{'font-family': 'Roboto',
+                                            'font-weight': rebate?.datatype === 'Y' ? '700' : '400',
+                                            }">
+                                                {{rebate.code}}</td>
+                                            <td></td>
+                                            <td [ngStyle]="{'color': checkSymbols(rebate?.amount) ? 'red' : 'black','font-family': 'Roboto',
+                                            'font-weight': rebate?.datatype === 'Y' ? '700' : '400',}">
+                                                {{rebate?.amount}}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="5" class="cc_bdr-btm"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-start text-uppercase fontSize cc_robotoBold">gross profit
+                                                analysis
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td class="cc_head">sale</td>
+                                            <td class="cc_head">cost</td>
+                                            <td class="cc_head">dealer gross</td>
+                                        </tr>
+
+                                        <tr *ngFor="let gross of grossDetails" class="cc_robotoBold"
+                                            [ngClass]="{'cc_bg-blue cc_rounded-corners': gross?.datatype=='Y'}">
+                                            <td
+                                                [ngStyle]="{'font-family':'Roboto','font-weight': gross?.datatype === 'Y' ? '700' : '400',}">
+                                                {{gross?.datatitle}}</td>
+
+                                            <td [ngStyle]="{
+                                                        'font-family':'Roboto','font-weight': gross?.datatype === 'Y' ? '700' : '400',
+                                                        
+                                                    }">{{gross?.datamiddlevalue}}</td>
+
+                                            <td [ngStyle]="{
+                                                        'font-family': 'Roboto','font-weight': gross?.datatype === 'Y' ? '700' : '400',
+                                                        'color': checkSymbols(gross?.salevalue) ? 'red' : 'black'
+                                                    }">{{gross?.salevalue}}</td>
+
+                                            <td [ngStyle]="{
+                                                        'font-family':'Roboto','font-weight': gross?.datatype === 'Y' ? '700' : '400',
+                                                        'color': checkSymbols(gross?.costvalue) ? 'red' : 'black'
+                                                    }">{{gross?.costvalue}}</td>
+
+                                            <td [ngStyle]="{
+                                                        'font-family': 'Roboto','font-weight': gross?.datatype === 'Y' ? '700' : '400',
+                                                        'color': checkSymbols(gross?.grossvalue) ? 'red' : 'black'
+                                                    }">{{gross?.grossvalue}}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="5" style="height: 5px;"></td> <!-- Spacer row -->
+                                        </tr>
+                                        <tr *ngFor="let fee of feeDetails ">
+                                            <td>{{fee?.datatitle}}</td>
+                                            <td>{{fee?.datamidvalue}}</td>
+                                            <td [ngStyle]="{'color': checkSymbols(fee?.datavalue) ? 'red' : 'black'}">
+                                                {{fee?.datavalue}}</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" class="cc_bdr-btm"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="table summary-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 25%; " class="fontSize">summary</th>
+                                            <th style="width: 10%;"></th>
+                                            <th style="width: 10%;"></th>
+                                            <th style="width: 40%;"></th>
+                                            <th style="width: 15%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let summ of summary">
+                                            <td>{{summ?.datatitle1 }}</td>
+                                            <td [ngStyle]="{'color': checkSymbols(summ?.datavalue1) ? 'red' : 'black'}">
+                                                {{summ?.datavalue1}}
+                                            </td>
+                                            <td></td>
+                                            <td>{{summ?.datatitle2 }}</td>
+                                            <td [ngStyle]="{'color': checkSymbols(summ?.datavalue2) ? 'red' : 'black'}">
+                                                {{summ?.datavalue2}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="isLoading" class="CC_loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>

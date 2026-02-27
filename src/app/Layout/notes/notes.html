@@ -1,0 +1,90 @@
+<div class="container-fluid d-flex justify-content-center align-items-center px-0"
+  [ngStyle]="{'pointer-events': spinnerLoader  ? 'none': 'visible'}">
+  <!-- <div class="gross-popup">
+      <div class="header">  
+        <h5 class="title" style="white-space: nowrap;float: left;margin-left: -2rem;">
+          <span class="slash">//</span>Add Notes   &nbsp;&nbsp; <span class="slash" style="font-size:.8rem">#</span> <span style="font-size:.8rem">
+            {{ notesData?.apiRoute == 'AddNotesAction' ? notesData.mainkey : notesData.title1 }}
+          </span> 
+          <a type="button" class="close-btn ms-auto me-2" id="close" (click)="close('O')" style="text-decoration: none;color: black;">X </a>
+        </h5>
+      </div>
+      <div class="body"> 
+        <div class="row  d-flex align-items-center " style="margin-top: 2rem;">
+          <div class="col-1"></div>
+          <div class="col-10 ps-4 cntr">&nbsp;
+          </div>
+        </div>
+        <div class="row   align-items-center">
+          <div class="col-1">&nbsp;</div>
+          <div class="col-6 ps-4">Enter Notes:</div>
+  
+        </div>
+        <div class="row  d-flex align-items-center">
+            <div class="col-1"></div>
+          <div class="col-10 ps-4 cntr">      
+            <textarea class="form-control" [(ngModel)]="notes" rows="5" maxlength="1000"
+              placeholder="Notes..."></textarea>
+          </div>
+        </div> 
+  
+  
+  
+        <div class="row mb-2 mt-4 d-flex align-items-center">
+          <div class="col-3"></div>
+          <div class="col-4 mt-4 ps-0 cntr">
+            <button type="button" class="btn btn-primary " (click)="savenotes()">Save</button>
+          </div>&nbsp;&nbsp;
+          <div class="col-1  cntr" style="color: #2a91f0;font-size: .8rem;font-family: 'Roboto';cursor: pointer;">
+            <span id="closecommment" (click)="close('C')">Cancel</span>
+          </div>
+          <div class="col-3"></div>  
+        </div>  
+      </div>
+      </div> -->
+
+  <div class="recap position-relative">
+    <div class="row d-flex w-100 m-0">
+      <div class="col-lg-12" style="overflow: auto; max-height: calc(100vh - 80px);">
+        <div class="row">
+
+          <!-- Header -->
+          <div class="col-lg-12 col-12 d-flex align-items-center justify-content-between">
+            <div class="m-3 p-2">
+              <div class="row align-items-center">
+                <div class="col-12 p-0">
+                  <h2 class="m-0 p-0">
+                    Deal #: <span> {{ notesData?.apiRoute == 'AddNotesAction' ? notesData.mainkey : notesData.title1 }}</span>
+                  </h2>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn-close" (click)="close('O')"></button>
+          </div>
+
+          <!-- Notes -->
+          <div class="col-lg-12 col-12 d-flex align-items-center justify-content-between noteblock">
+            <div class="m-3 w-100">
+              <div class="mb-3">
+                <label for="notes" class="form-label">Notes</label>
+                <textarea class="form-control" [(ngModel)]="notes" rows="4" maxlength="1000"
+                  placeholder="Enter your notes here"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="col-lg-12 col-12 d-flex align-items-center">
+            <div class="m-3 w-100">
+              <div class="text-end">
+                <button class="btn btn-outline-primary me-2 editbtn" (click)="savenotes()">Save</button>
+                <button class="btn btn-outline-danger cancelbtn" (click)="close('C')">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

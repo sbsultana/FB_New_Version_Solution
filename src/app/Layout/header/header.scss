@@ -1,0 +1,340 @@
+// .navbar-custom {
+//     border-bottom: 1px solid #dee2e6;
+//     padding: 6px 32px;
+//     height:75px !important;
+
+//     .navbar-brand img {
+//         height: 30px;
+//     }
+
+//     .navbar-brand {
+//         .line {
+//             width: 1px;
+//             height: 30px;
+//             transform: scaleY(2);
+//             background: #111111;
+//             margin: 0 36px;
+//             opacity: .2;
+//         }
+
+//         p {
+//             font-family: 'Roboto';
+//             font-size: 24px;
+//             line-height: 32px;
+//             margin: 0;
+//         }
+//     }
+
+//     .nav-icons {
+//         margin: 0 5px 0 0;
+
+//         img {
+//             margin-right: 24px;
+//             cursor: pointer;
+//         }
+//     }
+
+//     app-riv-icon{
+//         height: 24px !important;
+//         margin-right: 24px;
+//     }
+
+//     .user-info {
+//         text-align: left;
+//         margin: 0 44px 0 44px;
+
+//         h4 {
+//             font-size: 0.8rem;
+//             font-family: 'Roboto-Bold';
+//             line-height: 20px;
+//             margin: 0;
+//             color: #000;
+//         }
+
+//         p {
+//             font-size: 0.8rem;
+//             font-family: 'Roboto';
+//             line-height: 20px;
+//             margin: 0;
+//             color: #18181B !important;
+//             text-transform: capitalize;
+
+//             span {
+//                 color: #71717A;
+//                 // opacity: .7;
+
+//                 a {
+//                     color: #71717A;
+//                     text-decoration: none;
+//                 }
+//             }
+//         }
+
+//         .dropdown-toggle::after {
+//             border: none !important;
+//         }
+
+//         ul {
+//             background: #fff !important;
+
+//             li {
+//                 font-size: 14px;
+
+//                 &:active {
+//                     background: transparent !important;
+//                 }
+//             }
+//         }
+
+//         .dropdown-menu-dark {
+//             --bs-dropdown-link-active-bg: transparent !important;
+//         }
+
+//         .dropdown-toggle::after {
+//             border: none !important;
+//         }
+//     }
+
+//     .axel-logo {
+//         height: 14px;
+//         aspect-ratio: 100 / 7;
+//     }
+
+//     .offcanvas {
+//         --bs-offcanvas-width: auto !important;
+//     }
+
+
+// }
+
+
+
+
+// .user-info {
+//     p {
+
+//         span {
+//             color: #71717A;
+//             // opacity: .7;
+
+//             a {
+//                 color: #71717A;
+//                 text-decoration: none;
+//             }
+//         }
+//     }
+
+//     ul {
+//         background: #fff !important;
+
+//         li {
+//             font-size: 14px;
+
+//             &:active {
+//                 background: transparent !important;
+//             }
+//         }
+//     }
+
+//     .dropdown-menu-dark {
+//         --bs-dropdown-link-active-bg: transparent !important;
+//     }
+
+//     .dropdown-toggle::after {
+//         border: none !important;
+//     }
+// }
+
+// .dropdown-item {
+//     cursor: pointer;
+// }
+
+// //Loader
+// .loading-overlay {
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     background: rgba(255, 255, 255, 0.6);
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     z-index: 1050;
+// }
+
+// .network {
+//     cursor: default !important;
+// }
+
+.navbar-custom {
+    border-bottom: 1px solid #dee2e6;
+    padding: 6px 32px;
+    height:75px !important;
+
+    .navbar-brand img {
+        height: 30px;
+    }
+
+    .navbar-brand {
+        .line {
+            width: 1px;
+            height: 30px;
+            transform: scaleY(2);
+            background: #111111;
+            margin: 0 36px;
+            opacity: .2;
+        }
+
+        p {
+            font-family: 'Roboto';
+            font-size: 24px;
+            line-height: 32px;
+            margin: 0;
+        }
+    }
+
+    .nav-icons {
+        margin: 0 5px 0 0;
+
+        img {
+            margin-right: 24px;
+            cursor: pointer;
+        }
+    }
+
+    app-riv-icon{
+        height: 24px !important;
+        margin-right: 24px;
+    }
+
+    .user-info {
+        text-align: left;
+        margin: 0 44px 0 44px;
+
+        h4 {
+            font-size: 0.8rem;
+            font-weight:700;
+            font-family: 'Roboto';
+            line-height: 20px;
+            margin: 0;
+            color: #000;
+        }
+
+        p {
+            font-size: 0.8rem;
+            font-family: 'Roboto';
+            line-height: 20px;
+            margin: 0;
+            color: #18181B !important;
+            text-transform: capitalize;
+
+            span {
+                color: #71717A;
+                // opacity: .7;
+
+                a {
+                    color: #71717A;
+                    text-decoration: none;
+                    // cursor: default;
+
+                }
+            }
+        }
+
+        .dropdown-toggle::after {
+            border: none !important;
+        }
+
+        ul {
+            background: #fff !important;
+
+            li {
+                font-size: 14px;
+
+                &:active {
+                    background: transparent !important;
+                }
+            }
+        }
+
+        .dropdown-menu-dark {
+            --bs-dropdown-link-active-bg: transparent !important;
+        }
+
+        .dropdown-toggle::after {
+            border: none !important;
+        }
+    }
+
+    .axel-logo {
+        height: 14px;
+        aspect-ratio: 100 / 7;
+    }
+
+    .offcanvas {
+        --bs-offcanvas-width: auto !important;
+    }
+
+
+}
+
+
+
+
+.user-info {
+    p {
+
+        span {
+            color: #71717A;
+            // opacity: .7;
+
+            a {
+                color: #71717A;
+                text-decoration: none;
+            }
+        }
+    }
+
+    ul {
+        background: #fff !important;
+
+        li {
+            font-size: 14px;
+
+            &:active {
+                background: transparent !important;
+            }
+        }
+    }
+
+    .dropdown-menu-dark {
+        --bs-dropdown-link-active-bg: transparent !important;
+    }
+
+    .dropdown-toggle::after {
+        border: none !important;
+    }
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+//Loader
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.network {
+    cursor: default !important;
+}

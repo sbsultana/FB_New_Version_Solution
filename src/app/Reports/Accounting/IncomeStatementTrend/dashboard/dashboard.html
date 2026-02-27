@@ -1,0 +1,106 @@
+<app-toast-container></app-toast-container>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+  <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+  <div class="container-fluid">
+    <div class="col-12">
+      <div class="filter-dropdowns">
+        <div class="date-filter-card d-flex align-items-center justify-content-start">
+          <div class="open-calendar position-relative">
+            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
+              [bsConfig]="bsConfig" [(ngModel)]="StartDate" readonly (keydown)="$event.preventDefault()" />
+          </div>
+        </div>
+
+        <div class="date-filter-card d-flex align-items-center justify-content-start">
+          <div class="open-calendar position-relative">
+            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
+              [bsConfig]="bsConfig" [(ngModel)]="EndDate" readonly (keydown)="$event.preventDefault()" />
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="apply-button" (click)="applyDateChange()"><span>Apply</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="performance-scorecard">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th class="text-start">WesternAuto</th>
+            <th></th>
+            <th *ngFor="let item of ExpenseTrendByStoreKeysMonth.slice(0, ExpenseTrendByStoreKeysMonth.length - 1)">
+              <span>{{ item }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let item of ExpenseTrendByStoreMonth; let i = index">
+            <tr [id]="i" [ngClass]="{ 
+                store: ['Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed', 'Total Store Gross', 'Total Expenses', 'Operating Profit', 'Net Adds/Deducts', 'Net Profit'].includes(item.LABLE) 
+              }">
+              <td>
+                <span style="white-space: nowrap;" [ngClass]="{ 
+                    bold: ['Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed', 'Total Store Gross', 'Total Expenses', 'Operating Profit', 'Net Adds/Deducts', 'Net Profit'].includes(item.LABLE), 
+                    notbold: !['Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed', 'Total Store Gross', 'Total Expenses', 'Operating Profit', 'Net Adds/Deducts', 'Net Profit'].includes(item.LABLE) 
+                  }">
+                  {{ item.LABLE }}
+                </span>
+              </td>
+              <td>
+                <div>
+                  <i class="fa fa-area-chart" style="font-size:15px; color:#0554ef; cursor: pointer;"
+                    (click)="openGraph(item['itemKey'], ['itemKey'], Month, item)"></i>
+                </div>
+              </td>
+
+              <td *ngFor="let itemKey of AllDatakeysMonth.slice(0, AllDatakeysMonth.length - 1)"
+                style="text-align: right;" [ngClass]="{
+                    negative: !inTheGreen(item[itemKey]) && (item.LABLE === 'Operating Profit' || item.LABLE === 'Net Profit'),
+                    setPerens: !inTheGreen(item[itemKey]),
+                    bold: isBoldRow(item.LABLE),
+                    notbold: !isBoldRow(item.LABLE),
+                    nopointerevents: isNonClickable(item[itemKey], itemKey, item.LABLE),
+                    pointerevents: !isNonClickable(item[itemKey], itemKey, item.LABLE),
+                    cursor: isNonClickable(item[itemKey], itemKey, item.LABLE) ? 'default' : 'pointer'
+                  }" (click)="
+                    (itemKey !== 'YTD' && itemKey !== 'LYTD') 
+                      ? openDetails(item, itemKey, '', '') 
+                      : null">
+                <ng-container
+                  *ngIf="['New Units', 'Pre-Owned Units', 'Unit Retail Sales', 'Fleet Units'].includes(item.LABLE)">
+                  {{ item[itemKey] === 0 || item[itemKey] == null ? '-' : item[itemKey] | number:'1.0-0' }}
+                </ng-container>
+
+                <!-- Percentage -->
+                <ng-container
+                  *ngIf="['Variable Expenses%', 'Personnel Expenses%', 'Semi-Fixed Expenses%', 'Fixed Expenses%', 'Other Expenses%'].includes(item.LABLE)">
+                  {{
+                  (item[itemKey] === 0 || item[itemKey] == null)
+                  ? '-'
+                  : (item[itemKey] < 0 ? '(' + (item[itemKey] * -1 | number:'1.0-0') + '%)' : (item[itemKey] |
+                    number:'1.0-0') + '%' ) }} </ng-container>
+
+                    <!-- Currency -->
+                    <ng-container
+                      *ngIf="!['New Units', 'Pre-Owned Units', 'Unit Retail Sales', 'Fleet Units', 'Variable Expenses%', 'Personnel Expenses%', 'Semi-Fixed Expenses%', 'Fixed Expenses%', 'Other Expenses%'].includes(item.LABLE)">
+                      {{
+                      (item[itemKey] === 0 || item[itemKey] == null)
+                      ? '-'
+                      : (item[itemKey] < 0 ? '(' + '$' + (item[itemKey] * -1 | number:'1.0-0') + ')' : '$' +
+                        (item[itemKey] | number:'1.0-0')) }} </ng-container>
+
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+        <tbody *ngIf="NoData">
+          <tr>
+            <td colspan="13" style="text-align: center;">No Records Found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>

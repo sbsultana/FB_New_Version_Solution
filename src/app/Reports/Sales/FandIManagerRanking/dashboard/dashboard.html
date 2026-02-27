@@ -1,0 +1,334 @@
+<ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="white" type="ball-clip-rotate">
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+<!-- <div  class="row">
+    <div class="col-md-12 col-lg-12 col-xl-12 col-xxl-12 mt-2"> -->
+<main>
+  <div>
+    <div class="container-fluid">
+      <div class="report-bar">
+        <div class="filter-dropdowns">
+
+          <!-- Store Dropdown -->
+          <div class="dropdown">
+                <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+                    {{storedisplayname}} )
+                    <span class="arrow"></span></button>
+                <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
+                    (StoresData)="StoresData($event)"></app-stores>
+            </div>
+
+          <!-- Time Frame Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(2)">
+              <span *ngIf="DateType != 'C'">
+                <!-- {{DateType == 'LM' ? 'Last Month' :
+                      (DateType == 'PM' ? 'Same Mon PY' : DateType)}} -->
+                <span> {{displaytime()}}</span>
+              </span>
+              <span *ngIf="DateType == 'C'">
+                {{FromDate | date:'MM/dd/yyyy'}} - {{ToDate | date:'MM/dd/yyyy'}}
+              </span>
+              <span class="arrow"></span>
+            </button>
+
+            <div class="timeframe" *ngIf="activePopover === 2">
+              <div class="date-filter-card mt-3">
+                <button class="outline-button" (click)="SetDates('MTD')"
+                  [ngClass]="{'active':DateType == 'MTD'}">MTD</button>
+                <button class="outline-button" (click)="SetDates('QTD')"
+                  [ngClass]="{'active':DateType == 'QTD'}">QTD</button>
+                <button class="outline-button" (click)="SetDates('YTD')"
+                  [ngClass]="{'active':DateType == 'YTD'}">YTD</button>
+                <button class="outline-button" (click)="SetDates('PYTD')"
+                  [ngClass]="{'active':DateType == 'PYTD'}">PYTD</button>
+                <button class="outline-button" (click)="SetDates('LY')" [ngClass]="{'active':DateType == 'LY'}">Last
+                  Year</button>
+                <button class="outline-button" (click)="SetDates('LM')" [ngClass]="{'active':DateType == 'LM'}">Last
+                  Month</button>
+                <button class="outline-button" (click)="SetDates('PM')" [ngClass]="{'active':DateType == 'PM'}">Same Mon
+                  PY</button>
+                <hr>
+                <!-- <button class="outline-button custom-btn"
+                            (click)="SetDates('C','B')"
+                            [ngClass]="{'active':DateType == 'C'}">
+                      Custom <i class="fa-solid fa-calendar-days calendar-icon"></i>
+                    </button> -->
+              </div>
+              <div class="open-calender cavender-dd d-flex justify-content-flex-start">
+                <input class="text-start opacity-0 custon-height" type="text" bsDaterangepicker
+                  [(ngModel)]="bsRangeValue" #datepicker="bsDaterangepicker" [bsConfig]="{rangeInputFormat: 'MM/DD/YYYY',
+                                        dateInputFormat: 'MM/DD/YYYY',
+                                        showWeekNumbers: false}" (bsValueChange)="dateRangeCreated($event)"
+                  [maxDate]="maxDate" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Rank By Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(3)">
+              Rank by ( {{storeorgroup== 'S' ? 'Store' : 'Group'}})
+              <span class="arrow"></span>
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 3">
+              <div class="date-filter-card">
+                <button class="outline-button" (click)="storeorgroups('S','S')"
+                  [ngClass]="{'active':storeorgroup.indexOf('S')>=0}">
+                  Store
+                </button>
+                <button class="outline-button" (click)="storeorgroups('G','G')"
+                  [ngClass]="{'active':storeorgroup.indexOf('G')>=0}">
+                  Group
+                </button>
+              </div>
+            </div>
+          </div>
+          <!--New,Used-->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(4)">
+              New Used ( {{neworused.length ==
+              1 ? neworused :
+              'Selected' }}
+              {{neworused.length == 1 ? '':
+              neworused.length }} )
+
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 4">
+              <div class="date-filter-card">
+                <button type="button" class="outline-button" [ngClass]="{'active': neworused.indexOf('New') >= 0}"
+                  (click)="multipleorsingle('NU','New')">New</button>
+                <button type="button" class="outline-button" [ngClass]="{'active': neworused.indexOf('Used') >= 0}"
+                  (click)="multipleorsingle('NU','Used')">Used</button>
+              </div>
+            </div>
+          </div>
+          <!-- Deal Type Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(5)">
+              Deal Type ( {{retailorlease.length == 0 ? 'Select' :
+              (retailorlease.length == 1 ? retailorlease : 'Selected')}} {{retailorlease.length > 1 ?
+              retailorlease.length: ''}} )
+
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 5">
+              <div class="date-filter-card btn-dealtype">
+                <button class="outline-button"
+                  *ngFor="let type of ['Retail','Lease','Wholesale','Misc','Fleet','Demo','Special Order','Rental','Dealer Trade']"
+                  (click)="multipleorsingle('RL', type)" [ngClass]="{'active': retailorlease.indexOf(type) >= 0}">
+                  {{type}}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deal Status Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(6)"> Finance Type ( {{financetype.length ==
+              1 ? financetype :
+              'Selected' }}
+              {{financetype.length == 1 ? '':
+              financetype.length }} )
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 6">
+              <div class="date-filter-card">
+                <button class="outline-button" (click)="multipleorsingle('DS','Finance')"
+                  [ngClass]="{'active': financetype.indexOf('Finance') >= 0}">Finance</button>
+                <button class="outline-button" (click)="multipleorsingle('DS','Cash')"
+                  [ngClass]="{'active': financetype.indexOf('Cash') >= 0}">Cash</button>
+                <button type="button" class="outline-button" (click)="multipleorsingle('DS','Lease')"
+                  [ngClass]="{'active': financetype.indexOf('Lease') >= 0}">Lease</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <div class="dropdown">
+            <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+          </div>
+
+        </div>
+      </div>
+
+
+
+
+
+      <div class="performance-scorecard">
+        <!-- <div class="table"> -->
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <!-- <th></th> -->
+              <th class="text-center bg-white" colspan="3" *ngIf="dateType==''"
+                style="border-right: 2px solid #e0e1e2;">
+                <!-- {{FromDate
+                                |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
+                                {{FromDate | date:'yyyy'}}) -->
+              </th>
+              <th colspan="3" *ngIf="dateType!=''" style="border-right: 2px solid #e0e1e2;">
+                <!-- {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
+                                dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
+                                ToDate}}
+                               -->
+              </th>
+
+              <!-- <th class="spacer"></th> -->
+              <th colspan="3" style="border-right: 2px solid #e0e1e2;">Back Gross</th>
+              <th class="spacer"></th>
+              <th colspan="4" >Unit Count</th>
+              <!-- <th class="spacer"></th> -->
+            </tr>
+
+            <tr>
+              <!-- <th class="bdr-rt"></th> -->
+              <!-- <th></th> -->
+              <th class="bdr-rt" (click)="tabClick('Rank',columnState)" style="
+                            white-space: nowrap;cursor: pointer;">Rank</th>
+              <th class="bdr-rt" (click)="tabClick('fimanager',columnState)" style="cursor: pointer;">Finance Mgr
+              </th>
+              <th class="bdr-rt" (click)="tabClick('StoreName',columnState)" style="cursor: pointer">Store Name</th>
+
+              <!-- <th class="spacer"></th> -->
+              <th (click)="tabClick('BackgrossPVR',columnState)" style="cursor: pointer;">PVR</th>
+
+              <th (click)="tabClick('BackGross',columnState)" style="cursor: pointer">Gross</th>
+              <th (click)="tabClick('BackGrossPace',columnState)" style="cursor: pointer">Pace</th>
+
+
+              <!-- <th class="spacer"></th> -->
+              <!-- <th class="spacer"></th> -->
+              <th (click)="tabClick('New',columnState)" style="cursor: pointer;">New</th>
+              <th (click)="tabClick('Used',columnState)" style="cursor: pointer;">Used</th>
+              <th (click)="tabClick('Total',columnState)" style="cursor: pointer;">Total</th>
+              <th (click)="tabClick('Pace',columnState)" style="cursor: pointer;">Pace
+
+              </th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let spdata of FIManagerData; let i=index">
+            <tr
+              [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' || i.toString() == index, 'divBold': spdata.data1 === 'Reports Total'}"
+              [id]="'DV_'+i">
+
+              <td id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'"> <span>{{spdata.Rank}}</span>
+              </td>
+              <!-- cursor: pointer (click)="openDetails(spdata.Data2)"-->
+              <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'" style="width: 10%;text-align: left;">
+                <span>{{spdata.fimanager}}</span>
+              </td>
+              <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'" style="width: 15%;text-align: left;">
+                {{(spdata.StoreName ==undefined ? '-' :spdata.StoreName)}}
+                <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>                         -->
+                <!-- <span [id]="'D_'+i" title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">  -->
+                <!-- {{(spdata.StoreName ==undefined ? '-' : ( (spdata.StoreName.toString() | slice:0:22) +
+                                (spdata.StoreName.toString().length > 22 ? '...' : '') ))}} -->
+                <!-- </span> -->
+              </td>
+
+              <!-- <td id="DataBody7">-</td> -->
+              <!-- <td class="spacer"></td> -->
+
+              <td id="DataBody10" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.BackgrossPVR)}">
+                <!-- {{(spdata.BackgrossPVR ===null
+                            || spdata.BackgrossPVR ===0)? '-' :spdata.BackgrossPVR |
+                            currency:'USD':'symbol':'1.0-0' }} -->
+                <span class="d-flex justify-content-between"> {{
+                  (spdata.BackgrossPVR == 0 || spdata.BackgrossPVR == null ? '' :
+                  '$') }} <span> {{
+                    (spdata.BackgrossPVR == 0 ||spdata.BackgrossPVR== null ? '-' :
+                    spdata.BackgrossPVR |number:'1.0-0') }}</span></span>
+              </td>
+
+              <td id="DataBody8" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata['BackGross'])}">
+                <!-- {{(spdata['BackGross']===null
+                                || spdata['BackGross'] ===0)? '-' :spdata['BackGross']
+                                | currency:'USD':'symbol':'1.0-0' }} -->
+
+                <span class="d-flex justify-content-between"> {{
+                  (spdata['BackGross'] == 0 || spdata['BackGross'] == null ? '' :
+                  '$') }} <span> {{
+                    (spdata['BackGross'] == 0 ||spdata['BackGross']== null ? '-' :
+                    spdata['BackGross'] |number:'1.0-0') }}</span></span>
+              </td>
+              <td id="DataBody9" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.BackGrossPace)}">
+                <!-- {{(spdata.BackGrossPace
+                                ===null || spdata.BackGrossPace ===0)? '-' :spdata.BackGrossPace |
+                                currency:'USD':'symbol':'1.0-0' }} -->
+                <span class="d-flex justify-content-between"> {{
+                  (spdata.BackGrossPace == 0 || spdata.BackGrossPace == null ? '' :
+                  '$') }} <span> {{
+                    (spdata.BackGrossPace == 0 ||spdata.BackGrossPace== null ? '-' :
+                    spdata.BackGrossPace |number:'1.0-0') }}</span></span>
+              </td>
+
+
+
+              <!-- <td class="spacer"></td> -->
+              <td id="DataBody4">{{(spdata.New ===null || spdata.New ===0)? '-' :spdata.New |
+                number:'1.0'}}
+              </td>
+              <td id="DataBody5">{{(spdata.Used ===null || spdata.Used ===0)? '-' :spdata.Used |
+                number:'1.0'
+                }}</td>
+              <td id="DataBody6" (click)="openDetails(spdata)"
+                [ngClass]="[spdata.Total != 0 && spdata.Total != null && spdata.Total != undefined && spdata.Total != '' && spdata.Total != '-' ? 'popuppointer' : 'popupdisable']">
+                {{(spdata.Total ===null || spdata.Total ===0)? '-'
+                :spdata.Total | number:'1.0' }}</td>
+              <td id="DataBody7">{{(spdata.Pace ===null || spdata.Pace ===0)? '-' :spdata.Pace |
+                number:'1.0'
+                }}</td>
+              <!-- <td class="spacer"></td> -->
+              <!-- <td id="DataBody14">-</td> -->
+
+              <!-- <td id="DataBody11">$5,000</td>
+                        <td id="DataBody12">$15,000</td>
+                        <td id="DataBody13">$1,200</td>
+                        <td id="DataBody14">100.0</td> -->
+
+              <!-- <td id="DataBody15">-</td> -->
+            </tr>
+            <!-- <tr *ngIf="spdata.Data2.length>0" [id]="'DNS_'+i"
+                            [ngClass]="{'hidden': spdata.Dealerx === '+'  }">
+                            <td colspan="8" style="background: #363b4f;">
+                                <ng-container>
+                                    <table style="width: 100%;" style="visibility: hidden;">
+                                        <thead>
+                                            <tr>
+                                                <th>Deal</th>
+                                                <th>Customer</th>
+                                                <th>Vehicle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let dt2 of spdata.Data2">
+                                                <td><span>{{dt2.Deal}}</span></td>
+                                                <td><span>{{dt2.Customer}}</span></td>
+                                                <td><span>{{dt2.Vehicle}}</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </ng-container>
+                            </td>
+                        </tr> -->
+          </tbody>
+          <tbody *ngIf="NoData" style="pointer-events:none">
+            <tr>
+              <td colspan="12" style="text-align: center;">No Records Found!!!</td>
+
+            </tr>
+          </tbody>
+        </table>
+        <!-- </div> -->
+        <!-- </div>
+    </div> -->
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- <ng-template #popupReport>
+    <app-fandimangerranking-report [popup]="popup"></app-fandimangerranking-report>
+</ng-template> -->
+
+<!-- <button [hidden]=true id="report" (click)="reportOpen(popupReport)"></button> -->

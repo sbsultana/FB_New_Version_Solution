@@ -1,0 +1,225 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+  <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+  <div>
+    <div class="container-fluid">
+      <div class="report-bar">
+        <div class="filter-dropdowns">
+          
+           <!-- Store Dropdown -->
+          <div class="dropdown">
+                <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+                    {{storedisplayname}} )
+                    <span class="arrow"></span></button>
+                <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
+                   (StoresData)="StoresData($event)"></app-stores>
+            </div>
+
+          <!-- Time Frame Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(1)">
+              <span> {{displaytime}}</span>
+              <span class="arrow"></span></button>
+            <div class="timeframe" *ngIf="activePopover === 1">
+              <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
+            </div>
+          </div>
+
+          <!-- Rank By Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(3)">Rank By:
+              ({{storeorgroup== 'S' ? 'Store' : 'Group'}})
+              <span class="arrow"></span>
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 3">
+              <div class="date-filter-card">
+                <button class="outline-button" (click)="storeorgroups('S','S')"
+                  [ngClass]="{'active':storeorgroup=='S'}">
+                  Store
+                </button>
+                <button class="outline-button" (click)="storeorgroups('G','G')"
+                  [ngClass]="{'active':storeorgroup=='G'}">
+                  Group
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deal Type Dropdown -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(5)">Deal Type:
+              ( {{retailorlease.length == 0 ? 'Select' :
+              (retailorlease.length == 1 ? retailorlease : 'Selected')}}
+              <span *ngIf="retailorlease.length > 1"> {{retailorlease.length}} </span>)
+              <span class="arrow"></span>
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 5">
+              <div class="date-filter-card btn-dealtype">
+                <button class="outline-button"
+                  *ngFor="let type of ['Retail','Lease','Wholesale','Misc','Fleet','Demo','Special Order','Rental','Dealer Trade']"
+                  (click)="multipleorsingle('RL', type)" [ngClass]="{'active': retailorlease.indexOf(type) >= 0}">
+                  {{type}}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Deal Status Dropdown -->
+          <div class="dropdown d-none">
+            <button class="dropdown-toggle" (click)="togglePopover(6)">Deal Status:
+              ({{dealStatus.length == 1 ? dealStatus : 'Selected'}}
+              <span *ngIf="dealStatus.length > 1"> {{dealStatus.length}} </span>)
+              <span class="arrow"></span>
+            </button>
+            <div class="timeframe" *ngIf="activePopover === 6">
+              <div class="date-filter-card">
+                <button class="outline-button" (click)="multipleorsingle('DS','Booked')"
+                  [ngClass]="{'active':dealStatus.indexOf('Booked')>=0}">Booked</button>
+                <button class="outline-button" (click)="multipleorsingle('DS','Finalized')"
+                  [ngClass]="{'active':dealStatus.indexOf('Finalized')>=0}">Finalized</button>
+                <button class="outline-button" (click)="multipleorsingle('DS','Delivered')"
+                  [ngClass]="{'active':dealStatus.indexOf('Delivered')>=0}">Delivered</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <div class="dropdown">
+            <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+          </div>
+
+        </div>
+      </div>
+
+
+
+      <div class="performance-scorecard">
+        <table class="table mb-0">
+          <thead>
+            <tr>
+              <th class="text-center bg-white" colspan="3" *ngIf="dateType==''">
+                <!-- {{FromDate | date:'MMMM'}} ({{FromDate | date:'dd'}}-{{ToDate | date:'dd'}}, {{FromDate | date:'yyyy'}}) -->
+              </th>
+              <th colspan="3" *ngIf="dateType!=''">
+                <!-- {{
+              dateType=="MTD" ? "MTD" :
+              dateType=="YTD" ? "YTD" :
+              dateType=="QTD" ? "QTD" :
+              dateType=="LM" ? "LAST MONTH" :
+              dateType=="LY" ? "LAST YEAR" :
+              FromDate +" - "+ ToDate
+              }} -->
+              </th>
+              <th colspan="5">Unit Count</th>
+              <th colspan="4">Front Gross</th>
+              <!-- <th colspan="2"></th> -->
+            </tr>
+            <tr>
+              <th class="bdr-rt" (click)="tabClick('Rank',columnState)">Rank</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('SalesPerson',columnState)">Salesperson</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('StoreName',columnState)">Store Name</th>
+
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('MTD_NEW',columnState)">New</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('MTD_USED',columnState)">Used</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('MTD_Total',columnState)">Total</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('Pace',columnState)">Pace</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('UnitDayAvg',columnState)">90 Day Avg</th>
+
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('Gross',columnState)">Total</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('GrossPace',columnState)">Pace</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('PVR',columnState)">PVR</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('GrossDayAvg',columnState)">90 Day Avg</th>
+
+              <!-- <th class="bdr-rt cursor-pointer" (click)="tabClick('APPTS',columnState)">APPTS</th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('Activities',columnState)">Activities</th> -->
+            </tr>
+          </thead>
+
+          <tbody *ngFor="let spdata of IndividualSalesPersonsData; let i=index">
+            <tr [ngClass]="{
+                  'title' : i % 2 == 0,
+                  'titleOdd' : i % 2 != 0,
+                  'Selectedrow': spdata.Dealerx === '-',
+                  'divBold': spdata.data1 === 'Reports Total',
+                  'avgBold': spdata.SalesPerson === 'Average'
+                }" [id]="'DV_'+i">
+
+              <td *ngIf="spdata.data1 !== 'Reports Total'">{{spdata.Rank}}</td>
+              <td *ngIf="spdata.data1 !== 'Reports Total'" class="text-start">{{spdata.SalesPerson}}</td>
+              <td *ngIf="spdata.data1 !== 'Reports Total'" class="text-start">
+                <span [id]="'D_'+i" [title]="spdata.StoreName || 'Reports Total'"
+                  *ngIf="spdata.SalesPerson!='Average' || storeorgroup=='S'">
+                  {{ spdata.StoreName ? spdata.StoreName : '-' }}
+                </span>
+              </td>
+
+              <td>{{ spdata.MTD_NEW !== null && spdata.MTD_NEW !== undefined ? (spdata.MTD_NEW | number:'1.1') : '-' }}
+              </td>
+              <td>{{ spdata.MTD_USED !== null && spdata.MTD_USED !== undefined ? (spdata.MTD_USED | number:'1.1') : '-'
+                }}
+              </td>
+              <!-- class="text-primary text-decoration-underline cursor-pointer" -->
+              <td (click)="openDetails(spdata)">
+                {{ spdata.MTD_Total !== null && spdata.MTD_Total !== undefined ? (spdata.MTD_Total | number:'1.1') : '-'
+                }}
+              </td>
+              <td>{{ spdata.Pace !== null && spdata.Pace !== undefined ? (spdata.Pace | number:'1.1') : '-' }}</td>
+              <td>{{ spdata.UnitDayAvg !== null && spdata.UnitDayAvg !== undefined ? (spdata.UnitDayAvg | number:'1.1')
+                :
+                '-' }}</td>
+
+              <!-- Gross -->
+              <td class="text-end" [ngClass]="{ negative: !inTheGreen(spdata.Gross)}">
+                <span class="d-flex justify-content-between">
+                  {{ spdata.Gross !== null && spdata.Gross !== undefined ? '$' : '' }}
+                  <span>
+                    {{ spdata.Gross !== null && spdata.Gross !== undefined ? (spdata.Gross | number:'1.0-0') : '-' }}
+                  </span>
+                </span>
+              </td>
+
+              <td class="text-end" [ngClass]="{ negative: !inTheGreen(spdata.GrossPace)}">
+                <span class="d-flex justify-content-between">
+                  {{ spdata.GrossPace !== null && spdata.GrossPace !== undefined ? '$' : '' }}
+                  <span>
+                    {{ spdata.GrossPace !== null && spdata.GrossPace !== undefined ? (spdata.GrossPace | number:'1.0-0')
+                    :
+                    '-' }}
+                  </span>
+                </span>
+              </td>
+
+              <td class="text-end" [ngClass]="{ negative: !inTheGreen(spdata.PVR)}">
+                <span class="d-flex justify-content-between">
+                  {{ spdata.PVR !== null && spdata.PVR !== undefined ? '$' : '' }}
+                  <span>
+                    {{ spdata.PVR !== null && spdata.PVR !== undefined ? (spdata.PVR | number:'1.0-0') : '-' }}
+                  </span>
+                </span>
+              </td>
+
+              <td class="text-end" [ngClass]="{ negative: !inTheGreen(spdata.GrossDayAvg)}">
+                <span class="d-flex justify-content-between">
+                  {{ spdata.GrossDayAvg !== null && spdata.GrossDayAvg !== undefined ? '$' : '' }}
+                  <span>
+                    {{ spdata.GrossDayAvg !== null && spdata.GrossDayAvg !== undefined ? (spdata.GrossDayAvg |
+                    number:'1.0-0') : '-' }}
+                  </span>
+                </span>
+              </td>
+
+              <!-- <td>{{ spdata.APPTS !== null && spdata.APPTS !== undefined ? (spdata.APPTS | number:'1.0-0') : '-' }}</td>
+              <td>{{ spdata.Activities !== null && spdata.Activities !== undefined ? (spdata.Activities | number:'1.0-0') : '-' }}</td> -->
+            </tr>
+          </tbody>
+          <tbody *ngIf="NoData" style="pointer-events:none">
+            <tr>
+              <td colspan="17" class="text-center">No Records Found!!!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>

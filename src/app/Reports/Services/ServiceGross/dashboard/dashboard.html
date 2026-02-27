@@ -1,0 +1,70 @@
+<div id="print-section" class="report-container">
+    <h2>Sales Performance Report</h2>
+
+    <!-- Units Section -->
+    <h3>Units</h3>
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>MTD</th>
+                <th>Pace</th>
+                <th>Target</th>
+                <th>+/−</th>
+                <th>Type</th>
+                <th>MTD</th>
+                <th>Pace</th>
+                <th>Target</th>
+                <th>+/−</th>
+                <th>Type</th>
+                <th>MTD</th>
+                <th>Pace</th>
+                <th>Target</th>
+                <th>+/−</th>
+                <th>Type</th>
+                <th>MTD</th>
+                <th>Pace</th>
+                <th>Target</th>
+                <th>+/−</th>
+                <th>Type</th>
+                <th>MTD</th>
+                <th>Pace</th>
+                <th>Target</th>
+                <th>+/−</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let unit of unitsData">
+                <td>{{ unit.type }}</td>
+                <td>{{ unit.mtd }}</td>
+                <td>{{ unit.pace }}</td>
+                <td>{{ unit.target }}</td>
+                <td [class.negative]="unit.diff < 0">{{ unit.diff }}</td>
+                <td>{{ unit.type }}</td>
+                <td>{{ unit.mtd }}</td>
+                <td>{{ unit.pace }}</td>
+                <td>{{ unit.target }}</td>
+                <td [class.negative]="unit.diff < 0">{{ unit.diff }}</td>
+                <td>{{ unit.type }}</td>
+                <td>{{ unit.mtd }}</td>
+                <td>{{ unit.pace }}</td>
+                <td>{{ unit.target }}</td>
+                <td [class.negative]="unit.diff < 0">{{ unit.diff }}</td>
+                <td>{{ unit.type }}</td>
+                <td>{{ unit.mtd }}</td>
+                <td>{{ unit.pace }}</td>
+                <td>{{ unit.target }}</td>
+                <td [class.negative]="unit.diff < 0">{{ unit.diff }}</td>
+                <td>{{ unit.type }}</td>
+                <td>{{ unit.mtd }}</td>
+                <td>{{ unit.pace }}</td>
+                <td>{{ unit.target }}</td>
+                <td [class.negative]="unit.diff < 0">{{ unit.diff }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <div class="actions">
+        <button (click)="printSection()">Print Report</button>
+    </div>

@@ -1,0 +1,158 @@
+<div class="report-bar">
+    <div class="filter-dropdowns">
+           <!-- Store Dropdown -->
+          <div class="dropdown">
+                <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+                    {{storedisplayname}} )
+                    <span class="arrow"></span></button>
+                <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
+                    (StoresData)="StoresData($event)"></app-stores>
+            </div>
+       
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(1)">
+                <span> {{displaytime}}</span>
+                <span class="arrow"></span></button>
+            <div class="timeframe" *ngIf="activePopover === 1">
+                <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(2)">New / Used ( {{neworused.length == 1 && neworused
+                == 'C' ? 'Commercial Only' : (neworused.length == 1 && neworused != 'C' ? neworused : (neworused.length
+                > 1 ? 'Selected' : 'None'))}}
+                {{neworused.length > 1 ? +neworused.length:'' }} )
+                <span class="arrow"></span></button>
+            <div class="reportstores-card my-2" *ngIf="activePopover === 2">
+                <div class="row h-100">
+                    <div class="stores d-flex flex-column ">
+                        <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                            <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
+                                <ng-container>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':neworused.indexOf('New')>=0,'inactive':neworused.indexOf('New')<0}"
+                                        (click)="multipleorsingle('NU','New')"> New
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':neworused.indexOf('Used')>=0,'inactive':neworused.indexOf('Used')<0}"
+                                        (click)="multipleorsingle('NU','Used')">Used
+                                    </button>
+                                    <!-- <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':neworused.indexOf('C')>=0,'inactive':neworused.indexOf('C')<0}"
+                                        (click)="multipleorsingle('NU','C')">Commercial Only
+                                    </button> -->
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(3)">Deal Type ( {{retailorlease.indexOf('All')>=0 ?
+                'All' : (retailorlease.length==0 ? 'NONE' :
+                'Selected')}}
+                {{ retailorlease.indexOf('All') < 0 && retailorlease.length !=0 ? retailorlease.length :'' }} ) <span
+                    class="arrow"></span></button>
+            <div class="reportstores-card my-2" *ngIf="activePopover === 3">
+                <div class="row h-100">
+                    <div class="stores d-flex flex-column ">
+                        <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                            <div class="store-columns flex-grow-1">
+                                <ng-container>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','All')"
+                                        [ngClass]="{'active':retailorlease.indexOf('All')>=0, 'inactive':retailorlease.indexOf('All')<0}">All
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Retail and Lease')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Retail and Lease')>=0, 'inactive':retailorlease.indexOf('Retail and Lease')<0}">Retail
+                                        & Lease
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Retail')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Retail')>=0, 'inactive':retailorlease.indexOf('Retail')<0}">Retail
+                                    </button>
+
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Lease')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Lease')>=0, 'inactive':retailorlease.indexOf('Lease')<0}">Lease
+                                    </button>
+
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Wholesale')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Wholesale')>=0, 'inactive':retailorlease.indexOf('Wholesale')<0}">Wholesale
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Misc')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Misc')>=0, 'inactive':retailorlease.indexOf('Misc')<0}">Misc.
+                                    </button> <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Fleet')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Fleet')>=0, 'inactive':retailorlease.indexOf('Fleet')<0}">Fleet
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Demo')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Demo')>=0, 'inactive':retailorlease.indexOf('Demo')<0}">Demo
+                                    </button>
+
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Special Order')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Special Order')>=0, 'inactive':retailorlease.indexOf('Special Order')<0}">Special Order
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Rental')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Rental')>=0, 'inactive':retailorlease.indexOf('Rental')<0}">Rental
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        (click)="multipleorsingle('RL','Dealer Trade')"
+                                        [ngClass]="{'active':retailorlease.indexOf('Dealer Trade')>=0, 'inactive':retailorlease.indexOf('Dealer Trade')<0}">Dealer
+                                        Trade
+                                    </button>
+
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(4)">Deal Status ( {{dealstatus.length ==
+                                1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ? 'NONE' : 'Selected')}}
+              {{                                    dealstatus.length
+                                    > 1 ? dealstatus.length  :'' }} )
+                <span class="arrow"></span></button>
+            <div class="reportstores-card my-2" *ngIf="activePopover === 4">
+                <div class="row h-100">
+                    <div class="stores d-flex flex-column ">
+                        <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                            <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
+                                <ng-container>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Delivered')>=0,'inactive':dealstatus.indexOf('Delivered')<0}"
+                                        (click)="multipleorsingle('DS','Delivered')"> Delivered
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Capped')>=0,'inactive':dealstatus.indexOf('Capped')<0}"
+                                        (click)="multipleorsingle('DS','Capped')">Booked
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0,'inactive':dealstatus.indexOf('Finalized')<0}"
+                                        (click)="multipleorsingle('DS','Finalized')"> Finalized
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+        </div>
+
+    </div>
+</div>

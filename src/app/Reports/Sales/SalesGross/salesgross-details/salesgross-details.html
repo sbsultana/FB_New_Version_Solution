@@ -1,0 +1,392 @@
+<div class="container-fluid d-flex justify-content-center align-items-center"
+    [ngStyle]="{'pointer-events': spinnerLoader || spinnerLoadersec  ? 'none': 'visible'}">
+    <div class="gross-popup">
+        <div class="header d-flex align-items-center">
+            <h5 class="title m-0 ms-2">
+                <img src="" alt="">
+                <span class="slash">//</span>{{ this.Salesdetails[0].var1Value }} &nbsp;&nbsp;
+                <span class="slash"> // </span> {{ this.Salesdetails[0].userName}}
+            </h5>
+            <div class="col-3 me-4 ms-auto">
+                <!-- <input class="form-control NR_search" name="DetailsSearchName" [(ngModel)]="searchText"
+                    placeholder="Search" type="text" (input)="filterData()">
+                <div style="float: right; margin-top: -28px; margin-right: 6px;"><img
+                        src="../../assetsimages/Search-Icon.png" height="16px" width="18px"></div> -->
+            </div>
+            <img src="images/Download.svg" (click)="exportAsXLSX()" class="img-fluid mt-2" alt=""
+                style="cursor: pointer;">
+            <a type="button" class="close-btn ms-auto me-0 mt-1" (click)="close()"
+                style="text-decoration: none;color: black;font-size: 1.3rem;">X</a>
+        </div>
+        <div class="content">
+            <div class="loading" *ngIf="spinnerLoader">
+                <div class="loader"></div>
+            </div>
+            <div class="d-flex" id="SalesGrossDetails" #TABLE #table style="width: 100%;">
+                <div class="det_cont ScrollOff" style="min-height: 30vh;height: 71vh;"
+                    (mouseenter)="updateCurrentElement('scrollOne')" (scroll)="updateVerticalScroll($event)" #scrollOne>
+                    <div class="table-wrapper">
+                        <table class="table mb-0 w-100">
+                            <thead>
+                                <tr>
+                                    <th style="cursor: pointer;" [style.font-size.vw]="fontSize"
+                                        (click)="sortColumn('dealid')">Deal #
+                                        <span class="sort-icon" [ngClass]="getSortIcon('dealid')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('Stock')">Stock #
+                                        <span class="sort-icon" [ngClass]="getSortIcon('Stock')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('contractdate')">Date
+                                        <span class="sort-icon" [ngClass]="getSortIcon('contractdate')"></span>
+                                    </th>
+                                    <th style="width: 20%; " [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('customername')">Customer
+                                        <span class="sort-icon" [ngClass]="getSortIcon('customername')"></span>
+                                    </th>
+                                    <th style="width: 20%; " [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('ad_Year')">Year
+                                        <span class="sort-icon" [ngClass]="getSortIcon('ad_make')"></span>
+                                    </th>
+                                    <th style="width: 20%; " [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('ad_make')">Make
+                                        <span class="sort-icon" [ngClass]="getSortIcon('ad_make')"></span>
+                                    </th>
+                                    <th style="width: 20%; " [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('ad_model')">Model
+                                        <span class="sort-icon" [ngClass]="getSortIcon('ad_model')"></span>
+                                    </th>
+
+
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('ad_dealtype')">
+                                        &nbsp;
+                                        <br>
+                                        New/Used
+                                        <span class="sort-icon" [ngClass]="getSortIcon('ad_dealtype')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('vin')">VIN
+                                        <span class="sort-icon" [ngClass]="getSortIcon('vin')"></span>
+                                    </th>
+                                    <th style="text-align:right !important " [style.font-size.vw]="fontSize"
+                                        style="cursor: pointer;" (click)="sortColumn('TradeAcv')">Trade
+                                        <span class="sort-icon" [ngClass]="getSortIcon('TradeAcv')"></span>
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <!-- data-bs-toggle="modal" data-bs-target="#warningmessage" | filter : SGDSearchName -->
+                            <tbody *ngIf="(SalesPersonDetails ).length >0; else ifNotShow">
+                                <ng-container *ngIf="SalesPersonDetails.length > 0; else ifNotShow">
+                                    <tr *ngFor="let det of SalesPersonDetails ; let i=index" [id]="'SD_'+i"
+                                        (mouseover)="hoverclass($event,i)">
+                                        <td [style.font-size.vw]="fontSize" [id]="'SD_'+i"
+                                            (click)="openSalesModal(det.dealid,det.vin,det.dealerid,det.Stock,det.source,det?.customernumber)"
+                                            [ngClass]="[det.dealid != 0 && det.dealid != null && det.dealid != undefined && det.dealid != '' && det.dealid != '-' ? 'popuppointer' : 'popupdisable']">
+                                            {{ (det.dealid == 0 || det.dealid == null || det.dealid == undefined ? '-' :
+                                            det.dealid ) }}
+                                        </td>
+                                        <td [style.font-size.vw]="fontSize" style="text-align: left !important;"
+                                            [id]="'SD_'+i">
+                                            {{ (det.Stock == 0 || det.Stock == null || det.Stock == undefined ? ' - ' :
+                                            det.Stock ) }}
+                                        </td>
+                                        <td [style.font-size.vw]="fontSize" [id]="'SD_'+i">
+                                            {{ (det.contractdate == 0 || det.contractdate == null || det.contractdate ==
+                                            undefined ? '-' :
+                                            det.contractdate | date:'MM.dd.yyyy' ) }}
+                                        </td>
+                                        <td title="{{det.customername}}" [id]="'SD_'+i"
+                                            style="cursor: default; text-align: left; white-space: nowrap;"
+                                            [style.font-size.vw]="fontSize">
+                                            {{(det.customername == undefined ||
+                                            det.customername == null ? '--' : (
+                                            (det.customername.toString() | slice:0:20) +
+                                            (det.customername.toString().length > 20 ? '..' : '') ))}}</td>
+
+                                        <td [style.font-size.vw]="fontSize" style="text-align: left !important;"
+                                            [id]="'SD_'+i">
+                                            {{ (det.ad_Year == 0 || det.ad_Year == null || det.ad_Year == undefined ? '
+                                            - '
+                                            :
+                                            det.ad_Year ) }}
+                                        </td>
+
+                                        <td [style.font-size.vw]="fontSize" style="text-align: left !important;"
+                                            [id]="'SD_'+i">
+                                            {{ (det.ad_make == 0 || det.ad_make == null || det.ad_make == undefined ? '
+                                            - '
+                                            :
+                                            det.ad_make ) }}
+                                        </td>
+                                        <td [style.font-size.vw]="fontSize" style="text-align: left !important;"
+                                            [id]="'SD_'+i">
+                                            {{ (det.ad_model == 0 || det.ad_model == null || det.ad_model == undefined ?
+                                            ' -
+                                            ' :
+                                            det.ad_model ) }}
+                                        </td>
+
+
+                                        <td [style.font-size.vw]="fontSize" [id]="'SD_'+i">
+                                            {{ ( det.ad_dealtype == null || det.ad_dealtype == undefined ? '-' :
+                                            det.ad_dealtype
+                                            ) }}
+                                        </td>
+                                        <td style="padding-right: .8rem !important;" [style.font-size.vw]="fontSize"
+                                            [id]="'SD_'+i">
+                                            {{ (det.vin == 0 || det.vin == null || det.vin == undefined ? '-' : det.vin
+                                            ) }}
+                                        </td>
+                                        <td style="text-align: right;" [style.font-size.vw]="fontSize" [id]="'SD_'+i">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (det.TradeAcv == 0 || det.TradeAcv == null || det.TradeAcv ==
+                                                undefined ?
+                                                '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{ (det.TradeAcv == 0 || det.TradeAcv == null || det.TradeAcv ==
+                                                    undefined ?
+                                                    '-' :
+                                                    det.TradeAcv | number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                    </tr>
+                                </ng-container>
+
+                            </tbody>
+                            <ng-template #ifNotShow>
+                                <tr *ngIf="NoData">
+                                    <td colspan="4" style="text-align: center; font-size: .8vw; height: 30px;">No Data
+                                        Found!!!</td>
+                                </tr>
+                            </ng-template>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="det_cont" style="min-height: 30vh;max-height:71vh;"
+                    (mouseenter)="updateCurrentElement('scrollTwo')" (scroll)="updateVerticalScroll($event)" #scrollTwo>
+                    <div class="table-wrapper">
+                        <table class="table table-borderless mb-0">
+                            <thead>
+                                <tr style="text-align: initial;">
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('frontgross')">Front <br>Gross
+                                        <span class="sort-icon" [ngClass]="getSortIcon('frontgross_decimal')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('backgross')">Back <br>Gross
+                                        <span class="sort-icon" [ngClass]="getSortIcon('backgross_decimal')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('totalgross')">Total <br>Gross
+                                        <span class="sort-icon" [ngClass]="getSortIcon('totalgross_decimal')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('salesperson1')">SP <br>1
+                                        <span class="sort-icon" [ngClass]="getSortIcon('salesperson1')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('salesperson2')">SP <br>2
+                                        <span class="sort-icon" [ngClass]="getSortIcon('salesperson2')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('fimanager')">F&I <br>Mgr.
+                                        <span class="sort-icon" [ngClass]="getSortIcon('fimanager')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('salesmanager')">Desk <br>Mgr.
+                                        <span class="sort-icon" [ngClass]="getSortIcon('salesmanager')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('FinReserve')">FIN.<br>Reserve
+                                        <span class="sort-icon" [ngClass]="getSortIcon('FinReserve')"></span>
+                                    </th>
+                                    <th [style.font-size.vw]="fontSize" style="cursor: pointer;"
+                                        (click)="sortColumn('productcount')">Product <br>Count
+                                        <span class="sort-icon" [ngClass]="getSortIcon('productcount')"></span>
+                                    </th>
+
+                                    <ng-container *ngIf="SalesPersonDetails != undefined && spinnerLoader==false">
+                                        <ng-container *ngIf="SalesPersonDetails[0].products != undefined">
+                                            <th *ngFor="let pdct of SalesPersonDetails[0].products"
+                                                [style.font-size.vw]="fontSize">&nbsp; <br>{{pdct.PCName}}</th>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="spinnerLoader == true ">
+                                        <th [style.font-size.vw]="fontSize">Service Contract </th>
+                                        <th [style.font-size.vw]="fontSize"> Gap </th>
+                                        <th [style.font-size.vw]="fontSize"> Prepaid Maintenance </th>
+                                        <th [style.font-size.vw]="fontSize"> VTR </th>
+                                        <th [style.font-size.vw]="fontSize"> Insurance </th>
+                                        <th [style.font-size.vw]="fontSize">Chemical </th>
+                                        <th [style.font-size.vw]="fontSize"> Other</th>
+
+                                    </ng-container>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="(SalesPersonDetails ).length >0 ; else ifNotShowSecond">
+                                <ng-container *ngIf="SalesPersonDetails.length > 0; else ifNotShowSecond">
+
+                                    <tr *ngFor="let det of SalesPersonDetails ; let i=index;" [id]="'SP_'+i"
+                                        (mouseover)="hoverclass($event,i)">
+                                        <td style="text-align: right !important;" [id]="'SP_'+i"
+                                            [ngClass]="{ negative: !inTheGreen(det.frontgross)}"
+                                            [style.font-size.vw]="fontSize">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (det.frontgross == 0 || det.frontgross == null ||
+                                                det.frontgross ==
+                                                undefined ?
+                                                '' :'$' ) }}
+                                                <span>
+                                                    {{ (det.frontgross == 0 || det.frontgross == null ||
+                                                    det.frontgross ==
+                                                    undefined ?
+                                                    '-' :
+                                                    det.frontgross | number:'1.2-2' ) }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td style="text-align: right !important;" [id]="'SP_'+i"
+                                            [ngClass]="{ negative: !inTheGreen(det.backgross)}"
+                                            [style.font-size.vw]="fontSize">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (det.backgross == 0 || det.backgross == null ||
+                                                det.backgross ==
+                                                undefined ? ''
+                                                : '$' ) }}
+                                                <span>
+                                                    {{ (det.backgross == 0 || det.backgross == null ||
+                                                    det.backgross ==
+                                                    undefined ? '-'
+                                                    : det.backgross |
+                                                    number:'1.2-2' ) }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td style="text-align: right !important;" [id]="'SP_'+i"
+                                            [ngClass]="{ negative: !inTheGreen(det.totalgross)}"
+                                            [style.font-size.vw]="fontSize">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (det.totalgross == 0 || det.totalgross == null ||
+                                                det.totalgross == undefined ? '-' :'$' ) }}
+                                                <span>
+                                                    {{ (det.totalgross == 0 || det.totalgross == null ||
+                                                    det.totalgross == undefined ? '-' :
+                                                    det.totalgross | number:'1.2-2' ) }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td title="{{det.salesperson1}}" [id]="'SP_'+i"
+                                            style="cursor: default;white-space: nowrap;text-align: left !important;"
+                                            [style.font-size.vw]="fontSize">
+                                            {{(det.salesperson1 ==
+                                            null || det.salesperson1 == undefined || det.salesperson1 == 'Unknown' ? ''
+                                            : (
+                                            (det.salesperson1.toString() | slice:0:1) +
+                                            (det.salesperson1.toString().length > 1 ? '.' : '') ))}}
+                                            {{(det.salesperson1 == null || det.salesperson1 == undefined ? '' :
+                                            det.salesperson1.toString() |
+                                            slice: det.salesperson1.indexOf(' ')+1 )}}
+                                        </td>
+                                        <td title="{{det.salesperson2}}" [id]="'SP_'+i"
+                                            style="cursor: default;white-space: nowrap;text-align: left !important;"
+                                            [style.font-size.vw]="fontSize">
+                                            {{(det.salesperson2 ==
+                                            null || det.salesperson2 == undefined || det.salesperson2 == 'Unknown' ? '-'
+                                            : (
+                                            (det.salesperson2.toString() | slice:0:1) +
+                                            (det.salesperson2.toString().length > 1 ? '.' : '') ))}}
+                                            {{(det.salesperson2 == null || det.salesperson2 == undefined ? '' :
+                                            det.salesperson2.toString() |
+                                            slice: det.salesperson2.toString().indexOf(' ')+1 )}}</td>
+                                        <td title="{{det.fimanager}}" [id]="'SP_'+i"
+                                            style="cursor: default;white-space: nowrap;text-align: left !important;"
+                                            [style.font-size.vw]="fontSize">
+                                            {{(det.fimanager == null ||
+                                            det.fimanager == undefined || det.fimanager == 'Unknown' ? '' : (
+                                            (det.fimanager.toString() | slice:0:1) +
+                                            (det.fimanager.toString().length > 1 ? '.' : '') ))}}
+                                            {{(det.fimanager == null || det.fimanager == undefined ? '' :
+                                            det.fimanager.toString() | slice:
+                                            det.fimanager.indexOf(' ')+1 )}}</td>
+                                        <td title="{{det.salesmanager}}" [id]="'SP_'+i"
+                                            style="cursor: default;white-space: nowrap;text-align: left !important;"
+                                            [style.font-size.vw]="fontSize">
+                                            {{(det.salesmanager ==
+                                            null || det.salesmanager == undefined || det.salesmanager == 'Unknown' ? ''
+                                            : (
+                                            (det.salesmanager.toString() | slice:0:1) +
+                                            (det.salesmanager.toString().length > 1 ? '.' : '') ))}}
+                                            {{(det.salesmanager == null || det.salesmanager == undefined ? '' :
+                                            det.salesmanager.toString() |
+                                            slice: det.salesmanager.indexOf(' ')+1 )}}</td>
+                                        <td style="cursor: default;white-space: nowrap;text-align: right !important;"
+                                            [id]="'SP_'+i" [style.font-size.vw]="fontSize">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (det.FinReserve == 0 || det.FinReserve == null || det.FinReserve ==
+                                                undefined ?
+                                                '' :'$') }}
+                                                <span>
+                                                    {{ (det.FinReserve == 0 || det.FinReserve == null || det.FinReserve
+                                                    ==
+                                                    undefined ?
+                                                    '-' :
+                                                    det.FinReserve | number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [style.font-size.vw]="fontSize" [id]="'SP_'+i">
+                                            {{ (det.productcount == 0 || det.productcount == null || det.productcount ==
+                                            undefined ? '-' :
+                                            det.productcount | number ) }}
+                                        </td>
+
+                                        <td style="text-align: right !important;" [id]="'SP_'+i"
+                                            *ngFor="let pdct of det.products"
+                                            [ngClass]="{ negative: !inTheGreen(pdct.Amount)}"
+                                            [style.font-size.vw]="fontSize">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (pdct.Amount == 0 || pdct.Amount == null ||
+                                                pdct.Amount == undefined
+                                                ? '' : '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (pdct.Amount == 0 || pdct.Amount == null ||
+                                                    pdct.Amount == undefined
+                                                    ? '-' : pdct.Amount | number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                    </tr>
+
+
+                                </ng-container>
+
+                            </tbody>
+                            <ng-template #ifNotShowSecond>
+                                <tr *ngIf="SGDSearchName != '' || NoData">
+                                    <td colspan="18"
+                                        style="text-align: center;font-size: .8vw;font-family: 'Roboto'; height: 30px;">
+                                        No
+                                        Data Found!!!</td>
+                                </tr>
+                            </ng-template>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
