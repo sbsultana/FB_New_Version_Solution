@@ -22,6 +22,7 @@ import { NotificationService } from '../../Core/Providers/Shared/notification.se
 
 import { AuthServices } from '../../Core/Providers/Shared/auth.service 1';
 import { common } from '../../common';
+import { Subscription } from 'rxjs';
 
 declare var bootstrap: any;
 @Component({
@@ -34,526 +35,276 @@ declare var bootstrap: any;
 
 
 export class Header {
-  public componentData: any;
-  public loading = false;
-  private toast = inject(ToastService);
-  // public userInfo : any;
-  private router = inject(Router);
-  dealerGroups: string[] = ['Cavender', 'Fredbeans', 'Price'];
-  KeyWords = ['Prasad', 'Chavali', 'Pchavali', 'Greedily', 'Greedily Routine4'];
-  selectedGroup: string | null = null;
-  groupsandstoresdata: any = []
-  stores: any = [];
-  userInfo: any =
-  {
-    "group": "FREDBEANS",
-    "fullName": "Prasad Chavali",
-    "GU_URL": "https://fb.axelone.app/",
-    "xtract_url": "https://fbxtract..axelone.app/",
-    "user_Info": {
-        "userid": 1,
-        "firstname": "Prasad",
-        "lastname": "Chavali",
-        "email": "pchavali-axelone@fredbeans.com",
-        "phone": "+19000000004",
-        "roleid": 100,
-        "status": "Y",
-        "profileImg": "88a8b6b1a8270a1eda07c76cab267cb9prasad.png",
-        "title": "Super Admin",
-        "moduleids": "1,2,53,4,5,8,16,18,19,22,23,24,26,27,28,29,30,35,40,48,62,66,67,70,71,72,73,74,75,76,77,78,79,80,88,89,90,91,92,93,94,95,96,97,99,100,102,104,7,11,12,68,14,15,25,81,83,84,85,87,98,101,103,41,36,63,69,54",
-        "preferences": 1,
-        "ADuserid": "DEALERS\\PChavali-AxelOne",
-        "storeids": "71,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54",
-        "userstores": "71,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54",
-        "ustores": "71,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54",
-        "oth_stores": "",
-        "uid": 1,
-        "Xtract": 1,
-        "Touch": 1,
-        "Xperience": 1,
-        "Xchange": 3,
-        "Xiom": 1,
-        "Tracs": 1,
-        "iat": 1767102955,
-        "exp": 1798638955
-    },
-    "site": "prod"
-}
-  ceoLogs: any = [
-    {
-      username: 'dealers\\pchavali-axelone',
-      group: 'FREDBEANS',
-      stgroup: 'FREDBEANS',
-      url: 'https://fredbeans.axelautomotive.com/',
-      pwd: 'AxelOne1!',
-      logo: 'FB_Logo.png'
-    },
-    {
-      username: 'prasad.chavali@axelautomotive.com',
-      group: 'WESTERN',
-      stgroup: 'WESTERN',
-      url: 'https://westernauto.axelone.app/',
-      pwd: 'Cav@2024$$',
-      logo: 'WesternLogo.svg'
-    },
-    {
-      username: 'prasad.chavali@axelautomotive.com',
-      group: 'TPG',
-      stgroup: 'TPG',
-      url: 'https://tropical.axelone.app',
-      pwd: 'tcp@2025$$',
-      logo: 'Tropical_Logo.png'
-    },
-    {
-      username: 'MOSSY\\AxelOne',
-      group: 'MOSSY',
-      stgroup: 'MOSSY',
-      url: 'https://mossy.axelone.app',
-      pwd: 'Welcome2Mossy!',
-      logo: 'Mossy_Logo.png'
-    },
-    // {
-    //   username : 'prasad.chavali@axelautomotive.com',
-    //   group : 'Dream',
-    //   stgroup : 'DMG1',
-    //   url : 'https://dream.axelautomotive.com/',
-    //   pwd : 'Dmg@2024$$',
-    //   logo : 'Dream_Logo.png'
-    // },
-    // {
-    //   username : 'prasad.chavali@axelautomotive.com',
-    //   group : 'Ancira',
-    //   stgroup : 'ANCIRA',
-    //   url : 'https://ancira.axelautomotive.com/',
-    //   pwd : 'Anc@2024$$',
-    //   logo : 'Ancira_logo.png'
-    // },
-    // {
-    //   username : 'PRICESIMMS\\axel1',
-    //   group : 'Price',
-    //   stgroup : 'Price',
-    //   url : 'https://price.axelautomotive.com/',
-    //   pwd : 'Rug-Dubbed-Pavement2',
-    //   logo : 'Price_Logo.png'
-    // },
-    // {
-    //   username : 'RigoG@toyotacedarpark.com',
-    //   group : 'Idea',
-    //   stgroup : 'ID',
-    //   url : 'https://idea.axelautomotive.com/',
-    //   pwd : 'axelone'
-    // },
-    // {
-    //   username : 'MWAXEL3@motorwerks.com',
-    //   group : 'Murgado',
-    //   stgroup : 'MG',
-    //   url : 'https://murgado.axelautomotive.com/',
-    //   pwd : 'Murgad0@2024'
-    // },
-  ]
+  @Output() ready = new EventEmitter<void>();
 
+  componentData: any;
+  userInfo: any;
   hasUnread = false;
-  matched: boolean = false;
-  constructor(public shared: Sharedservice, public AuthServices: AuthServices, public userNetworkInfo: UserNetworkService, public apiCall: Api, private http: HttpClient, public notificationService: NotificationService, public comm: common, public apiService: Api,) {
+  matched = false;
+  loading = false;
+  selectedGroup: string | null = null;
 
-    //this.userNetworkInfo.networkStatus = false;
-    // const storedUser = localStorage.getItem('userInfo');
-    // const storedUser = this.userInfo
-    // if (userInfo) {
-    const userInfo = this.userInfo;
-    localStorage.setItem('userInfo', JSON.stringify(this.userInfo))
+  private readonly toast = inject(ToastService);
+  private readonly router = inject(Router);
+  private readonly http = inject(HttpClient);
+  private readonly apiCall = inject(Api);
+  private readonly shared = inject(Sharedservice);
 
-    console.log('I Am Header : ', userInfo);
+  public readonly userNetworkInfo = inject(UserNetworkService);
+  public readonly notificationService = inject(NotificationService);
 
-    this.userInfo = userInfo;
-    //console.log(userInfo.fullName); // "Veera Babu C"
+  private readonly KeyWords = ['Prasad', 'Chavali', 'Pchavali'];
 
-    if (this.userInfo?.user_Info) {
-      const fullName = this.userInfo?.fullName?.toLowerCase() || '';
-      const firstName = this.userInfo.user_Info?.firstname?.toLowerCase() || '';
-      const lastName = this.userInfo.user_Info?.lastname?.toLowerCase() || '';
-      this.matched = this.KeyWords.some(keyword =>
-        fullName.includes(keyword.toLowerCase()) ||
-        firstName.includes(keyword.toLowerCase()) ||
-        lastName.includes(keyword.toLowerCase())
-      );
+  private processingToken = false; // ✅ Prevent premature logout
+  private sub!: Subscription;
+  userData: any;
+  ngOnInit(): void {
+    if (window.location.pathname.startsWith('/schedules')) {
+      return;
+    }
+    history.pushState(null, '', location.href);
+    window.onpopstate = () => {
+      history.pushState(null, '', location.href);
+    };
+    this.sub = this.apiCall.userToken$
+      .subscribe(data => {
+        if (data) {
+          this.userData = data;
+        }
+      });
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (storedUserInfo) {
+      this.userInfo = JSON.parse(storedUserInfo);
+      // ✅ Clean up token in URL
+      let cleanUrl = window.location.href;
+      cleanUrl = cleanUrl.replace(/[?&]token=[^&#]*/g, '').replace(/[?&]$/, '');
+
+      if (cleanUrl.includes('#')) {
+        const [base, hash] = cleanUrl.split('#');
+        let cleanHash = hash.replace(/[?&]token=[^&#]*/g, '').replace(/[?&]$/, '');
+        cleanUrl = base + (cleanHash ? `#${cleanHash}` : '');
+      }
+
+      window.history.replaceState({}, document.title, cleanUrl);
+
+      this.afterUserLoad();
+      this.getGruopsandStores()
+      this.ready.emit();
+
+      return;
     }
 
-    const tropicalname = this.userInfo.fullName?.toLowerCase()
+    const token = this.getTokenFromUrl();
 
-    this.matched = this.KeyWords.some(keyword =>
-      tropicalname.includes(keyword.toLowerCase()));
+    if (token) {
+      this.processingToken = true;
+      this.processToken(token);
+      setTimeout(() => {
+        this.processingToken = false;
+        this.ready.emit();
+      }, 800);
+      return;
+    }
 
+    this.checkUserInfo();
 
-
-
-    // }else{
-    //     var userInfo = this.userNetworkInfo.getUser();
-    //     this.userInfo = userInfo;
-    //     localStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-    //       const fullName = this.userInfo?.fullName?.toLowerCase() || '';
-    //       const firstName = this.userInfo?.user_Info?.firstname?.toLowerCase() || '';
-    //       const lastName = this.userInfo?.user_Info?.lastname?.toLowerCase() || '';
-
-
-    //       this.matched = this.KeyWords.some(keyword =>
-    //         fullName.includes(keyword.toLowerCase()) ||
-    //         firstName.includes(keyword.toLowerCase()) ||
-    //         lastName.includes(keyword.toLowerCase())
-    //       );
-    // }
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart && !this.processingToken) {
+        this.checkUserInfo();
+      }
+    });
     this.apiCall.GetHeaderData().subscribe((res: any) => {
       this.componentData = res.obj;
-       this.shared.common.pageName = this.componentData.title
-    }
-    );
+      this.shared.common.pageName = this.componentData.title
+    });
     console.log('Header Component Data : ', this.componentData.title);
-    this.shared.common.pageName = this.componentData.title
-
   }
-
-  ngOnInit(): void {
-    const storedUser = localStorage.getItem('userInfo');
-    console.log(storedUser, '....................');
-
-    if (storedUser) {
-
-      this.getNotificationCount();
-      this.getGruopsandStores();
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+  /** ✅ Extract token from URL if exists */
+  private getTokenFromUrl(): string | null {
+    //debuger;
+    try {
+      const match = window.location.href.match(/[?&]token=([^&#]+)/i);
+      return match?.[1] ? decodeURIComponent(match[1]) : null;
+    } catch (err) {
+      return null;
     }
   }
 
-  onDealerSelect(dealer: any, index: number, event: Event): void {
-    this.selectedGroup = dealer;
+  /** ✅ Decode token, store user info, and remove token from URL */
+  private processToken(token: string): void {
+    const localToken = localStorage.getItem('Login_token');
+    if (!localToken) localStorage.setItem('Login_token', token);
 
-    this.loading = true;
+    try {
+      const decoded = JSON.parse(atob(token));
+      localStorage.setItem('userInfo', JSON.stringify(decoded));
+      this.userInfo = decoded;
+      this.afterUserLoad();
 
-    if (dealer.stgroup == 'CAV1' || dealer.stgroup == 'WESTERN' || dealer.stgroup == 'DMG1' || dealer.stgroup == 'MOSSY' || dealer.stgroup == 'FREDBEANS') {
+      // ✅ Clean up token in URL
+      let cleanUrl = window.location.href;
+      cleanUrl = cleanUrl.replace(/[?&]token=[^&#]*/g, '').replace(/[?&]$/, '');
 
-      const postObj = {
-        'username': dealer.username,
-        'password': btoa(dealer.pwd),
-        'group': dealer.stgroup
-      };
+      if (cleanUrl.includes('#')) {
+        const [base, hash] = cleanUrl.split('#');
+        let cleanHash = hash.replace(/[?&]token=[^&#]*/g, '').replace(/[?&]$/, '');
+        cleanUrl = base + (cleanHash ? `#${cleanHash}` : '');
+      }
 
-      this.apiCall.postmethod('login/login2', postObj).subscribe({
-        next: (res: any) => {
-
-          if (res.status === 200) {
-
-            const tkn = (dealer.stgroup == 'WESTERN' ? res.response.jwttoken : res.response)
-            const userPayload = this.getJwtPayload(tkn);  // Safe extraction
-
-            console.log('User info Header : ', userPayload);
-
-            const userInfo = {
-              group: res.group,
-              user_aou_AD_userid: dealer.username,
-              fullName: userPayload.firstname + ' ' + userPayload.lastname, // Use actual value if available
-              GU_URL: res?.groupInfo?.GU_URL || '',
-              xtract_url: res?.groupInfo?.XTRACT_URL || '',
-              user_Info: userPayload,
-              site: environment.site
-            };
-
-            //console.log('Before Local Storage : ', userInfo);
-
-            this.userNetworkInfo.setUser(userInfo);
-            this.userInfo = userInfo
-
-            if (localStorage.getItem('userInfo')) {
-              localStorage.removeItem('userInfo');
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-            } else {
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-            }
-
-            if (userInfo.group == 'MOSSY') {
-              var token = btoa(JSON.stringify(userInfo));
-
-              console.log('User Info :', userInfo);
-              if (!this.userNetworkInfo.networkStatus) {
-                //alert(1);
-                window.location.reload();
-              } else {
-                // return
-                //window.location.href = `http://localhost:4201?token=${token}`;
-                window.location.href = environment.mossyAppUrl + `?token=${token}`;
-              }
-
-            }
-            else if (userInfo.group == 'FREDBEANS') {
-              var token = btoa(JSON.stringify(userInfo));
-
-              console.log('User Info :', userInfo);
-              if (!this.userNetworkInfo.networkStatus) {
-                //alert(1);
-                window.location.reload();
-              } else {
-                // return
-                window.location.href = environment.fbAppUrl + `?token=${token}`;
-              }
-            }
-            else {
-              window.location.reload();
-            }
-
-
-          } else {
-            // this.toast.show('Invalid username or password', 'danger');
-            this.toast.show('Invalid username or password', 'warning', 'Invalid');
-          }
-
-          //this.loading = false; // ✅ Always reset loading after `next`
-        },
-        error: (err: { error: { status: number; }; }) => {
-          //console.error('Login error:', err);
-
-          if (err.error.status && err.error.status == 401) {
-            this.toast.show('Please try entering it again', 'warning', 'Passwword is Invalid');
-          } else if (err.error.status && err.error.status == 404) {
-            this.toast.show("We couldn't find an account with the eamil you entered", 'danger', 'Account not found');
-          } else if (err.error.status && err.error.status == 503) {
-            this.toast.show("Authentication service unavailable, Please try after some time!", 'warning', 'Service Unavaiable');
-          }
-          //this.toast.show('Something went wrong. Please try again.', 'danger');
-
-          //this.loading = false; // ✅ Also reset loading on error
-          //this.cdr.detectChanges();
-        }
-      });
-    } else if (dealer.stgroup == 'TPG') {
-
-
-      const postObj = {
-        'username': dealer.username,
-        'password': btoa(dealer.pwd),
-        'group': dealer.stgroup
-      };
-
-      this.apiCall.getMethod(`login/status/a/${dealer.stgroup}/${dealer.username}`).subscribe({
-        next: (data: any) => {
-
-          console.log('Tpg User Login  : ', data);
-
-          if (data.status == 200) {
-            const tkn = data.response
-            const userPayload = this.getJwtPayload(tkn);
-
-            console.log('✅ API response 2:', userPayload);
-
-
-            const userInfo = {
-              group: dealer.stgroup,
-              user_aou_AD_userid: userPayload?.user_Info?.ADuserid,
-              fullName: userPayload?.firstname + ' ' + userPayload?.lastname, // Use actual value if available
-              GU_URL: data?.groupInfo?.GU_URL || '',
-              xtract_url: data?.groupInfo?.XTRACT_URL || '',
-              user_Info: userPayload,
-              xpertResp: '',
-              site: environment.site
-            };
-
-
-            console.log('User info Obj : ', userInfo);
-
-            this.userNetworkInfo.setUser(userInfo);
-            this.userInfo = userInfo;
-            if (localStorage.getItem('userInfo')) {
-              localStorage.removeItem('userInfo');
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-
-              window.location.reload();
-            } else {
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-              window.location.reload();
-            }
-
-            var token = btoa(JSON.stringify(userInfo));
-
-            console.log('User Info :', userInfo);
-            if (!this.userNetworkInfo.networkStatus) {
-              //alert(1);
-              window.location.reload();
-            } else {
-              // return
-              //window.location.href = `http://localhost:4201?token=${token}`;
-              window.location.href = environment.tropicalUrl + `?token=${token}`;
-            }
-
-            //this.understood();
-
-          }
-
-
-        }
-      });
-      // this.redirectToMicrosoftTropical('axel-testuser-1@tropicalchevrolet.com');
-
-      // window.location.reload();
+      window.history.replaceState({}, document.title, cleanUrl);
+    } catch (e) {
     }
-    // else if (dealer.stgroup == 'MOSSY'){
-    //     const userInfo = {
-    //       group: dealer.stgroup,
-    //       user_aou_AD_userid: dealer.username,
-    //       fullName: dealer.username,
-    //       GU_URL: dealer?.GU_URL || '',
-    //       xtract_url: dealer?.XTRACT_URL || '',
-    //       user_Info: ''
-    //     };
+  }
 
-    //     console.log('User Info :', userInfo)
-    //     this.userNetworkInfo.setUser(userInfo);
-    //     localStorage.setItem('userInfo', JSON.stringify(userInfo));
+  /** ✅ After user info available */
+  private afterUserLoad(): void {
+    this.evaluateUserMatch();
+    this.loadHeaderData();
+  }
 
-    //     const userinfos : any = this.userInfo;
-    //     var token = btoa(JSON.stringify(userinfos));
+  /** ✅ Keyword match */
+  private evaluateUserMatch(): void {
+    const info = this.userInfo?.user_Info || {};
+    const fullName = (this.userInfo?.fullName || '').toLowerCase();
+    const first = (info?.firstname || '').toLowerCase();
+    const last = (info?.lastname || '').toLowerCase();
 
-    //    // window.location.href = `https://mossy.axelone.app?token=${token}`;
-    //     // window.location.replace(`http://localhost:4321?token=${token}`);
-    //     return;
-    // }
+    this.matched = this.KeyWords.some(
+      (k) =>
+        fullName.includes(k.toLowerCase()) ||
+        first.includes(k.toLowerCase()) ||
+        last.includes(k.toLowerCase())
+    );
+  }
 
-    else {
-      const postObj = {
-        'username': dealer.username,
-        'password': btoa(dealer.pwd),
-      };
+  /** ✅ Fetch header data */
+  private loadHeaderData(): void {
+    this.apiCall.GetHeaderData().subscribe((res: any) => (this.componentData = res.obj));
+  }
+  private checkUserInfo(): void {
 
-
-      this.apiCall.postmethod('login', postObj).subscribe({
-        next: (res: any) => {
-          //this.loading = false;
-          //this.block = 'insight';
-          //this.cdr.detectChanges();
-          //console.log('API Response:', res);
-
-          if (res.status === 200) {
-
-            //this.toast.show('Login successful', 'success');
-
-            //this.toast.show('Login Success.!', 'success', 'Success');
-
-
-
-            const tkn = (dealer.stgroup == 'WESTERN' ? res.response.jwttoken : res.response)
-            const userPayload = this.getJwtPayload(tkn);  // Safe extraction
-
-
-            const userInfo = {
-              group: res.group,
-              user_aou_AD_userid: dealer.username,
-              fullName: userPayload.firstname + ' ' + userPayload.lastname, // Use actual value if available
-              GU_URL: res?.groupInfo?.GU_URL || '',
-              xtract_url: res?.groupInfo?.XTRACT_URL || '',
-              user_Info: userPayload,
-              site: environment.site
-            };
-
-            //console.log('Before Local Storage : ', userInfo);
-
-            this.userNetworkInfo.setUser(userInfo);
-            if (localStorage.getItem('userInfo')) {
-              localStorage.removeItem('userInfo');
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-            } else {
-              localStorage.setItem('userInfo', JSON.stringify(userInfo));
-            }
-
-            window.location.reload();
-            // this.understood();
-
-          } else {
-            // this.toast.show('Invalid username or password', 'danger');
-            this.toast.show('Invalid username or password', 'warning', 'Invalid');
-          }
-
-          // this.loading = false; // ✅ Always reset loading after `next`
-        },
-        error: (err: { error: { status: number; }; }) => {
-          //console.error('Login error:', err);
-
-          if (err.error.status && err.error.status == 401) {
-            this.toast.show('Please try entering it again', 'warning', 'Passwword is Invalid');
-          } else if (err.error.status && err.error.status == 404) {
-            this.toast.show("We couldn't find an account with the eamil you entered", 'danger', 'Account not found');
-          } else if (err.error.status && err.error.status == 503) {
-            this.toast.show("Authentication service unavailable, Please try after some time!", 'warning', 'Service Unavaiable');
-          }
-          //this.toast.show('Something went wrong. Please try again.', 'danger');
-
-          //this.loading = false; // ✅ Also reset loading on error
-          //this.cdr.detectChanges();
-        }
-
-      });
+    if (window.location.pathname.startsWith('/schedules')) {
+      return;
     }
-    // setTimeout(async () => {
-    //   window.location.reload();
-    // }, 2000);
+
+    if (this.processingToken) return;
+
+    const stored = localStorage.getItem('userInfo');
+
+    let user: any = null;
+
+    if (stored) {
+      try {
+        user = JSON.parse(stored);
+      } catch {
+        user = null;
+      }
+    }
+
+    if (!user || !Object.keys(user).length) {
+
+      const redirectUrl = 'https://axelone.app/?logout=true';
+
+      window.location.replace(redirectUrl);
+      return;
+    }
+
+    this.getNotificationCount();
   }
 
-  redirectToMicrosoftTropical(userEmail: any): Promise<void> {
 
-    return this.AuthServices.loginWithUsernameHint(userEmail); // Make sure 'initialize' is a public method in AuthServices
+  /** ✅ Notifications */
+  private getNotificationCount(): void {
+    this.notificationService.unreadCount$.subscribe((count) => (this.hasUnread = count > 0));
   }
 
-  fetchDashboardData(dealer: string) {
-    // Modify this method as per your backend API logic
-    const obj = {
-      dealerGroup: dealer,
-      // other params
-    };
-
-
+  onNotificationIconClick(): void {
+    this.notificationService.triggerFetch();
+    this.toast.show('Notifications will be implemented soon', 'success', 'Coming Soon');
   }
 
-  dashbardRoute() {
+  /** ✅ Settings navigation */
+  onSettingsClick(): void {
+    this.apiCall.headermenu(`${this.userInfo.user_Info.roleid}`).subscribe({
+      next: (data: any) => {
+        const settings = data?.response?.find(
+          (m: any) => m.mod_name === 'Settings' || m.mod_name === 'SETTINGS' || m.Mod_ID == 26
+        );
+        if (!settings) return console.error('SETTINGS module not found');
+
+        try {
+          const xmlDataArray = JSON.parse(settings.xmlData);
+          const firstItem = xmlDataArray[0];
+          if (firstItem) this.gotoLink(firstItem.mod_filename);
+        } catch (e) {
+          console.error('Error parsing xmlData:', e);
+        }
+      },
+      error: (err) => console.error('API Error:', err),
+    });
+  }
+  gotoLink(url: string): void {
+    if (!url) return;
+
+    try {
+      const uToken = localStorage.getItem('Login_token') || '';
+      const currentHost = window.location.host;
+      const isLocal = /localhost|127\.0\.0\.1/.test(currentHost);
+      const target = new URL(url, window.location.origin);
+
+      target.searchParams.set('token', uToken);
+
+      if (target.host === currentHost || isLocal) {
+        this.router.navigateByUrl(target.pathname + target.search).catch(() => {
+          window.location.href = target.href;
+        });
+      } else {
+        const currentBase = currentHost.split('.').slice(-2).join('.');
+        const targetBase = target.host.split('.').slice(-2).join('.');
+        targetBase === currentBase
+          ? (window.location.href = target.href)
+          : (window.location.href = target.href);
+      }
+    } catch (error) {
+      console.error('Invalid URL:', error, 'for input:', url);
+    }
+  }
+
+  dashbardRoute(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  logoutSession() {
-    localStorage.removeItem('userInfo');
-    this.router.navigate(['/']);
-  }
+  // logoutSession(): void {
 
-  getJwtPayload(token: string): any {
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      throw new Error('Invalid JWT format');
-    }
-    const payload = this.decodeBase64Url(parts[1]);
-    return JSON.parse(payload);
-  }
+  //   const site = this.userInfo?.site ;
+  //   localStorage.clear();
+  //   window.location.href =
+  //     site === 'demo' ? 'https://demo.axelone.app?logout=true' : 'http://axelone.app?logout=true';
+  // }
 
-  decodeBase64Url(base64Url: string): string {
-    // Replace - with + and _ with / to make it valid Base64
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    // Add padding if needed
-    const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, '=');
-    return atob(padded);
-  }
-
-  getNotificationCount() {
-    this.notificationService.unreadCount$.subscribe((count) => {
-      console.log('Count of notificaiton  : ', count);
-      this.hasUnread = count > 0 ? true : false;
+  logoutSession(): void {
+    const site = this.userInfo?.site;
+    localStorage.clear();
+    sessionStorage.clear();
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', () => {
+      history.pushState(null, '', location.href);
     });
+    const target =
+      site === 'demo' ? 'https://demo.axelone.app?logout=true' : 'https://axelone.app?logout=true';
+    window.location.replace(target); // THIS prevents going back
   }
 
-
-  onNotificationIconClick() {
-    // alert('Hello !');
-
-    const offcanvasEl = document.getElementById('notif');
-    if (offcanvasEl) {
-      const offcanvas = new bootstrap.Offcanvas(offcanvasEl);
-      offcanvas.show();
+  onNetworkClick() {
+    if (this.userNetworkInfo?.networkStatus) {
+      this.toast.show('You are already connected to the office network.', 'success', 'Connected');
+    } else {
+      this.toast.show('Please connect to the office network.', 'warning', 'Not Connected');
     }
-    this.notificationService.triggerFetch(); // Notify dashboard
   }
-
 
   onExcelClick() {
 
@@ -564,6 +315,7 @@ export class Header {
     this.apiCall.setExportToExcelAllReports({ obj: Data });
 
   }
+  groupsandstoresdata: any = []
   getGruopsandStores() {
     this.shared.common.completeUserDetails = this.userInfo
     // alert('HI')
