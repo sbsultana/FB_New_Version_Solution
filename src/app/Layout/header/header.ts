@@ -58,6 +58,14 @@ export class Header {
   private processingToken = false; // ✅ Prevent premature logout
   private sub!: Subscription;
   userData: any;
+  constructor(){
+     this.apiCall.GetHeaderData().subscribe((res: any) => {
+      this.componentData = res.obj;
+      this.shared.common.pageName = this.componentData.title
+      console.log(this.shared.common.pageName,'Page Name');
+      
+    });
+  }
   ngOnInit(): void {
     if (window.location.pathname.startsWith('/schedules')) {
       return;
@@ -87,13 +95,7 @@ export class Header {
       }
 
       window.history.replaceState({}, document.title, cleanUrl);
-      this.userInfo.user_Info['Preferences'] = 1
-      this.userInfo.user_Info['Storeids'] = '71,8,7,4,35,1,32,40,50,25,18,31,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54'
-
-      console.log(this.userInfo);
-      
-      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
-      console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);
+    
 
       this.afterUserLoad();
       this.getGruopsandStores()
@@ -121,10 +123,7 @@ export class Header {
         this.checkUserInfo();
       }
     });
-    this.apiCall.GetHeaderData().subscribe((res: any) => {
-      this.componentData = res.obj;
-      this.shared.common.pageName = this.componentData.title
-    });
+   
     console.log('Header Component Data : ', this.componentData.title);
   }
   ngOnDestroy() {
