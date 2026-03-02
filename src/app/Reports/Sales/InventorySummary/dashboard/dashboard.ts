@@ -11,16 +11,16 @@ import { Stores } from '../../../../CommonFilters/stores/stores';
 import { Router } from '@angular/router'
 import { group, log } from 'console';
 import { CurrencyPipe } from '@angular/common';
-
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule,Stores],
+  imports: [SharedModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class Dashboard {
-  storeIds: any = '0';
+  storeIds: any = '';
   TotalReport: any = 'T';
   date: any;
   AgeFrom: any = 0;
@@ -53,19 +53,23 @@ export class Dashboard {
   totalcount: any = ''
   groupsArray: any = [];
   // storename: any = ''
+  
   stores: any = [];
   storecount: any = null;
   storedisplayname: any = '';
   groupName: any = '';
-  groupId: any = 8;
+  groupId: any = 0;
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
-  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, private cp: CurrencyPipe) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, private cp: CurrencyPipe,private toast: ToastService,) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      // this.storeIds = '1,2'
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -75,12 +79,7 @@ export class Dashboard {
       this.getStoresandGroupsValues()
     }
     this.date = new Date();
-    if (typeof window !== 'undefined') {
 
-      // if (localStorage.getItem('UserDetails') != null) {
-      //   this.storeIds = JSON.parse(localStorage.getItem('UserDetails')!).Store_Ids
-      // }
-    }
 
     this.shared.setTitle(this.shared.common.titleName + "-Inventory Summary");
     if (typeof window !== 'undefined') {
@@ -95,6 +94,9 @@ export class Dashboard {
           this.Wholesale = ['N']
         }
       }
+
+
+      
     }
     const data = {
       title: 'Inventory Summary',
@@ -278,7 +280,7 @@ export class Dashboard {
           if (totalres.response != undefined) {
             if (totalres.response.length > 0) {
               this.TotalIS = totalres.response.map((v: any) => ({
-                store: 'Report Totals',
+                store: 'REPORT TOTALS',
                 Dealer: '+',
                 Data2: [],
                 ...v,
@@ -424,7 +426,21 @@ export class Dashboard {
     }
   }
 
+  sorted(property: any) {
+    this.isDesc = !this.isDesc; //change the direction
+    this.column = property;
+    let direction = this.isDesc ? 1 : -1;
 
+    this.inventoryDetails.sort(function (a: any, b: any) {
+      if (a[property] < b[property]) {
+        return -1 * direction;
+      } else if (a[property] > b[property]) {
+        return 1 * direction;
+      } else {
+        return 0;
+      }
+    });
+  }
   sort(property: any) {
     this.isDesc = !this.isDesc; //change the direction
     this.column = property;
@@ -443,7 +459,7 @@ export class Dashboard {
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
       if (this.shared.common.pageName == 'Inventory Summary') {
-       if (res.obj.storesData != undefined) {
+        if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
@@ -501,63 +517,6 @@ export class Dashboard {
       }
     });
   }
-
-  ngOnDestroy() {
-    this.unsubscribing()
-  }
-  Scrollpercent: any = 0;
-  scrollCurrentposition: any = 0
-  @ViewChild('scrollcent') scrollcent!: ElementRef;
-
-  updateVerticalScroll(event: any): void {
-
-    this.scrollCurrentposition = event.target.scrollTop
-    const scrollDemo = document.querySelector('#scrollcent') as HTMLElement;
-    this.Scrollpercent = Math.round(
-      (event.target.scrollTop /
-        (event.target.scrollHeight - scrollDemo.clientHeight)) *
-      100
-    );
-  }
-  // reportOpening(temp: any) {
-  //   this.ngmodelactive = this.ngbmodal.open(temp, {
-  //     size: 'xl',
-  //     backdrop: 'static',
-  //   });
-  // }
-  index = '';
-  commentobj = {};
-
-
-
-
-  //-----------Reports---------//
-  getStockType() {
-    const obj = {}
-    this.shared.api.postmethod(this.shared.common.routeEndpoint + "GetInventoryStockTypes", obj).subscribe((res: any) => {
-      this.stocktype = res.response;
-      console.log(this.stocktype,'stocktype');
-
-    })
-  }
-
-  toporbottom: any = ['T'];
-  activePopover: number = -1;
-  // stocktype: any = [];
-  // statustype: any = ['Stock']
-  // ZeroBalance: any = ['Y']
-  // Wholesale: any = ['N']
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
-    if (!clickedInside) {
-      this.activePopover = -1;
-    }
-  }
-  togglePopover(popoverIndex: number) {
-    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
-  }
-
   getStoresandGroupsValues() {
     this.storesFilterData.groupsArray = this.groupsArray;
     this.storesFilterData.groupId = this.groupId;
@@ -592,6 +551,63 @@ export class Dashboard {
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
   }
+  ngOnDestroy() {
+    this.unsubscribing()
+  }
+  Scrollpercent: any = 0;
+  scrollCurrentposition: any = 0
+  @ViewChild('scrollcent') scrollcent!: ElementRef;
+
+  updateVerticalScroll(event: any): void {
+
+    this.scrollCurrentposition = event.target.scrollTop
+    const scrollDemo = document.querySelector('#scrollcent') as HTMLElement;
+    this.Scrollpercent = Math.round(
+      (event.target.scrollTop /
+        (event.target.scrollHeight - scrollDemo.clientHeight)) *
+      100
+    );
+  }
+  // reportOpening(temp: any) {
+  //   this.ngmodelactive = this.ngbmodal.open(temp, {
+  //     size: 'xl',
+  //     backdrop: 'static',
+  //   });
+  // }
+  index = '';
+  commentobj = {};
+
+
+
+
+  //-----------Reports---------//
+  getStockType() {
+    const obj = {}
+    this.shared.api.postmethod(this.shared.common.routeEndpoint + "GetInventoryStockTypes", obj).subscribe((res: any) => {
+      this.stocktype = res.response;
+      console.log(this.stocktype);
+
+    })
+  }
+
+  toporbottom: any = ['T'];
+  activePopover: number = -1;
+  // stocktype: any = [];
+  // statustype: any = ['Stock']
+  // ZeroBalance: any = ['Y']
+  // Wholesale: any = ['N']
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
+  togglePopover(popoverIndex: number) {
+    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
+  }
+
+
   multipleorsingle(block: any, e: any) {
     if (block == 'TB') {
       this.toporbottom = [];
@@ -651,7 +667,8 @@ export class Dashboard {
 
 
     if (this.statustype.length == 0) {
-      alert('Please select atleast one status type')
+    
+      this.toast.show('Please select atleast one status type', 'warning', 'Warning');
     }
 
     // else if (this.stocktype.length == 0) {
@@ -730,7 +747,8 @@ export class Dashboard {
           }
         }
         else {
-          alert('Invalid Details');
+        
+          this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
       (error) => {
@@ -807,7 +825,6 @@ export class Dashboard {
     }
     return letters;
   }
-
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('Inventory Summary');
@@ -917,8 +934,9 @@ export class Dashboard {
     // Helper function for formatting
     const formatValue = (val: any, key: string): string => {
       if (val == null || val === '') return '-';
-      if (currencyFields.includes(key)) return `$${val}`;
-      if (key === 'percentageof$') return `${val}%`;
+      if (currencyFields.includes(key)) return this.cp.transform(val, 'USD', 'symbol', '1.0-0')!;
+      if (key === 'percentageof$') return this.cp.transform(val, 'USD', '', '1.2-2')! + '%';
+      if (key === 'DayAvg90Days' || key == 'DaysSupply') return this.cp.transform(val, 'USD', '', '1.2-2')!;
       return val;
     };
 
@@ -971,18 +989,18 @@ export class Dashboard {
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('Inventory Summary Details');
     let storeValue = 'All Stores';
-    if (
-      this.storeIds &&
-      this.storeIds.length > 0 &&
-      this.storeIds.length !== this.stores.length
-    ) {
+    // if (
+    //   this.storeIds &&
+    //   this.storeIds.length > 0 &&
+    //   this.storeIds.length !== this.stores.length
+    // ) {
       storeValue = this.stores
         .filter((s: any) => this.storeIds.includes(s.ID))
         .map((s: any) => s.storename)
         .join(', ');
-    }
+    // }
     const filters = [
-      { name: 'Store:', values: storeValue },
+      { name: 'Store:', values:this.storename != 'REPORT TOTALS' ? this.storename : storeValue },
       { name: 'New Used:', values: this.dealType.toString() },
       { name: 'Wholesale:', values: this.Wholesale.map((item: any) => item === 'Y' ? 'Yes' : 'No').toString() },
       { name: 'W/Balance:', values: this.ZeroBalance.toString() == 'Y' ? 'Yes' : 'No' },
@@ -1007,28 +1025,28 @@ export class Dashboard {
       'Store Name', 'Stock #', 'Age', 'Year', 'Make',
       'Model', 'VIN', 'Color', 'GL Balance', 'Invoice'
     ];
-    
+
     const headerRow = worksheet.addRow(secondHeader);
     headerRow.height = 25;
-    
+
     headerRow.eachCell((cell) => {
       cell.font = {
         bold: true,
         color: { argb: 'FFFFFFFF' }
       };
-    
+
       cell.alignment = {
         vertical: 'middle',
         horizontal: 'center'
       };
-    
+
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF2F5597' }
       };
     });
-    
+
     const bindingHeaders = ['Dealername', 'stock', 'Age', 'Year', 'Make', 'Model', 'vin', 'Color', 'glbalance', 'Price'];
     const currencyFields: any = ['glbalance', 'Price'];
     let notesCount = 11

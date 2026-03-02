@@ -5,9 +5,11 @@ import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
 import { Setdates } from '../../../../Core/Providers/SetDates/setdates';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
 import { Stores } from '../../../../CommonFilters/stores/stores';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
 @Component({
   selector: 'app-cardeals-reports',
-  imports: [SharedModule, DateRangePicker, Stores],
+  imports: [SharedModule, DateRangePicker, Stores,ToastContainer],
   templateUrl: './cardeals-reports.html',
   styleUrl: './cardeals-reports.scss'
 })
@@ -70,7 +72,7 @@ export class CardealsReports {
     this.setDates(this.ngChanges.datevaluetype)
 
   }
-  constructor(private shared: Sharedservice, private datesSrvc: Setdates) { }
+  constructor(private shared: Sharedservice, private datesSrvc: Setdates,private toast:ToastService) { }
 
   ngOnInit() {
     this.getGroups();
@@ -170,7 +172,7 @@ export class CardealsReports {
     // this.datevaluetype=
     console.log(type);
     if (type != 'C') {
-      this.displaytime = 'Time Frame (' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
+      this.displaytime = '(' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     }
     this.maxDate = new Date();
     this.minDate = new Date();
@@ -227,8 +229,6 @@ export class CardealsReports {
         if (e == 'All') {
           // this.retailorlease.splice(index, 1);
           this.retailorlease = []
-          // alert('Please select atleast one Deal Type');
-
         } else {
           this.retailorlease.splice(index, 1);
           let allindex = this.retailorlease.findIndex((i: any) => i == 'All');
@@ -237,16 +237,15 @@ export class CardealsReports {
           }
         }
       } else {
-        this.otherblocks = ['Retail and Lease']
         if (e == 'All') {
           const dealdata = JSON.stringify(this.dealTypeData)
           this.retailorlease = JSON.parse(dealdata)
         } else {
           this.retailorlease.push(e);
-          // if (this.retailorlease.length == 0) {
-          //   alert('Please select atleast one Deal Type');
-
-          // }
+          if (this.retailorlease.length == this.dealTypeData.length - 1) {
+            const dealdata = JSON.stringify(this.dealTypeData)
+            this.retailorlease = JSON.parse(dealdata)
+          }
         }
       }
     }
@@ -298,11 +297,34 @@ export class CardealsReports {
   viewreport() {
     this.activePopover = -1
 
-    if (this.retailorlease.length == 0) {
-      alert('Please select atleast one Deal Type');
+    // if (this.retailorlease.length == 0) {
+  
+    // }
+    // else if (this.dealstatus.length == 0) {
+    
+    // }
+    if(!this.storeIds || this.storeIds.length === 0){
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
     }
     else if (this.dealstatus.length == 0) {
-      alert('Please select atleast one Deal Status');
+      this.toast.show(
+        'Please Select Atleast One Deal Status',
+        'warning',
+        'Warning'
+      );
+     
+    }
+    else if (this.retailorlease.length == 0) {
+      this.toast.show(
+        'Please Select Atleast One Deal Type',
+        'warning',
+        'Warning'
+      );
+     
     }
     else {
       const data = {

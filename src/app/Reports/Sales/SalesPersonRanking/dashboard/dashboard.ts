@@ -6,6 +6,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { common } from '../../../../common';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 // import { SalesgrossDetailsComponent } from '../../Sales/Gross/salesgross-details/salesgross-details.component';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -35,7 +36,7 @@ export class Dashboard {
   storecount: any = null;
   storedisplayname: any = '';
   groupName: any = '';
-  groupId: any = 8;
+  groupId: any = 0;
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
@@ -59,11 +60,9 @@ export class Dashboard {
   TotalReport: any = 'T';
   storeIds!: any;
   dateType: any = 'MTD';
-  groups: any = 1;
-  // storeorgroup: any = 'G';
-  storeorgroup: any = 'G';
-
-  saleType: any = 'Retail,Lease,Wholesale,Misc';
+  groups: any = 0;
+  storeorgrp: any = 'G';
+  saleType: any = 'Retail,Lease,Wholesale,Misc,Fleet,Demo,Special Order,Rental,Dealer Trade';
   retailorlease: any = this.saleType.split(',');
   columnName: any = 'Rank';
   columnState: any = 'asc';
@@ -76,7 +75,7 @@ export class Dashboard {
     {
       type: 'Bar',
       storeIds: this.storeIds,
-      storeorgroup: this.storeorgroup,
+      storeorgroup: this.storeorgrp,
       dealStatus: this.dealStatus,
       saleType: this.saleType,
       groups: this.groups,
@@ -84,11 +83,12 @@ export class Dashboard {
   ];
   popup: any = [{ type: 'Popup' }];
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common,) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,
+    ) {
     this.solutionurl = this.shared.api;
 
     // this.initializeDates();
-    this.shared.setTitle('SalesPerson Rankings');
+    this.shared.setTitle('Salesperson Rankings');
     // this.GetData(this.columnName, this.columnState);
 
     // let today = new Date();
@@ -108,8 +108,19 @@ export class Dashboard {
     // this.ToDate = this.ToDate.replace(/-/g, '/');
 
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
+      } else {
+        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        }
       }
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -134,17 +145,17 @@ export class Dashboard {
       localStorage.setItem('stime', 'MTD')
 
 
-      this.shared.setTitle(this.shared.common.titleName + '-SalesPerson Rankings');
+      this.shared.setTitle(this.shared.common.titleName + '-Salesperson Rankings');
       // if (localStorage.getItem('Fav') != 'Y') {
       const data = {
-        title: 'SalesPerson Rankings',
+        title: 'Salesperson Rankings',
         stores: this.storeIds,
         toporbottom: this.TotalReport,
         datetype: this.DateType,
         fromdate: this.FromDate,
         todate: this.ToDate,
         groups: this.groups,
-        storeorgroup: this.storeorgroup,
+        storeorgroup: this.storeorgrp,
         saleType: this.saleType.toString(),
         dealStatus: this.dealStatus,
         count: 0,
@@ -157,7 +168,7 @@ export class Dashboard {
           type: 'Bar',
           storeIds: this.storeIds,
           dealStatus: this.dealStatus,
-          storeorgroup: this.storeorgroup,
+          storeorgroup: this.storeorgrp,
           fromdate: this.FromDate,
           todate: this.ToDate,
           saleType: this.saleType,
@@ -236,7 +247,7 @@ export class Dashboard {
 
 
   StoresData(data: any) {
-    // alert('Hi')
+  
     console.log(data, 'Data');
 
     this.storeIds = data.storeids;
@@ -247,34 +258,48 @@ export class Dashboard {
     this.storedisplayname = data.storedisplayname;
   }
 
-  tabClick(col_Name: any, Col_state: any) {
-    if (this.columnName == col_Name) {
-      if (Col_state == 'asc') {
-        this.columnState = 'desc';
-        this.GetData(this.columnName, this.columnState);
-      } else {
-        this.columnState = 'asc';
-        this.GetData(this.columnName, this.columnState);
-      }
-    } else {
-      if (
-        this.storeorgroup == 'G' &&
-        col_Name != 'Rank' &&
-        col_Name != 'ServiceAdvisor' &&
-        col_Name != 'StoreName'
-      ) {
-        this.columnState = 'desc';
-        this.columnName = col_Name;
-        this.GetData(this.columnName, this.columnState);
-      } else {
-        this.columnState = 'desc';
-        this.columnName = col_Name;
-        this.GetData(this.columnName, this.columnState);
-      }
+  // tabClick(col_Name: any, Col_state: any) {
+  //   if (this.columnName == col_Name) {
+  //     if (Col_state == 'asc') {
+  //       this.columnState = 'desc';
+  //       this.GetData(this.columnName, this.columnState);
+  //     } else {
+  //       this.columnState = 'asc';
+  //       this.GetData(this.columnName, this.columnState);
+  //     }
+  //   } else {
+  //     if (
+  //       this.storeorgrp == 'G' &&
+  //       col_Name != 'Rank' &&
+  //       col_Name != 'ServiceAdvisor' &&
+  //       col_Name != 'StoreName'
+  //     ) {
+  //       this.columnState = 'desc';
+  //       this.columnName = col_Name;
+  //       this.GetData(this.columnName, this.columnState);
+  //     } else {
+  //       this.columnState = 'desc';
+  //       this.columnName = col_Name;
+  //       this.GetData(this.columnName, this.columnState);
+  //     }
+  //   }
+  // }
+  tabClick(col_Name: any) {
+
+    // First click on a column
+    if (this.columnName !== col_Name) {
+      this.columnName = col_Name;
+      this.columnState = 'asc';
     }
+
+    else {
+      this.columnState = this.columnState === 'asc' ? 'desc' : 'asc';
+    }
+
+    this.GetData(this.columnName, this.columnState);
   }
   GetData(sortdata?: any, sortstate?: any) {
-  console.log(sortdata, sortstate, this.storeIds);
+    console.log(sortdata, sortstate, this.storeIds);
 
     this.IndividualSalesPersonsData = [];
     this.shared.spinner.show();
@@ -285,9 +310,9 @@ export class Dashboard {
       StoreID: this.storeIds,
       Exp: sortdata,
       OrderType: sortstate,
-      RankBy: this.storeorgroup,
+      RankBy: this.storeorgrp,
       DealType: this.saleType,
-      // DealStatus: this.dealStatus.toString(),
+      DealStatus: this.dealStatus.toString(),
     };
     let startFrom = new Date().getTime();
     const curl = this.shared.getEnviUrl() + 'GetSalesPersonsRankings';
@@ -375,7 +400,7 @@ export class Dashboard {
   SPRstate: any;
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
-      if (this.comm.pageName == 'SalesPerson Rankings') {
+      if (this.comm.pageName == 'Salesperson Rankings') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           // this.groupId = this.ngChanges.groups;
@@ -390,26 +415,26 @@ export class Dashboard {
     })
     this.shared.api.GetReportOpening().subscribe((res) => {
       // // console.log(res);
-      if (res.obj.Module == 'SalesPerson Rankings') {
+      if (res.obj.Module == 'Salesperson Rankings') {
         document.getElementById('report')?.click();
       }
     });
     this.shared.api.GetReports().subscribe((data) => {
-      if (data.obj.Reference == 'SalesPerson Rankings') {
+      if (data.obj.Reference == 'Salesperson Rankings') {
         if (data.obj.header == undefined) {
           this.TotalReport = data.obj.TotalReport;
-            this.storeIds = data.obj.storeValues;
+          this.storeIds = data.obj.storeValues;
 
           this.dealStatus = data.obj.dealStatus;
-          if (this.storeorgroup != data.obj.storeorgroup) {
+          if (this.storeorgrp != data.obj.storeorgroup) {
             this.columnName = 'Rank';
             // this.columnState = 'asc';
-            this.storeorgroup = data.obj.storeorgroup;
+            this.storeorgrp = data.obj.storeorgroup;
           } else {
-            this.storeorgroup = data.obj.storeorgroup;
+            this.storeorgrp = data.obj.storeorgroup;
             // this.columnState = 'desc';
           }
-          this.storeorgroup = data.obj.storeorgroup;
+          this.storeorgrp = data.obj.storeorgroup;
           this.saleType = data.obj.saleType;
           this.groups = data.obj.groups;
           if (data.obj.FromDate != undefined && data.obj.ToDate != undefined) {
@@ -433,7 +458,7 @@ export class Dashboard {
           }
         }
         const headerdata = {
-          title: 'SalesPerson Rankings',
+          title: 'Salesperson Rankings',
 
           stores: this.storeIds,
           toporbottom: this.TotalReport,
@@ -441,7 +466,7 @@ export class Dashboard {
           fromdate: this.FromDate,
           todate: this.ToDate,
           groups: this.groups,
-          storeorgroup: this.storeorgroup,
+          storeorgroup: this.storeorgrp,
           saleType: this.saleType,
           dealStatus: this.dealStatus,
         };
@@ -452,7 +477,7 @@ export class Dashboard {
           {
             type: 'Bar',
             storeIds: this.storeIds,
-            storeorgroup: this.storeorgroup,
+            storeorgroup: this.storeorgrp,
             fromdate: this.FromDate,
             todate: this.ToDate,
             saleType: this.saleType,
@@ -464,7 +489,7 @@ export class Dashboard {
     });
     this.shared.api.getExportToExcelAllReports().subscribe((res) => {
       this.SPRstate = res.obj.state;
-      if (res.obj.title == 'SalesPerson Rankings') {
+      if (res.obj.title == 'Salesperson Rankings') {
         if (res.obj.state == true) {
           this.exportToExcel();
         }
@@ -472,7 +497,7 @@ export class Dashboard {
     });
 
     this.shared.api.getExportToPrintAllReports().subscribe((res) => {
-      if (res.obj.title == 'SalesPerson Rankings') {
+      if (res.obj.title == 'Salesperson Rankings') {
         if (res.obj.statePrint == true) {
           // this.GetPrintData();
         }
@@ -480,14 +505,14 @@ export class Dashboard {
     });
 
     this.shared.api.getExportToPDFAllReports().subscribe((res) => {
-      if (res.obj.title == 'SalesPerson Rankings') {
+      if (res.obj.title == 'Salesperson Rankings') {
         if (res.obj.statePDF == true) {
           // this.generatePDF();
         }
       }
     });
     this.shared.api.getExportToEmailPDFAllReports().subscribe((res) => {
-      if (res.obj.title == 'SalesPerson Rankings') {
+      if (res.obj.title == 'Salesperson Rankings') {
         if (res.obj.stateEmailPdf == true) {
           // this.sendEmailData(res.obj.Email, res.obj.notes, res.obj.from);
         }
@@ -624,6 +649,7 @@ export class Dashboard {
   AllStores: boolean = true;
   AllGroups: boolean = true;
 
+  storeorgroup: any = ['G'];
   // retailorlease: any = [];
   // saleType: any = 'Retail,Lease,Wholesale,Misc,Fleet,Demo,Special Order,Rental,Dealer Trade';
 
@@ -714,7 +740,7 @@ export class Dashboard {
   }
 
   storeorgroups(_block: any, val: string) {
-    this.storeorgroup = val;
+    this.storeorgroup = [val];
   }
 
   // Date selection
@@ -784,7 +810,7 @@ export class Dashboard {
     // this.datevaluetype=
     // console.log(type);
 
-    this.displaytime = 'Time Frame (' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
+    this.displaytime = '(' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     this.maxDate = new Date();
     this.minDate = new Date();
     this.minDate.setFullYear(this.maxDate.getFullYear() - 3);
@@ -812,165 +838,208 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1;
     // console.log('Apply clicked with:', {
-  //   FromDate: this.FromDate,
-  //     ToDate: this.ToDate,
-  //       Stores: this.selectedstorevalues,
-  //         Groups: this.selectedGroups,
-  //           StoreOrGroup: this.storeorgroup,
-  //             SaleType: this.retailorlease,
-  //               DealStatus: this.dealStatus
-  // });
+    //   FromDate: this.FromDate,
+    //     ToDate: this.ToDate,
+    //       Stores: this.selectedstorevalues,
+    //         Groups: this.selectedGroups,
+    //           StoreOrGroup: this.storeorgroup,
+    //             SaleType: this.retailorlease,
+    //               DealStatus: this.dealStatus
+    // });
 
-
-    if(this.retailorlease.length == 0){
-   alert('Please select any one Deal Type');
-  }   
-  else if (this.dealStatus.length == 0) {
-alert('Please select atleast one Deal Status');
-  } 
-  else {
-  const data = {
-    Reference: 'SalesPerson Rankings',
-    FromDate: this.FromDate,
-    ToDate: this.ToDate,
-    // TotalReport: this.toporbottom[0],
-    storeValues: this.storeIds.toString(),
-    // == '' ? '0': this.selectedstorevalues.toString(),
-    dateType: this.DateType,
-    groups: this.selectedGroups.toString(),
-    storeorgroup: this.storeorgroup.toString(),
-    saleType: this.retailorlease.toString(),
-    dealStatus: this.dealStatus,
-  };
-    this.shared.api.SetReports({
-    obj: data,
-  });
-this.close();
-this.GetData(this.columnName, this.columnState);
+    if (!this.storeIds || this.storeIds.length === 0) {
+    
+      this.toast.show('Please select at least one store', 'warning', 'Warning');
+      return;
+    }
+    else if (this.retailorlease.length == 0) {
+    
+      this.toast.show('Please select any one Deal Type', 'warning', 'Warning');
+    }
+    else if (this.dealStatus.length == 0) {
+  
+      this.toast.show('Please select atleast one Deal Status', 'warning', 'Warning');
+    }
+    else {
+      const data = {
+        Reference: 'Salesperson Rankings',
+        FromDate: this.FromDate,
+        ToDate: this.ToDate,
+        // TotalReport: this.toporbottom[0],
+        storeValues: this.storeIds.toString(),
+        // == '' ? '0': this.selectedstorevalues.toString(),
+        dateType: this.DateType,
+        groups: this.selectedGroups.toString(),
+        storeorgroup: this.storeorgroup.toString(),
+        saleType: this.retailorlease.toString(),
+        dealStatus: this.dealStatus,
+      };
+      this.shared.api.SetReports({
+        obj: data,
+      });
+      this.close();
+      this.GetData(this.columnName, this.columnState);
 
 
     }
   }
-exportToExcel(): void {
-  const workbook = this.shared.getWorkbook();
-  const worksheet = workbook.addWorksheet('SalesPerson Rankings');
-  const title = worksheet.addRow(['SalesPerson Rankings']);
-  title.font = { size: 14, bold: true, name: 'Arial' };
-  title.alignment = { vertical: 'middle', horizontal: 'center' };
-  worksheet.mergeCells('A1:L1');
-  worksheet.addRow([]);
-  const formattedFromDate = this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy');
-  const formattedToDate = this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy');
+  ExcelStoreNames: any = []
+  exportToExcel(): void {
+    const workbook = this.shared.getWorkbook();
+    const worksheet = workbook.addWorksheet('Salesperson Rankings');
+    const title = worksheet.addRow(['Salesperson Rankings']);
+    title.font = { size: 14, bold: true, name: 'Arial' };
+    title.alignment = { vertical: 'middle', horizontal: 'center' };
+    worksheet.mergeCells('A1:L1');
+    worksheet.addRow([]);
+    const formattedFromDate = this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy');
+    const formattedToDate = this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy');
 
-  // const rankByValue =
-  // typeof this.storeorgroup === 'string'
-  //   ? this.storeorgroup.toUpperCase() === 'S'
-  //     ? 'Store'
-  //     : this.storeorgroup.toUpperCase() === 'G'
-  //       ? 'Group'
-  //       : this.storeorgroup
-  //   : 'Store';
-  const filters = [
-    { name: 'Store:', values: 'WesternAuto' },
-    { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
-    { name: 'Rank By:', values: this.storeorgroup == 'S' ? 'Store' : 'Group' },
-    // { name: 'New/Used:', values: this.neworused || 'All' },
-    { name: 'Deal Type:', values: this.retailorlease || 'All' },
-    { name: 'Deal Status:', values: this.dealStatus || 'All' },
-  ];
+    // const rankByValue =
+    // typeof this.storeorgroup === 'string'
+    //   ? this.storeorgroup.toUpperCase() === 'S'
+    //     ? 'Store'
+    //     : this.storeorgroup.toUpperCase() === 'G'
+    //       ? 'Group'
+    //       : this.storeorgroup
+    //   : 'Store';
 
+    this.ExcelStoreNames = []
+    let storeNames: any[] = [];
 
-  let currentRow = worksheet.lastRow?.number ?? worksheet.rowCount;
-  filters.forEach((filter) => {
-    currentRow++;
+    //  }
 
+    worksheet.addRow([]);
+    // let storeValue = 'All Stores';
+    // if (
+    //   this.storeIds &&
+    //   this.storeIds.length > 0 &&
+    //   this.storeIds.length !== this.stores.length
+    // ) {
+    //   storeValue = this.stores
+    //     .filter((s: any) => this.storeIds.includes(s.ID))
+    //     .map((s: any) => s.storename)
+    //     .join(', ');
+    // }
+    let storeValue = '';
 
-    let value = Array.isArray(filter.values)
-      ? filter.values.join(', ')
-      : filter.values;
+    if (!this.storeIds || this.storeIds.length === 0) {
+      // No selection → All stores
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else if (this.storeIds.length === this.stores.length) {
+      // All selected → bind all store names
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else {
+      // Partial selection
+      storeValue = this.stores
+        .filter((s: any) => this.storeIds.includes(s.ID))
+        .map((s: any) => s.storename)
+        .join(', ');
+    }
 
-    const row = worksheet.addRow([filter.name, value]);
-    row.getCell(1).font = { bold: true, name: 'Arial', size: 10 };
-    row.getCell(2).font = { name: 'Arial', size: 10, color: { argb: 'FF1F497D' } }; // blue color for values
-    worksheet.mergeCells(`B${currentRow}:F${currentRow}`);
-  });
-
-  worksheet.addRow([]);
-
-
-
-  const firstHeader = ['', '', '', 'Unit Count', '', '', '', '', 'Total Gross', '', '', ''];
-  const headerRow1 = worksheet.addRow(firstHeader);
-
-
-  const secondHeader = [
-    'Rank', 'Salesperson', 'Store Name',
-
-    'New', 'Used', 'Total', 'Pace', '90 Day Avg', 'Total', 'Pace', 'PVR', '90 Day Avg'
-  ];
-  const headerRow2 = worksheet.addRow(secondHeader);
-
-  const headerRow1Index = headerRow1.number;
-  const headerRow2Index = headerRow2.number;
-
-
-  worksheet.mergeCells(`A${headerRow1Index}`);
-  worksheet.mergeCells(`B${headerRow1Index}`);
-  worksheet.mergeCells(`C${headerRow1Index}`);
-  worksheet.mergeCells(`D${headerRow1Index}:H${headerRow1Index}`); // Back Gross
-  worksheet.mergeCells(`I${headerRow1Index}:L${headerRow1Index}`); // Unit Count
-
-  [headerRow1, headerRow2].forEach(r => {
-    r.height = 22;
-    r.eachCell({ includeEmpty: false }, (cell) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF2F5597' }, // deep blue
-      };
-    });
-  });
+    const filters = [
+      { name: 'Store:', values: storeValue },
+      { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
+      { name: 'Rank By:', values: this.storeorgroup == 'S' ? 'Store' : 'Group' },
+      // { name: 'New/Used:', values: this.neworused || 'All' },
+      { name: 'Deal Type:', values: this.retailorlease || 'All' },
+      { name: 'Deal Status:', values: this.dealStatus.toString().replace('Finalized' ,'Closed or Sold') || 'All' },
+    ];
 
 
+    let currentRow = worksheet.lastRow?.number ?? worksheet.rowCount;
+    filters.forEach((filter) => {
+      currentRow++;
 
-  const bindingHeaders = [
-    'Rank', 'SalesPerson', 'StoreName',
-    'MTD_NEW', 'MTD_USED',
-    'MTD_Total', 'Pace', 'UnitDayAvg', 'Gross', 'GrossPace', 'PVR', 'GrossDayAvg'
-  ];
 
-  const currencyFields = ['Gross', 'GrossPace', 'PVR', 'GrossDayAvg'];
+      let value = Array.isArray(filter.values)
+        ? filter.values.join(', ')
+        : filter.values;
 
-  this.IndividualSalesPersonsData.forEach((info: any) => {
-    const rowData = bindingHeaders.map((key) => {
-      const val = info[key];
-      return (val === 0 || val == null || val === '') ? '-' : val;
+      const row = worksheet.addRow([filter.name, value]);
+      row.getCell(1).font = { bold: true, name: 'Arial', size: 10 };
+      row.getCell(2).font = { name: 'Arial', size: 10, color: { argb: 'FF1F497D' } }; // blue color for values
+      worksheet.mergeCells(`B${currentRow}:F${currentRow}`);
     });
 
-    const dataRow = worksheet.addRow(rowData);
+    worksheet.addRow([]);
 
-    bindingHeaders.forEach((key, index) => {
-      const cell = dataRow.getCell(index + 1);
 
-      if (currencyFields.includes(key) && typeof cell.value === 'number') {
-        cell.numFmt = '"$"#,##0.00';
-        cell.alignment = { horizontal: 'right', vertical: 'middle' };
-      } else {
+
+    const firstHeader = ['', '', '', 'Unit Count', '', '', '', '', 'Total Gross', '', '', ''];
+    const headerRow1 = worksheet.addRow(firstHeader);
+
+
+    const secondHeader = [
+      'Rank', 'Salesperson', 'Store Name',
+
+      'New', 'Used', 'Total', 'Pace', '90 Day Avg', 'Total', 'Pace', 'PVR', '90 Day Avg'
+    ];
+    const headerRow2 = worksheet.addRow(secondHeader);
+
+    const headerRow1Index = headerRow1.number;
+    const headerRow2Index = headerRow2.number;
+
+
+    worksheet.mergeCells(`A${headerRow1Index}`);
+    worksheet.mergeCells(`B${headerRow1Index}`);
+    worksheet.mergeCells(`C${headerRow1Index}`);
+    worksheet.mergeCells(`D${headerRow1Index}:H${headerRow1Index}`); // Back Gross
+    worksheet.mergeCells(`I${headerRow1Index}:L${headerRow1Index}`); // Unit Count
+
+    [headerRow1, headerRow2].forEach(r => {
+      r.height = 22;
+      r.eachCell({ includeEmpty: false }, (cell) => {
+        cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
         cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      }
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF2F5597' }, // deep blue
+        };
+      });
     });
-  });
 
 
-  worksheet.columns.forEach(col => col.width = 25);
+
+    const bindingHeaders = [
+      'Rank', 'SalesPerson', 'StoreName',
+      'MTD_NEW', 'MTD_USED',
+      'MTD_Total', 'Pace', 'UnitDayAvg', 'Gross', 'GrossPace', 'PVR', 'GrossDayAvg'
+    ];
+
+    const currencyFields = ['Gross', 'GrossPace', 'PVR', 'GrossDayAvg'];
+
+    this.IndividualSalesPersonsData.forEach((info: any) => {
+      const rowData = bindingHeaders.map((key) => {
+        const val = info[key];
+        return (val === 0 || val == null || val === '') ? '-' : val;
+      });
+
+      const dataRow = worksheet.addRow(rowData);
+
+      bindingHeaders.forEach((key, index) => {
+        const cell = dataRow.getCell(index + 1);
+
+        if (currencyFields.includes(key) && typeof cell.value === 'number') {
+          cell.numFmt = '"$"#,##0.00';
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+      });
+    });
 
 
-  workbook.xlsx.writeBuffer().then(buffer => {
-    this.shared.exportToExcel(workbook, 'SalesPerson Rankings');
-  });
-}
+    worksheet.columns.forEach(col => col.width = 25);
+
+
+    workbook.xlsx.writeBuffer().then(buffer => {
+      this.shared.exportToExcel(workbook, 'Salesperson Rankings');
+    });
+  }
 }
 
 

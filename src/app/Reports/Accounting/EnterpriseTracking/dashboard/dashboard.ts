@@ -6,6 +6,7 @@ import {
   OnInit,
   SimpleChanges,
   ViewChild,
+  HostListener
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -16,6 +17,10 @@ import * as FileSaver from 'file-saver';
 import { Workbook } from 'exceljs';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+
+
+
+
 import { Subscription } from 'rxjs';
 import { Api } from '../../../../Core/Providers/Api/api';
 import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
@@ -23,6 +28,9 @@ import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker
 import { environment } from '../../../../../environments/environment';
 import { common } from '../../../../common';
 import { EnterprisetrackingDetails } from '../enterprisetracking-details/enterprisetracking-details';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
@@ -31,7 +39,7 @@ const EXCEL_EXTENSION = '.xlsx';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, SharedModule, BsDatepickerModule],
+  imports: [CommonModule, SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -65,6 +73,25 @@ export class Dashboard implements OnInit {
   popup: any = [{ type: 'Popup' }];
   selectedDate: Date = new Date();
   currentMonth!: Date;
+  // StoreValues: any = '0';
+  // popup: any = [{ type: 'Popup' }];
+  // groups: any = 1;
+  selectedstorevalues: any = [];
+  gridvisibility: any;
+  bsRangeValue!: Date[];
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storeIds: any = '0';
+  stores: any = []
+  activePopover: number = -1;
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
   constructor(
     public apiSrvc: Api,
     private route: ActivatedRoute,
@@ -76,28 +103,29 @@ export class Dashboard implements OnInit {
     // private excelservice: ExcelService,
     private datepipe: DatePipe,
     private comm: common,
-    private injector: Injector
+    private injector: Injector,
+    public shared: Sharedservice,
+    private toast: ToastService
   ) {
-    localStorage.setItem('time', 'C');
-    this.title.setTitle(this.comm.titleName + '-Enterprise Tracking');
-    this.date = new Date();
-    if (localStorage.getItem('UserDetails') != null) {
-      // this.groups = JSON.parse(localStorage.getItem('UserDetails')!).flag.groupid
-
-      this.StoreValues = JSON.parse(
-        localStorage.getItem('UserDetails')!
-      ).Store_Ids;
-      // let allstores = JSON.parse(
-      //   localStorage.getItem('UserDetails')!
-      // ).Store_Ids.split(',')
-      // allstores.indexOf(this.comm.AutoBodyNorth.toString()) > 0 ? this.StoreValues = allstores.filter((val: any) => val != this.comm.AutoBodyNorth.toString() || val != this.comm.AutoBodyNorth).toString() : this.StoreValues = this.StoreValues
+    const lastMonth = new Date();
+    let today = new Date();
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
-    this.date = new Date();
-    let today = new Date()
+    console.log();
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
     if (today.getDate() < 5) {
-      this.date = new Date(today.setMonth(today.getMonth() - 1));
+      this.date = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
     } else {
-      this.date = new Date(today.setMonth(today.getMonth()));
+      this.date = new Date(lastMonth.setMonth(lastMonth.getMonth()));
     }
     this.Month =
       this.date.toString().substr(8, 2) +
@@ -105,6 +133,7 @@ export class Dashboard implements OnInit {
       this.date.toString().substr(4, 3) +
       '-' +
       this.date.toString().substr(11, 4);
+    this.title.setTitle(this.comm.titleName + '-Enterprise Tracking');
     const data = {
       title: 'Enterprise Tracking',
       path1: '',
@@ -112,7 +141,7 @@ export class Dashboard implements OnInit {
       path3: '',
       Month: this.date,
       stores: this.StoreValues.toString(),
-      store: 2,
+      store: this.StoreValues,
       groups: this.groups,
       count: 0,
     };
@@ -127,6 +156,7 @@ export class Dashboard implements OnInit {
         groups: this.groups,
       },
     ];
+    this.selectedDate = this.date
     this.currentMonth = this.selectedDate;
     this.GetEnterpriseTracking(this.currentMonth);
   }
@@ -138,8 +168,19 @@ export class Dashboard implements OnInit {
   };
 
   applyDateChange() {
-    this.currentMonth = this.selectedDate;
-    this.GetEnterpriseTracking(this.currentMonth);
+    if (!this.storeIds || this.storeIds.length === 0) {
+    
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
+      return;
+    }
+    else {
+      this.currentMonth = this.selectedDate;
+      this.GetEnterpriseTracking(this.currentMonth);
+    }
   }
 
   Scrollpercent: any = 0;
@@ -166,7 +207,7 @@ export class Dashboard implements OnInit {
     lastMonthDate.setFullYear(lastMonthDate.getFullYear() - 1);
     this.LastMonth = lastMonthDate;
     let obj = {
-      AS_IDS: 2,
+      AS_IDS: this.storeIds.toString(),
       DATE: Month,
     };
     console.log(obj);
@@ -205,7 +246,8 @@ export class Dashboard implements OnInit {
             }
           } else {
             this.spinner.hide();
-            alert('Invalid Details');
+           
+            this.toast.show('Invalid Details.', 'danger', 'Error');
           }
         },
         (error) => {
@@ -250,9 +292,57 @@ export class Dashboard implements OnInit {
     // var curl =
     //   'https://fbxtractapi.axelautomotive.com/api/fredbeans/GetSalesPersonCommCalc';
     // this.apiSrvc.logSaving(curl, {}, '', 'Success', 'Enterprise Tracking');
+    this.getStores();
   }
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
 
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
+  getStores() {
+    this.selectedstorevalues = [];
+  }
   ngAfterViewInit(): void {
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Enterprise Tracking') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.StoreValues)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
     this.reportOpenSub = this.apiSrvc.GetReportOpening().subscribe((res) => {
       // console.log(res);
       if (this.reportOpenSub != undefined) {
@@ -269,12 +359,12 @@ export class Dashboard implements OnInit {
             this.date = data.obj.month;
             this.Month = data.obj.month;
             console.log(data.obj.month);
-            this.StoreValues = data.obj.storeValues;
+            this.storeIds = data.obj.storeValues;
             this.StoreName = data.obj.Sname;
             this.groups = data.obj.groups;
           } else {
             if (data.obj.header == 'Yes') {
-              this.StoreValues = data.obj.storeValues;
+              this.storeIds = data.obj.storeValues;
             }
           }
           this.GetEnterpriseTracking(this.currentMonth);
@@ -284,7 +374,7 @@ export class Dashboard implements OnInit {
             path2: '',
             path3: '',
             Month: this.Month,
-            stores: this.StoreValues,
+            stores: this.storeIds,
             groups: this.groups,
           };
           this.apiSrvc.SetHeaderData({
@@ -293,7 +383,7 @@ export class Dashboard implements OnInit {
           this.header = [
             {
               type: 'Bar',
-              StoreValues: this.StoreValues,
+              storeIds: this.storeIds,
               Month: new Date(this.Month),
               groups: this.groups,
             },
@@ -344,6 +434,17 @@ export class Dashboard implements OnInit {
   }
 
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
+
+  togglePopover(popoverIndex: number) {
+    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
+  }
 
   reportOpen(temp: any) {
     this.ngbmodalActive = this.ngbmodal.open(temp, {
@@ -353,6 +454,16 @@ export class Dashboard implements OnInit {
   }
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
+
+
+    let storeValue = '';
+    const selectedStoreIds: string[] = this.storeIds && this.storeIds.length
+      ? this.storeIds.map((id: any) => id.toString()) : [];
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
+    storeValue = allStores.filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+      .map((s: any) => s.storename.trim())
+      .filter(Boolean)
+      .join(', ');
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Enterprise Tracking');
@@ -431,7 +542,7 @@ export class Dashboard implements OnInit {
     };
     const DateMonth = worksheet.addRow(['Month :']);
     const datemonth = worksheet.getCell('B7');
-    datemonth.value = this.Month;
+    datemonth.value = this.currentMonth;
     datemonth.font = { name: 'Arial', family: 4, size: 9 };
     datemonth.alignment = { vertical: 'top', horizontal: 'left' };
     DateMonth.getCell(1).font = {
@@ -444,7 +555,7 @@ export class Dashboard implements OnInit {
     Groups.value = 'Group :';
     Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
     const groups = worksheet.getCell('B8');
-    groups.value = 'WESTERN AUTO';
+    groups.value = 'Silvertip';
     groups.font = { name: 'Arial', family: 4, size: 9 };
     groups.alignment = {
       vertical: 'middle',
@@ -455,7 +566,7 @@ export class Dashboard implements OnInit {
     const Stores = worksheet.getCell('A9');
     Stores.value = 'Store :';
     const stores = worksheet.getCell('B9');
-    stores.value = 'WESTERN AUTO';
+    stores.value = storeValue;
     stores.font = { name: 'Arial', family: 4, size: 9 };
     stores.alignment = {
       vertical: 'top',
@@ -476,7 +587,7 @@ export class Dashboard implements OnInit {
     // const FromDate = this.datepipe.transform( new Date(this.FromDate),'MMM dd');
     // const ToDate = this.datepipe.transform( new Date(this.ToDate),'MMM dd');
     let DateRange = worksheet.getCell('A12');
-    DateRange.value = this.Month;
+    DateRange.value = this.selectedDate;
     DateRange.alignment = { vertical: 'middle', horizontal: 'center' };
     DateRange.font = {
       name: 'Arial',
@@ -650,231 +761,162 @@ export class Dashboard implements OnInit {
       cell.border = { right: { style: 'thin' } };
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
     });
+    // worksheet.eachRow((row, rowNumber) => {
+    //   if (rowNumber >= 14) {
+    //     row.eachCell((cell, colNumber) => {
+    //       if (colNumber !== 1) {  
+    //         cell.alignment = {
+    //           indent: 1,
+    //           vertical: 'middle',
+    //           horizontal: 'right'
+    //         };
+    //       }
+    //     });
+    //   }
+    // });
+
     for (const d of EnterpriseTrackingData) {
+
+      // =========================
+      // MAIN ROW (STORE LEVEL)
+      // =========================
+
       const Data1 = worksheet.addRow([
-        d.STORE == '' ? '-' : d.STORE == null ? '-' : d.STORE,
-        d.RETAILUNITS_UNITS == ''
-          ? '-'
-          : d.RETAILUNITS_UNITS == null
-            ? '-'
-            : d.RETAILUNITS_UNITS,
-        d.GROSS_PACE == '' ? '-' : d.GROSS_PACE == null ? '-' : d.GROSS_PACE,
-        d.PACE == '' ? '-' : d.PACE == null ? '-' : d.PACE,
-
-
-        d.GROSS_YOY == '' ? '-' : d.GROSS_YOY == null ? '-' : d.GROSS_YOY,
-        d.GROSS_DIFFPERCENT == ''
-          ? '-'
-          : d.GROSS_DIFFPERCENT == null
-            ? '-'
-            : d.GROSS_DIFFPERCENT,
-        d.EXP_VARIABLE == ''
-          ? '-'
-          : d.EXP_VARIABLE == null
-            ? '-'
-            : d.EXP_VARIABLE,
-        d.EXP_PERSONNEL == ''
-          ? '-'
-          : d.EXP_PERSONNEL == null
-            ? '-'
-            : d.EXP_PERSONNEL,
-        d.EXP_SEMIFIXED == ''
-          ? '-'
-          : d.EXP_SEMIFIXED == null
-            ? '-'
-            : d.EXP_SEMIFIXED,
-        d.EXP_FIXED == '' ? '-' : d.EXP_FIXED == null ? '-' : d.EXP_FIXED,
-        d.EXP_TOTAL == '' ? '-' : d.EXP_TOTAL == null ? '-' : d.EXP_TOTAL,
-        d.OPERATINGNET_OPNET == ''
-          ? '-'
-          : d.OPERATINGNET_OPNET == null
-            ? '-'
-            : d.OPERATINGNET_OPNET,
-        d.OPERATINGNET_YOY == ''
-          ? '-'
-          : d.OPERATINGNET_YOY == null
-            ? '-'
-            : d.OPERATINGNET_YOY,
-        d.OPERATINGNET_DIFF == ''
-          ? '-'
-          : d.OPERATINGNET_DIFF == null
-            ? '-'
-            : d.OPERATINGNET_DIFF,
-        d.NETPROFIT_NETADJUST == ''
-          ? '-'
-          : d.NETPROFIT_NETADJUST == null
-            ? '-'
-            : d.NETPROFIT_NETADJUST,
-        d.NETPROFIT == '' ? '-' : d.NETPROFIT == null ? '-' : d.NETPROFIT,
+        d.STORE ?? '-',
+        d.RETAILUNITS_UNITS ?? '-',
+        d.GROSS_PACE ?? '-',
+        d.PACE ?? '-',
+        d.GROSS_YOY ?? '-',
+        d.GROSS_DIFFPERCENT ?? '-',
+        d.EXP_VARIABLE ?? '-',
+        d.EXP_PERSONNEL ?? '-',
+        d.EXP_SEMIFIXED ?? '-',
+        d.EXP_FIXED ?? '-',
+        d.EXP_TOTAL ?? '-',
+        d.OPERATINGNET_OPNET ?? '-',
+        d.OPERATINGNET_YOY ?? '-',
+        d.OPERATINGNET_DIFF ?? '-',
+        d.NETPROFIT_NETADJUST ?? '-',
+        d.NETPROFIT ?? '-'
       ]);
-      Data1.font = { name: 'Arial', family: 4, size: 8 };
 
-      Data1.eachCell((cell, number) => {
-        cell.border = { right: { style: 'thin' } };
-        if (number === 1) {
+      Data1.font = { name: 'Arial', size: 9 };
+
+      Data1.eachCell((cell, colNumber) => {
+
+        // Border
+        cell.border = { right: { style: 'dotted' } };
+
+        // Alignment
+        if (colNumber === 1) {
           cell.alignment = {
             indent: 2,
             vertical: 'middle',
-            horizontal: 'left',
+            horizontal: 'left'
           };
         } else {
           cell.alignment = {
+            indent: 1,
             vertical: 'middle',
-            horizontal: 'right',
-            indent: 2,
+            horizontal: 'right'
           };
+        }
+
+        // Number formatting
+        if (colNumber === 2 || colNumber === 6) {
+          cell.numFmt = '#,##0';
+        } else {
+          cell.numFmt = '$#,##0.00';
         }
       });
 
-      Data1.font = { name: 'Arial', family: 4, size: 9 };
-      Data1.alignment = { vertical: 'middle', horizontal: 'center' };
-      Data1.getCell(1).alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
+      // Zebra Row Background
+      if (Data1.number % 2) {
+        Data1.eachCell(cell => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE5E5E5' }
+          };
+        });
+      }
 
-      Data1.eachCell((cell: any, number: any) => {
-        cell.border = { right: { style: 'dotted' } };
-        cell.numFmt = '$#,##0.00';
-        if (number == 2) {
-          cell.numFmt = '#,##0';
-        } else if (number == 6) {
-          cell.numFmt = '#,##0';
-        }
-      });
-      if (Data1.number % 2) {
-        Data1.eachCell((cell, number) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-            bgColor: { argb: 'FF0000FF' },
-          };
-        });
-      }
-      if (Data1.number % 2) {
-        Data1.eachCell((cell, number) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-            bgColor: { argb: 'FF0000FF' },
-          };
-        });
-      }
-      if (d.sub != undefined) {
+      // =========================
+      // SUB ROWS (DEPARTMENT LEVEL)
+      // =========================
+
+      if (d.sub?.length) {
+
         for (let i = 1; i < d.sub.length; i++) {
-          const d1 = d.sub[i];
-          const Data2 = worksheet.addRow([
-            d1.DEPT == '' ? '-' : d1.DEPT == null ? '-' : d1.DEPT,
-            d1.RETAILUNITS_UNITS == ''
-              ? '-'
-              : d1.RETAILUNITS_UNITS == null
-                ? '-'
-                : d1.RETAILUNITS_UNITS,
-            d1.GROSS_PACE == ''
-              ? '-'
-              : d1.GROSS_PACE == null
-                ? '-'
-                : d1.GROSS_PACE,
-            d1.PACE == ''
-              ? '-'
-              : d1.PACE == null
-                ? '-'
-                : d1.PACE,
 
-            d1.GROSS_YOY == ''
-              ? '-'
-              : d1.GROSS_YOY == null
-                ? '-'
-                : d1.GROSS_YOY,
-            d1.GROSS_DIFFPERCENT == ''
-              ? '-'
-              : d1.GROSS_DIFFPERCENT == null
-                ? '-'
-                : d1.GROSS_DIFFPERCENT,
-            d1.EXP_VARIABLE == ''
-              ? '-'
-              : d1.EXP_VARIABLE == null
-                ? '-'
-                : d1.EXP_VARIABLE,
-            d1.EXP_PERSONNEL == ''
-              ? '-'
-              : d1.EXP_PERSONNEL == null
-                ? '-'
-                : d1.EXP_PERSONNEL,
-            d1.EXP_SEMIFIXED == ''
-              ? '-'
-              : d1.EXP_SEMIFIXED == null
-                ? '-'
-                : d1.EXP_SEMIFIXED,
-            d1.EXP_FIXED == ''
-              ? '-'
-              : d1.EXP_FIXED == null
-                ? '-'
-                : d1.EXP_FIXED,
-            d1.EXP_TOTAL == ''
-              ? '-'
-              : d1.EXP_TOTAL == null
-                ? '-'
-                : d1.EXP_TOTAL,
-            d1.OPERATINGNET_OPNET == ''
-              ? '-'
-              : d1.OPERATINGNET_OPNET == null
-                ? '-'
-                : d1.OPERATINGNET_OPNET,
-            d1.OPERATINGNET_YOY == ''
-              ? '-'
-              : d1.OPERATINGNET_YOY == null
-                ? '-'
-                : d1.OPERATINGNET_YOY,
-            d1.OPERATINGNET_DIFF == ''
-              ? '-'
-              : d1.OPERATINGNET_DIFF == null
-                ? '-'
-                : d1.OPERATINGNET_DIFF,
-            d1.NETPROFIT_NETADJUST == ''
-              ? '-'
-              : d1.NETPROFIT_NETADJUST == null
-                ? '-'
-                : d1.NETPROFIT_NETADJUST,
-            d1.NETPROFIT == ''
-              ? '-'
-              : d1.NETPROFIT == null
-                ? '-'
-                : d1.NETPROFIT,
+          const d1 = d.sub[i];
+
+          const Data2 = worksheet.addRow([
+            d1.DEPT ?? '-',
+            d1.RETAILUNITS_UNITS ?? '-',
+            d1.GROSS_PACE ?? '-',
+            d1.PACE ?? '-',
+            d1.GROSS_YOY ?? '-',
+            d1.GROSS_DIFFPERCENT ?? '-',
+            d1.EXP_VARIABLE ?? '-',
+            d1.EXP_PERSONNEL ?? '-',
+            d1.EXP_SEMIFIXED ?? '-',
+            d1.EXP_FIXED ?? '-',
+            d1.EXP_TOTAL ?? '-',
+            d1.OPERATINGNET_OPNET ?? '-',
+            d1.OPERATINGNET_YOY ?? '-',
+            d1.OPERATINGNET_DIFF ?? '-',
+            d1.NETPROFIT_NETADJUST ?? '-',
+            d1.NETPROFIT ?? '-'
           ]);
-          Data2.outlineLevel = 1; // Grouping level 2
-          Data2.font = { name: 'Arial', family: 4, size: 9 };
-          Data2.alignment = { vertical: 'middle', horizontal: 'center' };
-          Data2.getCell(1).alignment = {
-            indent: 2,
-            vertical: 'middle',
-            horizontal: 'left',
-          };
-          Data2.eachCell((cell: any, number: any) => {
+
+          // Grouping
+          Data2.outlineLevel = 1;
+
+          Data2.font = { name: 'Arial', size: 9 };
+
+          Data2.eachCell((cell, colNumber) => {
+
+            // Border
             cell.border = { right: { style: 'dotted' } };
-            cell.numFmt = '$#,##0';
-            if (number == 2) {
+
+            // Alignment
+            if (colNumber === 1) {
+              cell.alignment = {
+                indent: 3,
+                vertical: 'middle',
+                horizontal: 'left'
+              };
+            } else {
+              cell.alignment = {
+                indent: 1,
+                vertical: 'middle',
+                horizontal: 'right'
+              };
+            }
+
+            // Number formatting
+            if (colNumber === 2 || colNumber === 6) {
               cell.numFmt = '#,##0';
-            } else if (number == 6) {
-              cell.numFmt = '#,##0';
+            } else {
+              cell.numFmt = '$#,##0';
             }
           });
+
+          // Zebra Row Background
           if (Data2.number % 2) {
-            Data2.eachCell((cell, number) => {
+            Data2.eachCell(cell => {
               cell.fill = {
                 type: 'pattern',
                 pattern: 'solid',
-                fgColor: { argb: 'e5e5e5' },
-                bgColor: { argb: 'FF0000FF' },
+                fgColor: { argb: 'FFE5E5E5' }
               };
             });
           }
         }
       }
     }
+
 
     worksheet.eachRow((row, rowIndex) => {
       row.eachCell((cell, colIndex) => {
@@ -939,7 +981,7 @@ export class Dashboard implements OnInit {
     this.index = i.toString() + slblock;
 
     var lblName = 'Salesperson';
-    //alert(lblName);
+   
 
     this.commentobj = {
       TYPE: lblName,
@@ -954,7 +996,6 @@ export class Dashboard implements OnInit {
       mainCat: item.SP1,
     };
 
-    //alert(this.index);
   }
 
   addcmt(data: any) {
@@ -1481,11 +1522,9 @@ export class Dashboard implements OnInit {
         this.apiSrvc.postmethod(this.comm.routeEndpoint + 'mail', formData).subscribe(
           (res: any) => {
             console.log('Response:', res);
-            if (res.status === 200) {
-              // alert(res.response);
-              alert(res.response);
-            } else {
-              alert('Invalid Details');
+            if (res.status === 200)  {
+             
+              this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },
           (error) => {

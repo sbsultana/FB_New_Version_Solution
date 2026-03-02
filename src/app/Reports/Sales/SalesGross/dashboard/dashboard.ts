@@ -31,7 +31,7 @@ export class Dashboard {
   GridView = 'Global';
   TotalReport: any = 'B';
   TotalSortPosition: any = 'B';
-  storeIds: any = '2';
+  storeIds: any = '';
   salesPersonId: any = '0';
   salesManagerId: any = '0';
   financeManagerId: any = '0';
@@ -54,7 +54,7 @@ export class Dashboard {
   CurrentDate = new Date();
   NoData: boolean = false;
   responcestatus: string = '';
-  groups: any = 1;
+  groups: any = 0;
   acquisition: any = ['All'];
   otherstoreid: any = '';
   selectedotherstoreids: any = ''
@@ -89,10 +89,24 @@ export class Dashboard {
 
     if (typeof window !== 'undefined') {
       console.log(localStorage.getItem('stime'));
-
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groups = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)   
+          localStorage.setItem('flag','M')    
+      } else {
+        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+          console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);
+          
+          this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        }
       }
+
+      // this.storeIds = '1,2'
 
       if (localStorage.getItem('stime') != null) {
         let stime = localStorage.getItem('stime');
@@ -154,7 +168,7 @@ export class Dashboard {
       fromdate: this.FromDate,
       todate: this.ToDate,
       GridView: this.GridView,
-      groups: 1,
+      groups: this.groups,
       count: 0,
       as: this.acquisition
 
@@ -195,7 +209,7 @@ export class Dashboard {
   }
   getSalesData() {
     // this.responcestatus = '';
-    // alert('Hi')
+    
     if ((this.storeIds != '' && this.storeIds != '0')) {
       this.shared.spinner.show();
       this.NoData = false;
@@ -209,7 +223,7 @@ export class Dashboard {
   }
 
   GetData() {
-    // alert('Hello')
+  
     this.IndividualSalesGross = [];
     // this.shared.spinner.show();
     const obj = {
@@ -243,14 +257,14 @@ export class Dashboard {
               if (res.response.length > 0) {
                 this.IndividualSalesGross = res.response;
                 this.TotalSalesGross = res.response.filter(
-                  (e: any) => e.data1.toLowerCase() == 'reports total'
+                  (e: any) => e.data1.toLowerCase() == 'report totals'
                 );
                 this.TotalSalesGross = this.TotalSalesGross.map((v: any) => ({
                   ...v,
                   Dealer: '+',
                 }));
                 this.IndividualSalesGross = res.response.filter(
-                  (i: any) => i.data1.toLowerCase() != 'reports total'
+                  (i: any) => i.data1.toLowerCase() != 'report totals'
                 );
                 // this.responcestatus = 'I';
                 this.NoData = false;
@@ -285,7 +299,7 @@ export class Dashboard {
                     x.Data3 = JSON.parse(x.data3);
                     x.Data2.forEach((val: any) => {
                       x.Data3.forEach((ele: any) => {
-                        ele.data3 = ele.data3.toLowerCase()
+                        ele.data3 = ele.data3?.toLowerCase()
                         if (val.data2 == ele.data2) {
                           val.SubData.push(ele);
                         }
@@ -314,7 +328,7 @@ export class Dashboard {
                 this.SalesData = []
               }
             } else {
-              // alert('Empty Response');
+             
               //  //this.shared.toast.error('Empty Response', '');
               this.shared.spinner.hide();
               this.NoData = true;
@@ -323,7 +337,7 @@ export class Dashboard {
             }
 
           } else {
-            // alert(res.status);
+        
 
             //this.shared.toast.error(res.status, '');
             this.shared.spinner.hide();
@@ -433,7 +447,7 @@ export class Dashboard {
     this.NoData = false;
     this.getPeopleList()
     this.GetBackGrossData();
-    this.GetBackGrossTotalData();
+    // this.GetBackGrossTotalData();
   }
 
   GetBackGrossData() {
@@ -466,24 +480,37 @@ export class Dashboard {
             if (res.response != undefined) {
               if (res.response.length > 0) {
                 this.IndividualSalesGrossBackGross = [];
+                // this.IndividualSalesGrossBackGross = res.response;
+
                 this.IndividualSalesGrossBackGross = res.response;
+                this.TotalSalesGrossBackGross = res.response.filter((e: any) => e.data1.toLowerCase() == 'reports total');
+                this.TotalSalesGrossBackGross = this.TotalSalesGrossBackGross.map((v: any) => ({ ...v, Dealer: '-', }));
+                this.TotalSalesGrossBackGross && this.TotalSalesGrossBackGross.length > 0 ? this.TotalSalesGrossBackGross[0].data1 = 'REPORT TOTALS' : ''
+                this.IndividualSalesGrossBackGross = res.response.filter((i: any) => i.data1.toLowerCase() != 'reports total');
+
                 this.responcestatus = this.responcestatus + 'I';
                 let length = this.IndividualSalesGrossBackGross.length;
                 let path2 = this.path2;
                 let path3 = this.path3;
+
+                if (this.TotalReport == 'B') {
+                  this.IndividualSalesGrossBackGross.push(this.TotalSalesGrossBackGross[0]);
+                } else {
+                  this.IndividualSalesGrossBackGross.unshift(this.TotalSalesGrossBackGross[0]);
+                }
                 this.IndividualSalesGrossBackGross.some(function (x: any) {
-                  if (x.Data2 != undefined) {
-                    x.Data2 = JSON.parse(x.Data2);
-                    x.Data2 = x.Data2.map((v: any) => ({
+                  if (x.data2 != undefined && x.data2 != '') {
+                    x.data2 = JSON.parse(x.data2);
+                    x.data2 = x.data2.map((v: any) => ({
                       ...v,
                       SubData: [],
                       data2sign: '-',
                     }));
                   }
-                  if (x.Data3 != undefined) {
-                    x.Data3 = JSON.parse(x.Data3);
-                    x.Data2.forEach((val: any) => {
-                      x.Data3.forEach((ele: any) => {
+                  if (x.data3 != undefined && x.data3 != '') {
+                    x.data3 = JSON.parse(x.data3);
+                    x.data2.forEach((val: any) => {
+                      x.data3.forEach((ele: any) => {
                         if (val.data2 == ele.data2) {
                           val.SubData.push(ele);
                         }
@@ -499,7 +526,9 @@ export class Dashboard {
                     x.Dealer = '+';
                   }
                 });
-                this.combineIndividualandTotalBackGross();
+                this.BackGross = this.IndividualSalesGrossBackGross;
+                console.log(this.BackGross);
+                this.shared.spinner.hide()
               } else {
                 // this.toast.error('Empty Response','');
                 this.shared.spinner.hide();
@@ -511,7 +540,7 @@ export class Dashboard {
               this.NoData = true;
             }
           } else {
-            // alert(res.status);
+          
             this.shared.spinner.hide();
             this.NoData = true;
           }
@@ -660,7 +689,7 @@ export class Dashboard {
       }
     }
     if (cat == '2') {
-      if (Item.data2 != undefined && ParentItem.data1.toLowerCase() != 'reports total') {
+      if (Item.data2 != undefined && ParentItem.data1.toLowerCase() != 'report totals') {
         const DetailsSalesPeron = this.shared.ngbmodal.open(
           SalesgrossDetails,
           {
@@ -698,7 +727,7 @@ export class Dashboard {
       }
     }
     if (cat == '1') {
-      if (Item.data1 != undefined && Item.data1.toLowerCase() != 'reports total') {
+      if (Item.data1 != undefined && Item.data1.toLowerCase() != 'report totals') {
         const DetailsSalesPeron = this.shared.ngbmodal.open(
           SalesgrossDetails,
           {
@@ -736,6 +765,7 @@ export class Dashboard {
       }
     }
   }
+
   isDesc: boolean = false;
   column: string = 'CategoryName';
 
@@ -744,12 +774,11 @@ export class Dashboard {
     this.column = property;
     let direction = this.isDesc ? 1 : -1;
     // //console.log(direction);
-    if (direction == -1) {
-      this.TotalSortPosition = 'T';
-    } else {
-      this.TotalSortPosition = 'B';
-    }
-    data.sort(function (a: any, b: any) {
+    let individual = data.filter((e: any) => e.data1.toLowerCase() !== 'report totals');
+    let total = data.filter((e: any) => e.data1.toLowerCase() == 'report totals');
+    console.log(individual, property);
+
+    let sorteddata = individual.sort(function (a: any, b: any) {
       if (a[property] < b[property]) {
         return -1 * direction;
       } else if (a[property] > b[property]) {
@@ -758,7 +787,60 @@ export class Dashboard {
         return 0;
       }
     });
+    console.log(sorteddata, '................');
+
+    if (this.TotalReport == 'T') {
+      return this.SalesData = [...total, ...sorteddata]
+    } else {
+      return this.SalesData = [...sorteddata, ...total]
+
+    }
   }
+
+  // sort(property: string, data: any[]): any[] {
+  //   // toggle sort direction
+  //   this.isDesc = !this.isDesc;
+  //   this.column = property;
+
+  //   const direction = this.isDesc ? 1 : -1;
+
+  //   // Normalize the label check (handles "Report Total" / "Reports Total")
+  //   const isTotalRow = (e: any) =>
+  //     (e?.data1 ?? '').toString().trim().toLowerCase() === 'reports total' ||
+  //     (e?.data1 ?? '').toString().trim().toLowerCase() === 'report total';
+
+  //   const individual = data.filter(e => !isTotalRow(e));
+  //   const total = data.filter(e => isTotalRow(e));
+
+  //   individual.sort((a: any, b: any) => {
+  //     const av = a?.[property];
+  //     const bv = b?.[property];
+
+  //     // Handle null/undefined
+  //     if (av == null && bv == null) return 0;
+  //     if (av == null) return -1 * direction;
+  //     if (bv == null) return 1 * direction;
+
+  //     // Compare numbers if possible, else compare as strings
+  //     const an = Number(av);
+  //     const bn = Number(bv);
+  //     const bothNumbers = !isNaN(an) && !isNaN(bn);
+
+  //     if (bothNumbers) {
+  //       return (an - bn) * direction;
+  //     }
+
+  //     // String compare (case-insensitive)
+  //     return av.toString().localeCompare(bv.toString(), undefined, { sensitivity: 'base' }) * direction;
+  //   });
+
+  //   // If TotalReport === 'T' total first else total last
+  //   const result = (this.TotalReport === 'T')
+  //     ? [...total, ...individual]
+  //     : [...individual, ...total];
+
+  //   return result;
+  // }
   subdataindex: any = 0;
   expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any) {
     let id = (e.target as Element).id;
@@ -865,7 +947,7 @@ export class Dashboard {
 
         // if (this.GridView == 'Global') {
         // console.log(this.GridView); 
-        // alert('NGAfter')    
+        
         if (this.GridView == 'Global') {
           this.getSalesData();
 
@@ -988,8 +1070,8 @@ export class Dashboard {
       { name: 'Sales Managers :', values: this.salesManagerId == 0 || this.salesManagerId == '' ? 'All Sales Managers' : this.salesManagerId == null ? '-' : this.salesManagerId },
       { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
       { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
+      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
+      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
     ]
     // const ReportFilter = worksheet.addRow(['Report Controls :']);
     // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };

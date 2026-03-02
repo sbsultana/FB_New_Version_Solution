@@ -1,913 +1,215 @@
- .content-wrapper {
-   margin-left: 149px;
-   background: radial-gradient(176.81% 119.6% at 21.24% 110.83%, #05F 0%, rgba(0, 85, 255, 0.10) 80.29%), radial-gradient(460.55% 83.6% at -4.76% 100%, rgba(0, 85, 255, 0.90) 0%, rgba(0, 85, 255, 0.12) 91.35%), radial-gradient(117.09% 53.18% at 71.73% 122.78%, #05F 11.81%, rgba(15, 89, 247, 0.10) 100%), #001D57;
-   height: 300px;
-   margin-top: 59px;
- }
-
- //////////////////////////////////// REPORT BAR ////////////////////////////////////////
-
-
- .backgrossbtn {
-   float: left;
-   background-color: #c6dbff;
-   color: #0554ef;
-   padding: 2px 16px;
-   font-family: "Roboto";
-   font-weight: 700;
-   font-size: .875rem;
-   line-height: 1.25rem;
-   border-radius: 8px;
-   transition: all 0.3s ease;
-
-   &:hover {
-     border-radius: 50px;
-     background-color: #d2e3fc;
-     cursor: pointer;
-   }
-
-   &:focus {
-     outline: none;
-   }
- }
-
-
-
- // .backgrossbtn {
- //   background-color: #c6dbff;
- //   color: #0554ef;
- //   border: none;
- //   border: none;
- //   padding: 6px 24px;
- //   font-family: "Roboto";
- //   font-size: .875rem;
- //   line-height: 1.25rem;
- //   border-radius: 12px;
- //   transition: all 0.3s ease;
-
- //   &:hover {
- //     border-radius: 50px;
- //     background-color: #d2e3fc;
- //     cursor: pointer;
- //   }
-
- //   &:focus {
- //     outline: none;
- //   }
- // }
-
- /////////////////////////////////////SALES KPI GRID////////////////////////////////////
- .divBold {
-   font-family: 'RobotoBold';
- }
-
- .performance-scorecard {
-   display: flex;
-   flex-direction: column;
-   border-radius: 10px;
-   height: calc(100vh - 135px);
-   //  padding-right: .3rem;
-   overflow: auto;
-   max-width: 100%;
-
-   .table {
-     border-collapse: collapse;
-     text-transform: capitalize;
-     border-radius: 10px;
-     background: #fff;
-     font-family: 'Roboto';
-     max-width: 100%;
-     position: relative;
-
-     th,
-     td {
-       white-space: nowrap;
-       vertical-align: top;
-       padding: 0.25rem 0.5rem;
-       margin: 0;
-       box-shadow: inset 0 0 0 .4px #e0edff;
-       border-bottom: none;
-     }
-
-     th:first-child,
-     td:first-child {
-       position: sticky;
-       left: 0;
-       z-index: 103;
-       text-align: center;
-       overflow: hidden;
-       text-overflow: ellipsis;
-     }
-
-     th:not(:first-child),
-     td:not(:first-child) {
-       text-align: end;
-     }
-
-     thead {
-       position: sticky;
-       top: 0;
-       z-index: 99;
-       font-family: "Roboto";
-       font-size: 0.875rem;
-
-       th {
-         text-align: center;
-       }
-
-       tr:nth-child(1) {
-         background-color: #0554ef !important;
-         color: #fff;
-
-         th {
-           // padding: 4px 6px;
-           border: none;
-           box-shadow: none;
-           font-size: .875rem;
-           font-family: "Roboto";
-           font-weight: 700;
-           text-transform: capitalize;
-
-           span {
-             font-size: .875rem;
-             font-family: "RobotoLight";
-             font-weight: lighter;
-           }
-         }
-
-         th:first-child {
-           background-color: #0554ef;
-           z-index: 103;
-         }
-
-         th:not(:first-child) {
-           text-align: center !important;
-           box-shadow: inset 1px 0 0px 0 #cfd6de;
-
-         }
-
-         th:nth-child(2) {
-           background-color: #0554ef;
-           z-index: 102;
-         }
-       }
-
-       tr:nth-child(2) {
-         background-color: #dbe7ff !important;
-         color: #000;
-         font-family: "Roboto";
-         // text-transform: uppercase;
-         font-weight: 700;
-         font-size: .875rem;
-
-         th {
-           text-align: center;
-           padding: 0.25rem 0.5rem;
-         }
-
-         th:first-child {
-           background-color: #dbe7ff;
-           z-index: 103;
-           text-align: center;
-         }
-
-         th:nth-child(2) {
-           background-color: #dbe7ff;
-           z-index: 102;
-         }
-       }
-     }
-
-     tbody {
-       font-family: "Roboto";
-       font-size: 1rem;
-
-       .member-row {
-         td:first-child {
-           font-family: "Roboto";
-           padding-left: 1rem;
-           text-align: left;
-           z-index: 9;
-         }
-
-         td {
-           padding: 4px 8px;
-           font-family: "Roboto";
-         }
-       }
-
-       tr:nth-child(even) {
-         background-color: #f9fbff;
-       }
-
-       tr:nth-child(odd) {
-         background-color: #ffffff;
-       }
-
-       tr:nth-child(even) {
-         td:first-child {
-           background-color: #f9fbff;
-         }
-       }
-
-       tr:nth-child(odd) {
-         td:first-child {
-           background-color: #ffffff;
-         }
-       }
-
-       td:first-child {
-         // background-color: #fff;
-         font-family: "Roboto";
-         text-align: left;
-         z-index: 9;
-         //  padding-left: 1.5rem;
-
-         .MemCount {
-           color: #125df0;
-         }
-       }
-
-       .bdr-tp {
-         border-top: 1px solid #0554ef;
-       }
-
-       .bdr-bt {
-         border-bottom: 1px solid #0554ef;
-       }
-
-       td:not(:first-child) {
-         text-align: end;
-       }
-
-       td:nth-child(1),
-       td:nth-child(6),
-       td:nth-child(11),
-       td:nth-child(16) {
-         // border-right: 1px solid #0554ef !important;
-         box-shadow: inset -1px 0px 0px 0px #0554ef;
-         box-shadow:
-           inset 0 0.4px 0 0 #e0edff,
-           /* top */
-           inset -1px 0 0 0 #0554ef,
-           /* right */
-           inset 0 -0.4px 0 0 #e0edff,
-           /* bottom */
-           inset 0.4px 0 0 0 #e0edff;
-         /* left */
-       }
-
-       // tr:nth-child(even),
-       // tr:nth-child(odd) {
-       //   background-color: #ffffff;
-       // }
-
-      //  .negative {
-      //    color: red;
-      //  }
-
-       .sub-title {
-         font-size: .9rem !important;
-         font-weight: 400;
-       }
-
-       .sub-subtitle {
-         font-size: 0.8rem !important;
-       }
-
-       .text-normal {
-         font-family: "Roboto" !important;
-       }
-
-       .text-medium {
-         font-family: "RobotoMedium" !important;
-       }
-
-       .text-bold {
-         font-family: "Roboto";
-         font-weight: 700;
-         pointer-events: none !important;
-
-         td:first-child {
-           text-align: center;
-         }
-
-         td:nth-child(2) {
-           text-align: left;
-         }
-       }
-
-       .darkred-bg {
-         background-color: #282828 !important;
-         color: #fff;
-       }
-
-       .PaddLeft {
-         padding-left: 1.5rem !important;
-       }
-
-       .lightblue-bg {
-         background-color: #c6dbff !important;
-         color: #000;
-         font-family: 'Roboto';
-         font-weight: 700;
-
-         td:not(:first-child) {
-           color: #c6dbff !important;
-           box-shadow: none;
-         }
-
-         td:first-child {
-           background-color: #c6dbff !important;
-           padding-left: 0.5rem !important;
-           box-shadow: none;
-         }
-       }
-
-       .greaterThanVal {
-         color: green;
-         font-family: "RobotoBold";
-       }
-
-       .positive-bg {
-         // background-color: #E0FAF0 !important;
-         background-color: #c2f1c8 !important;
-         color: #000 !important;
-         cursor: default;
-       }
-
-       .negative-bg {
-         // background-color: #FCEEF3 !important;
-         background-color: #f1c2c2 !important;
-         color: #000 !important;
-         cursor: default;
-       }
-
-       .sticky-bottom-row {
-         position: sticky;
-         bottom: 0;
-         background-color: #fff;
-         z-index: 10;
-         box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-       }
-
-       .gold-bg {
-         background-color: #ffa51a;
-         color: #fff;
-       }
-
-       .sticky-footer {
-         td:first-child {
-           position: sticky;
-           left: 0;
-           z-index: 104;
-           background-color: #fff !important;
-         }
-
-         td:nth-child(2) {
-           position: sticky;
-           left: 70px;
-           z-index: 103;
-           background-color: #fff !important;
-           text-align: right !important;
-           border-right: 1px solid #0554ef !important;
-         }
-
-         td {
-           // box-shadow: inset 0 1px 0 0 #0554ef;
-           // border-top: 2px solid #0554ef;
-           padding: 12px 8px;
-           background-color: #fff;
-           position: sticky;
-           text-align: right !important;
-           bottom: 0;
-           font-family: "RobotoBold";
-           z-index: 102;
-           font-size: 1rem;
-         }
-       }
-     }
-
-     .spacer {
-       border: 1px solid #0554ef;
-       min-height: 20px;
-     }
-
-     .hidden {
-       display: none !important;
-     }
-
-   }
- }
- .negative {
+.pointercursor {
+  cursor: pointer;
+}
+
+.pointernone {
+  pointer-events: none;
+}
+
+//////////////////////////////////// REPORT BAR ////////////////////////////////////////
+
+
+.backgrossbtn {
+  float: right;
+  background-color: #000;
+  text-transform: capitalize;
+  color: #fff;
+  padding: 2px 16px;
+  font-family: "Roboto";
+  font-weight: 700;
+  font-size: .875rem;
+  line-height: 1.25rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-radius: 50px;
+    background-color: #000;
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.salesgross-tbl {
+  .table {
+
+    thead,
+    tbody {
+
+      th:nth-child(1),
+      th:nth-child(6),
+      th:nth-child(11),
+      th:nth-child(16),
+
+      td:nth-child(1),
+      td:nth-child(6),
+      td:nth-child(11),
+      td:nth-child(16) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+
+    }
+  }
+}
+
+.backgross-tbl {
+  .table {
+
+    thead,
+    tbody {
+
+      th:nth-child(1),
+      th:nth-child(2),
+      th:nth-child(7),
+      th:nth-child(11),
+
+      td:nth-child(1),
+      td:nth-child(2),
+      td:nth-child(7),
+      td:nth-child(11) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+
+    }
+  }
+}
+
+/////////////////////////////////////SALES KPI GRID////////////////////////////////////
+
+
+.negative {
   color: red;
 }
- .performance-scorecard-Backgross {
-   display: flex;
-   flex-direction: column;
-   border-radius: 10px;
-   height: calc(100vh - 135px);
-   //  padding-right: .3rem;
-   overflow: auto;
-   max-width: 100%;
-
-   .table {
-     border-collapse: collapse;
-     text-transform: capitalize;
-     border-radius: 10px;
-     background: #fff;
-     font-family: 'Roboto';
-     max-width: 100%;
-     position: relative;
-
-     th,
-     td {
-       white-space: nowrap;
-       vertical-align: top;
-       padding: 0.25rem 0.5rem;
-       margin: 0;
-       box-shadow: inset 0 0 0 .4px #e0edff;
-       border-bottom: none;
-     }
-
-     th:first-child,
-     td:first-child {
-       position: sticky;
-       left: 0;
-       z-index: 103;
-       text-align: center;
-       overflow: hidden;
-       text-overflow: ellipsis;
-     }
-
-     th:not(:first-child),
-     td:not(:first-child) {
-       text-align: end;
-     }
-
-     thead {
-       position: sticky;
-       top: 0;
-       z-index: 99;
-       font-family: "Roboto";
-       font-size: 0.875rem;
-
-       th {
-         text-align: center;
-       }
-
-       tr:nth-child(1) {
-         background-color: #0554ef !important;
-         color: #fff;
-
-         th {
-           // padding: 4px 6px;
-           border: none;
-           box-shadow: none;
-           font-size: .875rem;
-           font-family: "Roboto";
-           font-weight: 700;
-           text-transform: capitalize;
-
-           span {
-             font-size: .875rem;
-             font-family: "RobotoLight";
-             font-weight: lighter;
-           }
-         }
-
-         th:first-child {
-           background-color: #0554ef;
-           z-index: 103;
-         }
-
-         th:not(:first-child) {
-           text-align: center !important;
-           box-shadow: inset 1px 0 0px 0 #cfd6de;
-
-         }
-
-         th:nth-child(2) {
-           background-color: #0554ef;
-           z-index: 102;
-         }
-       }
-
-       tr:nth-child(2) {
-         background-color: #dbe7ff !important;
-         color: #000;
-         font-family: "Roboto";
-         // text-transform: uppercase;
-         font-weight: 700;
-         font-size: .875rem;
-
-         th {
-           text-align: center;
-           padding: 0.25rem 0.5rem;
-         }
-
-         th:first-child {
-           background-color: #dbe7ff;
-           z-index: 103;
-           text-align: center;
-         }
-
-         th:nth-child(2) {
-           background-color: #dbe7ff;
-           z-index: 102;
-         }
-       }
-     }
-
-     tbody {
-       font-family: "Roboto";
-       font-size: 1rem;
-
-       .member-row {
-         td:first-child {
-           font-family: "Roboto";
-           padding-left: 1rem;
-           text-align: left;
-           z-index: 9;
-         }
-
-         td {
-           padding: 4px 8px;
-           font-family: "Roboto";
-         }
-       }
-
-       tr:nth-child(even) {
-         background-color: #f9fbff;
-       }
-
-       tr:nth-child(odd) {
-         background-color: #ffffff;
-       }
-
-       tr:nth-child(even) {
-         td:first-child {
-           background-color: #f9fbff;
-         }
-       }
-
-       tr:nth-child(odd) {
-         td:first-child {
-           background-color: #ffffff;
-         }
-       }
-
-       td:first-child {
-         // background-color: #fff;
-         font-family: "Roboto";
-         text-align: left;
-         z-index: 9;
-         //  padding-left: 1.5rem;
-
-         .MemCount {
-           color: #125df0;
-         }
-       }
-
-
-       td:not(:first-child) {
-         text-align: end;
-       }
-
-       td:nth-child(1),
-       td:nth-child(2),
-       td:nth-child(7),
-       td:nth-child(11) {
-         // border-right: 1px solid #0554ef !important;
-         box-shadow: inset -1px 0px 0px 0px #0554ef;
-         box-shadow:
-           inset 0 0.4px 0 0 #e0edff,
-           /* top */
-           inset -1px 0 0 0 #0554ef,
-           /* right */
-           inset 0 -0.4px 0 0 #e0edff,
-           /* bottom */
-           inset 0.4px 0 0 0 #e0edff;
-         /* left */
-       }
-
-       // tr:nth-child(even),
-       // tr:nth-child(odd) {
-       //   background-color: #ffffff;
-       // }
-
-      //  .negative {
-      //    color: red;
-      //  }
-
-       .sub-title {
-         font-size: .9rem !important;
-         font-weight: 400;
-       }
-
-       .sub-subtitle {
-         font-size: 0.8rem !important;
-       }
-
-       .text-normal {
-         font-family: "Roboto" !important;
-       }
-
-       .text-medium {
-         font-family: "RobotoMedium" !important;
-       }
-
-       .text-bold {
-         font-family: "Roboto";
-         font-weight: 700;
-         pointer-events: none !important;
-
-         td:first-child {
-           text-align: center;
-         }
-
-         td:nth-child(2) {
-           text-align: left;
-         }
-       }
-
-       .darkred-bg {
-         background-color: #282828 !important;
-         color: #fff;
-       }
-
-       .PaddLeft {
-         padding-left: 1.5rem !important;
-       }
-
-       .lightblue-bg {
-         background-color: #c6dbff !important;
-         color: #000;
-         font-family: 'Roboto';
-         font-weight: 700;
-
-         td:not(:first-child) {
-           color: #c6dbff !important;
-           box-shadow: none;
-         }
-
-         td:first-child {
-           background-color: #c6dbff !important;
-           padding-left: 0.5rem !important;
-           box-shadow: none;
-         }
-       }
-
-       .greaterThanVal {
-         color: green;
-         font-family: "RobotoBold";
-       }
-
-       .positive-bg {
-         // background-color: #E0FAF0 !important;
-         background-color: #c2f1c8 !important;
-         color: #000 !important;
-         cursor: default;
-       }
-
-       .negative-bg {
-         // background-color: #FCEEF3 !important;
-         background-color: #f1c2c2 !important;
-         color: #000 !important;
-         cursor: default;
-       }
-
-       .sticky-bottom-row {
-         position: sticky;
-         bottom: 0;
-         background-color: #fff;
-         z-index: 10;
-         box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-       }
-
-       .gold-bg {
-         background-color: #ffa51a;
-         color: #fff;
-       }
-
-       .sticky-footer {
-         td:first-child {
-           position: sticky;
-           left: 0;
-           z-index: 104;
-           background-color: #fff !important;
-         }
-
-         td:nth-child(2) {
-           position: sticky;
-           left: 70px;
-           z-index: 103;
-           background-color: #fff !important;
-           text-align: right !important;
-           border-right: 1px solid #0554ef !important;
-         }
-
-         td {
-           // box-shadow: inset 0 1px 0 0 #0554ef;
-           // border-top: 2px solid #0554ef;
-           padding: 12px 8px;
-           background-color: #fff;
-           position: sticky;
-           text-align: right !important;
-           bottom: 0;
-           font-family: "RobotoBold";
-           z-index: 102;
-           font-size: 1rem;
-         }
-       }
-     }
-
-     .spacer {
-       border: 1px solid #0554ef;
-       min-height: 20px;
-     }
-
-     .hidden {
-       display: none !important;
-     }
-
-   }
- }
-
- .Up-arrow-circle {
-   background-color: #28a745;
-   color: white;
-   border-radius: 50%;
-   padding: 4px;
-   font-size: 12px;
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   width: 16px;
-   height: 16px;
- }
-
- .Down-arrow-circle {
-   background-color: #dc3545;
-   color: white;
-   border-radius: 50%;
-   padding: 4px;
-   font-size: 12px;
-   display: inline-flex;
-   align-items: center;
-   justify-content: center;
-   width: 16px;
-   height: 16px;
- }
-
- /////////////////////////////////////BENCHMARK GRID////////////////////////////////////
- .offcanvas {
-   position: fixed;
-   bottom: 0;
-   z-index: 1045;
-   display: flex;
-   flex-direction: column;
-   max-width: 100%;
-   visibility: hidden;
-   background-color: transparent !important;
-   background-clip: padding-box;
-   outline: 0;
-   transition: transform .3s ease-in-out;
- }
-
- .view-benchmark-button {
-   background-color: #c6dbff;
-   color: #0554ef;
-   border: none;
-   border: none;
-   padding: 6px 24px;
-   font-family: "Roboto";
-   font-size: .875rem;
-   line-height: 1.25rem;
-   border-radius: 12px;
-   transition: all 0.3s ease;
-
-   &:hover {
-     border-radius: 50px;
-     background-color: #d2e3fc;
-     cursor: pointer;
-   }
-
-   &:focus {
-     outline: none;
-   }
- }
-
- .custom-rounded-offcanvas {
-   top: 80px;
-   margin: 20px;
-   border-radius: 16px;
-   overflow: auto;
-   width: auto !important;
-   max-width: 100vw;
-   height: auto !important;
-   max-height: calc(100vh - 100px);
-   max-height: 300px;
- }
-
- .offcanvas-body {
-   display: flex;
-   flex-direction: column;
-   height: auto !important;
-   overflow-y: auto;
- }
-
-
- @media print {
-   @page {
-     size: A4 landscape;
-     /* Force landscape */
-     margin: 10mm;
-   }
-
-   #print-section {
-     transform: scale(0.8);
-     transform-origin: top left;
-   }
-
-   body * {
-     visibility: hidden;
-   }
-
-   #print-section,
-   #print-section * {
-     visibility: visible;
-   }
-
-   #print-section {
-     position: absolute;
-     left: 0;
-     top: 0;
-     width: 100%;
-   }
-
-   .sidebar {
-     display: none !important;
-     visibility: hidden !important;
-   }
-
-   table {
-     width: 100%;
-     border-collapse: collapse;
-     font-size: 12px;
-     /* Reduce font size for wide tables */
-   }
-
-   th,
-   td {
-     padding: 4px;
-     border: 1px solid #000;
-     text-align: center;
-     text-transform: capitalize;
-     white-space: nowrap;
-   }
-
-   thead {
-     tr:nth-child(1) {
-       background-color: #0554ef !important;
-       color: #fff;
-
-       th {
-         background-color: #004080 !important;
-         color: #fff !important;
-       }
-     }
-
-     tr:nth-child(2) {
-       background-color: #dbe7ff !important;
-       color: #000;
-
-       th {
-         background-color: #dbe7ff !important;
-         color: #000;
-       }
-     }
-   }
-
-   tbody {
-     tr td {
-       background-color: #fff;
-       color: #000;
-     }
-   }
-
-
-   .backgrossbtn {
-     display: none;
-   }
-
-   .report-table th {
-     background-color: #004080 !important;
-     color: #fff !important;
-     -webkit-print-color-adjust: exact;
-   }
- }
-
-
-
- /////////////////////////////////////DATE PICKER SCSS////////////////////////////////////
+
+
+.Up-arrow-circle {
+  background-color: #28a745;
+  color: white;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.Down-arrow-circle {
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+
+@media print {
+  @page {
+    size: A4 landscape;
+    /* Force landscape */
+    margin: 10mm;
+  }
+
+  #print-section {
+    transform: scale(0.8);
+    transform-origin: top left;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #print-section,
+  #print-section * {
+    visibility: visible;
+  }
+
+  #print-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .sidebar {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    /* Reduce font size for wide tables */
+  }
+
+  th,
+  td {
+    padding: 4px;
+    border: 1px solid #000;
+    text-align: center;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+
+  thead {
+    tr:nth-child(1) {
+      background-color: #0554ef !important;
+      color: #fff;
+
+      th {
+        background-color: #004080 !important;
+        color: #fff !important;
+      }
+    }
+
+    tr:nth-child(2) {
+      background-color: #dbe7ff !important;
+      color: #000;
+
+      th {
+        background-color: #dbe7ff !important;
+        color: #000;
+      }
+    }
+  }
+
+  tbody {
+    tr td {
+      background-color: #fff;
+      color: #000;
+    }
+  }
+
+
+  .backgrossbtn {
+    display: none;
+  }
+
+  .report-table th {
+    background-color: #004080 !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+
+
+/////////////////////////////////////DATE PICKER SCSS////////////////////////////////////

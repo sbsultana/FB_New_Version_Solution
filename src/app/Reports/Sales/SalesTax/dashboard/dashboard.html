@@ -1,0 +1,382 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+
+                    <!-- Store Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+
+                    <!-- Apply Button -->
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header">
+                <table class="table mb-0 w-100">
+                    <thead>
+
+                        <tr>
+                            <th (click)="sort('Store')" style="cursor: pointer;">Store Name</th>
+                            <th (click)="sort('Status')" style="cursor: pointer;">Status</th>
+                            <th (click)="sort('Deal Type')" style="cursor: pointer;">Deal Type</th>
+                            <th (click)="sort('Stock Type')" style="cursor: pointer;">Stock Type</th>
+                            <th (click)="sort('Contract Date')" style="cursor: pointer;">Contract Date</th>
+                            <th (click)="sort('Final accounting date')" style="cursor: pointer;">Final Accounting Date
+                            </th>
+                            <th (click)="sort('Deal Number')" style="cursor: pointer;">Deal #</th>
+                            <th (click)="sort('Stock#')" style="cursor: pointer;">Stock #</th>
+                            <th (click)="sort('Customer')" style="cursor: pointer;">Customer</th>
+                            <th (click)="sort('Buyer Street Address')" style="cursor: pointer;">Buyer Street Address
+                            </th>
+                            <th (click)="sort('Buyer City')" style="cursor: pointer;">Buyer City</th>
+                            <th (click)="sort('Buyer State')" style="cursor: pointer;">Buyer State</th>
+                            <th (click)="sort('Buyer Zip Code')" style="cursor: pointer;">Buyer Zip Code</th>
+                            <th (click)="sort('Payment Type')" style="cursor: pointer;">Payment Type</th>
+                            <th (click)="sort('Taxable CCR')" style="cursor: pointer;">Taxable CCR</th>
+                            <th (click)="sort('Jrn')" style="cursor: pointer;">Journal</th>
+                            <th (click)="sort('SALE AMT')" style="cursor: pointer;">Sale Amt</th>
+                            <th (click)="sort('DOC FEES')" style="cursor: pointer;">Doc Fees</th>
+                            <th (click)="sort('TOTAL TAXABLE')" style="cursor: pointer;">Total Taxable</th>
+                            <th (click)="sort('RATE')" style="cursor: pointer;">Rate</th>
+                            <th (click)="sort('TAX FROM 324')" style="cursor: pointer;">Tax From 324</th>
+                            <th (click)="sort('7.25%')" style="cursor: pointer;">7.25%</th>
+                            <th (click)="sort('DISTRICT TAX')" style="cursor: pointer;">District Tax</th>
+                            <th (click)="sort('DIFF')" style="cursor: pointer;">Diff</th>
+                            <th (click)="sort('DIFF 9.750%')" style="cursor: pointer;">Diff 9.750%</th>
+
+                        </tr>
+                        <tr>
+                            <th class="text-start">REPORT TOTALS</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'Taxable CCR'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'Taxable CCR') == 0 || getTotal(SalesTaxData,'Taxable CCR')
+                                    ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'Taxable CCR') == 0 || getTotal(SalesTaxData,'Taxable
+                                        CCR') ==
+                                        null ? '-' : getTotal(SalesTaxData,'Taxable CCR') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="bdr-rt">&nbsp;</th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'SALE AMT'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'SALE AMT') == 0 || getTotal(SalesTaxData,'SALE AMT') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'SALE AMT') == 0 || getTotal(SalesTaxData,'SALE AMT') ==
+                                        null ? '-' : getTotal(SalesTaxData,'SALE AMT') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'DOC FEES'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'DOC FEES') == 0 || getTotal(SalesTaxData,'DOC FEES') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'DOC FEES') == 0 || getTotal(SalesTaxData,'DOC FEES') ==
+                                        null ? '-' : getTotal(SalesTaxData,'DOC FEES') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'TOTAL TAXABLE'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'TOTAL TAXABLE') == 0 || getTotal(SalesTaxData,'TOTAL
+                                    TAXABLE') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'TOTAL TAXABLE') == 0 || getTotal(SalesTaxData,'TOTAL
+                                        TAXABLE') ==
+                                        null ? '-' : getTotal(SalesTaxData,'TOTAL TAXABLE') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt">&nbsp;
+
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'TAX FROM 324'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'TAX FROM 324') == 0 || getTotal(SalesTaxData,'TAX FROM
+                                    324') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'TAX FROM 324') == 0 || getTotal(SalesTaxData,'TAX FROM
+                                        324') ==
+                                        null ? '-' : getTotal(SalesTaxData,'TAX FROM 324') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'7.25%'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'7.25%') == 0 || getTotal(SalesTaxData,'7.25%') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'7.25%') == 0 || getTotal(SalesTaxData,'7.25%') ==
+                                        null ? '-' : getTotal(SalesTaxData,'7.25%') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'DISTRICT TAX'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'DISTRICT TAX') == 0 || getTotal(SalesTaxData,'DISTRICT
+                                    TAX') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'DISTRICT TAX') == 0 || getTotal(SalesTaxData,'DISTRICT
+                                        TAX') ==
+                                        null ? '-' : getTotal(SalesTaxData,'DISTRICT TAX') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ negative: !inTheGreen(getTotal(SalesTaxData,'DIFF'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'DIFF') == 0 || getTotal(SalesTaxData,'DIFF') ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'DIFF') == 0 || getTotal(SalesTaxData,'DIFF') ==
+                                        null ? '-' : getTotal(SalesTaxData,'DIFF') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="text-end bdr-rt"
+                                [ngClass]="{ '': !inTheGreen(getTotal(SalesTaxData,'DIFF 9.750%'))}">
+                                <span class="justify-content-between d-flex">
+                                    {{getTotal(SalesTaxData,'DIFF 9.750%') == 0 || getTotal(SalesTaxData,'DIFF 9.750%')
+                                    ==
+                                    null ? '&nbsp;' : '$' }}
+                                    <span>
+                                        {{getTotal(SalesTaxData,'DIFF 9.750%') == 0 || getTotal(SalesTaxData,'DIFF
+                                        9.750%') ==
+                                        null ? '-' : getTotal(SalesTaxData,'DIFF 9.750%') | number:'1.2-2' }}
+                                    </span>
+                                </span>
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="SalesTaxData.length >0; else NoSalesTaxData ">
+                            <ng-container *ngFor="let SalesTax of SalesTaxData ; let i=index">
+                                <tr>
+                                    <td class="text-center">{{SalesTax.Store == 0 || SalesTax.Store == null ? '-' :
+                                        SalesTax.Store }}</td>
+                                    <td class="text-center">{{SalesTax.Status == 0 || SalesTax.Status == null ? '-' :
+                                        SalesTax.Status }}</td>
+                                    <td class="text-center">{{SalesTax['Deal Type'] == 0 || SalesTax['Deal Type'] ==
+                                        null ? '-' : SalesTax['Deal Type'] }}</td>
+                                    <td class="text-center">{{SalesTax['Stock Type'] == 0 || SalesTax['Stock Type'] ==
+                                        null ? '-' : SalesTax['Stock Type'] }}</td>
+                                    <td class="text-center">{{SalesTax['Contract Date'] == 0 || SalesTax['Contract
+                                        Date'] == null ? '-' : SalesTax['Contract Date'] | date:'MM/dd/yyyy' }}</td>
+                                    <td class="text-center">{{SalesTax['Final accounting date'] == 0 || SalesTax['Final
+                                        accounting date'] == null ? '-' : SalesTax['Final accounting date'] |
+                                        date:'MM/dd/yyyy' }}</td>
+                                    <td class="text-center">{{SalesTax['Deal Number'] == 0 || SalesTax['Deal Number'] ==
+                                        null ? '-' :
+                                        SalesTax['Deal Number'] }}</td>
+                                    <td class="text-start">{{SalesTax['Stock#'] == 0 || SalesTax['Stock#'] ==
+                                        null ? '-' : SalesTax['Stock#'] }}</td>
+                                    <td class="text-start">
+                                        {{(SalesTax.Customer ==
+                                        undefined ? '-' : (
+                                        (SalesTax.Customer.toString() |
+                                        slice:0:40) +
+                                        (SalesTax.Customer.toString().length > 40 ? '..' : '') ))}}
+                                    </td>
+                                    <td class="text-start">
+                                        {{(SalesTax['Buyer Street Address'] ==
+                                        undefined ? '-' : (
+                                        (SalesTax['Buyer Street Address'].toString() |
+                                        slice:0:40) +
+                                        (SalesTax['Buyer Street Address'].toString().length > 40 ? '..' : '') ))}}
+                                    </td>
+                                    <td class="text-start">
+                                        {{(SalesTax['Buyer City'] ==
+                                        undefined ? '-' : (
+                                        (SalesTax['Buyer City'].toString() |
+                                        slice:0:40) +
+                                        (SalesTax['Buyer City'].toString().length > 40 ? '..' : '') ))}}
+                                    </td>
+                                    <td class="text-start">{{SalesTax['Buyer State'] == 0 || SalesTax['Buyer State'] ==
+                                        null ? '-' : SalesTax['Buyer State'] }}</td>
+                                    <td class="text-start">{{SalesTax['Buyer Zip Code'] == 0 || SalesTax['Buyer Zip
+                                        Code'] ==
+                                        null ? '-' : SalesTax['Buyer Zip Code'] }}</td>
+                                    <td class="text-start">{{SalesTax['Payment Type'] == 0 || SalesTax['Payment Type']
+                                        ==
+                                        null ? '-' : SalesTax['Payment Type'] }}</td>
+                                    <td class="text-end"
+                                        [ngClass]="{ '': !inTheGreen(SalesTax['Taxable CCR'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['Taxable CCR'] == 0 || SalesTax['Taxable CCR'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['Taxable CCR'] == 0 || SalesTax['Taxable CCR'] ==
+                                                null ? '-' : SalesTax['Taxable CCR'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-start">{{SalesTax['Jrn.'] == 0 || SalesTax['Jrn.'] ==
+                                        null ? '-' : SalesTax['Jrn.'] }}</td>
+                                    <td class="text-end" [ngClass]="{ '': !inTheGreen(SalesTax['SALE AMT'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['SALE AMT'] == 0 || SalesTax['SALE AMT'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['SALE AMT'] == 0 || SalesTax['SALE AMT'] ==
+                                                null ? '-' : SalesTax['SALE AMT'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end" [ngClass]="{ '': !inTheGreen(SalesTax['DOC FEES'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['DOC FEES'] == 0 || SalesTax['DOC FEES'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['DOC FEES'] == 0 || SalesTax['DOC FEES'] ==
+                                                null ? '-' : SalesTax['DOC FEES'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end"
+                                        [ngClass]="{ '': !inTheGreen(SalesTax['TOTAL TAXABLE'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['TOTAL TAXABLE'] == 0 || SalesTax['TOTAL TAXABLE'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['TOTAL TAXABLE'] == 0 || SalesTax['TOTAL TAXABLE'] ==
+                                                null ? '-' : SalesTax['TOTAL TAXABLE'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end" [ngClass]="{ '': !inTheGreen(SalesTax['RATE'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['RATE'] == 0 || SalesTax['RATE'] ==
+                                            null ? '&nbsp;' : '&nbsp;' }}
+                                            <span>
+                                                {{SalesTax['RATE'] == 0 || SalesTax['RATE'] ==
+                                                null ? '-' : (SalesTax['RATE'] | number:'1.3-3')+ '%' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end"
+                                        [ngClass]="{ '': !inTheGreen(SalesTax['TAX FROM 324'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['TAX FROM 324'] == 0 || SalesTax['TAX FROM 324'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['TAX FROM 324'] == 0 || SalesTax['TAX FROM 324'] ==
+                                                null ? '-' : SalesTax['TAX FROM 324'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end" [ngClass]="{ '': !inTheGreen(SalesTax['7.25%'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['7.25%'] == 0 || SalesTax['7.25%'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['7.25%'] == 0 || SalesTax['7.25%'] ==
+                                                null ? '-' : SalesTax['7.25%'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end"
+                                        [ngClass]="{ '': !inTheGreen(SalesTax['DISTRICT TAX'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['DISTRICT TAX'] == 0 || SalesTax['DISTRICT TAX'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['DISTRICT TAX'] == 0 || SalesTax['DISTRICT TAX'] ==
+                                                null ? '-' : SalesTax['DISTRICT TAX'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesTax['DIFF'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['DIFF'] == 0 || SalesTax['DIFF'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['DIFF'] == 0 || SalesTax['DIFF'] ==
+                                                null ? '-' : SalesTax['DIFF'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="text-end"
+                                        [ngClass]="{ '': !inTheGreen(SalesTax['DIFF 9.750%'])}">
+                                        <span class="justify-content-between d-flex">
+                                            {{SalesTax['DIFF 9.750%'] == 0 || SalesTax['DIFF 9.750%'] ==
+                                            null ? '&nbsp;' : '$' }}
+                                            <span>
+                                                {{SalesTax['DIFF 9.750%'] == 0 || SalesTax['DIFF 9.750%'] ==
+                                                null ? '-' : SalesTax['DIFF 9.750%'] | number:'1.2-2' }}
+                                            </span>
+                                        </span>
+                                    </td>
+
+
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+
+                        <ng-template #NoSalesTaxData>
+                            <tr *ngIf="NoData != ''">
+                                <td colspan="24" *ngIf="NoData != ''"
+                                    style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
+                                    <label>{{NoData}}</label>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>

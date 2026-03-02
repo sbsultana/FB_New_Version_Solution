@@ -6,10 +6,12 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Stores } from '../../../../CommonFilters/stores/stores';
+
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule,Stores],
+  imports: [SharedModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -36,16 +38,25 @@ export class Dashboard {
   storecount: any = null;
   storedisplayname: any = '';
   groupName: any = '';
-  groupId: any = 8;
+  groupId: any = 0;
   stores: any = []
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
-  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, public ngbModalActive: NgbActiveModal
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
+  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, public ngbModalActive: NgbActiveModal,private toast: ToastService,
   ) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -282,6 +293,7 @@ export class Dashboard {
   closeTarget() {
     // this.ngmodelactive.dismiss()
   }
+  StoreId: any = ''
   CompleteComponentState: boolean = true;
   subdataindex: any = 0;
   openDetails(data2: any, data3: any, store: any, block: any, newAge: any, usedAge: any,) {
@@ -289,6 +301,7 @@ export class Dashboard {
     this.Block = block;
     this.var3 = data3;
     this.var2 = data2;
+    this.StoreId = store
     this.ageCategory = this.stockType[0] == 'New' ? newAge : usedAge
     this.getDetails()
   }
@@ -303,10 +316,9 @@ export class Dashboard {
   }
   subscription!: Subscription;
   ngAfterViewInit(): void {
-    // //console.log();
     this.shared.api.getStores().subscribe((res: any) => {
       if (this.shared.common.pageName == 'Inventory Book') {
-       if (res.obj.storesData != undefined) {
+        if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
@@ -315,6 +327,7 @@ export class Dashboard {
         }
       }
     })
+    // //console.log();
     this.email = this.shared.api.getExportToEmailPDFAllReports().subscribe((res: { obj: { title: string; stateEmailPdf: boolean; Email: any; notes: any; from: any; }; }) => {
       if (this.email != undefined) {
         if (res.obj.title == 'Inventory Book') {
@@ -355,6 +368,40 @@ export class Dashboard {
         }
       }
     });
+  }
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
   }
   ngOnDestroy() {
     this.unSubscribeing()
@@ -405,40 +452,6 @@ export class Dashboard {
         (event.target.scrollHeight - scrollDemo.clientHeight)) *
       100
     );
-  }
-  getStoresandGroupsValues() {
-    this.storesFilterData.groupsArray = this.groupsArray;
-    this.storesFilterData.groupId = this.groupId;
-    this.storesFilterData.storesArray = this.stores;
-    this.storesFilterData.storeids = this.storeIds;
-    this.storesFilterData.groupName = this.groupName;
-    this.storesFilterData.storename = this.storename;
-    this.storesFilterData.storecount = this.storecount;
-    this.storesFilterData.storedisplayname = this.storedisplayname;
-
-    this.storesFilterData = {
-      groupsArray: this.groupsArray,
-      groupId: this.groupId,
-      storesArray: this.stores,
-      storeids: this.storeIds,
-      groupName: this.groupName,
-      storename: this.storename,
-      storecount: this.storecount,
-      storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
-    };
-
-    // this.setHeaderData();
-    // this.GetData();
-
-  }
-  StoresData(data: any) {
-    this.storeIds = data.storeids;
-    this.groupId = data.groupId;
-    this.storename = data.storename;
-    this.groupName = data.groupName;
-    this.storecount = data.storecount;
-    this.storedisplayname = data.storedisplayname;
   }
   stockType: any = ['New'];
   aged: any = ['MNM'];
@@ -513,13 +526,16 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     if (this.stockType.length == 0) {
-      alert('Please select atleast one stocktype');
+     
+      this.toast.show('Please select atleast one stocktype', 'warning', 'Warning');
     }
     if (this.status.length == 0) {
-      alert('Please select atleast one status');
+ 
+      this.toast.show('Please select atleast one status', 'warning', 'Warning');
     }
     if (this.aged.length == 0) {
-      alert('Please select atleast one additional');
+ 
+      this.toast.show('Please select atleast one additional', 'warning', 'Warning');
     }
     else {
       this.setHeaderData()
@@ -562,7 +578,7 @@ export class Dashboard {
   getDetails() {
     this.shared.spinner.show()
     const obj = {
-      "As_id": this.storeIds,
+      "As_id": this.StoreId,
       "StockType": this.stockType.toString(),
       "Status": this.status.toString(),
       "WholeSale": this.wholesale.toString(),
@@ -767,7 +783,7 @@ export class Dashboard {
         .join(', ');
     }
     const filters = [
-      { name: 'Store:', values:storeValue},
+      { name: this.aged.toString() == 'MNM' ? "Make" : 'Age', values: this.var2 },
       { name: 'Stock Type:', values: this.stockType.toString() },
       { name: 'Units:', values: this.status.toString() },
       { name: 'Wholesale:', values: this.wholesale.map((item: any) => item === 'Y' ? 'Yes' : 'No').toString() },
@@ -798,28 +814,28 @@ export class Dashboard {
       'Stock #', 'Year', 'Make', 'Model',
       'Color', 'Age', 'MSRP', 'VIN'
     ];
-    
+
     const headerRow = worksheet.addRow(secondHeader);
     headerRow.height = 25;
-    
+
     headerRow.eachCell((cell) => {
       cell.font = {
         bold: true,
         color: { argb: 'FFFFFFFF' }
       };
-    
+
       cell.alignment = {
         vertical: 'middle',
         horizontal: 'center'
       };
-    
+
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
         fgColor: { argb: 'FF2F5597' }
       };
     });
-    
+
     const bindingHeaders = ['StockNo', 'Year', 'Make', 'Model', 'Color', 'Age', 'MSRP', 'VIN'];
     const currencyFields: any = ['MSRP'];
     let notesCount = 12

@@ -6,7 +6,8 @@ import { Setdates } from '../../../../Core/Providers/SetDates/setdates';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { common } from '../../../../common';
 import { Stores } from '../../../../CommonFilters/stores/stores';
-
+import { Subscription } from 'rxjs';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   imports: [SharedModule, BsDatepickerModule, Stores],
@@ -32,7 +33,7 @@ export class Dashboard {
   saleType: any = 'Retail,Lease,Misc,Special Order';
   financeType: any = 'Finance,Cash,Lease';
   storeorgrp: any = 'G';
-  groups: any = 1;
+  groups: any = 0;
 
 
   stores: any = []
@@ -41,7 +42,8 @@ export class Dashboard {
   storecount: any = null;
   storedisplayname: any = '';
   groupName: any = '';
-  groupId: any = 8;
+  groupId: any = 0;
+  excel!: Subscription;
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
@@ -58,7 +60,7 @@ export class Dashboard {
 
   // solutionurl: any = this.shared.getEnviUrl();
   LogCount = 1;
-  
+
 
 
 
@@ -68,31 +70,42 @@ export class Dashboard {
   dealStatus: any;
 
   constructor(
-    public shared: Sharedservice, public setdates: Setdates, private comm: common,
+    public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,
   ) {
     // this.initializeDates();
     this.shared.setTitle(this.shared.common.titleName + 'F&I Manager Ranking');
     // this.GetData(this.columnName, this.columnState);
 
-    // let today = new Date();
-    // let enddate = new Date(today.setDate(today.getDate() - 1));
-    // this.FromDate =
-    //   ('0' + (enddate.getMonth() + 1)).slice(-2) +
-    //   '-01' +
-    //   '-' +
-    //   enddate.getFullYear();
-    // this.ToDate =
-    //   ('0' + (enddate.getMonth() + 1)).slice(-2) +
-    //   '-' +
-    //   ('0' + enddate.getDate()).slice(-2) +
-    //   '-' +
-    //   enddate.getFullYear();
-    // this.FromDate = this.FromDate.replace(/-/g, '/');
-    // this.ToDate = this.ToDate.replace(/-/g, '/');
-    // this.shared.setTitle(this.shared.common.titleName+'-F&I Manager Ranking');
+    let today = new Date();
+    let enddate = new Date(today.setDate(today.getDate() - 1));
+    this.FromDate =
+      ('0' + (enddate.getMonth() + 1)).slice(-2) +
+      '-01' +
+      '-' +
+      enddate.getFullYear();
+    this.ToDate =
+      ('0' + (enddate.getMonth() + 1)).slice(-2) +
+      '-' +
+      ('0' + enddate.getDate()).slice(-2) +
+      '-' +
+      enddate.getFullYear();
+    this.FromDate = this.FromDate.replace(/-/g, '/');
+    this.ToDate = this.ToDate.replace(/-/g, '/');
+    this.shared.setTitle(this.shared.common.titleName + '-F&I Manager Ranking');
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
+      } else {
+        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        }
       }
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -153,6 +166,7 @@ export class Dashboard {
   }
 
   ngOnInit(): void {
+    this.SetDates(this.DateType);
     // if (typeof window !== 'undefined') {
 
     // localStorage.setItem('time', this.dateType);
@@ -181,7 +195,7 @@ export class Dashboard {
       StoreID: this.storeIds,
       Exp: sortdata,
       OrderType: sortstate,
-      RankBy: this.storeorgrp,
+      RankBy: this.storeorgroup,
       UserID: 0,
       SaleType: this.neworused.toString(),
       DealType: this.retailorlease.toString(),
@@ -360,7 +374,7 @@ export class Dashboard {
   //             this.NoData = false;
   //           }
   //         } else {
-  //           alert('Invalid Details');
+  //           
   //         }
   //       },
   //       (error) => {
@@ -469,7 +483,7 @@ export class Dashboard {
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
       if (this.shared.common.pageName == 'F&I Manager Rankings') {
-       if (res.obj.storesData != undefined) {
+        if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
@@ -547,7 +561,7 @@ export class Dashboard {
         }]
       }
     });
-    this.shared.api.getExportToExcelAllReports().subscribe((res: { obj: { state: boolean; title: string; }; }) => {
+    this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: { obj: { state: boolean; title: string; }; }) => {
       this.FIMstate = res.obj.state;
       if (res.obj.title == 'F&I Manager Rankings') {
         if (res.obj.state == true) {
@@ -579,20 +593,25 @@ export class Dashboard {
     });
   }
 
+  ngOnDestroy() {
+    if (this.excel != undefined) {
+      this.excel.unsubscribe()
+    }
+  }
   displaytime() {
     if (this.DateType == 'PM') {
-      return 'Time Frame (Same Month PY)';
+      return '(Same Month PY)';
     }
     else if (this.DateType == 'LM') {
-      return 'Time Frame (Last Month)';
+      return '(Last Month)';
     }
     else if (this.DateType == 'LY') {
-      return 'Time Frame (Last Year)';
+      return '(Last Year)';
     }
     else if (this.DateType == 'C') {
       return this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy')
     }
-    return 'Time Frame (' + this.DateType + ')';
+    return '(' + this.DateType + ')';
   }
 
   StoresData(data: any) {
@@ -673,7 +692,7 @@ export class Dashboard {
     // DetailsSF.result.then(
     //   (data) => {},
     //   (reason) => {
-    //     // alert('close');
+    
     //     // // on dismiss
     //     // const Data = {
     //     //   state: true,
@@ -682,7 +701,7 @@ export class Dashboard {
     //     this.GetData();
     //   }
     // );
-    //alert(this.index);
+
   }
 
 
@@ -761,7 +780,7 @@ export class Dashboard {
   AllStores: boolean = true;
   AllGroups: boolean = true;
 
-  storeorgroup: any = ['S'];
+  storeorgroup: any = ['G'];
   retailorlease: any = ['Retail', 'Lease', 'Misc', 'Special Order'];
   financetype: any = ['Finance', 'Cash', 'Lease'];
 
@@ -786,7 +805,7 @@ export class Dashboard {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
 
-   getStoresandGroupsValues() {
+  getStoresandGroupsValues() {
     this.storesFilterData.groupsArray = this.groupsArray;
     this.storesFilterData.groupId = this.groupId;
     this.storesFilterData.storesArray = this.stores;
@@ -1082,16 +1101,20 @@ export class Dashboard {
 
 
     if (this.storeIds.length === 0) {
-      alert('Please select any store');
+     
+      this.toast.show('Please select any store', 'warning', 'Warning');
     }
     else if (this.retailorlease.length == 0) {
-      alert('Please select any one Deal Type');
+      
+      this.toast.show('Please select any one Deal Type', 'warning', 'Warning');
     }
     else if (this.neworused.length == 0) {
-      alert('Please select atleast one Sale Type');
+     
+      this.toast.show('Please select atleast one Sale Type', 'warning', 'Warning');
     }
     else if (this.financetype.length == 0) {
-      alert('Please select atleast one Finance Type');
+      
+      this.toast.show('Please select atleast one Finance Type', 'warning', 'Warning');
     }
     else {
       const data = {
@@ -1119,7 +1142,7 @@ export class Dashboard {
     }
 
   }
-
+  ExcelStoreNames: any = []
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('F&I Manager Rankings');
@@ -1130,68 +1153,77 @@ export class Dashboard {
     worksheet.addRow([]);
     const formattedFromDate = this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy');
     const formattedToDate = this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy');
-    let storeValue = 'All Stores';
-    if (
-      this.storeIds &&
-      this.storeIds.length > 0 &&
-      this.storeIds.length !== this.stores.length
-    ) {
+
+    this.ExcelStoreNames = []
+    let storeNames: any[] = [];
+    // let store: any = [];
+    // this.storeIds && this.storeIds.toString().indexOf(',') > 0 ? store = this.storeIds.toString().split(',') : store=this.storeIds
+    // console.log(this.storeIds, this.groups, store, '...............................');
+    //     storeNames = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => store.includes(item.ID.toString()));
+
+    //     console.log(storeNames, 'storeNames');
+    //     if (store.length == this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length)
+    //     {
+    //     //    { this.ExcelStoreNames = 'All Stores' }
+    //     // else 
+    //     //   {
+    //          this.ExcelStoreNames = storeNames.map(function (a: any) { return a.storename; }); 
+    //         }
+
+    //  console.log( this.ExcelStoreNames , 'exclstoreNames');
+
+    let storeValue = '';
+
+    if (!this.storeIds || this.storeIds.length === 0) {
+      // No selection → All stores
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else if (this.storeIds.length === this.stores.length) {
+      // All selected → bind all store names
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else {
+      // Partial selection
       storeValue = this.stores
         .filter((s: any) => this.storeIds.includes(s.ID))
         .map((s: any) => s.storename)
         .join(', ');
     }
+    console.log(this.ExcelStoreNames, 'exclstoreNames');
     const filters = [
-      { name: 'Store:', values: storeValue },
+      { name: 'Stores:', values: storeValue },
       { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
       { name: 'Rank By:', values: this.storeorgroup == 'S' ? 'Store' : 'Group' },
       { name: 'New/Used:', values: this.neworused || 'All' },
       { name: 'Deal Type:', values: this.retailorlease || 'All' },
       { name: 'Finance Type:', values: this.financetype || 'All' },
     ];
-
-
-
-
     let currentRow = worksheet.lastRow?.number ?? worksheet.rowCount;
     filters.forEach((filter) => {
       currentRow++;
-
       let value = Array.isArray(filter.values)
         ? filter.values.join(', ')
         : filter.values;
-
       const row = worksheet.addRow([filter.name, value]);
       row.getCell(1).font = { bold: true, name: 'Arial', size: 10 };
       row.getCell(2).font = { name: 'Arial', size: 10, color: { argb: 'FF1F497D' } }; // blue color for values
       worksheet.mergeCells(`B${currentRow}:F${currentRow}`);
     });
-
     worksheet.addRow([]);
-
-
     const firstHeader = ['', '', '', 'Back Gross', '', '', 'Unit Count', '', ''];
     const headerRow1 = worksheet.addRow(firstHeader);
-
-
     const secondHeader = [
       'Rank', 'Finance Manager', 'Store Name',
       'PVR', 'Gross', 'Pace',
       'New', 'Used', 'Total', 'Pace'
     ];
     const headerRow2 = worksheet.addRow(secondHeader);
-
     const headerRow1Index = headerRow1.number;
-    const headerRow2Index = headerRow2.number;
-
-
     worksheet.mergeCells(`A${headerRow1Index}`);
     worksheet.mergeCells(`B${headerRow1Index}`);
     worksheet.mergeCells(`C${headerRow1Index}`);
     worksheet.mergeCells(`D${headerRow1Index}:F${headerRow1Index}`); // Back Gross
     worksheet.mergeCells(`G${headerRow1Index}:J${headerRow1Index}`); // Unit Count
-
-
     [headerRow1, headerRow2].forEach(r => {
       r.height = 22;
       r.eachCell({ includeEmpty: false }, (cell) => {
@@ -1204,25 +1236,19 @@ export class Dashboard {
         };
       });
     });
-
-
     const bindingHeaders = [
       'Rank', 'fimanager', 'StoreName',
       'BackgrossPVR', 'BackGross',
       'BackGrossPace', 'New', 'Used', 'Total', 'Pace'
     ];
-
     const currencyFields = ['BackgrossPVR', 'BackGross',
       'BackGrossPace'];
-
     this.FIManagerData.forEach((info: any) => {
       const rowData = bindingHeaders.map((key) => {
         const val = info[key];
         return (val === 0 || val == null || val === '') ? '-' : val;
       });
-
       const dataRow = worksheet.addRow(rowData);
-
       bindingHeaders.forEach((key, index) => {
         const cell = dataRow.getCell(index + 1);
 
@@ -1234,11 +1260,7 @@ export class Dashboard {
         }
       });
     });
-
-
     worksheet.columns.forEach(col => col.width = 25);
-
-
     workbook.xlsx.writeBuffer().then(buffer => {
       this.shared.exportToExcel(workbook, 'F&I Manager Rankings');
     });

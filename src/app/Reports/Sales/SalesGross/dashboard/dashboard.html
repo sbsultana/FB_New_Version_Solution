@@ -7,11 +7,12 @@
         <div class="container-fluid">
             <app-salesgross-reports [header]="header"></app-salesgross-reports>
 
-            <div class="performance-scorecard" #printSection id="print-section" *ngIf="GridView == 'Global'">
+            <div class="scorecard-multi-header salesgross-tbl" #printSection id="print-section"
+                *ngIf="GridView == 'Global'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr class="bdr-btm">
-                            <th class="text-start bdr-rt">
+                            <!-- <th class="text-start bdr-rt">
                                 <span> Date </span>: {{FromDate |date:'MMMM'}} <label
                                     *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                     {{ToDate
@@ -25,7 +26,8 @@
                                         {{FromDate |
                                         date:'yyyy'}}</label></label>
 
-                            </th>
+                            </th> -->
+                            <th>{{FromDate |date:'MMMM'}}</th>
 
                             <th colspan="5" class="text-center bdr-rt">Units</th>
                             <!-- <th class="spacer"></th> -->
@@ -47,21 +49,23 @@
 
                         </tr>
                         <tr>
-                            <th> </th>
+                            <!-- <th> </th> -->
                             <!-- <th class="bdr-rt" style="color:#fff"></th> -->
                             <!-- <th class="spacer"></th> -->
 
 
                             <!-- <th class="bdr-rt"></th> -->
-
+                            <th class="text-center">{{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy'
+                                }}</th>
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort('Units_MTD',IndividualSalesGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
                                 <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th>
+
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort(datetype() == 'MTD'? 'Units_Pace' :'Units_MTD' ,IndividualSalesGross)">
                                 Pace </th>
@@ -79,7 +83,7 @@
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort('FrontGross_MTD',IndividualSalesGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
@@ -101,7 +105,7 @@
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort('BackGross_MTD',IndividualSalesGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
@@ -121,7 +125,7 @@
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort('TotalGross_MTD',IndividualSalesGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
@@ -140,18 +144,18 @@
                     </thead>
                     <tbody>
                         <ng-container *ngFor="let SalesInfo of SalesData; let i=index">
-                            <tr [ngClass]="{'divBold': SalesInfo.data1.toString().toLowerCase() === 'reports total'  }"
+                            <tr [ngClass]="{'divBold': SalesInfo.data1.toLowerCase() === 'report totals','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORT TOTALS'  }"
                                 [id]="'D_'+i"
-                                [ngStyle]="{'pointer-events':SalesInfo.data1.toString().toLowerCase() === 'reports total' ? 'none' :'default','cursor':SalesInfo.data1.toLowerCase() === 'reports total' ? 'default':'pointer'}">
+                                [ngStyle]="{'pointer-events':SalesInfo.data1.toLowerCase() === 'report totals' ? 'none' :'default','cursor':SalesInfo.data1.toLowerCase() === 'report totals' ? 'default':'pointer'}">
                                 <td (click)="expandorcollapse(i,$event,SalesInfo.Dealer,SalesInfo,'')">
                                     <span class="d-flex justify-content-between" [id]="'D_'+i" style="cursor: pointer;">
                                         <span [id]="'D_'+i" title="{{SalesInfo.data1}}">
-                                            {{(SalesInfo.data1 == undefined || SalesInfo.data1.toString().trim() == '' ||
+                                            {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
-                                            (SalesInfo.data1.toString().toString().toLowerCase().length > 40 ? '...' : '') ))}}
+                                            (SalesInfo.data1.toString().toLowerCase().length > 40 ? '...' : '') ))}}
                                         </span>
-                                        <span *ngIf="SalesInfo.data1.toString().toLowerCase() != 'reports total'">
+                                        <span *ngIf="SalesInfo.data1.toLowerCase() != 'report totals'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
                                                 alt="Expand" [id]="'D_'+i">
                                             <img *ngIf="SalesInfo.Dealer === '-'" src="images/Minus_CircleIcon.svg"
@@ -453,10 +457,10 @@
                                         <span style="float: left; margin-right: 0.8rem; color: #363b4f;"
                                             (click)="expandorcollapse(i,$event,data2.data2sign,data2,SalesInfo)"
                                             [id]="'DN_'+i"
-                                            [ngClass]="{'disable': SalesInfo.data1.toString().toLowerCase() === 'reports total' }">&nbsp;</span>
+                                            [ngClass]="{'disable': SalesInfo.data1.toLowerCase() === 'report totals' }">&nbsp;</span>
                                         <span (click)="expandorcollapse(i,$event,data2.data2sign,data2,SalesInfo)"
-                                            [id]="'DN_'+i"> {{data2.data2 == undefined || data2.data2.toString().trim() == '' ||
-                                            data2.data2 == null ? '-' : data2.data2.toString().toLowerCase()}} </span>
+                                            [id]="'DN_'+i"> {{data2.data2 == undefined || data2.data2.trim() == '' ||
+                                            data2.data2 == null ? '-' : data2.data2.toLowerCase()}} </span>
                                     </td>
                                     <!-- <td></td> -->
                                     <!-- <td class="spacer"></td> -->
@@ -692,7 +696,7 @@
                                         <span style="margin-right: 1.7rem;"></span>
                                         <span title="{{dt3.data3}}" style="cursor: pointer;">{{(dt3.data3 == undefined
                                             ||
-                                            dt3.data3.toString().trim() == '' || dt3.data3 == null ?
+                                            dt3.data3.trim() == '' || dt3.data3 == null ?
                                             '-' : (
                                             (dt3.data3.toString() | slice:0:20) +
                                             (dt3.data3.toString().toLowerCase().length > 20 ? '...' : '') ))}}</span>
@@ -701,25 +705,30 @@
                                     <!-- <td></td> -->
                                     <!-- <td class="spacer"></td> -->
                                     <!-- <td></td> -->
-                                    <td>{{dt3.Units_MTD == 0 || dt3.Units_MTD == null ? 0 : dt3.Units_MTD |
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;">
+                                        {{dt3.Units_MTD == 0 || dt3.Units_MTD == null ? 0 : dt3.Units_MTD |
                                         number}}</td>
-                                    <td>{{dt3.Units_Pace == 0 || dt3.Units_Pace == null ? 0 : dt3.Units_Pace |
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;">
+                                        {{dt3.Units_Pace == 0 || dt3.Units_Pace == null ? 0 : dt3.Units_Pace |
                                         number}}</td>
                                     <td></td>
                                     <td></td>
 
-                                    <td>{{ dt3.PerDay == 0 || dt3.PerDay == null ? 0 : dt3.PerDay |
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;">{{ dt3.PerDay
+                                        == 0 || dt3.PerDay == null ? 0 : dt3.PerDay |
                                         number:'1.2-2'}}</td>
                                     <!-- <td class="spacer"></td> -->
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_MTD)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_MTD)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt3.FrontGross_MTD == 0 || dt3.FrontGross_MTD == null ? '' :
                                             '$') }} <span> {{
                                                 (dt3.FrontGross_MTD == 0 || dt3.FrontGross_MTD == null ? 0 :
                                                 dt3.FrontGross_MTD |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_Pace)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_Pace)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.FrontGross_Pace == 0 || dt3.FrontGross_Pace == null ? '' :
                                             '$') }} <span> {{
@@ -727,7 +736,8 @@
                                                 dt3.FrontGross_Pace |number:'1.0-0') }}</span></span></td>
                                     <td></td>
                                     <td></td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_MTD*1/dt3.Units_MTD*1)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.FrontGross_MTD*1/dt3.Units_MTD*1)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt3.FrontGross_MTD*1/dt3.Units_MTD*1 == 0 ||
                                             dt3.FrontGross_MTD*1/dt3.Units_MTD*1 == null ? '' :
@@ -740,13 +750,15 @@
                                     </td>
                                     <!-- <td class="spacer"></td> -->
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.BackGross_MTD == 0 || dt3.BackGross_MTD == null ? '' :
                                             '$') }} <span> {{
                                                 (dt3.BackGross_MTD == 0 || dt3.BackGross_MTD == null ? 0 :
                                                 dt3.BackGross_MTD |number:'1.0-0') }}</span></span></td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.BackGross_Pace)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.BackGross_Pace)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.BackGross_Pace == 0 || dt3.BackGross_Pace == null ? '' :
                                             '$') }} <span> {{
@@ -754,7 +766,8 @@
                                                 dt3.BackGross_Pace |number:'1.0-0') }}</span></span></td>
                                     <td></td>
                                     <td></td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD*1/dt3.Units_MTD*1)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD*1/dt3.Units_MTD*1)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt3.BackGross_MTD*1/dt3.Units_MTD*1 == 0 ||
                                             dt3.BackGross_MTD*1/dt3.Units_MTD*1 == null ? '' :
@@ -768,14 +781,16 @@
                                     <!-- <td class="spacer"></td> -->
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_MTD)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_MTD)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.TotalGross_MTD == 0 || dt3.TotalGross_MTD == null ? '' :
                                             '$') }} <span> {{
                                                 (dt3.TotalGross_MTD == 0 || dt3.TotalGross_MTD == null ? 0 :
                                                 dt3.TotalGross_MTD |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_Pace)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_Pace)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ? '' :
                                             '$') }} <span> {{
@@ -783,7 +798,8 @@
                                                 dt3.TotalGross_Pace |number:'1.0-0') }}</span></span></td>
                                     <td></td>
                                     <td></td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_MTD*1/dt3.Units_MTD*1)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_MTD*1/dt3.Units_MTD*1)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt3.TotalGross_MTD*1/dt3.Units_MTD*1 == 0 ||
                                             dt3.TotalGross_MTD*1/dt3.Units_MTD*1 == null ? '' :
@@ -806,11 +822,11 @@
                 </table>
             </div>
 
-            <div class="performance-scorecard-Backgross" *ngIf="GridView != 'Global'">
+            <div class="scorecard-multi-header backgross-tbl" *ngIf="GridView != 'Global'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr class="bdr-btm">
-                            <th class="text-start bdr-rt">
+                            <!-- <th class="text-start bdr-rt">
                                 <span> Dates </span>: {{FromDate |date:'MMMM'}} <label
                                     *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                     {{ToDate
@@ -824,8 +840,8 @@
                                         {{FromDate |
                                         date:'yyyy'}}</label></label>
 
-                            </th>
-
+                            </th> -->
+                            <th>{{FromDate | date:'MMMM'}}</th>
                             <th class="text-center bdr-rt">Units</th>
                             <th colspan="5" class="text-center bdr-rt">
                                 <div (click)="back2grid()" class="backgrossbtn HideItems">
@@ -840,20 +856,28 @@
                             </th>
                         </tr>
                         <tr>
-                            <th> </th>
 
 
-                            <th style="cursor: pointer;" class="bdr-rt" (click)="sort('Units_MTD',BackGross)">
+                            <!-- <th style="cursor: pointer;" class="bdr-rt" (click)="sort('Units_MTD',BackGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
                                         style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
                                 <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
-                            </th>
-
+                            </th> -->
+                            <th class="text-center">{{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy'
+                                }}</th>
                             <th style="cursor: pointer;" class="bdr-rt" (click)="sort('BackGross_MTD',BackGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
+                                    date:'MM.dd.yyyy'}} </span>
+
+
+                                <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
+                            </th>
+                            <th style="cursor: pointer;" class="bdr-rt" (click)="sort('BackGross_MTD',BackGross)">
+                                <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
+                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
@@ -894,17 +918,17 @@
                     </thead>
                     <tbody>
                         <ng-container *ngFor="let SalesInfo of BackGross; let i=index">
-                            <tr [ngClass]="{'divBold': SalesInfo.data1.toString().toLowerCase() === 'reports total'}"
+                            <tr [ngClass]="{'divBold': SalesInfo.data1.toLowerCase() === 'report totals','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORT TOTALS'}"
                                 [id]="'D_'+i">
                                 <td (click)="expandorcollapse(i,$event,SalesInfo.Dealer,SalesInfo,'')">
                                     <span class="d-flex justify-content-between" [id]="'D_'+i" style="cursor: pointer;">
                                         <span [id]="'D_'+i" title="{{SalesInfo.data1}}">
-                                            {{(SalesInfo.data1 == undefined || SalesInfo.data1.toString().trim() == '' ||
+                                            {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
                                             (SalesInfo.data1.toString().toLowerCase().length > 40 ? '...' : '') ))}}
                                         </span>
-                                        <!-- <span *ngIf="SalesInfo.data1 !== 'reports total'">
+                                        <!-- <span *ngIf="SalesInfo.data1 !== 'REPORTS TOTAL'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
                                                 alt="Expand" [id]="'D_'+i">
                                             <img *ngIf="SalesInfo.Dealer === '-'" src="images/Minus_CircleIcon.svg"
@@ -939,13 +963,14 @@
                                         </span>
                                     </div>
                                 </td> -->
-                                <td
+                                <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{negative: !inTheGreen(SalesInfo.Units_MTD), 'pointercursor': path2=='' , 'pointernone' :path2 != ''  }">
                                     {{
                                     SalesInfo.Units_MTD == 0 || SalesInfo.Units_MTD == null ? 0 :
                                     SalesInfo.Units_MTD | number}}</td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_MTD)}"><span
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_MTD), 'pointercursor': path2=='' , 'pointernone' :path2 != ''}"
+                                    (click)="openDetails(SalesInfo,'','1')"><span
                                         class="d-flex justify-content-between">
                                         {{
                                         (SalesInfo.BackGross_MTD == 0 || SalesInfo.BackGross_MTD == null ? '' :
@@ -954,8 +979,8 @@
                                             {{
                                             (SalesInfo.BackGross_MTD == 0 || SalesInfo.BackGross_MTD == null ? '-' :
                                             SalesInfo.BackGross_MTD |number:'1.0-0') }}</span></span></td>
-                                <td
-                                    [ngClass]="{ negative: !inTheGreen(datetype() == 'MTD' ? SalesInfo.BackGross_Pace : SalesInfo.BackGross_MTD)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(datetype() == 'MTD' ? SalesInfo.BackGross_Pace : SalesInfo.BackGross_MTD),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span class="d-flex justify-content-between">
                                         {{ datetype() == 'MTD' ? (SalesInfo.BackGross_Pace == 0 ||
                                         SalesInfo.BackGross_Pace == null ? '' :
@@ -973,7 +998,8 @@
                                     </span>
 
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_Target)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_Target),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
 
                                     <span class="d-flex justify-content-between">
                                         {{(SalesInfo.BackGross_Target == 0 ||
@@ -988,7 +1014,8 @@
 
 
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_Diff)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_Diff),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span class="d-flex justify-content-between">
                                         {{(SalesInfo.BackGross_Diff == 0 ||
                                         SalesInfo.BackGross_Diff == null ? '' :'$' )}}
@@ -1000,18 +1027,21 @@
 
 
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_PVR)}"><span
-                                        class="d-flex justify-content-between">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.BackGross_PVR),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
+                                    <span class="d-flex justify-content-between">
                                         {{
                                         (SalesInfo.BackGross_PVR == 0 || SalesInfo.BackGross_PVR == null ? '' :
                                         '$') }}
                                         <span>
                                             {{
                                             (SalesInfo.BackGross_PVR == 0 || SalesInfo.BackGross_PVR == null ? '-' :
-                                            SalesInfo.BackGross_PVR |number:'1.0-0') }}</span></span></td>
+                                            SalesInfo.BackGross_PVR |number:'1.0-0') }}</span></span>
+                                </td>
 
 
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.figross)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.figross),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
 
                                     <span class="d-flex justify-content-between"> {{
                                         (SalesInfo.figross == 0 || SalesInfo.figross == null ? '' :
@@ -1020,20 +1050,23 @@
                                             SalesInfo.figross |number:'1.0-0') }}</span></span>
 
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.FigrossPVR)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.FigrossPVR),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span class="d-flex justify-content-between"> {{
                                         (SalesInfo.FigrossPVR == 0 || SalesInfo.FigrossPVR == null ? '' :
                                         '$') }} <span> {{
                                             (SalesInfo.FigrossPVR == 0 || SalesInfo.FigrossPVR == null ? '-' :
                                             SalesInfo.FigrossPVR |number:'1.0-0') }}</span></span>
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.FRCOUNT)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.FRCOUNT),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span *ngIf="path1 == 'store'">{{ (SalesInfo.FRCOUNT == 0 ||
                                         SalesInfo.FRCOUNT == null ? '-' : SalesInfo.FRCOUNT ) }}
                                     </span>
                                     <span *ngIf="path1 != 'store'"></span>
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.FIPen)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.FIPen),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
 
                                     <span *ngIf="path1 == 'store'">{{ (SalesInfo.FIPen == 0 ||
                                         SalesInfo.FIPen == null ? '-' : SalesInfo.FIPen ) }}{{ (SalesInfo.FIPen == 0 ||
@@ -1042,31 +1075,37 @@
                                     <span *ngIf="path1 != 'store'"></span>
                                 </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.ProductSale)}"><span
-                                        class="d-flex justify-content-between">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.ProductSale),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
+                                    <span class="d-flex justify-content-between">
                                         {{
                                         (SalesInfo.ProductSale == 0 || SalesInfo.ProductSale == null ? '' :
                                         '$') }}
                                         <span>
                                             {{
                                             (SalesInfo.ProductSale == 0 || SalesInfo.ProductSale == null ? '-' :
-                                            SalesInfo.ProductSale |number:'1.0-0') }}</span></span></td>
+                                            SalesInfo.ProductSale |number:'1.0-0') }}</span></span>
+                                </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.ProductPVR)}"><span
-                                        class="d-flex justify-content-between">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.ProductPVR),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
+                                    <span class="d-flex justify-content-between">
                                         {{
                                         (SalesInfo.ProductPVR == 0 || SalesInfo.ProductPVR == null ? '' :
                                         '$') }}
                                         <span>
                                             {{
                                             (SalesInfo.ProductPVR == 0 || SalesInfo.ProductPVR == null ? '-' :
-                                            SalesInfo.ProductPVR |number:'1.0-0') }}</span></span></td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.productdealcount)}">
+                                            SalesInfo.ProductPVR |number:'1.0-0') }}</span></span>
+                                </td>
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.productdealcount),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     {{
                                     (SalesInfo.productdealcount == 0 || SalesInfo.productdealcount == null ? '-' :
                                     SalesInfo.productdealcount ) }}
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.Productpen)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.Productpen),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span *ngIf="path1 == 'store'">{{ (SalesInfo.Productpen == 0 ||
                                         SalesInfo.Productpen == null ? '-' : SalesInfo.Productpen ) }}{{
                                         (SalesInfo.Productpen == 0 ||
@@ -1075,13 +1114,15 @@
                                     <span *ngIf="path1 != 'store'"></span>
 
                                 </td>
-                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo.peorductPertra)}">
+                                <td (click)="openDetails(SalesInfo,'','1')"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.peorductPertra),'pointercursor': path2=='' , 'pointernone' :path2 != ''}">
                                     <span *ngIf="path1 == 'store'">{{(SalesInfo.peorductPertra == 0 ||
-                                        SalesInfo.peorductPertra == null ? '-' : SalesInfo.peorductPertra )}}</span>
+                                        SalesInfo.peorductPertra == null ? '-' : SalesInfo.peorductPertra |
+                                        number:'1.2-2' )}}</span>
                                     <span *ngIf="path1 != 'store'"></span>
                                 </td>
                             </tr>
-                            <ng-container *ngFor="let data2 of SalesInfo.Data2;let j=index">
+                            <ng-container *ngFor="let data2 of SalesInfo.data2;let j=index">
 
                                 <tr [id]="'DVN_'+i" [ngClass]="{'hidden': SalesInfo.Dealer === '+'  }"
                                     class="sub-title">
@@ -1089,28 +1130,32 @@
                                         <span style="float: left; margin-right: 0.8rem; color: #363b4f;"
                                             (click)="expandorcollapse(i,$event,data2.data2sign,data2,SalesInfo)"
                                             [id]="'DN_'+i"
-                                            [ngClass]="{'disable': SalesInfo.data1.toString().toLowerCase() === 'reports total' }">&nbsp;</span>
+                                            [ngClass]="{'disable': SalesInfo.data1.toLowerCase() === 'report totals' }">&nbsp;</span>
                                         <span (click)="expandorcollapse(i,$event,data2.data2sign,data2,SalesInfo)"
                                             [id]="'DN_'+i">
-                                            {{data2.data2 == undefined || data2.data2.toString().trim() == '' || data2.data2 ==
+                                            {{data2.data2 == undefined || data2.data2.trim() == '' || data2.data2 ==
                                             null ?
-                                            '-' : data2.data2.toString().toLowerCase()}} </span>
+                                            '-' : data2.data2.toLowerCase()}} </span>
                                     </td>
                                     <!-- <td></td> -->
                                     <!-- <td class="spacer"></td> -->
                                     <!-- <td></td> -->
 
-                                    <td>{{data2.Units_MTD == 0 || data2.Units_MTD == null ? '-' : data2.Units_MTD |
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{'pointercursor': path3=='' , 'pointernone' :path3 != ''  }">
+                                        {{data2.Units_MTD == 0 || data2.Units_MTD == null ? '-' : data2.Units_MTD |
                                         number}}</td>
 
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.BackGross_MTD)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.BackGross_MTD),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.BackGross_MTD == 0 || data2.BackGross_MTD == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.BackGross_MTD == 0 || data2.BackGross_MTD == null ? '-' :
-                                                data2.BackGross_MTD |number:'1.0-0') }}</span></span></td>
-                                    <td
-                                        [ngClass]="{ negative: !inTheGreen(datetype() == 'MTD' ? data2.BackGross_Pace : data2.BackGross_MTD)}">
+                                                data2.BackGross_MTD |number:'1.0-0') }}</span></span>
+                                    </td>
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(datetype() == 'MTD' ? data2.BackGross_Pace : data2.BackGross_MTD),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
 
                                         <span class="d-flex justify-content-between">
                                             {{ datetype() == 'MTD' ? (data2.BackGross_Pace == 0 ||
@@ -1132,8 +1177,9 @@
 
 
                                     <!------ Target value New/Used ------>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.BackGross_Target)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.BackGross_Target),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.BackGross_Target == 0 || data2.BackGross_Target == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.BackGross_Target == 0 || data2.BackGross_Target == null ? '-' :
@@ -1143,8 +1189,9 @@
                                     <!------ Pace and Target Diffr ------>
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.BackGross_dif)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.BackGross_dif),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.BackGross_dif == 0 || data2.BackGross_dif == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.BackGross_dif == 0 || data2.BackGross_dif == null ? '-' :
@@ -1153,8 +1200,9 @@
 
                                     <!------ Back Gross PVR ------>
 
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.BackGross_PVR)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.BackGross_PVR),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.BackGross_PVR == 0 || data2.BackGross_PVR == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.BackGross_PVR == 0 || data2.BackGross_PVR == null ? '-' :
@@ -1164,25 +1212,32 @@
 
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.figross)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.figross),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.figross == 0 || data2.figross == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.figross == 0 || data2.figross == null ? '-' :
                                                 data2.figross |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.FigrossPVR)}"> <span
-                                            class="d-flex justify-content-between"> {{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.FigrossPVR),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        <span class="d-flex justify-content-between"> {{
                                             (data2.FigrossPVR == 0 || data2.FigrossPVR == null ? '' :
                                             '$') }} <span> {{
                                                 (data2.FigrossPVR == 0 || data2.FigrossPVR == null ? '-' :
-                                                data2.FigrossPVR |number:'1.0-0') }}</span></span></td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.FRCOUNT)}">{{
+                                                data2.FigrossPVR |number:'1.0-0') }}</span></span>
+                                    </td>
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.FRCOUNT),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        {{
                                         (data2.FRCOUNT == 0 ||
                                         data2.FRCOUNT == null ? '-' :
                                         data2.FRCOUNT ) }}
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.FIPen)}">{{
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.FIPen),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
+                                        {{
                                         (data2.FIPen == 0 ||
                                         data2.FIPen == null ? '-' :
                                         data2.FIPen ) }}{{
@@ -1191,7 +1246,8 @@
                                         ) }}
                                     </td>
 
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.ProductSale)}">
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.ProductSale),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
                                         <span class="d-flex justify-content-between">
                                             {{
                                             (data2.ProductSale == 0 || data2.ProductSale == null ? '' :
@@ -1201,7 +1257,8 @@
                                                 data2.ProductSale | number:'1.0-0' )}} </span>
                                         </span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.ProductPVR)}">
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.ProductPVR),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
                                         <span class="d-flex justify-content-between"> {{
                                             (data2.ProductPVR == 0 || data2.ProductPVR == null ? '' : '$' )}}
                                             <span>
@@ -1212,23 +1269,26 @@
                                         </span>
 
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.productdealcount)}">
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.productdealcount),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
                                         {{
                                         (data2.productdealcount == 0 || data2.productdealcount == null ? '-' :
                                         data2.productdealcount )}}
 
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.Productpen)}">
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.Productpen),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
                                         {{ (data2.Productpen == 0 ||
                                         data2.Productpen == null ? '-' :
                                         data2.Productpen ) }}{{ (data2.Productpen == 0 ||
                                         data2.Productpen == null ? '' :
                                         '%' ) }}
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(data2.peorductPertra)}">
+                                    <td (click)="openDetails(data2,SalesInfo,'2')"
+                                        [ngClass]="{ negative: !inTheGreen(data2.peorductPertra),'pointercursor': path3=='' , 'pointernone' :path3 != '' }">
                                         {{ (data2.peorductPertra == 0 ||
                                         data2.peorductPertra == null ? '-' :
-                                        data2.peorductPertra ) }}
+                                        data2.peorductPertra | number:'1.2-2' ) }}
                                     </td>
                                 </tr>
 
@@ -1238,7 +1298,7 @@
                                         <span style="margin-right: 1.7rem;"></span>
                                         <span title="{{dt3.data3}}"
                                             (click)="openDetails(dt3,SalesInfo,'3')">{{(dt3.data3 ==
-                                            undefined || dt3.data3.toString().trim() == '' || dt3.data3 == null ?
+                                            undefined || dt3.data3.trim() == '' || dt3.data3 == null ?
                                             '-' : (
                                             (dt3.data3.toString() | slice:0:15) +
                                             (dt3.data3.toString().toLowerCase().length > 15 ? '...' : '') ))}}</span>
@@ -1247,7 +1307,8 @@
                                     <!-- <td></td> -->
 
 
-                                    <td>{{dt3.Units_MTD == 0 || dt3.Units_MTD == null ? '-' : dt3.Units_MTD |
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;">
+                                        {{dt3.Units_MTD == 0 || dt3.Units_MTD == null ? '-' : dt3.Units_MTD |
                                         number}}</td>
 
 
@@ -1255,7 +1316,8 @@
 
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.BackGross_MTD)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.BackGross_MTD == 0 || dt3.BackGross_MTD == null ? '' :
                                             '$') }} <span> {{
@@ -1263,7 +1325,7 @@
                                                 dt3.BackGross_MTD |number:'1.0-0') }}</span></span></td>
 
 
-                                    <td
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
                                         [ngClass]="{ negative: !inTheGreen(datetype() == 'MTD' ? dt3.BackGross_Pace : dt3.BackGross_MTD)}">
 
                                         <span class="d-flex justify-content-between">
@@ -1293,14 +1355,16 @@
 
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.figross)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.figross)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.figross == 0 || dt3.figross == null ? '' :
                                             '$') }} <span> {{
                                                 (dt3.figross == 0 || dt3.figross == null ? '-' :
                                                 dt3.figross |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.FigrossPVR)}"> <span
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.FigrossPVR)}"> <span
                                             class="d-flex justify-content-between"> {{
                                             (dt3.FigrossPVR == 0 || dt3.FigrossPVR == null ? '' :
                                             '$') }} <span> {{
@@ -1308,7 +1372,8 @@
                                                 dt3.FigrossPVR |number:'1.0-0') }}</span></span></td>
 
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.FRCOUNT)}">{{ (dt3.FRCOUNT
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.FRCOUNT)}">{{ (dt3.FRCOUNT
                                         == 0 || dt3.FRCOUNT == null ? '-' : dt3.FRCOUNT )}}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(dt3.FIPen)}">
                                         {{ (dt3.FIPen
@@ -1316,7 +1381,8 @@
                                         == 0 || dt3.FIPen == null ? '' : '%' )}}
                                     </td>
 
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.ProductSale)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.ProductSale)}">
                                         <span class="d-flex justify-content-between">
                                             {{
                                             (dt3.ProductSale == 0 || dt3.ProductSale == null ? '' :
@@ -1326,7 +1392,8 @@
                                                 dt3.ProductSale | number:'1.0-0' )}} </span>
                                         </span>
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.ProductPVR)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.ProductPVR)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt3.ProductPVR == 0 || dt3.ProductPVR == null ? '' : '$' )}}
                                             <span>
@@ -1337,23 +1404,26 @@
                                         </span>
 
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.productdealcount)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.productdealcount)}">
                                         {{
                                         (dt3.productdealcount == 0 || dt3.productdealcount == null ? '-' :
                                         dt3.productdealcount )}}
 
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.Productpen)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.Productpen)}">
                                         {{ (dt3.Productpen == 0 ||
                                         dt3.Productpen == null ? '-' :
                                         dt3.Productpen ) }}{{ (dt3.Productpen == 0 ||
                                         dt3.Productpen == null ? '' :
                                         '%' ) }}
                                     </td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt3.peorductPertra)}">
+                                    <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
+                                        [ngClass]="{ negative: !inTheGreen(dt3.peorductPertra)}">
                                         {{ (dt3.peorductPertra == 0 ||
                                         dt3.peorductPertra == null ? '-' :
-                                        dt3.peorductPertra ) }}
+                                        dt3.peorductPertra | number:'1.2-2' ) }}
                                     </td>
                                 </tr>
                             </ng-container>

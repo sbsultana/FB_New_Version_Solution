@@ -4,22 +4,19 @@
 <main>
   <div>
     <div class="container-fluid">
-
-      <div class="report-bar">
+      <div class="reports-bar">
         <div class="filter-dropdowns">
-
-          <!-- Store Dropdown -->
           <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
-              {{storedisplayname}} )
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">( {{storecount}}
+                {{storedisplayname}} )</span>
               <span class="arrow"></span></button>
-            <app-stores  [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+            <app-stores
+              [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
               [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
           </div>
-          <!-- Time Frame Dropdown -->
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(1)">
-              <span> {{displaytime}}</span>
+              Time Frame <span class="light-font"> {{ displaytime }}</span>
               <span class="arrow"></span></button>
             <div class="timeframe" *ngIf="activePopover === 1">
               <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
@@ -27,22 +24,22 @@
           </div>
 
           <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types:
-              ( {{ Teams == 'S' ? 'All Labor Types W/O Details' : Teams == 'A' ? 'All Labor Types' :
-              (selectedlabortypevalues.length > 0 ? selectedlabortypevalues.join(', ') : 'SELECT') }} )
+            <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types <span class="light-font"> ( {{ Teams
+                == 'S' ? 'All Labor Types W/O Details' : Teams == 'A' ? 'All Labor Types' :
+                (selectedlabortypevalues.length > 0 ? selectedlabortypevalues.join(', ') : 'SELECT') }} )</span>
               <span class="arrow"></span></button>
-            <div class="reportstores-card my-3" *ngIf="activePopover ===8">
+            <div class="reportstores-card my-2" *ngIf="activePopover ===8">
               <div class="row h-100">
                 <div class="groups pe-2 d-flex flex-column">
                   <div class="groups-wrapper flex-grow-1">
                     <div class="group-columns">
-                      <button class="outline-button" [ngClass]="{'active': Teams == 'A', 'inactive': Teams != 'A'}"
-                        (click)="teamsselection('A')">
+                      <button class="btn group-button w-100 text-start"
+                        [ngClass]="{'active': Teams == 'A', 'inactive': Teams != 'A'}" (click)="teamsselection('A')">
                         All Labor Types
                       </button>
 
-                      <button class="outline-button" [ngClass]="{'active': Teams == 'S', 'inactive': Teams != 'S'}"
-                        (click)="teamsselection('S')">
+                      <button class="btn group-button w-100 text-start"
+                        [ngClass]="{'active': Teams == 'S', 'inactive': Teams != 'S'}" (click)="teamsselection('S')">
                         All Labor Types W/O Details
                       </button>
                     </div>
@@ -75,13 +72,13 @@
 
           <!-- Deal Status Dropdown -->
           <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(3)">Zero Hours:
-              {{zeroro== 'E' ?
-              'Exclude' : 'Include'
-              }}
+            <button class="dropdown-toggle" (click)="togglePopover(3)">Zero Hours <span class="light-font">( {{zeroro==
+                'E' ?
+                'Exclude' : 'Include'
+                }} )</span>
               <span class="arrow"></span>
             </button>
-            <div class="timeframe" *ngIf="activePopover === 3">
+            <div class="timeframe my-2" *ngIf="activePopover === 3">
               <div class="date-filter-card">
                 <button class="outline-button inactive" (click)="zeroros('I','I')"
                   [ngClass]="{'active':zeroro.indexOf('I')>=0, 'inactive':zeroro.indexOf('I')<0}">
@@ -94,12 +91,13 @@
           </div>
 
           <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(4)">Rank By:
-              {{storeorgrp== 'S' ?
-              'Store' : 'Group'
-              }}
+            <button class="dropdown-toggle" (click)="togglePopover(4)">Rank By <span class="light-font">( {{storeorgrp==
+                'S' ?
+                'Store' : 'Group'
+                }} )</span>
+
             </button>
-            <div class="timeframe" *ngIf="activePopover === 4">
+            <div class="timeframe my-2" *ngIf="activePopover === 4">
               <div class="date-filter-card">
 
                 <button class="outline-button" (click)="storeorgroups('S','S')"
@@ -114,16 +112,16 @@
 
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(5)">
-              Pay Type:
+              Pay Type <span class="light-font">( {{
+                Paytype.length < 1 ? 'Select Pay Type' : Paytype.length==1 ? (Paytype[0]=='C' ? 'Customer Pay' :
+                  Paytype[0]=='W' ? 'Warranty' : Paytype[0]=='I' ? 'Internal' : Paytype[0]=='S' ? 'Sublet Gross' :
+                  Paytype[0]=='M' ? 'Misc' : Paytype[0]) : 'Selected ' + Paytype.length }} )</span>
 
-              {{
-              Paytype.length < 1 ? 'SELECT PAY TYPE' : Paytype.length==1 ? (Paytype[0]=='C' ? 'Customer Pay' :
-                Paytype[0]=='W' ? 'Warranty' : Paytype[0]=='I' ? 'Internal' : Paytype[0]=='S' ? 'Sublet Gross' :
-                Paytype[0]=='M' ? 'Misc' : Paytype[0]) : 'Selected (' + Paytype.length + ')' }} <span class="arrow">
-                </span>
+                  <span class="arrow">
+                  </span>
             </button>
 
-            <div class="timeframe" *ngIf="activePopover === 5">
+            <div class="timeframe my-2" *ngIf="activePopover === 5">
 
 
               <div class="date-filter-card">
@@ -164,16 +162,14 @@
               </div>
             </div>
           </div>
-
-          <!-- Apply Button -->
           <div class="dropdown">
             <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
           </div>
 
         </div>
       </div>
-      <div class="performance-scorecard" id="scrollcent" #scrollcent (scroll)="updateVerticalScroll($event)">
-        <table class="table mb-0">
+      <div class="scorecard-double-header" id="scrollcent" #scrollcent (scroll)="updateVerticalScroll($event)">
+        <table class="table mb-0 w-100">
           <thead>
             <tr>
               <!-- <th></th> -->
@@ -201,38 +197,38 @@
               <!-- <th class="bdr-rt"></th> -->
               <th>&nbsp;</th>
 
-              <th class="bdr-rt" (click)="tabClick('Rank',columnState)" style="cursor: pointer;
+              <th class="bdr-rt" (click)="tabClick('Rank')" style="cursor: pointer;
               white-space: nowrap; ">Rank</th>
-              <th class="bdr-rt" (click)="tabClick('ServiceAdvisor',columnState)" style="cursor: pointer; ">Service
+              <th class="bdr-rt" (click)="tabClick('ServiceAdvisor')" style="cursor: pointer; ">Service
                 Advisor</th>
-              <th class="bdr-rt" (click)="tabClick('StoreName',columnState)" style=" cursor: pointer;">Store Name</th>
+              <th class="bdr-rt" (click)="tabClick('StoreName')" style=" cursor: pointer;">Store Name</th>
               <!-- <th class="spacer"></th> -->
 
-              <th (click)="tabClick('RO',columnState)" style="cursor: pointer;">#ROs
+              <th (click)="tabClick('RO')" style="cursor: pointer;">#ROs
               </th>
-              <th (click)="tabClick('ROPerDay',columnState)" style=" cursor: pointer;">
+              <th (click)="tabClick('ROPerDay')" style=" cursor: pointer;">
                 ROs/Day</th>
-              <th (click)="tabClick('ActualHours',columnState)" style="cursor: pointer;text-align: right;">Hours</th>
-              <th (click)="tabClick('HoursPerRo',columnState)" style="cursor: pointer;">
+              <th (click)="tabClick('ActualHours')" style="cursor: pointer;text-align: right;">Hours</th>
+              <th (click)="tabClick('HoursPerRo')" style="cursor: pointer;">
                 Hours/Ro</th>
-              <th (click)="tabClick('LaborSale',columnState)" style="cursor: pointer">Labor Sales</th>
-              <th (click)="tabClick('LaborGross',columnState)" style="cursor: pointer;">
+              <th (click)="tabClick('LaborSale')" style="cursor: pointer">Labor Sales</th>
+              <th (click)="tabClick('LaborGross')" style="cursor: pointer;">
                 Labor Gross</th>
-              <th (click)="tabClick('PartsSale',columnState)" style="cursor: pointer">Parts Sales</th>
-              <th (click)="tabClick('PartsGross',columnState)" style="cursor: pointer">
+              <th (click)="tabClick('PartsSale')" style="cursor: pointer">Parts Sales</th>
+              <th (click)="tabClick('PartsGross')" style="cursor: pointer">
                 Parts Gross</th>
-              <th (click)="tabClick('TotalGross',columnState)" style="cursor: pointer">
+              <th (click)="tabClick('TotalGross')" style="cursor: pointer">
                 Total Gross</th>
 
-              <th (click)="tabClick('SubletGross',columnState)" style="cursor: pointer" *ngIf="Paytype.includes('S')">
+              <th (click)="tabClick('SubletGross')" style="cursor: pointer" *ngIf="Paytype.includes('S')">
                 Sublet Gross</th>
-              <th (click)="tabClick('MiscGross',columnState)" style="cursor: pointer" *ngIf="Paytype.includes('M')">
+              <th (click)="tabClick('MiscGross')" style="cursor: pointer" *ngIf="Paytype.includes('M')">
                 Misc</th>
 
-              <th (click)="tabClick('GP',columnState)" style="cursor: pointer">GP%</th>
-              <th (click)="tabClick('Discount',columnState)" style="cursor: pointer">
+              <th (click)="tabClick('GP')" style="cursor: pointer">GP%</th>
+              <th (click)="tabClick('Discount')" style="cursor: pointer">
                 Discounts</th>
-              <th (click)="tabClick('ELR',columnState)" style="cursor: pointer">ELR
+              <th (click)="tabClick('ELR')" style="cursor: pointer">ELR
               </th>
 
               <!-- <th>Points</th>
@@ -247,13 +243,14 @@
             </tr>
           </thead>
           <!-- highlite_col: spdata.index != index && index != '' -->
-          <tbody *ngFor="let spdata of ServiceAdvisorData; let i=index;'index+1' as j">
-            <tr
-              [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' ,  'divBold': spdata.ServiceAdvisor === 'Total'}"
-              [id]="'DV_'+j">
-              <td>
-                <!--  *ngIf="spdata.CommentsStatus == 'N'" -->
-                <!-- <div class="Tooltip">
+          <tbody>
+            <ng-container *ngFor="let spdata of ServiceAdvisorData; let i=index;'index+1' as j">
+              <tr
+                [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' ,  'divBold': spdata.ServiceAdvisor === 'Total'}"
+                [id]="'DV_'+j">
+                <td>
+                  <!--  *ngIf="spdata.CommentsStatus == 'N'" -->
+                  <!-- <div class="Tooltip">
 
                       <div style="cursor:pointer">
                           <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'Y'" width="17px"
@@ -275,86 +272,88 @@
                           </app-comments>
                       </span>
                   </div> -->
-              </td>
-              <td *ngIf="spdata.data1 === 'Reports Total'"></td>
-              <td *ngIf="spdata.data1 === 'Reports Total'" style="text-align: left;"></td>
-              <td *ngIf="spdata.data1 === 'Reports Total'" style="text-align: left;"><span>Reports
-                  Total</span></td>
-              <td id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'">
-                <span>{{spdata.Rank=='1000'?'':spdata.Rank}}</span>
-              </td>
-              <!-- (click)="openDetails(spdata.Data2)" -->
-              <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'"
-                style="width: 10%;text-align: left !important;">
-                <span>{{spdata.ServiceAdvisor}}</span>
-              </td>
-              <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'"
-                style="width: 15%;text-align: left !important;">
-                <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>                         -->
-                <span [id]="'D_'+i" title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">
-                  {{spdata.StoreName }} </span>
-              </td>
-              <!-- <td class="spacer"></td> -->
+                </td>
+                <td *ngIf="spdata.data1 === 'Reports Total'"></td>
+                <td *ngIf="spdata.data1 === 'Reports Total'" class="text-start"></td>
+                <td *ngIf="spdata.data1 === 'Reports Total'" class="text-start"><span>Reports
+                    Total</span></td>
+                <td class="text-center" id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'">
+                  <span>{{spdata.Rank=='1000'?'':spdata.Rank}}</span>
+                </td>
+                <!-- (click)="openDetails(spdata.Data2)" -->
+                <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'"
+                  style="width: 10%;text-align: left !important;">
+                  <span>{{spdata.ServiceAdvisor}}</span>
+                </td>
+                <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'"
+                  style="width: 15%;text-align: left !important;">
+                  <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>                         -->
+                  <span [id]="'D_'+i" title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">
+                    {{spdata.StoreName }} </span>
+                </td>
+                <!-- <td class="spacer"></td> -->
 
 
-              <td id="DataBody4" style="text-align: right;"
-                [ngClass]="[spdata.RO != 0 && spdata.RO != null && spdata.RO != undefined && spdata.RO != '' && spdata.RO != '-' ? 'popuppointer' : 'popupdisable']"
-                (click)="openDetails(spdata)">{{spdata.RO=='' || spdata.RO==null ||
-                spdata.RO==undefined ? '-' :spdata.RO| number:'1.0-0'}} </td>
-              <td id="DataBody6" style="text-align: right;">{{spdata.ROPerDay=='' || spdata.ROPerDay==null
-                || spdata.ROPerDay==undefined ? '-' :spdata.ROPerDay| number:'1.2-2'}}</td>
+                <td id="DataBody4" style="text-align: right;"
+                  [ngClass]="[spdata.RO != 0 && spdata.RO != null && spdata.RO != undefined && spdata.RO != '' && spdata.RO != '-' ? 'popuppointer' : 'popupdisable']"
+                  (click)="openDetails(spdata)">{{spdata.RO=='' || spdata.RO==null ||
+                  spdata.RO==undefined ? '-' :spdata.RO| number:'1.0-0'}} </td>
+                <td id="DataBody6" style="text-align: right;">{{spdata.ROPerDay=='' || spdata.ROPerDay==null
+                  || spdata.ROPerDay==undefined ? '-' :spdata.ROPerDay| number:'1.2-2'}}</td>
 
-              <td id="DataBody4" style="text-align: right;">{{spdata.ActualHours=='' ||
-                spdata.ActualHours==null || spdata.ActualHours==undefined ? '-' :spdata.ActualHours|
-                number:'1.2-2'}} </td>
-              <td id="DataBody5" style="text-align: right;">{{spdata.HoursPerRO=='' ||
-                spdata.HoursPerRO==null || spdata.HoursPerRO==undefined ? '-' :spdata.HoursPerRO|
-                number:'1.2-2'}}</td>
+                <td id="DataBody4" style="text-align: right;">{{spdata.ActualHours=='' ||
+                  spdata.ActualHours==null || spdata.ActualHours==undefined ? '-' :spdata.ActualHours|
+                  number:'1.2-2'}} </td>
+                <td id="DataBody5" style="text-align: right;">{{spdata.HoursPerRO=='' ||
+                  spdata.HoursPerRO==null || spdata.HoursPerRO==undefined ? '-' :spdata.HoursPerRO|
+                  number:'1.2-2'}}</td>
 
-              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborSale)}">
-                {{spdata.LaborSale=='' ||
-                spdata.LaborSale==null || spdata.LaborSale==undefined ? '-' :spdata.LaborSale|
-                currency:'USD':'symbol':'1.0-0'}}</td>
-              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborGross)}">
-                {{spdata.LaborGross=='' ||
-                spdata.LaborGross==null || spdata.LaborGross==undefined ? '-' :spdata.LaborGross|
-                currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborSale)}">
+                  {{spdata.LaborSale=='' ||
+                  spdata.LaborSale==null || spdata.LaborSale==undefined ? '-' :spdata.LaborSale|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.LaborGross)}">
+                  {{spdata.LaborGross=='' ||
+                  spdata.LaborGross==null || spdata.LaborGross==undefined ? '-' :spdata.LaborGross|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
 
-              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsSale)}">
-                {{spdata.PartsSale=='' ||
-                spdata.PartsSale==null || spdata.PartsSale==undefined ? '-' :spdata.PartsSale|
-                currency:'USD':'symbol':'1.0-0'}}</td>
-              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsGross)}">
-                {{spdata.PartsGross=='' ||
-                spdata.PartsGross==null || spdata.PartsGross==undefined ? '-' :spdata.PartsGross|
-                currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsSale)}">
+                  {{spdata.PartsSale=='' ||
+                  spdata.PartsSale==null || spdata.PartsSale==undefined ? '-' :spdata.PartsSale|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.PartsGross)}">
+                  {{spdata.PartsGross=='' ||
+                  spdata.PartsGross==null || spdata.PartsGross==undefined ? '-' :spdata.PartsGross|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
 
-              <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.TotalGross)}">
-                {{spdata.TotalGross=='' ||
-                spdata.TotalGross==null || spdata.TotalGross==undefined ? '-' :spdata.TotalGross|
-                currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody5" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.TotalGross)}">
+                  {{spdata.TotalGross=='' ||
+                  spdata.TotalGross==null || spdata.TotalGross==undefined ? '-' :spdata.TotalGross|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
 
-              <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('S')">{{spdata.SubletGross=='' ||
-                spdata.SubletGross==null || spdata.SubletGross==undefined ? '-' :spdata.SubletGross|
-                currency:'USD':'symbol':'1.0-0'}}</td>
-              <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('M')">{{spdata.MiscGross=='' ||
-                spdata.MiscGross==null || spdata.MiscGross==undefined ? '-' :spdata.MiscGross|
-                currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('S')">{{spdata.SubletGross=='' ||
+                  spdata.SubletGross==null || spdata.SubletGross==undefined ? '-' :spdata.SubletGross|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
+                <td id="DataBody5" style="text-align: right;" *ngIf="Paytype.includes('M')">{{spdata.MiscGross=='' ||
+                  spdata.MiscGross==null || spdata.MiscGross==undefined ? '-' :spdata.MiscGross|
+                  currency:'USD':'symbol':'1.0-0'}}</td>
 
-              <td id="DataBody4" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.GP)}">
-                {{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '-' : spdata.GP |
-                number:'1.1-1')}}{{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '' :
-                '%')}}
-              </td>
-              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.Discount)}">
-                {{spdata.Discount=='' || spdata.Discount==null
-                || spdata.Discount==undefined ? '-' :spdata.Discount| currency:'USD':'symbol':'1.0-0'}}
-              </td>
-              <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.ELR)}">
-                {{spdata.ELR=='' || spdata.ELR==null ||
-                spdata.ELR==undefined ? '-' :spdata.ELR| currency:'USD':'symbol':'1.1-1'}}</td>
+                <td id="DataBody4" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.GP)}">
+                  {{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '-' : spdata.GP |
+                  number:'1.1-1')}}{{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '' :
+                  '%')}}
+                </td>
+                <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.Discount)}">
+                  {{spdata.Discount=='' || spdata.Discount==null
+                  || spdata.Discount==undefined ? '-' :spdata.Discount| currency:'USD':'symbol':'1.0-0'}}
+                </td>
+                <td id="DataBody6" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata.ELR)}">
+                  {{spdata.ELR=='' || spdata.ELR==null ||
+                  spdata.ELR==undefined ? '-' :spdata.ELR| currency:'USD':'symbol':'1.1-1'}}</td>
 
-            </tr>
+              </tr>
+            </ng-container>
+
             <!-- <tr *ngIf="spdata.Data2.length>0" [id]="'DNS_'+i"
               [ngClass]="{'hidden': spdata.Dealerx === '+'  }">
               <td colspan="8" style="background: #363b4f;">
@@ -381,7 +380,7 @@
           </tbody>
           <tbody *ngIf="NoData">
             <tr>
-              <td colspan="17" style="text-align: center;">No Records Found!!!</td>
+              <td colspan="18" style="text-align: center;">No Records Found!!!</td>
               <td colspan="1" *ngIf="Paytype.includes('S')"></td>
               <td colspan="1" *ngIf="Paytype.includes('M')"></td>
             </tr>

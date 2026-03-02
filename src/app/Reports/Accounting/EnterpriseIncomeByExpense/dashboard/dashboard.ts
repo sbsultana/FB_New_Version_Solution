@@ -21,11 +21,12 @@ import numeral from 'numeral';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { Router } from '@angular/router';
 import { EnterpriseincomebyexpenseDetails } from '../enterpriseincomebyexpense-details/enterpriseincomebyexpense-details';
-
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -37,7 +38,6 @@ export class Dashboard {
   subscriptionExcel!: Subscription;
   subscriptionReport!: Subscription;
   FSData: any = [];
-  NoData: boolean = false;
   date: any;
   ExpenseTrendByStoreKeys: any = [];
   AllDatakeys: any = [];
@@ -55,7 +55,7 @@ export class Dashboard {
   SubFilter: any;
   SelectedTab: any = [];
   Month: any = '';
-  stores: any;
+  // stores: any;
   PreviousMonths: any = '13';
   selectedstorevalues: any = [];
   selectedstorename: any;
@@ -67,7 +67,7 @@ export class Dashboard {
 
   filters: string[] = [];
   selectedFilters: string[] = [];
-  selectedLabel: string = 'Selected (All)';
+  selectedLabel: string = '( All )';
   activePopover: number | null = null;
   bsConfig: Partial<BsDatepickerConfig> = {
     dateInputFormat: 'MMMM/YYYY',
@@ -97,9 +97,21 @@ export class Dashboard {
       groups: this.groups
     },
   ];
+  stores: any = [];
   popup: any = [{ type: 'Popup' }];
   CurrentRoute: any;
   SetTitle: any;
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storeIds: any = '0';
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
   constructor(
     private datepipe: DatePipe,
     public apiSrvc: Api,
@@ -110,8 +122,21 @@ export class Dashboard {
     private comm: common,
     private toast: ToastService,
     private router: Router,
-    private injector: Injector
+    private injector: Injector,
+    public shared: Sharedservice
   ) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+    }
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
     this.CurrentRoute = this.router.url.substring(1);
     switch (this.CurrentRoute) {
       case 'FixedIncomeByExpense':
@@ -141,11 +166,7 @@ export class Dashboard {
     }
     this.Month = this.date
     // this.date= this.Month
-    if (localStorage.getItem('UserDetails') != null) {
-      this.StoreValues = JSON.parse(
-        localStorage.getItem('UserDetails')!
-      ).Store_Ids;
-    }
+ 
 
 
     this.title.setTitle(this.comm.titleName + `-${this.SetTitle}`);
@@ -156,7 +177,7 @@ export class Dashboard {
         path2: '',
         path3: '',
         Month: this.date,
-        stores: 2,
+        stores: this.storeIds,
         filter: this.Filter,
         ShowHideGP: this.ShowHideGP,
         ShowHideBudget: this.ShowHideBudget,
@@ -167,7 +188,8 @@ export class Dashboard {
         obj: data,
       });
 
-      this.currentMonth = this.selectDate;
+      this.currentMonth = this.Month;
+      this.selectDate = this.Month
       this.GetDataByMonths(this.currentMonth, this.selectedFilters);
     }
     // });
@@ -200,34 +222,47 @@ export class Dashboard {
     this.activePopover = this.activePopover === index ? null : index;
   }
 
-  toggleFilter(filter: string) {
-    if (this.isSelected(filter)) {
-      this.selectedFilters = this.selectedFilters.filter(f => f !== filter);
-    } else {
-      this.selectedFilters.push(filter);
-    }
-    if (this.selectedFilters.length === 0) {
-      this.selectedFilters = [...this.filters];
-    }
-    this.updateLabel();
-  }
-
   isSelected(filter: string): boolean {
     return this.selectedFilters.includes(filter);
   }
 
+  toggleFilter(filter: string) {
+    const index = this.selectedFilters.indexOf(filter);
+    if (index >= 0) {
+      this.selectedFilters.splice(index, 1);
+    } else {
+      this.selectedFilters.push(filter);
+    }
+    this.updateLabel();
+  }
+
   updateLabel() {
-    this.selectedLabel =
-      this.selectedFilters.length === this.filters.length
-        ? 'Selected (All)'
-        : `Selected (${this.selectedFilters.length})`;
+    if (!this.selectedFilters || this.selectedFilters.length === 0) {
+      this.selectedLabel = '( Select )';
+    } else if (this.selectedFilters.length === this.filters.length) {
+      this.selectedLabel = '( All )';
+    } else if (this.selectedFilters.length === 1) {
+      this.selectedLabel = `( ${this.selectedFilters[0]} )`;
+    } else {
+      this.selectedLabel = `( Selected ${this.selectedFilters.length} )`;
+    }
   }
 
   applyDateChange() {
+    if (!this.storeIds || this.storeIds.length === 0) {
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
+      return;
+    }
+    if (!this.selectedFilters || this.selectedFilters.length === 0) {
+      this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
+      return;
+    }
     this.currentMonth = this.formatMonth(this.selectDate);
     this.GetDataByMonths(this.currentMonth, this.selectedFilters);
     this.activePopover = null;
+    this.isLoading = true;
   }
+
   formatMonth(date: Date): string {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -236,66 +271,78 @@ export class Dashboard {
 
 
   storeName: any;
+  isLoading = true;
+  NoData = false;
   IncomeSummaryDataKeys: any = [];
   ServiceTrendingSubKeys: any = [];
   ServiceTrendingXlm: any = [];
   GetDataByMonths(date: any, filters: any) {
     this.IncomeSummaryData = [];
+
     this.spinner.show();
-    const DateToday = this.datepipe.transform(
-      new Date(date),
-      'yyyy-MM-dd'
-    );
+    const DateToday = this.datepipe.transform(new Date(this.date), 'yyyy-MM-dd');
+    this.Month = DateToday
     const obj = {
       DEPARTMENT: filters.toString(),
-      AS_IDS: 2,
-      DATE: DateToday,
+      AS_IDS: this.storeIds.toString(),
+      DATE: this.datepipe.transform(this.selectDate, 'yyyy-MM-dd'),
     };
     console.log(obj);
+
     this.apiSrvc
       .postmethod(this.comm.routeEndpoint + 'GetEnterpriseIncomeExpenseReport', obj)
       .subscribe(
-        (x: any) => {
-          const currentTitle = document.title;
-          if (x.status == 200 && x.response) {
-            this.IncomeSummaryData = x.response;
+        (res: any) => {
+          this.isLoading = false;
+          if (res?.status === 200 && Array.isArray(res.response) && res.response.length) {
+
+            this.IncomeSummaryData = res.response;
             console.log('IncomeSummaryData', this.IncomeSummaryData);
 
-            const IncomeSummaryKeys = Object.keys(x.response[0] || {}).slice(6);
-            const lastTwoValues = IncomeSummaryKeys.slice(-2);
-            const remainingValues = IncomeSummaryKeys.slice(0, -2);
-            this.IncomeSummaryDataKeys = lastTwoValues.concat(remainingValues);
+            const incomeSummaryKeys = Object.keys(res.response[0] || {}).slice(6);
 
-            this.IncomeSummaryDataKeys = this.IncomeSummaryDataKeys.filter((dealership: any) =>
+            const lastTwoValues = incomeSummaryKeys.slice(-2);
+            const remainingValues = incomeSummaryKeys.slice(0, -2);
+
+            this.IncomeSummaryDataKeys = [...lastTwoValues, ...remainingValues];
+
+            this.IncomeSummaryDataKeys = this.IncomeSummaryDataKeys.filter((dealership: string) =>
               dealership !== 'TOTAL' &&
               dealership !== 'AVG' &&
               dealership !== 'SEQ' &&
               (this.ShowHideGP === 'Show' || (this.ShowHideGP === 'Hide' && !dealership.endsWith('_GP'))) &&
-              (this.ShowHideBudget === 'Show' || (this.ShowHideBudget === 'Hide' && !dealership.endsWith('_BDGT') && !dealership.endsWith('_VAR')))
+              (this.ShowHideBudget === 'Show' ||
+                (this.ShowHideBudget === 'Hide' &&
+                  !dealership.endsWith('_BDGT') &&
+                  !dealership.endsWith('_VAR')))
             );
 
-            if (this.IncomeSummaryData.length > 0) {
-              this.IncomeSummaryData.forEach((x: any) => {
-                (x.SubData = []), (x.data2sign = '+');
-              });
+            this.IncomeSummaryData.forEach((row: any) => {
+              row.SubData = [];
+              row.data2sign = '+';
+            });
 
-              console.log('Keys ', this.IncomeSummaryDataKeys);
-              this.NoData = this.IncomeSummaryDataKeys.length === 0;
-            } else {
-              this.NoData = true;
-            }
+            console.log('Keys ', this.IncomeSummaryDataKeys);
+
+            this.NoData = this.IncomeSummaryDataKeys.length > 6;
+
           } else {
-            this.NoData = true;
+            this.IncomeSummaryData = [];
+            this.IncomeSummaryDataKeys = [];
+            this.NoData = false;
           }
-
           this.spinner.hide();
         },
         (error) => {
           console.error(error);
-          this.NoData = true;
+          this.isLoading = false;
+          this.IncomeSummaryData = [];
+          this.IncomeSummaryDataKeys = [];
+          this.NoData = false;
           this.spinner.hide();
         }
       );
+
   }
 
   formatKey(key: string): string {
@@ -326,7 +373,7 @@ export class Dashboard {
     );
     const obj = {
       LEVEL: '1',
-      AS_IDs: 2,
+      AS_IDs: this.storeIds.toString(),
       STORENAMES: '',
       DEPARTMENT: this.selectedFilters.toString(),
       DATE: DateToday,
@@ -384,7 +431,7 @@ export class Dashboard {
                 );
               console.log('Layer One Keys', this.FixedExpenseLayerOneKeys);
 
-              this.NoData = false;
+              // this.NoData = false;
             } else {
               this.NoData = true;
             }
@@ -416,7 +463,7 @@ export class Dashboard {
     );
     const obj = {
       LEVEL: '2',
-      AS_IDs: 2,
+      AS_IDs: this.storeIds.toString(),
       STORENAMES: '',
       DEPARTMENT: this.selectedFilters.toString(),
       DATE: DateToday,
@@ -465,7 +512,7 @@ export class Dashboard {
               );
             console.log('Layer Two Keys', this.FixedExpenseLayerTwoKeys);
 
-            this.NoData = this.FixedExpenseLayerTwo.length === 0;
+            // this.NoData = this.FixedExpenseLayerTwo.length === 0;
           }
           this.spinner.hide();
         },
@@ -517,6 +564,17 @@ export class Dashboard {
   StoreCodes: any;
   block: any = '';
   ngAfterViewInit(): void {
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == this.SetTitle) {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
     this.apiSrvc.GetReportOpening().subscribe((res) => {
       console.log(res);
       if (res.obj.Module == this.SetTitle) {
@@ -614,6 +672,43 @@ export class Dashboard {
       }
     });
   }
+
+
+
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
   reportOpen(temp: any) {
     this.ngbmodalActive = this.ngbmodal.open(temp, {
       size: 'xl',
@@ -635,17 +730,17 @@ export class Dashboard {
     const DetailsET = this.ngbmodal.open(EnterpriseincomebyexpenseDetails, {
       size: 'xl',
       backdrop: 'static',
-      injector: Injector.create({
-        providers: [
-          { provide: CurrencyPipe, useClass: CurrencyPipe }
-        ],
-        parent: this.injector
-      })
+      // injector: Injector.create({
+      //   providers: [
+      //     { provide: CurrencyPipe, useClass: CurrencyPipe }
+      //   ],
+      //   parent: this.injector
+      // })
     });
     DetailsET.componentInstance.DetailsET = {
       LAYERONE: ObjectOne,
       DEPARTMENT: this.filters.toString(),
-      STORES: 2,
+      STORES: this.storeIds.toString(),
       LatestDate: this.currentMonth,
       STORENAME: StoreName,
       REFERENCE: Refer,
@@ -675,7 +770,7 @@ export class Dashboard {
       LAYERTWO: ObjectTwo,
       LAYERTHREE: ObjectThree,
       DEPARTMENT: this.filters.toString(),
-      STORES: 2,
+      STORES: this.storeIds.toString(),
       LatestDate: this.currentMonth,
       STORENAME: StoreName,
       REFERENCE: Refer,
@@ -693,12 +788,12 @@ export class Dashboard {
     const DetailsSF = this.ngbmodal.open({
       size: 'xl',
       backdrop: 'static',
-      injector: Injector.create({
-        providers: [
-          { provide: CurrencyPipe, useClass: CurrencyPipe }
-        ],
-        parent: this.injector
-      })
+      // injector: Injector.create({
+      //   providers: [
+      //     { provide: CurrencyPipe, useClass: CurrencyPipe }
+      //   ],
+      //   parent: this.injector
+      // })
     });
     DetailsSF.componentInstance.ETgraphdetails = {
       ITEM: item,
@@ -779,7 +874,8 @@ export class Dashboard {
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Fixed Income Expense');
+    let SetTitle = this.SetTitle.replace(/[\/()]/g, '').trim();
+    const worksheet = workbook.addWorksheet(SetTitle);
     worksheet.views = [
       {
         state: 'frozen',
@@ -803,7 +899,7 @@ export class Dashboard {
     worksheet.addRow('');
     const DateToday = this.datepipe.transform(
       new Date(),
-      'MM/dd/yyyy h:mm:ss a'
+      'MM.dd.yyyy h:mm:ss a'
     );
     worksheet.addRow([DateToday]).font = {
       name: 'Arial',
@@ -851,18 +947,38 @@ export class Dashboard {
     Groups.value = 'Group :';
     Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
     const groups = worksheet.getCell('B8');
-    groups.value = 'WesternAuto';
+    groups.value = 'Silvertip';
     groups.font = { name: 'Arial', family: 4, size: 9 };
     groups.alignment = {
       vertical: 'middle',
       horizontal: 'left',
       wrapText: true,
     };
+    let storeValue = '';
+
+    const selectedStoreIds: string[] =
+      this.storeIds && this.storeIds.length
+        ? this.storeIds.map((id: any) => id.toString())
+        : [];
+
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
+
+    // ✅ Bind ONLY selected store names
+    storeValue = allStores
+      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+      .map((s: any) => s.storename.trim())
+      .filter(Boolean)
+      .join(', ');
+
+    // ✅ Final fallback (safety)
+    if (!storeValue && selectedStoreIds.length) {
+      storeValue = selectedStoreIds.join(', ');
+    }
     worksheet.mergeCells('B9', 'K11');
     const Stores = worksheet.getCell('A9');
     Stores.value = 'Stores :';
     const stores = worksheet.getCell('B9');
-    stores.value = 'WesternAuto';
+    stores.value = storeValue;
     stores.font = { name: 'Arial', family: 4, size: 9 };
     stores.alignment = {
       vertical: 'top',
@@ -1442,10 +1558,11 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-              // alert(res.response);
+              
               this.toast.success(res.response)
             } else {
-              alert('Invalid Details');
+              
+              this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },
           (error) => {
@@ -1467,6 +1584,7 @@ export class Dashboard {
       type: theBlob.type,
     });
   };
+
   GetPrintData() {
     window.print();
   }

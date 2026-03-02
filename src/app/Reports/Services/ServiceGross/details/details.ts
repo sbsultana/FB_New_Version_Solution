@@ -394,7 +394,7 @@ export class Details {
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.Fsdetails.NAME]);
     worksheet.addRow(['Date:', this.LatestDate]);
-    worksheet.addRow(['Store:', 'WESTERN AUTO']);
+    worksheet.addRow(['Store:', 'Silvertip']);
     worksheet.addRow([]);
 
     // Grid Header

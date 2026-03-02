@@ -134,7 +134,14 @@ export class IncomestatementtrendDetails {
       .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
-          this.FSDetailsData = res.response;
+          this.FSDetailsData = res.response.map((item: any) => ({
+            ...item,
+            AccountDescription: item.AccountDescription
+              ? item.AccountDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : item.AccountDescription
+          }));
           // this.filterData();
           this.filteredFSdetailsData = this.FSDetailsData || [];
           console.log(this.FSDetailsData);
@@ -187,7 +194,15 @@ export class IncomestatementtrendDetails {
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {
-          this.FSSubDetailsMap[index] = res.response;
+          this.FSSubDetailsMap[index] = res.response.map((sub: any) => ({
+            ...sub,
+            DetailDescription: sub.DetailDescription
+              ? sub.DetailDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : sub.DetailDescription
+          }));
+
         }
       });
   }
@@ -376,10 +391,10 @@ export class IncomestatementtrendDetails {
   Details_ExportAsXLSX() {
     const FSDetailsData = [...this.filteredFSdetailsData];
     const FSSubDetailsMap = this.FSSubDetailsMap;
-   
+
     // Setup Excel
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Financial Summary Details');
+    const worksheet = workbook.addWorksheet('Income Statement Trend Details');
     const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
     const DateToday = this.datepipe.transform(new Date(), 'MM/dd/yyyy h:mm:ss a');
 
@@ -387,14 +402,14 @@ export class IncomestatementtrendDetails {
 
     // Header section (above grid)
     worksheet.addRow([]);
-    const titleRow = worksheet.addRow(['Financial Summary Details']);
+    const titleRow = worksheet.addRow(['Income Statement Trend Details']);
     titleRow.font = { bold: true, size: 12 };
     worksheet.addRow([]);
     worksheet.addRow([DateToday]).font = { size: 9 };
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.Fsdetails.NAME]);
     worksheet.addRow(['Date:', this.LatestDate]);
-    worksheet.addRow(['Store:', 'WESTERN AUTO']);
+    worksheet.addRow(['Store:', 'Silvertip']);
     worksheet.addRow([]);
 
     // Grid Header

@@ -19,6 +19,7 @@ import { HttpClient } from '@angular/common/http';
 import { Workbook } from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { Subscription } from 'rxjs';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 declare var bootstrap: any;
 
 @Component({
@@ -72,7 +73,7 @@ export class Dashboard implements OnInit {
   filteredTableData: any[] = [];
   tableData: any[] = [];
   selectedCategory: string = 'Sale';
-  apiUrl = 'https://tcxtractapi.axelone.app/api/WesternAuto/GetGLAccountsInfo';
+  apiUrl = 'https://tcxtractapi.axelone.app/api/SilverTip/GetGLAccountsInfo';
 
   // Account mapping specific
   AccountingMapping: any[] = []; // used in integrated UI
@@ -139,13 +140,11 @@ export class Dashboard implements OnInit {
     public modalService: NgbModal,
     private http: HttpClient,
      private ngbmodalActive: NgbActiveModal,
+     private toast: ToastService,
   ) {
     this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('UserDetails') != null) {
-        // existing bootstrap logic kept
-      }
-
+   
       this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
       if (localStorage.getItem('Fav') != 'Y') {
         const data = {
@@ -198,7 +197,7 @@ export class Dashboard implements OnInit {
     const obj = {
       userid: 1,
     };
-    this.shared.api.postmethod('Western/GetStoresList', obj).subscribe({
+    this.shared.api.postmethod('SilverTip/GetStoresList', obj).subscribe({
       next: (res: any) => {
         console.log(res);
         if (res) {
@@ -930,21 +929,24 @@ export class Dashboard implements OnInit {
       this.shared.spinner.hide();
 
       if (res && (res.status ==200 )) {
-        alert('This Account Mapped successfully');
+        
+        this.toast.show('This Account Mapped successfully', 'success', 'Success');
 
         this.getGLAccountsInfo();
-//  this.ngbmodalActive.dismiss(); // close modal
+
  (<HTMLInputElement>document.getElementById('forceCloseModal')).click();
  
         this.onclose();
       } else {
-        alert(res?.message || 'Failed to save mapping');
+     
+        this.toast.show(res?.message || 'Failed to save mapping', 'danger', 'Error');
       }
     },
     error: (err) => {
       this.shared.spinner.hide();
       console.error('UpdateAccountMapping error', err);
-      alert('Error saving mapping');
+     
+      this.toast.show('Error saving mapping.', 'danger', 'Error');
     },
   });
 }

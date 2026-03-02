@@ -5,40 +5,56 @@ export const routes: Routes = [
   // ACCOUNTING BLOCK
   { path: 'AccountMapping', loadComponent: () => import('./Reports/Accounting/AccountMapping/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FinancialStatement', loadComponent: () => import('./Reports/Accounting/FinancialStatement/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'financialsummary', loadComponent: () => import('./Reports/Accounting/FinancialSummary/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FinancialSummary', loadComponent: () => import('./Reports/Accounting/FinancialSummary/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ExpenseTrend', loadComponent: () => import('./Reports/Accounting/ExpenseTrend/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'IncomeStatementTrend', loadComponent: () => import('./Reports/Accounting/IncomeStatementTrend/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'IncomeStatementStoreComposite', loadComponent: () => import('./Reports/Accounting/IncomeStatement/income-statement-store-composite/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'IncomeStatementStore', loadComponent: () => import('./Reports/Accounting/IncomeStatementStoreComposite/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'IncomeStatementStoreV2', loadComponent: () => import('./Reports/Accounting/IncomeStatementStoreCompositeV2/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'IncomeStatementTrend', loadComponent: () => import('./Reports/Accounting/IncomeStatementTrend/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseTracking', loadComponent: () => import('./Reports/Accounting/EnterpriseTracking/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'EnterpriseIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FixedIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'VariableIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'EnterpriseIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'EnterpriseExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseDepartment/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseIncomeByExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseTrend/dashboard/dashboard').then(m => m.Dashboard) },
 
 
   // SALES BLOCK
   { path: 'SalesGross', loadComponent: () => import('./Reports/Sales/SalesGross/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesGrossManager', loadComponent: () => import('./Reports/Sales/SalesGrossManager/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesGrossExecutive', loadComponent: () => import('./Reports/Sales/SalesGrossExecutive/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'CarDeals', loadComponent: () => import('./Reports/Sales/CarDeals/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'SalesPersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  // { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FandIManagerRanking', loadComponent: () => import('./Reports/Sales/FandIManagerRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventoryBook', loadComponent: () => import('./Reports/Sales/InventoryBook/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventorySummary', loadComponent: () => import('./Reports/Sales/InventorySummary/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'Appointments', loadComponent: () => import('./Reports/Sales/Appointments/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'VariableGrossGL', loadComponent: () => import('./Reports/Sales/VariableGrossGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'QuickInventory', loadComponent: () => import('./Reports/Sales/QuickInventoryReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesReconciliation', loadComponent: () => import('./Reports/Sales/SalesReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'BookedToClosedReconciliation', loadComponent: () => import('./Reports/Sales/BookedToClosedReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
+
+  { path: 'FandIProductPenetration', loadComponent: () => import('./Reports/Sales/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FandIProductPenetrationV2', loadComponent: () => import('./Reports/Others/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
+
+  { path: 'SalesTax', loadComponent: () => import('./Reports/Sales/SalesTax/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
 
   // SERVICE BLOCK
   { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAppointments', loadComponent: () => import('./Reports/Services/ServiceAppointments/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'ServiceGrossOld', loadComponent: () => import('./Reports/Services/ServiceGross/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ServiceGross', loadComponent: () => import('./Reports/Services/ServiceGross/dashboard/dashboard').then(m => m.Dashboard) },
 
   // OTHERS
   { path: 'IncomeBudgetForecast', loadComponent: () => import('./Reports/Others/IncomeBudgetForecast/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'CITFloorplan', loadComponent: () => import('./Reports/Others/CITFloorplan/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'CIT', loadComponent: () => import('./Reports/Others/CITFloorplan/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FinanceReserveRecon', loadComponent: () => import('./Reports/Others/FinaceReserveReconReport/dashboard/dashboard').then(m => m.Dashboard) },
+
+  { path: 'CollisionCenter', loadComponent: () => import('./Reports/Others/CollisionCenter/dashboard/dashboard').then(m => m.Dashboard) },
 
   // parts
+
   { path: 'PartsAging', loadComponent: () => import('./Reports/Parts/PartsAging/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesManagerRanking', loadComponent: () => import('./Reports/Sales/SalesManangerRanking/dashboard/dashboard').then(m => m.Dashboard) },
 
 ];
+

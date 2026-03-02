@@ -7,13 +7,6 @@
             <div class="report-bar">
                 <div class="filter-dropdowns">
                     <div class="dropdown">
-                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
-                            {{storedisplayname}} )
-                            <span class="arrow"></span></button>
-                        <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
-                            (StoresData)="StoresData($event)"></app-stores>
-                    </div>
-                    <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(1)">Stock Type: ( {{ getDealTypeLabel()}}
                             )
                             <!-- <span>{{ getDealTypeSpan() }}</span> -->

@@ -1,0 +1,327 @@
+<!-- <ngx-spinner bdColor="rgba(51,51,51,0.8)" size="medium" color="white" type="ball-clip-rotate">
+    <p style="font-size: 20px; color: white">Loading..</p>
+</ngx-spinner>
+<div class="content-wrapper pt-4">
+    <div class="container-fluid">
+        <div class="report-bar">
+            <div class="filter-dropdowns">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storeIds.length ==
+                        stores.length ?
+                        '':
+                        (storeIds.length==1 || storeIds.length==0 ? '' :
+                        storeIds.length)}} {{storeIds.length == stores.length ? groupName:
+                        (storeIds.length==1 ? storeName : (storeIds.length == 0 ? 'Select ' : 'Selected') )}} )
+                        <span class="arrow"></span></button>
+                    <div class="reportstores-card my-3" *ngIf="activePopover === 0">
+                        <div class="row h-100">
+                            <div class="groups pe-2 d-flex flex-column">
+                                <div class="groups-wrapper flex-grow-1">
+                                    <div class="group-columns">
+                                        <ng-container *ngFor="let g of groupsArray">
+                                            <button class="btn group-button w-100 text-start"
+                                                [ngClass]="{'active':groups.indexOf(g.sg_id)>=0,'inactive':groups.indexOf(g.sg_id)<0}"
+                                                (click)="individualgroups(g)">
+                                                <span ngbTooltip="{{g.sg_name}}"> {{g.sg_name}}</span>
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vertical-divider"></div>
+                            <div class="stores d-flex flex-column ps-0">
+                                <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                    <div class="allstores text-start">
+                                        <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                            (click)="allstores('Y')">Select
+                                            All</a> |
+                                        <a class="text-primary text-decoration-none cursor-pointer ms-2"
+                                            (click)="allstores('N')">Clear
+                                            All</a>
+                                    </div>
+                                    <div class="store-columns flex-grow-1">
+                                        <ng-container *ngFor="let s of stores">
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="individualStores(s)"
+                                                [ngClass]="{'active':storeIds.indexOf(s.ID)>=0,'inactive':storeIds.indexOf(s.ID)<0}">
+                                                <span ngbTooltip="{{s.storename}}"> {{s.storename}}</span>
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="date-filter-card d-flex align-items-center justify-content-start">
+                    <div class="open-calendar position-relative">
+                        <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
+                            [bsConfig]="bsConfig" [(ngModel)]="month" readonly (ngModelChange)="changeDate($event)"
+                            (keydown)="$event.preventDefault()" />
+                    </div>
+                </div>
+
+                   <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="togglePopover(4)">Period ( {{period}} )
+                        <span class="arrow"></span></button>
+                    <div class="reportstores-card my-2" *ngIf="activePopover === 4">
+                        <div class="row h-100">
+                            <div class="stores d-flex flex-column ">
+                                <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                    <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
+                                        <ng-container>
+                                            <button class="btn btn-outline-primary store-button"
+                                                [ngClass]="{'active':period == 'Month','inactive':period != 'Month'}"
+                                                (click)="multipleorsingle('P','Month')"> Month
+                                            </button>
+                                            <button class="btn btn-outline-primary store-button"
+                                                [ngClass]="{'active':period == 'Pay Period 1' ,'inactive':period != 'Pay Period 1'}"
+                                                (click)="multipleorsingle('P','Pay Period 1')">Pay Period 1
+                                            </button>
+                                            <button class="btn btn-outline-primary store-button"
+                                                [ngClass]="{'active':period == 'Pay Period 2','inactive':period != 'Pay Period 2'}"
+                                                (click)="multipleorsingle('P','Pay Period 2')"> Pay Period 2
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             
+                <div class="dropdown">
+                    <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                </div>
+            </div>
+        </div>
+        <div class="performance-scorecard">
+            <table class="table mb-0">
+                <thead>
+                    <tr class="bdr-btm">
+                        <th>{{FromDate | date:'MMM YYYY'}} - {{DupPeriod}} </th>
+                        <th class="text-center bdr-rt" colspan="3"></th>
+                        <th colspan="2" class="text-center bdr-rt">Front Gross</th>
+                        <th colspan="2" class="text-center bdr-rt">Back Gross</th>
+                        <th colspan="2" class="text-center bdr-rt">Commission</th>
+                        <th colspan="1" class="text-center bdr-rt">Bonuses</th>
+                        <th colspan="3" class="text-center bdr-rt">Total Pay&nbsp;&nbsp;<i class="fa fa-eye" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#payplan"
+                                (click)="payplanpopup()" style="cursor: pointer;"></i></th>
+                    </tr>
+                    <tr>
+                        <th (click)="sort('SalesPerson')" style="cursor: pointer;">Salesperson </th>
+                        <th (click)="sort('New')" class="bdr-rt" style="cursor: pointer;">New</th>
+                        <th (click)="sort('Used')" class="bdr-rt" style="cursor: pointer;">Used</th>
+                        <th (click)="sort('Units')" class="bdr-rt" style="cursor: pointer;">Units</th>
+                        <th (click)="sort('Frontgross_Total')" class="bdr-rt" style="cursor: pointer;">Total</th>
+                        <th (click)="sort('FG_PVR')" class="bdr-rt" style="cursor: pointer;">PVR</th>
+                        <th (click)="sort('BackGross_Total')" class="bdr-rt" style="cursor: pointer;">Total</th>
+                        <th (click)="sort('BG_PVR')" class="bdr-rt" style="cursor: pointer;">PVR</th>
+                        <th (click)="sort('Total_Commission')" class="bdr-rt" style="cursor: pointer;">Total</th>
+                        <th (click)="sort('Average')" class="bdr-rt" style="cursor: pointer;">Average</th>
+                     
+                        <th (click)="sort(DupPeriod == 'Pay Period 1' ? 'FS_Bonus':'VolumeBonus')" class="bdr-rt" style="cursor: pointer;"> {{DupPeriod == 'Pay Period 1' ? 'Fast Start' : 'Volume'}}</th>
+                        <th (click)="sort('TotalPay_MTD')" class="bdr-rt" style="cursor: pointer;">MTD</th>
+                        <th (click)="sort('Pace')" class="bdr-rt" style="cursor: pointer;"> Pace</th>
+                        <th (click)="sort('Adjustments')" class="bdr-rt" style="cursor: pointer;">Adjustments
+                          
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="SPCSummaryData && SPCSummaryData.length > 0 ">
+                        <tr class="text-normal" *ngFor="let SPC of SPCSummaryData;let i = index">
+                            <td title="{{SPC.SalesPerson}}" id="D_0" (click)="navigateDetails(SPC)"
+                                style="cursor: pointer;">
+                                {{(SPC.SalesPerson == undefined ? '--' : ( (SPC.SalesPerson.toString() | slice:0:42) +
+                                (SPC.SalesPerson.toString().length > 42 ? '...' : '') ))}} </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.New)}">{{SPC.New == 0 ||
+                                SPC.New == null ?
+                                '-' : SPC.New | number:'1.1-1' }}</td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Used)}">{{SPC.Used == 0 ||
+                                SPC.Used == null ?
+                                '-' : SPC.Used | number:'1.1-1' }}</td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Units)}">{{SPC.Units == 0 || SPC.Units == null ?
+                                '-' : SPC.Units | number:'1.1-1' }}</td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Frontgross_Total)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.Frontgross_Total == 0 || SPC.Frontgross_Total == null ? '' : '$'}}
+                                    <span>
+                                        {{SPC.Frontgross_Total == 0 || SPC.Frontgross_Total == null ? '-' :
+                                        SPC.Frontgross_Total | number:
+                                        '1.2-2'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.FG_PVR)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.FG_PVR == 0 || SPC.FG_PVR == null ? '' : '$'}}
+                                    <span> {{SPC.FG_PVR == 0 || SPC.FG_PVR == null ? '-' : SPC.FG_PVR | number:
+                                        '1.2-2'}} </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.BackGross_Total)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.BackGross_Total == 0 || SPC.BackGross_Total == null ? '' : '$'}}
+                                    <span>
+                                        {{SPC.BackGross_Total == 0 || SPC.BackGross_Total == null ? '-' :
+                                        SPC.BackGross_Total | number:
+                                        '1.2-2'}} </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.BG_PVR)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.BG_PVR == 0 || SPC.BG_PVR == null ? '' : '$'}}
+                                    <span>
+                                        {{SPC.BG_PVR == 0 || SPC.BG_PVR == null ? '-' : SPC.BG_PVR | number:'1.2-2'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Total_Commission)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.Total_Commission == 0 || SPC.Total_Commission == null ? '' : '$'}}
+                                    <span> {{SPC.Total_Commission == 0 || SPC.Total_Commission == null ? '-' :
+                                        SPC.Total_Commission | number:
+                                        '1.2-2'}}</span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Average)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.Average == 0 || SPC.Average == null ? '' : '$'}}
+                                    <span> {{SPC.Average == 0 || SPC.Average == null ? '-' : SPC.Average | number:
+                                        '1.2-2'}}</span>
+                                </span>
+                            </td>
+                     
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.VolumeBonus)}">
+                                <span class="d-flex justify-content-between" *ngIf="DupPeriod == 'Pay Period 1'">
+                                    {{SPC.FS_Bonus == 0 || SPC.FS_Bonus == null ? '' : '$'}}
+                                    <span> {{SPC.FS_Bonus == 0 || SPC.FS_Bonus == null ? '-' : SPC.FS_Bonus
+                                        | number: '1.2-2'}}</span>
+                                </span>
+
+                                  <span class="d-flex justify-content-between" *ngIf="DupPeriod != 'Pay Period 1'">
+                                    {{SPC.VolumeBonus == 0 || SPC.VolumeBonus == null ? '' : '$'}}
+                                    <span> {{SPC.VolumeBonus == 0 || SPC.VolumeBonus == null ? '-' : SPC.VolumeBonus
+                                        | number: '1.2-2'}}</span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.TotalPay_MTD)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.TotalPay_MTD == 0 || SPC.TotalPay_MTD == null ? '' : '$'}}
+                                    <span>
+                                        {{SPC.TotalPay_MTD == 0 || SPC.TotalPay_MTD == null ? '-' :
+                                        SPC.TotalPay_MTD | number: '1.2-2'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Pace)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.Pace == 0 || SPC.Pace == null ? '' : '$'}}
+                                    <span>
+                                        {{SPC.Pace == 0 || SPC.Pace == null ? '-' : SPC.Pace | number:
+                                        '1.2-2'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td [ngClass]="{ negative: !inTheGreen(SPC.Adjustments)}">
+                                <span class="d-flex justify-content-between">
+                                    {{SPC.Adjustments == 0 || SPC.Adjustments == null ? '' : '$'}}
+                                    <span> {{SPC.Adjustments == 0 || SPC.Adjustments == null ? '-' : SPC.Adjustments |
+                                        number:
+                                        '1.2-2'}}</span>
+                                </span>
+                            </td>
+                        </tr>
+                         <tr class="bdr-tp sticky-bottom-row text-bold">
+                        <td id="D_0"> </td>
+                        <td>{{getTotal('New') | number:'1.1-1'}}</td>
+                        <td>{{getTotal('Used') | number:'1.1-1'}}</td>
+                        <td>{{getTotal('Units') | number:'1.1-1'}}</td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('Frontgross_Total') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('Frontgross_Total') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td></td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('BackGross_Total') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('BackGross_Total') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td></td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('Total_Commission') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('Total_Commission') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td></td>
+                       
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('VolumeBonus') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('VolumeBonus') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('TotalPay_MTD') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('TotalPay_MTD') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('Pace') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('Pace') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="d-flex justify-content-between">
+                                {{getTotal('Adjustments') ? '$' : ''}}
+                                <span>
+                                    {{getTotal('Adjustments') | number:'1.2-2'}}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    </ng-container>
+                    <tr *ngIf="NoData != ''">
+                        <td colspan="15"
+                            style="text-align: center !important;font-size: .8vw;background: #fff !important;color: black; display: revert;">
+                            <label>No Data Found</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade mt-4" id="payplan" tabindex="-1" role="dialog" aria-labelledby="logoutLabel" aria-hidden="true">
+    <div class="modal-dialog mt-4 pt-4">
+        <div class="modal-content mt-4" style="background-color: white !important;">
+            <div class="modal-header ">
+                <h5 class="modal-title" id="myModalLabel">Pay Plan</h5>
+                <span class="close ms-auto" data-bs-dismiss="modal" aria-hidden="true"
+                    style="font-size: x-large;cursor: pointer;">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height: 69vh; overflow: auto;">
+                <app-payplan [plan]="plan"></app-payplan>
+            </div>
+        </div>
+    </div>
+</div> -->

@@ -1,0 +1,120 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div class="fluid-container mx-2">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between pb-2">
+                <div class="filter-dropdowns d-flex align-items-center">
+                    <div class="date-filter-card d-flex align-items-center justify-content-start">
+                        <div class="open-calendar position-relative">
+                            <input type="text" placeholder="Select Year" bsDatepicker class="form-control year-input"
+                                [bsConfig]="bsConfig" [(bsValue)]="bsValue" (bsValueChange)="onDateSelected($event)"
+                                readonly (keydown)="$event.preventDefault()" />
+                        </div>
+                    </div>
+                    <button class="apply-button" (click)="applyFilterAndYear()">
+                        Apply
+                    </button>
+                </div>
+            </div>
+            <div class="collision-tbl">
+                <div class="loop-tbl" *ngFor="let item of CollisionData; let i = index">
+                    <div class="performance-scorecard" [ngClass]="item?.RO_Number === 'Subtotals' ? 'mb-0' : 'mb-3'">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr *ngIf="item?.RO_Number !== 'Subtotals'">
+                                    <th class="text-start">{{ item?.RO_Number }}</th>
+                                    <th class="text-start" colspan="3">{{ item?.Primary_Contact }}</th>
+                                    <th class="text-start" colspan="2">Date Cr: {{ item?.Date_Cr | date: 'MM/dd/yy' }}</th>
+                                    <th class="text-start" colspan="2">{{ item?.Year }} {{ item?.Make }}</th>
+                                    <th class="text-start" colspan="2">{{ item?.Model }}</th>
+                                    <th class="text-start" colspan="2">{{ item?.Carrier_Name }}</th>
+                                    <th class="text-end" colspan="3">Status: {{ item?.RO_Status }}</th>
+                                </tr>
+                                <tr *ngIf="item?.RO_Number === 'Subtotals'"
+                                    style="background-color: #001D57 !important;">
+                                    <th class="text-start" style="background-color: #001D57 !important;">Subtotals</th>
+                                    <th class="text-center" colspan="14">{{ item?.Toatl_Repair_orders }} Repair Orders
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">Category</th>
+                                    <th class="text-end">Total Billed</th>
+                                    <th class="text-end">Profit</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th>Other</th>
+                                    <th>TAX</th>
+                                    <th>TAX SUR</th>
+                                    <th>MECH LAB</th>
+                                    <th>PAINT LAB</th>
+                                    <th>BODY LAB</th>
+                                    <th>SUBLET</th>
+                                    <th>OEM PARTS</th>
+                                    <th class="text-end">AM PARTS</th>
+                                    <th class="text-end">LKQ PARTS</th>
+                                    <th class="text-end">PAINT MAT'L</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr [ngStyle]="{ 'font-weight': item?.RO_Number === 'Subtotals' ? '700' : '400' }">
+                                    <td>Amount</td>
+                                    <td>{{ formatCurrency(item?.Total_Billed_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.Profit) }}</td>
+                                    <td>{{ formatCurrency(item?.Subtotal_Amount) }}</td>
+                                    <td rowspan="3" class="text-end align-start">{{ formatCurrency(item?.Other) }}</td>
+                                    <td rowspan="3" class="text-end align-start">{{ formatCurrency(item?.Tax) }}</td>
+                                    <td rowspan="3" class="text-end align-start">{{ formatCurrency(item?.Tax_Sur) }}
+                                    </td>
+                                    <td>{{ formatCurrency(item?.Mechlab_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.Paintlab_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.Bodylab_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.SUBLET_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.Oemparts_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.AM_Parts_Amount) }}</td>
+                                    <td>{{ formatCurrency(item?.LKQ_Parts_Amount) }}</td>
+                                    <td rowspan="3" class="text-end align-middle">
+                                        {{ formatCurrency(item?.Paint_Matl_Cost) }}
+                                    </td>
+                                </tr>
+                                <tr [ngStyle]="{ 'font-weight': item?.RO_Number === 'Subtotals' ? '700' : '400' }">
+                                    <td>Cost</td>
+                                    <td>{{ formatCurrency(item?.Total_Billed_Cost) }}</td>
+                                    <td>-</td>
+                                    <td>{{ formatCurrency(item?.Subtotal_Cost) }}</td>
+                                    <!-- <td>-</td>
+                                <td>-</td>
+                                <td>-</td> -->
+                                    <td>{{ formatCurrency(item?.Mechlab_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.Paintlab_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.Bodylab_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.Sublet_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.Oemparts_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.AM_Parts_Cost) }}</td>
+                                    <td>{{ formatCurrency(item?.LKQ_Parts_Cost) }}</td>
+                                </tr>
+                                <tr [ngStyle]="{ 'font-weight': item?.RO_Number === 'Subtotals' ? '700' : '400' }">
+                                    <td>Margin</td>
+                                    <td>{{ formatPercent(item?.Total_Billed_Margin) }}</td>
+                                    <td>{{ formatPercent(item?.Profit_Margin_Percent) }}</td>
+                                    <td>-</td>
+                                    <!-- <td>-</td>
+                                <td>-</td>
+                                <td>-</td> -->
+                                    <td>{{ formatPercent(item?.Mechlab_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.Paintlab_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.Bodylab_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.Sublet_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.OEMPARTS_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.AM_Parts_Percent) }}</td>
+                                    <td>{{ formatPercent(item?.LKQ_Parts_Percent) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

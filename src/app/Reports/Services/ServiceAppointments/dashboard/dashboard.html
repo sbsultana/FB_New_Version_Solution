@@ -4,27 +4,28 @@
 <main>
     <div>
         <div class="container-fluid">
-            <div class="report-bar">
+            <div class="reports-bar">
                 <div class="filter-dropdowns">
                     <div class="dropdown">
-                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
-                            {{storedisplayname}} )
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
                             <span class="arrow"></span></button>
-                        <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
-                            (StoresData)="StoresData($event)"></app-stores>
-                    </div>
-                    <!-- Time Frame Dropdown -->
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>&nbsp;&nbsp;
+
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
-                            <span> {{displaytime}}</span>
+                            Time Frame <span class="light-font"> ( {{displaytime}} )</span>
                             <span class="arrow"></span></button>
                         <div class="timeframe" *ngIf="activePopover === 1">
                             <app-date-range-picker [Dates]="Dates"
                                 (updatedDates)="updatedDates($event)"></app-date-range-picker>
                         </div>
                     </div>
-                    <!-- Apply Button -->
-                    <div class="dropdown">
+                    <div class="dropdown">&nbsp;&nbsp;
                         <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
                     </div>
                 </div>
@@ -49,12 +50,12 @@
                     </div>
                 </div>
             </div>
-            <div class="performance-scorecard">
-                <table class="table mb-0">
+            <div class="scorecard-single-header appointments-tbl">
+                <table class="table mb-0 w-100">
                     <thead>
                         <tr>
                             <th class="text-start" (click)="sort(['AS_COMPANYNAME'])" style="cursor: pointer;"
-                                *ngIf="storeId.toString().indexOf(',')> 0 || storeId == 0 ">Dealer</th>
+                                *ngIf="storeIds.toString().indexOf(',')> 0 || storeIds == 0 ">Dealer</th>
                             <th (click)="sort('CUSTOMER')" style="cursor: pointer;">Customer</th>
                             <th (click)="sort('CONTACT NUMBER')" style="cursor: pointer;"> Contact Number</th>
                             <th (click)="sort('APPTDate')" style="cursor: default;"> Date</th>
@@ -82,7 +83,7 @@
                         <tbody>
                             <tr *ngFor="let Appointment of Appointmentdata | filter: searchQuery; let i=index">
                                 <td style="text-align: left;"
-                                    *ngIf="storeId.toString().indexOf(',')> 0 || storeId == 0 ">
+                                    *ngIf="storeIds.toString().indexOf(',')> 0 || storeIds == 0 ">
                                     {{Appointment["AS_COMPANYNAME"] || '-'}}</td>
                                 <td style="text-align: left;">{{Appointment["CUSTOMER"] || '-'}}</td>
                                 <td class="text-start">
@@ -117,7 +118,7 @@
                         <td class="aligncenter">{{Appointment["Sales Representative"] || '-'}}</td>
                         <td class="aligncenter">{{Appointment["BD Agent"] || '-'}}</td>
                         <td class="aligncenter">{{Appointment["Manager"] || '-'}}</td>
-                        <td class="aligncenter">{{Appointment["Created"] | date:'MM.dd.yyyy'}}</td>
+                        <td class="aligncenter">{{Appointment["Created"] | date:'MM/dd/yyyy'}}</td>
                         <td class="aligncenter">{{Appointment["Source"] || '-'}}</td>
                         <td  style="text-align: center !important;">{{Appointment["Contacted"] || '-'}}</td> -->
                             </tr>

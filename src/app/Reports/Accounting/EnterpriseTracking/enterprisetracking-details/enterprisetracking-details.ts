@@ -373,7 +373,7 @@ export class EnterprisetrackingDetails {
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.ETdetails.DEPARTMENT === 'TOTAL' ? 'New, Used, Service, Parts, Collision' : this.ETdetails.DEPARTMENT]);
     worksheet.addRow(['Date:', this.LatestDate]);
-    worksheet.addRow(['Store:', 'WESTERN AUTO']);
+    worksheet.addRow(['Store:', this.ETdetails.STORE]);
     worksheet.addRow([]);
 
     // Grid Header

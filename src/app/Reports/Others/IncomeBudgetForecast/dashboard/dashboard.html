@@ -9,6 +9,13 @@
             <div class="col-12">
                 <div class="d-flex align-items-center justify-content-between pb-2">
                     <div class="filter-dropdowns d-flex align-items-center">
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+                                {{storedisplayname}} )
+                                <span class="arrow"></span></button>
+                            <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}"
+                                [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                        </div>
                         <div class="date-filter-card d-flex align-items-center justify-content-start">
                             <div class="open-calendar position-relative">
                                 <input type="text" placeholder="Select Year" bsDatepicker
@@ -20,7 +27,7 @@
                         </div>
                         <div class="dropdown">
                             <button class="dropdown-toggle text-capitalize" (click)="togglePopover(1)">
-                                {{ selectedFilter }} <span class="arrow"></span>
+                                Type ( {{ selectedFilter }} ) <span class="arrow"></span>
                             </button>
 
                             <div class="timeframe" *ngIf="activePopover === 1">
@@ -47,7 +54,7 @@
                 </div>
                 <div class="performance-scorecard">
                     <table class="table mb-0 w-100">
-                        <thead>
+                        <thead >
                             <tr>
                                 <th class="text-start"
                                     style="width: 180px; background-color: #0554EF !important; color: #FFF;">
@@ -60,8 +67,7 @@
                                     style="width: 100px; background-color: #0554EF !important; color: #FFF;">
                                     {{ m }}
                                 </th>
-                                <th
-                                    style="width: 100px; background-color: #0554EF !important; color: #FFF;">
+                                <th style="width: 100px; background-color: #0554EF !important; color: #FFF;">
                                     Total
                                 </th>
                             </tr>
@@ -94,45 +100,46 @@
                                     *ngFor="let key of ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let j = index">
 
                                     <ng-container *ngIf="!isEditMode">
-                                        <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
-                                            {{ row[key] | currency:'USD':'symbol':'1.0-0' }}
+                                        <ng-container
+                                            *ngIf="row[key] && row[key] !== 0 && row[key] !== '0'; else showDash">
+                                            <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
+                                                {{ row[key] | currency:'USD':'symbol':'1.0-0' }}
+                                            </ng-container>
+                                            <ng-template #unitValue>
+                                                {{ row[key] }}
+                                            </ng-template>
                                         </ng-container>
-                                        <ng-template #unitValue>
-                                            {{ row[key] }}
+                                        <ng-template #showDash>
+                                            
                                         </ng-template>
                                     </ng-container>
-
                                     <ng-container *ngIf="isEditMode">
-                                        <input type="number" [(ngModel)]="PDCForecastData[i][key]"
-                                            class="form-control editabletxt" style="text-align: right;"
+                                        <input type="number" [(ngModel)]="row[key]" name="row[key]" id="row[key]"
+                                            [ngModelOptions]="{standalone: true}" class="form-control editabletxt"
+                                            style="text-align: right;" [disabled]="row.ITV_Formula_Status === 'Y'"
+                                            (input)="onKeydownEvent($event, row, i, key, j)"
                                             (paste)="onPaste($event, i, j)" />
+
                                     </ng-container>
                                 </td>
 
                                 <td>
                                     <strong>
-                                        <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
-                                            {{ getRowTotal(row) | currency:'USD':'symbol':'1.0-0' }}
+                                        <ng-container *ngIf="!isEmptyValue(getRowTotal(row)); else showDash">
+                                            <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
+                                                {{ getRowTotal(row) | currency:'USD':'symbol':'1.0-0' }}
+                                            </ng-container>
+                                            <ng-template #unitValue>
+                                                {{ getRowTotal(row) }}
+                                            </ng-template>
                                         </ng-container>
-
-                                        <ng-template #unitValue>
-                                            {{ getRowTotal(row) }}
+                                        <ng-template #showDash>
+                                            
                                         </ng-template>
                                     </strong>
 
                                 </td>
                             </tr>
-
-
-                            <!-- Total Row -->
-                            <!-- <tr class="table-total">
-                                <td><strong>Total</strong></td>
-                                <td
-                                    *ngFor="let m of ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let i = index">
-                                    <strong>{{ getColumnTotal(i) | currency:'USD':'symbol':'1.0-0' }}</strong>
-                                </td>
-                                <td><strong>{{ getGrandTotal() | currency:'USD':'symbol':'1.0-0' }}</strong></td>
-                            </tr> -->
                         </tbody>
 
                         <ng-template #noData>

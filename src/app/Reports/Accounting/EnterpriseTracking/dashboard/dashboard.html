@@ -4,28 +4,43 @@
 <main>
   <div class="container-fluid">
     <div class="col-12">
-      <div class="filter-dropdowns">
-        <div class="date-filter-card d-flex align-items-center justify-content-start">
-          <div class="open-calendar position-relative">
-            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
-              [bsConfig]="bsConfig" [(ngModel)]="selectedDate" readonly (keydown)="$event.preventDefault()" />
+      <div class="reports-bar">
+        <div class="filter-dropdowns">
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">( {{storecount}}
+                {{storedisplayname}} )</span>
+              <span class="arrow"></span></button>
+            <app-stores
+              [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+              [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
           </div>
-        </div>
-        <div class="dropdown">
-          <button class="apply-button" (click)="applyDateChange()"><span>Apply</span></button>
+
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="dp.show()">
+              Month
+              <span class="light-font">
+                ( {{ selectedDate | date:'MMMM/yyyy' }} )
+              </span>
+            </button>
+            <input #dp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="selectedDate" [bsConfig]="bsConfig" readonly
+              (keydown)="$event.preventDefault()" style="position: absolute; opacity: 0; height: 0; width: 0;" />
+          </div>
+          <div class="dropdown">
+            <button class="apply-button" (click)="applyDateChange()"><span>Apply</span></button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="performance-scorecard">
+    <div class="scorecard-multi-header enterprisetracking-tbl">
       <table class="table mb-0 w-100">
         <thead>
           <tr>
-            <th class="text-start text-capitalize">{{currentMonth | date:'MMMM yyyy'}}</th>
+            <th class="text-start">{{currentMonth | date:'MMMM yyyy'}}</th>
             <th>Retail</th>
             <th colspan="4">Gross</th>
             <th colspan="5">Estimated Expenses</th>
             <th colspan="3">Operating Net</th>
-            <th colspan="2" style="border-radius: 0 10px 0 0;">Net Profit</th>
+            <th colspan="2" style="box-shadow: none;">Net Profit</th>
           </tr>
           <tr>
             <th class="text-start">Store</th>
@@ -50,7 +65,7 @@
           <ng-container *ngIf="EnterpriseTrackingData.length > 0; else NoEnterpriseTrackingData">
             <ng-container *ngFor="let ETNP of EnterpriseTrackingData; let j=index">
               <tr class="lightblue-bg" [ngClass]="{ 'text-bold': ETNP.STORE === 'REPORT TOTAL' }">
-                <td class="lightblue-bg text-capitalize"><span class="dlrship" >
+                <td class="lightblue-bg text-capitalize text-start"><span class="dlrship">
                     {{(ETNP?.STORE ==
                     "" ||
                     ETNP?.STORE == null ? '' : ETNP?.STORE)}}
@@ -179,7 +194,7 @@
               <ng-container *ngFor="let ET of ETNP.sub; let j=index">
                 <tr class="title" id="DV_0" *ngIf="ET.DEPT !== null && ET.DEPT !== 'TOTAL'"
                   [ngClass]="{ 'text-bold': ET.STORE === 'REPORT TOTAL' }">
-                  <td class="extra-padding text-capitalize"><span title="{{ET.SP1}}" id="D_0">{{(ET.DEPT ==
+                  <td class="extra-padding text-capitalize text-start"><span title="{{ET.SP1}}" id="D_0">{{(ET.DEPT ==
                       undefined
                       ? '--' : (
                       (ET.DEPT.toString() |

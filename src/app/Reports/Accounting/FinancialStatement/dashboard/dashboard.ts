@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
 import {
   BsDatepickerConfig,
   BsDatepickerModule,
@@ -13,10 +13,14 @@ import { Api } from '../../../../Core/Providers/Api/api';
 import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 import { environment } from '../../../../../environments/environment';
 import { Subscription } from 'rxjs';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import numeral from 'numeral';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   providers: [CurrencyPipe, DatePipe, DecimalPipe],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
@@ -25,7 +29,7 @@ export class Dashboard {
   dynamicTitle = 'Financial Statement';
   FSData: any[] = [];
   Month: string | null = null;
-  storeIds: any = '';
+  // storeIds: any = '';
   storeName: any;
   presentDate: Date | null = null;
   lastFourMonthsArray: string[] = [];
@@ -36,6 +40,31 @@ export class Dashboard {
   excel!: Subscription;
   selectedDate: Date = new Date();
   currentMonth!: Date;
+  // groupId: any = [1];
+  storeIds: any = [4]
+  stores: any = []
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  groups: any = 1;
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': this.storeIds, 'type': 'S', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
+  activePopover: number = -1;
+  ngChanges: any;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
+
   constructor(
     public apiSrvc: Api,
     public shared: Sharedservice,
@@ -48,12 +77,33 @@ export class Dashboard {
     private datepipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private decimalPipe: DecimalPipe,
+    private toast: ToastService,
     private comm: common
   ) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')[0]
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')[0]
+    }
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
+
     this.shared.setTitle(this.shared.common.titleName + '-Financial Statement');
     // if (localStorage.getItem('Fav') !== 'Y') {
     const data = { title: this.dynamicTitle, stores: '2' };
     this.shared.api.SetHeaderData({ obj: data });
+    const lastMonth = new Date();
+    let today = new Date();
+    if (today.getDate() < 7) {
+      this.selectedDate = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
+    } else {
+      this.selectedDate = new Date(lastMonth.setMonth(lastMonth.getMonth()));
+    }
     this.currentMonth = this.selectedDate;
     this.onMonthChange(this.currentMonth);
     // }
@@ -68,8 +118,19 @@ export class Dashboard {
   };
 
   applyDateChange() {
-    this.currentMonth = this.selectedDate;
-    this.onMonthChange(this.currentMonth);
+    if (!this.storeIds || this.storeIds.length === 0) {
+    
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
+      return;
+    }
+    else {
+      this.currentMonth = this.selectedDate;
+      this.onMonthChange(this.currentMonth);
+    }
   }
 
   onMonthChange(monthDate: Date) {
@@ -88,7 +149,7 @@ export class Dashboard {
     }
     const dateFormatted = this.datepipe.transform(monthDate, 'dd-MMM-yyyy');
     const obj = {
-      stores: '2',
+      stores: this.storeIds,
       DATE: dateFormatted,
     };
     const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetFinStatementReport';
@@ -99,7 +160,8 @@ export class Dashboard {
         this.spinner.hide();
 
         if (res.status !== 200) {
-          alert('Invalid Details');
+        
+          this.toast.show('Invalid Details', 'danger', 'Error');
           return;
         }
 
@@ -160,7 +222,17 @@ export class Dashboard {
   }
   ngAfterViewInit() {
 
-
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Financial Statement') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
     this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: { obj: { title: string; state: boolean; }; }) => {
       if (this.excel != undefined) {
         if (res.obj.title == 'Financial Statement') {
@@ -172,6 +244,52 @@ export class Dashboard {
     });
 
 
+  }
+  // @HostListener('document:click', ['$event'])
+  // onDocumentClick(event: MouseEvent) {
+  //   const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+  //   if (!clickedInside) {
+  //     this.activePopover = -1;
+  //   }
+  // }
+
+  togglePopover(popoverIndex: number) {
+    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
+  }
+
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'S', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
   }
   expandorcollapse(ind: any, e: any, ref: any, Item: any, Department: any) {
     let id = (e.target as Element).id;
@@ -210,7 +328,7 @@ export class Dashboard {
       'dd-MMM-yyyy'
     );
     const obj = {
-      "Store": '2',
+      "Store": this.storeIds,
       "Department": Object.Department,
       "DATE": DateToday,
       "Headname": Object.DisplayName
@@ -277,32 +395,41 @@ export class Dashboard {
       );
   }
 
+  isSpecialRow(name: string): boolean {
+    return [
+      'Total Selling Gross (New)',
+      'Total Selling Gross (Used)',
+      'Net Income Before Taxes',
+      'Total Operating Department Profit'
+    ].includes(name);
+  }
+
   getStyle(value: any, valueType: string) {
-    if (value == null || value === '' || value === 0 || value === '0' || value === undefined) {
+    if (value === null || value === '' || value === 0 || value === '0') {
       return { 'justify-content': 'center' };
     }
     switch (valueType) {
-      case '$': return { 'justify-content': 'flex-end' };
-      case '#': return { 'justify-content': 'flex-end' };
-      case '%': return { 'justify-content': 'center' };
-      default: return { 'justify-content': 'initial' };
+      case '$':
+        return { 'justify-content': 'space-between' };
+      case '#':
+        return { 'justify-content': 'flex-end' };
+      case '%':
+        return { 'justify-content': 'center' };
+      default:
+        return { 'justify-content': 'initial' };
     }
   }
-
   formatValue(value: any, valueType: string): string {
-    if (value == null || value === '' || value === 0 || value === '0' || value === undefined) {
+    if (value === null || value === undefined || value === 0 || value === '0') {
       return '-';
-    }
-
-    switch (valueType) {
-      case '#':
-        return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value);
-      case '$':
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
-      case '%':
-        return new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2 }).format(value / 100);
-      default:
-        return value;
+    } else if (valueType === '#') {
+      return typeof value === 'number' ? numeral(value).format('0,0') : value;
+    } else if (valueType === '$') {
+      return typeof value === 'number' ? numeral(value).format('0,0') : value;
+    } else if (valueType === '%') {
+      return typeof value === 'number' ? value.toLocaleString() + '%' : value;
+    } else {
+      return value;
     }
   }
   index: string = '';
@@ -471,19 +598,48 @@ export class Dashboard {
         return value;
     }
   }
-
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('Financial Statement');
 
-    const formattedMonth = this.shared.datePipe.transform(this.selectedDate, 'MMMM yyyy');
+    const formattedMonth = this.shared.datePipe.transform(
+      this.selectedDate,
+      'MMMM yyyy'
+    );
 
+    // ================= STORE VALUE FOR EXCEL =================
+    let storeValue = '';
+
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
+    const selectedStoreIds: string[] = Array.isArray(this.storeIds)
+      ? this.storeIds.map((id: any) => id.toString())
+      : [];
+
+    // ✅ No selection OR all selected → show ALL store names
+    if (!selectedStoreIds.length || selectedStoreIds.length === allStores.length) {
+      storeValue = allStores
+        .map((s: any) => s.storename?.trim())
+        .filter(Boolean)
+        .join(', ');
+    }
+    // ✅ Partial selection → show ONLY selected store names
+    else {
+      storeValue = allStores
+        .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+        .map((s: any) => s.storename?.trim())
+        .filter(Boolean)
+        .join(', ');
+    }
+
+    // ================= FILTERS =================
     const filters = [
-      { name: 'Store:', values: 'WesternAuto' },
+      { name: 'Store:', values: storeValue },
       { name: 'Month:', values: formattedMonth },
     ];
 
-    const currentMonth = this.shared.datePipe.transform(this.selectedDate, 'MMMM yyyy');
+    const currentMonth = formattedMonth;
+
+    // ================= TITLE =================
     worksheet.mergeCells('A1:G1');
     const title = worksheet.getCell('A1');
     title.value = 'Financial Statement';
@@ -491,6 +647,7 @@ export class Dashboard {
     title.font = { bold: true, size: 14 };
     worksheet.getRow(1).height = 25;
 
+    // ================= FILTER ROWS =================
     let startIndex = 2;
     filters.forEach(filter => {
       const labelCell = worksheet.getCell(`A${startIndex}`);
@@ -502,17 +659,26 @@ export class Dashboard {
 
       worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
       valueCell.value = filter.values;
+      valueCell.alignment = { wrapText: true };
 
       startIndex++;
     });
 
     worksheet.addRow([]);
 
+    // ================= HEADER =================
     const dynamicMonths = this.lastFourMonthsArray.map(m =>
       this.shared.datePipe.transform(m, 'MMMM yyyy')
     );
 
-    const headerRow = ['Department', 'Actual', 'Budget', 'Variance', ...dynamicMonths];
+    const headerRow = [
+      'Department',
+      'Actual',
+      'Budget',
+      'Variance',
+      ...dynamicMonths
+    ];
+
     const headerRow1 = worksheet.addRow(headerRow);
 
     headerRow1.eachCell({ includeEmpty: true }, cell => {
@@ -530,8 +696,9 @@ export class Dashboard {
         right: { style: 'thin' },
       };
     });
-    this.FSData.forEach((data: any) => {
 
+    // ================= DATA =================
+    this.FSData.forEach((data: any) => {
       const mainValues = [
         data.DisplayName || '',
         data.Actual,
@@ -547,30 +714,34 @@ export class Dashboard {
       if (data.IsHeader === 'T' || data.IsHeader === 'Y') {
         const color = data.IsHeader === 'T' ? 'FFDDEBF7' : 'FFBFD4F2';
         mainRow.font = { bold: true };
-        mainRow.eachCell({ includeEmpty: true }, cell => { cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } }; cell.font = { bold: true }; cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } }; });
+        mainRow.eachCell(cell => {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
+          cell.font = { bold: true };
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+        });
       }
 
       mainRow.eachCell({ includeEmpty: true }, (cell, colNum) => {
-        const valueType = data.ValueType;
-        const formatted = this.formatExcelValue(cell.value, valueType);
-
         if (colNum === 1) {
           cell.alignment = { horizontal: 'left' };
+          return;
         }
+
+        const formatted = this.formatExcelValue(cell.value, data.ValueType);
 
         if (formatted !== '-') {
           cell.value = formatted;
-
-          if (valueType === '$') cell.numFmt = '$#,##0.00';
-          else if (valueType === '#') cell.numFmt = '#,##0';
-          else if (valueType === '%') cell.numFmt = '0.00%';
-
-          cell.alignment = { horizontal: 'right' };
-        } else {
-          // cell.value = '-';
-          cell.alignment = { horizontal: 'right' };
+          if (data.ValueType === '$') cell.numFmt = '$#,##0.00';
+          else if (data.ValueType === '#') cell.numFmt = '#,##0';
+          else if (data.ValueType === '%') cell.numFmt = '0.00%';
         }
 
+        cell.alignment = { horizontal: 'right' };
         cell.border = {
           top: { style: 'thin' },
           left: { style: 'thin' },
@@ -578,6 +749,8 @@ export class Dashboard {
           right: { style: 'thin' }
         };
       });
+
+      // ================= SUB DATA =================
       if (data.SubData?.length) {
         data.SubData.forEach((sub: any) => {
           const subValues = [
@@ -612,20 +785,14 @@ export class Dashboard {
               return;
             }
 
-            const valueType = sub.ValueType;
-            const formatted = this.formatExcelValue(cell.value, valueType);
+            const formatted = this.formatExcelValue(cell.value, sub.ValueType);
 
-            if (formatted === '-') {
-              // cell.value = '-';
-              cell.alignment = { horizontal: 'right' };
-              return;
+            if (formatted !== '-') {
+              cell.value = formatted;
+              if (sub.ValueType === '$') cell.numFmt = '$#,##0.00';
+              else if (sub.ValueType === '#') cell.numFmt = '#,##0';
+              else if (sub.ValueType === '%') cell.numFmt = '0.00%';
             }
-
-            cell.value = formatted;
-
-            if (valueType === '$') cell.numFmt = '$#,##0.00';
-            else if (valueType === '#') cell.numFmt = '#,##0';
-            else if (valueType === '%') cell.numFmt = '0.00%';
 
             cell.alignment = { horizontal: 'right' };
           });
@@ -633,15 +800,20 @@ export class Dashboard {
       }
     });
 
-    worksheet.getColumn(1).eachCell({ includeEmpty: true }, cell => {
-      cell.alignment = { horizontal: 'left' };
-    });
+    // ================= COLUMN STYLES =================
+    worksheet.getColumn(1).alignment = { horizontal: 'left' };
     worksheet.columns.forEach((col, i) => {
       col.width = i === 0 ? 30 : 18;
     });
 
-    this.shared.exportToExcel(workbook, `Financial Statement_${currentMonth}`);
+    // ================= EXPORT =================
+    this.shared.exportToExcel(
+      workbook,
+      `Financial Statement_${currentMonth}`
+    );
   }
+
+
 
 
 

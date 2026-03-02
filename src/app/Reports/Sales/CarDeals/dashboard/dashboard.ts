@@ -35,7 +35,7 @@ export class Dashboard {
   path2id: any;
   path3id: any;
   CurrentDate = new Date();
-  groups: any = 1;
+  groups: any = 0;
   GridView = 'Global';
   dealType: any = ['New', 'Used'];
   saleType: any = ['Retail', 'Lease', 'Misc', 'Special Order']
@@ -56,7 +56,8 @@ export class Dashboard {
     // if (typeof window !== 'undefined') {
     // if (localStorage.getItem('UserDetails') != null) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.store = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.store = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
 
     this.setDates('MTD')
@@ -176,13 +177,32 @@ export class Dashboard {
     return true;
   }
 
-  getTotal(frontgross: any, colname: any) {
-    let total: any = 0
-    frontgross.some(function (x: any) {
-      total += parseInt(x[colname])
-    })
-    return total
+  // getTotal(frontgross: any, colname: any) {
+  //   let total: any = 0
+  //   frontgross.some(function (x: any) {
+  //     total += parseInt(x[colname])
+  //   })
+  //   return total
+  // }
+
+  getTotal(frontgross: any[], colname: string) {
+    return frontgross.reduce((total, x) => {
+      const raw = x?.[colname];
+
+      // Skip null/undefined/empty strings
+      if (raw === null || raw === undefined || raw === '') return total;
+
+      // Parse as number (handles strings like "123" or "123.45")
+      const n = Number(raw);
+
+      // Skip NaN
+      if (Number.isNaN(n)) return total;
+
+      // Add the value (use Math.trunc if you only want integer part)
+      return total + n;
+    }, 0);
   }
+
 
   notesView() {
     this.notesViewState = !this.notesViewState
@@ -206,7 +226,7 @@ export class Dashboard {
       title2: '',
       apiRoute: 'AddGeneralNotes'
     }
-    this.Notespopup = this.shared.ngbmodal.open(ref, { size: 'xxl', backdrop: 'static' });
+    this.Notespopup = this.shared.ngbmodal.open(ref, { size: 'lg', backdrop: 'static' });
   }
   closeNotes(e: any) {
     this.shared.ngbmodal.dismissAll()
@@ -339,6 +359,7 @@ export class Dashboard {
 
 
   }
+
   setHeaderReportData() {
     this.pageNumber = 0
 
@@ -416,8 +437,8 @@ export class Dashboard {
       // { name: 'Store :', values: 'WesternAuto' },
       { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate },
       { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
+      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
+      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
     ]
     // const ReportFilter = worksheet.addRow(['Report Controls :']);
     // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
@@ -450,11 +471,32 @@ export class Dashboard {
       worksheet.getCell(`A${startIndex}`).value = val.name;
       worksheet.getCell(`B${startIndex}`).value = val.values
     })
+    var secondHeader = []
+    var bindingHeaders = []
+    if (storeNames && storeNames.length > 1) {
+      secondHeader = [
+        'Date', 'Store', 'Deal #', 'Status', 'R/L', 'Stock #', 'New/Used', 'Year', 'Make', 'Model', 'Vehicle Age', 'Trade',
+        'VIN', 'Age', 'F Gross', 'B Gross', 'Total', 'Mgr', 'F&I Mgr', 'Sp 1', 'Sp 2', 'Buyer', 'Cust #'
+      ];
+      bindingHeaders = [
+        'displaydate', 'store', 'dealid', 'Status', 'RL', 'Stock', 'Type',
+        'ad_year', 'ad_make', 'ad_model', 'VehicleAge', 'TradeACV', 'VIN',
+        'ad_custAge', 'frontgross', 'backgross', 'totalgross', 'salesmanager',
+        'fimanager', 'salesperson1', 'salesperson2', 'Buyer', 'ad_custid',
+      ];
+    } else {
+      secondHeader = [
+        'Date', 'Deal #', 'Status', 'R/L', 'Stock #', 'New/Used', 'Year', 'Make', 'Model', 'Vehicle Age', 'Trade',
+        'VIN', 'Age', 'F Gross', 'B Gross', 'Total', 'Mgr', 'F&I Mgr', 'Sp 1', 'Sp 2', 'Buyer', 'Cust #'
+      ];
+      bindingHeaders = [
+        'displaydate', 'dealid', 'Status', 'RL', 'Stock', 'Type',
+        'ad_year', 'ad_make', 'ad_model', 'VehicleAge', 'TradeACV', 'VIN',
+        'ad_custAge', 'frontgross', 'backgross', 'totalgross', 'salesmanager',
+        'fimanager', 'salesperson1', 'salesperson2', 'Buyer', 'ad_custid',
+      ];
+    }
 
-    const secondHeader = [
-      'Date', 'Deal #', 'Status', 'R/L', 'Stock #', 'New/Used', 'Year', 'Make', 'Model', 'Vehicle Age', 'Trade',
-      'Vin', 'Age', 'F Gross', 'B Gross', 'Total', 'Mgr', 'FI Mgr', 'SP 1', 'SP 2', 'Buyer', 'Cust #'
-    ];
     worksheet.addRow(secondHeader);
     worksheet.getRow(8).height = 25;
     worksheet.getRow(8).font = { bold: true, color: { argb: 'FFFFFFFF' } };
@@ -466,16 +508,14 @@ export class Dashboard {
       str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
 
 
-    const bindingHeaders = [
-      'displaydate', 'dealid', 'Status', 'RL', 'Stock', 'Type',
-      'ad_year', 'ad_make', 'ad_model', 'VehicleAge', 'TradeACV', 'VIN',
-      'ad_custAge', 'frontgross', 'backgross', 'totalgross', 'salesmanager',
-      'fimanager', 'salesperson1', 'salesperson2', 'Buyer', 'ad_custid',
-    ];
+
     const currencyFields = ['TradeACV', 'frontgross', 'backgross', 'totalgross'];
     for (const info of this.cardealsdata) {
       const rowData = bindingHeaders.map(key => {
         const val = info[key];
+        // displaydate
+        if (key === 'displaydate') return this.shared.datePipe.transform(val, 'MM/dd/yyyy');
+
         return val === 0 || val == null ? '-' : capitalize(val);
       });
 

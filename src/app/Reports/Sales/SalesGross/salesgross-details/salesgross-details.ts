@@ -31,7 +31,9 @@ export class SalesgrossDetails {
       }
     });
   }
-  pageNumber: any = 0;
+  pageNumber: number = 0;
+  pageSize: number = 100;
+  hasMoreData: boolean = true;
   spinnerLoadersec: boolean = false;
 
   details: any = [];
@@ -59,36 +61,38 @@ export class SalesgrossDetails {
       SalesManager: this.Salesdetails[0].SalesManager,
       FinanceManager: this.Salesdetails[0].FinanceManager
     };
-    this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossSummaryDetails', obj)
-      .subscribe((res) => {
-        if (res.status == 200) {
-          this.details = res.response;
-          let spDetails = [
-            ...this.SalesPersonDetails,
-            ...this.details,
-          ];
-          if (res.response != undefined) {
-            if (res.response.length > 0) {
-              spDetails.some(function (x: any) {
-                if (x.products != undefined) {
-                  x.products = JSON.parse(x.products);
-                }
-              });
+    this.shared.api.postmethod(
+      this.shared.common.routeEndpoint + 'GetSalesGrossSummaryDetails',
+      obj
+    ).subscribe((res) => {
+
+      if (res.status === 200) {
+
+        this.details = res.response || [];
+
+        let spDetails = [
+          ...this.SalesPersonDetails,
+          ...this.details
+        ];
+        spDetails.forEach((x: any) => {
+          if (x.products && typeof x.products === 'string') {
+            try {
+              x.products = JSON.parse(x.products);
+            } catch {
+              x.products = [];
             }
           }
-
-          this.SalesPersonDetails = spDetails
-          //console.log(this.SalesPersonDetails);
-          // this.spinner.hide()
-          this.spinnerLoader = false;
-          this.spinnerLoadersec = false;
-          if (this.SalesPersonDetails.length > 0) {
-            this.NoData = false;
-          } else {
-            this.NoData = true;
-          }
+        });
+        if (this.details.length < this.pageSize) {
+          this.hasMoreData = false;
         }
-      });
+        this.SalesPersonDetails = spDetails;
+        this.spinnerLoader = false;
+        this.spinnerLoadersec = false;
+        this.NoData = this.SalesPersonDetails.length === 0;
+      }
+
+    });
   }
 
   viewDeal(dealData: any) {
@@ -127,82 +131,42 @@ export class SalesgrossDetails {
   currentElement!: string;
 
   @ViewChild('scrollOne') scrollOne!: ElementRef;
-  @ViewChild('scrollTwo') scrollTwo!: ElementRef;
-  count = 0
-  updateVerticalScroll(event: any): void {
-    if (this.currentElement === 'scrollTwo') {
-      this.scrollOne.nativeElement.scrollTop = event.target.scrollTop;
-      if (
-        event.target.scrollTop + event.target.clientHeight >=
-        event.target.scrollHeight - 2
-      ) {
-        // alert("reached at bottom");
-        if (this.count % 2 == 0) {
-          if (this.pageNumber == 0) {
-            if (this.details.length == 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-            // this.spinnerLoadersec = true;
-            // this.pageNumber++;
-            // this.GetDetails();
-          } else {
-            if (this.details.length >= 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-          }
-        }
-      }
-    }
-    else if (this.currentElement === 'scrollOne') {
-      this.scrollTwo.nativeElement.scrollTop = event.target.scrollTop;
-      if (
-        event.target.scrollTop + event.target.clientHeight >=
-        event.target.scrollHeight - 2
-      ) {
-        this.count++
-        if (this.count % 2 == 0) {
-          if (this.pageNumber == 0) {
-            if (this.details.length == 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-            // this.spinnerLoadersec = true;
-            // this.pageNumber++;
-            // this.GetDetails();
-          } else {
-            if (this.details.length >= 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-          }
-        }
-      }
-    }
-  }
+  count = 0;
+updateVerticalScroll(event: any): void {
+  const element = event.target;
+  const atBottom =
+    Math.ceil(element.scrollTop + element.clientHeight) >= element.scrollHeight;
+  if (!atBottom) return;
+  if (this.spinnerLoader) return;
+  if (!this.hasMoreData) return;  
 
-  updateCurrentElement(element: 'scrollOne' | 'scrollTwo') {
-    this.currentElement = element;
-  }
+  this.spinnerLoader = true;
+  this.pageNumber++;
+  this.GetDetails();
+}
+
   trTag: any = '';
   secondtrtag: any = ''
 
   hoverclass(e: any, i: any) {
-    if (this.trTag != '') {
+    if (this.trTag) {
       this.trTag.classList.remove('hover');
+    }
+    if (this.secondtrtag) {
       this.secondtrtag.classList.remove('hover');
     }
-    let id = (e.target as Element).id;
+    const id = (e.target as Element).id;
     this.trTag = document.getElementById('SD_' + i);
     this.secondtrtag = document.getElementById('SP_' + i);
-    if (id == 'SD_' + i || id == 'SP_' + i) {
-      this.trTag.classList.add('hover');
-      this.secondtrtag.classList.add('hover');
+    if ((id === 'SD_' + i || id === 'SP_' + i)) {
+
+      if (this.trTag) {
+        this.trTag.classList.add('hover');
+      }
+
+      if (this.secondtrtag) {
+        this.secondtrtag.classList.add('hover');
+      }
     }
   }
 
@@ -250,15 +214,16 @@ export class SalesgrossDetails {
 
               const workbook = this.shared.getWorkbook();
               const worksheet = workbook.addWorksheet('Sales Gross Details');
-
+              const capitalize = (str: string) =>
+                str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
               let filters: any = [
                 { name: 'Store :', values: this.Salesdetails[0].var1Value },
                 { name: 'Time Frame :', values: this.Salesdetails[0].StartDate + ' to ' + this.Salesdetails[0].EndDate },
                 { name: 'Deal Type : ', values: this.Salesdetails[0].dealtype == '' ? '-' : this.Salesdetails[0].dealtype == null ? '-' : this.Salesdetails[0].dealtype.toString().replaceAll(',', ', ') },
-                { name: 'Sale Type :', values: this.Salesdetails[0].saletype == '' ? '-' : this.Salesdetails[0].saletype == null ? '-' : this.Salesdetails[0].saletype.toString().replaceAll(',', ', ') },
-                { name: 'Deal Status :', values: this.Salesdetails[0].dealstatus == '' ? '-' : this.Salesdetails[0].dealstatus == null ? '-' : this.Salesdetails[0].dealstatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
+                { name: 'Sale Type :', values: this.Salesdetails[0].saletype == '' ? '-' : this.Salesdetails[0].saletype == null ? '-' : this.Salesdetails[0].saletype.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
+                { name: 'Deal Status :', values: this.Salesdetails[0].dealstatus == '' ? '-' : this.Salesdetails[0].dealstatus == null ? '-' : this.Salesdetails[0].dealstatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
               ]
-              const ReportFilter = worksheet.addRow(['Report Controls :']);
+              const ReportFilter = worksheet.addRow(['Sales Gross Details']);
               ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
               let startIndex = 2
               filters.forEach((val: any) => {
@@ -314,9 +279,10 @@ export class SalesgrossDetails {
                   // d[count]=p.amount
                 })
                 var obj = [count,
-                  (d.dealid == '' ? '-' : (d.dealid == null ? '-' : (d.dealid))), (d.Stock == '' ? '-' : (d.Stock == null ? '-' : (d.Stock))),
+                  (d.dealid == '' ? '-' : (d.dealid == null ? '-' : (d.dealid))),
+                  (d.Stock == '' ? '-' : (d.Stock == null ? '-' : (d.Stock))),
                   (d.contractdate == '' ? '-' : (d.contractdate == null ? '-' : (d.contractdate))),
-                  (d.customername == '' ? '-' : (d.customername == null ? '-' : (d.customername))),
+                  (d.customername == '' ? '-' : (d.customername == null ? '-' : capitalize(d.customername))),
                   (d.ad_Year == '' ? '-' : (d.ad_Year == null ? '-' : (d.ad_Year.toString()))),
 
 
@@ -328,10 +294,10 @@ export class SalesgrossDetails {
                   (d.frontgross == '' ? '-' : (d.frontgross == null ? '-' : (parseFloat(d.frontgross)))),
                   (d.backgross == '' ? '-' : (d.backgross == null ? '-' : (parseFloat(d.backgross)))),
                   (d.totalgross == '' ? '-' : (d.totalgross == null ? '-' : (parseFloat(d.totalgross)))),
-                  (d.salesperson1 == '' ? '-' : (d.salesperson1 == null ? '-' : (d.salesperson1))),
-                  (d.salesperson2 == '' ? '-' : (d.salesperson2 == null ? '-' : (d.salesperson2))),
-                  (d.fimanager == '' ? '-' : (d.fimanager == null ? '-' : (d.fimanager))),
-                  (d.salesmanager == '' ? '-' : (d.salesmanager == null ? '-' : (d.salesmanager))),
+                  (d.salesperson1 == '' ? '-' : (d.salesperson1 == null ? '-' : capitalize(d.salesperson1))),
+                  (d.salesperson2 == '' ? '-' : (d.salesperson2 == null ? '-' : capitalize(d.salesperson2))),
+                  (d.fimanager == '' ? '-' : (d.fimanager == null ? '-' : capitalize(d.fimanager))),
+                  (d.salesmanager == '' ? '-' : (d.salesmanager == null ? '-' : capitalize(d.salesmanager))),
                   (d.FinReserve == '' ? '-' : (d.FinReserve == null ? '-' : (d.FinReserve))),
                   (d.productcount == '' ? '-' : (d.productcount == null ? '-' : (d.productcount))),
                 ];
@@ -464,7 +430,7 @@ export class SalesgrossDetails {
   //   });
   // }
 
-    isDesc: boolean = false;
+  isDesc: boolean = false;
   column: string = 'CategoryName';
   sortColumn(property: any) {
     this.isDesc = !this.isDesc; //change the direction

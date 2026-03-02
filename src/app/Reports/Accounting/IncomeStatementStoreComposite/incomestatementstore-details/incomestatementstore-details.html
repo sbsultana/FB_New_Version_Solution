@@ -16,8 +16,13 @@
             <a type="button" class="close-btn" (click)="close()"><i class="fa-solid fa-xmark"></i> </a>
         </div>
         <div class="content pt-2">
-            <div class="loading" *ngIf="spinnerLoader">
+            <!-- <div class="loading" *ngIf="spinnerLoader">
                 <div class="loader"></div>
+            </div> -->
+            <div *ngIf="spinnerLoader" class="graph-loader d-flex align-items-center justify-content-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
             </div>
             <div class="d-block" id="FsDetails" #TABLE #table style="width: 100%;">
                 <div class="performance-scorecard" style="height: 70vh;">
@@ -93,7 +98,7 @@
                                                                 <span>{{ sub.Control || '-' }}</span>
                                                             </td>
                                                             <td style="text-align: center !important;">
-                                                                <span>{{ sub.AccountingDate | date: 'MM.dd.yyyy'
+                                                                <span>{{ sub.AccountingDate | date: 'MM/dd/yyyy'
                                                                     }}</span>
                                                             </td>
                                                             <td style="text-align: left !important;">
@@ -147,10 +152,12 @@
                         </tfoot>
 
                         <!-- No Data -->
-                        <ng-template #ifNotShow>
+                         <ng-template #ifNotShow>
                             <tr *ngIf="NoData">
-                                <td colspan="4" style="text-align: center; font-size: .8vw; height: 30px;">No Data
-                                    Found!!!</td>
+                                <td colspan="4"
+                                    style="text-align: center; font-size: .875rem;font-family: 'Roboto';padding: 5px 0;">
+                                    No Data
+                                    Found</td>
                             </tr>
                         </ng-template>
                     </table>

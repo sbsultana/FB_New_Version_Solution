@@ -93,7 +93,7 @@
                                                                 <span>{{ sub.Control || '-' }}</span>
                                                             </td>
                                                             <td style="text-align: center !important;">
-                                                                <span>{{ sub.AccountingDate | date: 'MM.dd.yyyy'
+                                                                <span>{{ sub.AccountingDate | date: 'MM/dd/yyyy'
                                                                     }}</span>
                                                             </td>
                                                             <td style="text-align: left !important;">
@@ -267,7 +267,7 @@
                                                 <td>{{ (Ad.accountingdate == 0 || Ad.accountingdate == null ||
                                                     Ad.accountingdate == undefined ?
                                                     '-' :
-                                                    Ad.accountingdate | date: 'MM.dd.yyyy') }}</td>
+                                                    Ad.accountingdate | date: 'MM/dd/yyyy') }}</td>
                                                 <td>{{ (Ad.refer == 0 || Ad.refer == null || Ad.refer == undefined ? '-'
                                                     : Ad.refer ) }}</td>
                                                 <td [ngClass]="{ negative:!inTheGreen(Ad.postingamount)}"

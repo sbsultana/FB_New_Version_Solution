@@ -1,0 +1,335 @@
+<!-- <app-toast-container></app-toast-container> -->
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between pb-2">
+                    <div class="filter-dropdowns d-flex align-items-center">
+                        <div class="dropdown">
+                            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
+                                {{storedisplayname}} )
+                                <span class="arrow"></span></button>
+                            <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}"
+                                [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                        </div>
+                        <div class="date-filter-card d-flex align-items-center justify-content-start">
+                            <div class="open-calendar position-relative">
+                                <input type="text" placeholder="Select Year" bsDatepicker
+                                    class="form-control year-input" [bsConfig]="bsConfig" [(bsValue)]="bsValue"
+                                    (bsValueChange)="onYearSelected($event)" readonly
+                                    (keydown)="$event.preventDefault()" />
+                            </div>
+                        </div>
+                        <button class="apply-button" (click)="applyFilterAndYear()">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+                <!-- <div class="performance-scorecard">
+                    <table class="table mb-0 w-100">
+                        <thead>
+                            <tr>
+                                <th class="text-start"
+                                    style="width: 180px; background-color: #0554EF !important; color: #FFF;">
+                                    Category
+                                </th>
+                                <th style="width: 250px; background-color: #0554EF !important; color: #FFF;">
+                                    Variable
+                                </th>
+                                <th *ngFor="let m of ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']"
+                                    style="width: 100px; background-color: #0554EF !important; color: #FFF;">
+                                    {{ m }}
+                                </th>
+                                <th style="width: 100px; background-color: #0554EF !important; color: #FFF;">
+                                    Total
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody *ngIf="!NoPDCForecastdata; else noData">
+                            <tr *ngFor="let row of PDCForecastData; let i = index">
+
+                                <td class="customGridTable" *ngIf="variableType == 'store'">
+                                    <span class="categoryHeader"
+                                        *ngIf="row?.Category && i === 0 || row?.Category !== PDCForecastData[i - 1]?.Category">
+                                        {{ row?.Category }}
+                                    </span>
+                                </td>
+
+                                <td class="customGridTable" *ngIf="variableType == 'expenses'">
+                                    <span class="categoryHeader"
+                                        *ngIf="row?.ITV_CategoryName && i === 0 || row?.ITV_CategoryName !== PDCForecastData[i - 1]?.ITV_CategoryName">
+                                        {{ row?.ITV_CategoryName }}
+                                    </span>
+                                </td>
+
+                                <td class="customGridTable text-start">
+                                    {{ row.ITV_Variable_Name }}
+                                </td>
+
+                                <td
+                                    *ngFor="let key of ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; let j = index">
+
+                                    <ng-container *ngIf="!isEditMode">
+                                        <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
+                                            {{ row[key] | currency:'USD':'symbol':'1.0-0' }}
+                                        </ng-container>
+                                        <ng-template #unitValue>
+                                            {{ row[key] }}
+                                        </ng-template>
+                                    </ng-container>
+
+                                    <ng-container *ngIf="isEditMode">
+                                        <input type="number" [(ngModel)]="PDCForecastData[i][key]"
+                                            class="form-control editabletxt" style="text-align: right;"
+                                            (paste)="onPaste($event, i, j)" />
+                                    </ng-container>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        <ng-container *ngIf="row.ValueType === 'G'; else unitValue">
+                                            {{ getRowTotal(row) | currency:'USD':'symbol':'1.0-0' }}
+                                        </ng-container>
+
+                                        <ng-template #unitValue>
+                                            {{ getRowTotal(row) }}
+                                        </ng-template>
+                                    </strong>
+
+                                </td>
+                            </tr>
+                        </tbody>
+
+                        <ng-template #noData>
+                            <tbody>
+                                <tr>
+                                    <td colspan="14" class="text-center text-muted py-3">
+                                        No data available
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </ng-template>
+                    </table>
+                </div> -->
+                <div class="performance-scorecard table-responsive srtbl">
+                    <table class="table mb-0" style="background-color: #c6dbff;">
+                        <thead>
+                            <tr>
+
+                                <th class="text-start">{{storename}}</th>
+                                <th colspan="4" style=" border-right: 1px solid #e0e1e2;">Transaction</th>
+
+                                <th colspan="4" style=" border-right: 1px solid #e0e1e2;">Accounting</th>
+
+                                <th colspan="4">Difference</th>
+                            </tr>
+                            <tr>
+
+                                <th class="text-start">{{ selectedMonth | date: 'MMMM - yyyy'}}</th>
+                                <th>Units</th>
+                                <th>Front Gross</th>
+                                <th>Back Gross</th>
+                                <th>Total Gross</th>
+
+                                <th>Units</th>
+                                <th>Front Gross</th>
+                                <th>Back Gross</th>
+                                <th>Total Gross</th>
+
+                                <th>Units</th>
+                                <th>Front Gross</th>
+                                <th>Back Gross</th>
+                                <th>Total Gross</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngIf="SRData.length > 0; else NoSRdata">
+
+                                <ng-container *ngFor="let SR of SRData">
+
+                                    <!-- GROUP HEADER ROW -->
+                                    <tr class="title text-bold lightblue-bg">
+                                        <td class="lightblue-bg text-start">
+                                            {{ SR.Lable1 || '-' }}
+                                        </td>
+
+                                        <ng-container *ngFor="let subdata of SR.sub">
+
+                                            <ng-container *ngIf="subdata.Lable1_subcategory == ''">
+
+                                                <ng-container *ngFor="let subcat of subdata.subcategory">
+
+                                                    <ng-container
+                                                        *ngIf="subcat.Lable2 == SR.Lable1 + 'Total' || subcat.Lable2 == 'GrandTotal' || subcat.Lable2 == SR.Lable1">
+
+                                                        <!-- TRANSACTION -->
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Sale_Units) }">
+                                                            {{ formatNumber(subcat.Sale_Units) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Sale_Frontgross) }">
+                                                            {{ formatCurrency(subcat.Sale_Frontgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Sale_Backgross) }">
+                                                            {{ formatCurrency(subcat.Sale_Backgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Sale_Totalgross) }">
+                                                            {{ formatCurrency(subcat.Sale_Totalgross) }}
+                                                        </td>
+
+                                                        <!-- ACCOUNTING -->
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Acct_Units) }">
+                                                            {{ formatNumber(subcat.Acct_Units) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Acct_Frontgross) }">
+                                                            {{ formatCurrency(subcat.Acct_Frontgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Acct_Backgross) }">
+                                                            {{ formatCurrency(subcat.Acct_Backgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Acct_Totalgross) }">
+                                                            {{ formatCurrency(subcat.Acct_Totalgross) }}
+                                                        </td>
+
+                                                        <!-- DIFFERENCE -->
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Diff_Units) }">
+                                                            {{ formatNumber(subcat.Diff_Units) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Diff_Frontgross) }">
+                                                            {{ formatCurrency(subcat.Diff_Frontgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Diff_Backgross) }">
+                                                            {{ formatCurrency(subcat.Diff_Backgross) }}
+                                                        </td>
+
+                                                        <td class="alignright"
+                                                            [ngClass]="{ negative: !inTheGreen(subcat.Diff_Totalgross) }">
+                                                            {{ formatCurrency(subcat.Diff_Totalgross) }}
+                                                        </td>
+
+                                                    </ng-container>
+
+                                                </ng-container>
+
+                                            </ng-container>
+
+                                        </ng-container>
+                                    </tr>
+
+                                    <!-- SUB CATEGORY ROWS -->
+                                    <ng-container *ngFor="let subdata of SR.sub">
+
+                                        <tr *ngIf="subdata.Lable1_subcategory != ''" class="title">
+                                            <td
+                                                [ngClass]="{'acct_adj': subdata.Lable1_subcategory == 'Accounting Adjustments'}">
+                                                {{ subdata.Lable1_subcategory }}
+                                            </td>
+                                            <td colspan="12"></td>
+                                        </tr>
+
+                                        <tr *ngFor="let subcat of subdata.subcategory" class="sub-title">
+
+                                            <ng-container
+                                                *ngIf="subcat.Lable2 != SR.Lable1+'Total' && subcat.Lable2 != 'GrandTotal' && subcat.Lable2 != SR.Lable1">
+
+                                                <td class="extra-padding">
+                                                    {{ subcat.Lable2 }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Sale_Units) }">
+                                                    {{ formatNumber(subcat.Sale_Units) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Sale_Frontgross) }">
+                                                    {{ formatCurrency(subcat.Sale_Frontgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Sale_Backgross) }">
+                                                    {{ formatCurrency(subcat.Sale_Backgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Sale_Totalgross) }">
+                                                    {{ formatCurrency(subcat.Sale_Totalgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Acct_Units) }">
+                                                    {{ formatNumber(subcat.Acct_Units) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Acct_Frontgross) }">
+                                                    {{ formatCurrency(subcat.Acct_Frontgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Acct_Backgross) }">
+                                                    {{ formatCurrency(subcat.Acct_Backgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Acct_Totalgross) }">
+                                                    {{ formatCurrency(subcat.Acct_Totalgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Diff_Units) }">
+                                                    {{ formatNumber(subcat.Diff_Units) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Diff_Frontgross) }">
+                                                    {{ formatCurrency(subcat.Diff_Frontgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Diff_Backgross) }">
+                                                    {{ formatCurrency(subcat.Diff_Backgross) }}
+                                                </td>
+
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat.Diff_Totalgross) }">
+                                                    {{ formatCurrency(subcat.Diff_Totalgross) }}
+                                                </td>
+
+                                            </ng-container>
+
+                                        </tr>
+
+                                    </ng-container>
+
+                                </ng-container>
+
+                            </ng-container>
+
+                            <!-- NO DATA -->
+                            <ng-template #NoSRdata>
+                                <tr>
+                                    <td colspan="13" class="text-center">
+                                        No Data Found
+                                    </td>
+                                </tr>
+                            </ng-template>
+
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

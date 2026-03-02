@@ -6,6 +6,7 @@ import { Api } from '../../../../Core/Providers/Api/api';
 import * as XLSX from 'xlsx';
 import { Title } from '@angular/platform-browser';
 import { common } from '../../../../common';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -58,7 +59,7 @@ export class Dashboard implements OnInit {
   constructor(
     public shared: Sharedservice,
     private api: Api, private title: Title,
-     private comm: common,   public apiSrvc: Api,
+     private comm: common,   public apiSrvc: Api,private toast: ToastService,
   ) { 
     this.title.setTitle(this.comm.titleName + '-Enterprise Tracking');
     const data = {
@@ -110,7 +111,7 @@ export class Dashboard implements OnInit {
   getStoresList(): Promise<void> {
     return new Promise((resolve) => {
       this.shared.spinner.show();
-      this.api.postmethod('Western/GetStoresList', { userid: 1 }).subscribe({
+      this.api.postmethod('SilverTip/GetStoresList', { userid: 1 }).subscribe({
         next: (res: any) => {
           this.shared.spinner.hide();
           const storeData = res?.response || res || [];
@@ -219,7 +220,7 @@ export class Dashboard implements OnInit {
       DEALTYPE: ''
     };
 
-    this.api.postmethod('WesternAuto/GetSalesGrossGLSummaryReport', payload).subscribe({
+    this.api.postmethod('SilverTip/GetSalesGrossGLSummaryReport', payload).subscribe({
       next: (res: any) => {
         this.shared.spinner.hide();
 
@@ -365,7 +366,7 @@ onPageSizeChange() {
 
   console.log('Payload:', payload);
 
-  this.api.postmethod('WesternAuto/GetSalesGrossGLDetails', payload).subscribe({
+  this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
     next: (res) => {
       const response = res?.response || [];
 
@@ -457,7 +458,7 @@ onPageSizeChange() {
 //   console.log('Payload for account details:', payload);
 
 //   this.shared.spinner.show();
-//   this.api.postmethod('WesternAuto/GetSalesGrossGLDetails', payload).subscribe({
+//   this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
 //     next: (res: any) => {
 //       this.shared.spinner.hide();
 
@@ -677,7 +678,7 @@ getVariableGrossGLAccountDetails(row: any): void {
 
   this.shared.spinner.show();
 
-  this.api.postmethod('WesternAuto/GetSalesGrossGLDetails', payload).subscribe({
+  this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
     next: (res: any) => {
       this.shared.spinner.hide();
 
@@ -711,7 +712,8 @@ getVariableGrossGLAccountDetails(row: any): void {
 
 downloadDetails() {
   if (!this.tableData || this.tableData.length === 0) {
-    alert('No data to download');
+    
+    this.toast.show('No data to download', 'warning', 'Warning');
     return;
   }
 

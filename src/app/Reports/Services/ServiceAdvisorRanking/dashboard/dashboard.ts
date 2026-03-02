@@ -7,10 +7,12 @@ import { common } from '../../../../common';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
 import { Subscription } from 'rxjs';
 import { Stores } from '../../../../CommonFilters/stores/stores';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker,Stores],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker,Stores,NgbModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -26,11 +28,11 @@ export class Dashboard {
   storeIds: any = '0';
   CompleteComponentState: boolean = true;
   dateType: any = 'MTD';
-  Paytype: any = ['C', 'W', 'I', 'S', 'M'];
+  Paytype: any = ['C', 'W', 'I', 'S', 'M']; 
 
   // solutionurl: any = environment.apiUrl;
   LogCount = 1;
-  groups: any = 1;
+  groups: any = 0;
   StoreVal: any = '0';
   LaborTypeVal: any = ''
   columnName: any = 'Rank';
@@ -53,6 +55,18 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
+  stores: any = []
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
     Types: [
@@ -65,44 +79,34 @@ export class Dashboard {
       { 'code': 'PM', 'name': 'Same Month PY' },
     ]
   }
-  groupsArray: any = [];
-  storename: any = ''
-  storecount: any = null;
-  storedisplayname: any = '';
-  groupName: any = '';
-  groupId: any = 8;
-  stores: any = []
-  storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
-  };
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common
 
-  ) {
-    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
-    }
+  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,  ) {
+    this.initializeDates(this.DateType)
+    let today = new Date();
+         if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)   
+          localStorage.setItem('flag','M')    
+      } else {
+        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        }
+      }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      // // console.log(this.stores, this.groupsArray, 'Stores and Groups');
       this.getStoresandGroupsValues()
+      // this.StoresData(this.ngChanges)
     }
-    this.initializeDates(this.DateType)
-    let today = new Date();
 
-    if (localStorage.getItem('UserDetails') != null) {
-      this.storeIds = JSON.parse(localStorage.getItem('UserDetails')!).Store_Ids;
-
-      let otherid = JSON.parse(localStorage.getItem('UserDetails')!).oth_stores
-      this.otherstoreid = otherid ? (otherid.toString().indexOf(',') > 0 ?
-        otherid.toString().split(',') :
-        otherid.toString()) : '';
-      this.selectedotherstoreids = this.comm.DefaultOtherstoresSelection
-
-
-    }
     let enddate = new Date(today.setDate(today.getDate() - 1));
     this.FromDate =
       ('0' + (enddate.getMonth() + 1)).slice(-2) +
@@ -124,7 +128,7 @@ export class Dashboard {
     this.shared.setTitle(this.shared.common.titleName + '-Service Advisor Rankings');
     const data = {
       title: 'Service Advisor Rankings',  
-      stores: '2'.toString(),
+      stores:   this.storeIds.toString(),
       labortype: this.LaborTypeVal.toString(),
       laborstate: this.LaborState,
     
@@ -155,35 +159,61 @@ export class Dashboard {
     // this.apiSrvc.logSaving(curl, {}, '', 'Success', 'Service Advisor Rankings');
   }
 
-  tabClick(col_Name: any, Col_state: any) {
-    if (this.columnName == col_Name) {
-      if (Col_state == 'asc') {
-        this.columnState = 'desc';
-        this.GetData(this.columnName, this.columnState);
-      } else {
-        this.columnState = 'asc';
-        this.GetData(this.columnName, this.columnState);
-      }
-    } else {
-      if (this.storeorgrp == 'G' && (col_Name != 'Rank' && col_Name != 'ServiceAdvisor' && col_Name != 'StoreName')) {
-        this.columnState = 'desc';
-        this.columnName = col_Name;
-        this.GetData(this.columnName, this.columnState);
-      } else {
-        this.columnState = 'asc';
-        this.columnName = col_Name;
-        this.GetData(this.columnName, this.columnState);
-      }
-    }
-    //console.log(this.columnName, this.columnState);
+  // tabClick(col_Name: any, Col_state: any) {
+  //   if (this.columnName == col_Name) {
+  //     if (Col_state == 'asc') {
+  //       this.columnState = 'desc';
+  //       this.GetData(this.columnName, this.columnState);
+  //     } else {
+  //       this.columnState = 'asc';
+  //       this.GetData(this.columnName, this.columnState);
+  //     }
+  //   } else {
+  //     if (this.storeorgrp == 'G' && (col_Name != 'Rank' && col_Name != 'ServiceAdvisor' && col_Name != 'StoreName')) {
+  //       this.columnState = 'desc';
+  //       this.columnName = col_Name;
+  //       this.GetData(this.columnName, this.columnState);
+  //     } else {
+  //       this.columnState = 'asc';
+  //       this.columnName = col_Name;
+  //       this.GetData(this.columnName, this.columnState);
+  //     }
+  //   }
+  //   //console.log(this.columnName, this.columnState);
 
+  // }
+  tabClick(col_Name: any) {
+
+    // First click on a column
+    if (this.columnName !== col_Name) {
+      this.columnName = col_Name;
+      this.columnState = 'asc';   
+    }
+     
+    else {
+      this.columnState = this.columnState === 'asc' ? 'desc' : 'asc';
+    }
+  
+    this.GetData(this.columnName, this.columnState);
+  }
+  StoresData(data: any) {
+  
+    console.log(data, 'Data');
+
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
   }
   getlaborData() {
     if (this.StoreVal != '' || this.selectedotherstoreids != '') {
       this.shared.spinner.show();
       if (this.LaborTypeVal == '') {
         const obj = {
-          StoreID:this.storeIds,
+          StoreID:
+  this.storeIds.toString(),
           type: this.LaborState
         };
         this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res: { response: any[]; }) => {
@@ -214,7 +244,9 @@ export class Dashboard {
     const obj = {
       StartDate: this.FromDate,
       EndDate: this.ToDate,
-      StoreID: this.storeIds,
+      StoreID:
+       
+ this.storeIds.toString(),
 
       Exp: sortdata,
       OrderType: sortstate,
@@ -422,12 +454,15 @@ export class Dashboard {
   SARstate: any;
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
-      if (this.shared.common.pageName == 'Service Advisor Rankings') {
-       if (res.obj.storesData != undefined) {
+      if (this.comm.pageName == 'Service Advisor Rankings') {
+        if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          // this.groupId = this.ngChanges.groups;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          // this.storeIds = this.ngChanges.storeIds;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          // // console.log(this.stores, this.groupsArray, 'Stores and Groups');
           this.getStoresandGroupsValues()
         }
       }
@@ -456,7 +491,7 @@ export class Dashboard {
             if (data.obj.FromDate != undefined && data.obj.ToDate != undefined) {
               this.FromDate = data.obj.FromDate;
               this.ToDate = data.obj.ToDate;
-              this.storeIds = data.obj.storeValues;
+              this.StoreVal = data.obj.storeValues;
               this.dateType = data.obj.dateType;
               this.LaborState = data.obj.laborstate;
               this.selectedotherstoreids = data.obj.otherstoreids;
@@ -465,7 +500,7 @@ export class Dashboard {
             } else {
               this.FromDate = data.obj.FromDate;
               this.ToDate = data.obj.ToDate;
-              this.storeIds = data.obj.storeValues;
+              this.StoreVal = data.obj.storeValues;
               this.dateType = data.obj.dateType;
               this.LaborState = data.obj.laborstate;
               this.selectedotherstoreids = data.obj.otherstoreids;
@@ -476,7 +511,7 @@ export class Dashboard {
           else {
             if (data.obj.header == 'Yes') {
               // this.storeIds = data.obj.storeValues;
-              this.storeIds = data.obj.storeValues
+              this.StoreVal = data.obj.storeValues
               //console.log(this.storeIds);
               this.getlaborData();
               // this.GetData(this.columnName, this.columnState);
@@ -488,7 +523,7 @@ export class Dashboard {
             path1: '',
             path2: '',
             path3: '',
-            stores: '2',
+            stores:  this.storeIds.toString(),
             labortype: this.LaborTypeVal.toString(),
           
             datetype: this.dateType,
@@ -551,40 +586,6 @@ export class Dashboard {
     });
 
   }
-  getStoresandGroupsValues() {
-    this.storesFilterData.groupsArray = this.groupsArray;
-    this.storesFilterData.groupId = this.groupId;
-    this.storesFilterData.storesArray = this.stores;
-    this.storesFilterData.storeids = this.storeIds;
-    this.storesFilterData.groupName = this.groupName;
-    this.storesFilterData.storename = this.storename;
-    this.storesFilterData.storecount = this.storecount;
-    this.storesFilterData.storedisplayname = this.storedisplayname;
-
-    this.storesFilterData = {
-      groupsArray: this.groupsArray,
-      groupId: this.groupId,
-      storesArray: this.stores,
-      storeids: this.storeIds,
-      groupName: this.groupName,
-      storename: this.storename,
-      storecount: this.storecount,
-      storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
-    };
-
-    // this.setHeaderData();
-    // this.GetData();
-
-  }
-  StoresData(data: any) {
-    this.storeIds = data.storeids;
-    this.groupId = data.groupId;
-    this.storename = data.storename;
-    this.groupName = data.groupName;
-    this.storecount = data.storecount;
-    this.storedisplayname = data.storedisplayname;
-  }
   ngOnDestroy() {
     if (this.reportOpenSub != undefined) {
       this.reportOpenSub.unsubscribe()
@@ -639,7 +640,60 @@ export class Dashboard {
   // }
 
 
+  getStoresandGroupsValues() {
 
+
+    //   this.stores = this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groupId[0])[0].Stores;
+    //   // console.log( this.stores)
+    //   this.storeIds = []
+    //   this.storeIds.push(1)
+    //  // console.log( this.storeIds.length)
+    //   // let data = this.comm.completeUserDetails;
+    //   // data.Store_Ids.indexOf(',') > 0 ? this.storeIds.push(parseInt(data.Store_Ids.split(',')[0])) : this.storeIds.push(data.Store_Ids)
+    //   this.storecount = this.storeIds.length
+    //   if (this.storeIds.length == 1) {
+    //     this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename;
+    //     this.storecount = null;
+    //     this.storedisplayname = this.storename
+    //   }
+    //   else if (this.storeIds.length == this.stores.length) {
+    //     this.groupName = this.groupsArray.filter((val: any) => val.sg_id == this.groupId[0])[0].sg_name;
+    //     this.storecount = null;
+    //     this.storedisplayname = this.groupName;
+    //   }
+    //   else if (this.storeIds.length > 1) {
+    //     this.storecount = this.storeIds.length;
+    //     this.storedisplayname = 'Selected'
+    //   }
+    //   else {
+    //     this.storedisplayname = 'Select'
+    //   }
+
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
 
   Scrollpercent: any = 0;
   scrollCurrentposition: any = 0
@@ -692,7 +746,7 @@ export class Dashboard {
     // this.datevaluetype=
     console.log(type);
 
-    this.displaytime = 'Time Frame (' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
+    this.displaytime = '(' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     this.maxDate = new Date();
     this.minDate = new Date();
     this.minDate.setFullYear(this.maxDate.getFullYear() - 3);
@@ -850,7 +904,7 @@ export class Dashboard {
     this.zeroro = [];
     this.zeroro.push(e);
     // }
-    // alert(this.zeroro)
+  
   }
   storeorgroups(block: any, e: any) {
     // if (block == 'TB') {
@@ -879,20 +933,43 @@ export class Dashboard {
     // if (this.selectedlabortypevalues.length == this.labortypes.length) {
     //   this.selectedlabortypevalues = 0;
     // }
-    if (this.DateType == '') {
-      // this.toast.error('Please select any Datetype');
-    } else if (this.selectedstorevalues.length == 0 && this.selectedotherstoreids.length == 0) {
-      // this.toast.warning('Please select atleast one Store', '');
+//    const hasStoreSelection =
+//   (Array.isArray(this.selectedstorevalues) && this.selectedstorevalues.length > 0) ||
+//   (typeof this.selectedstorevalues === 'string' && this.selectedstorevalues.trim() !== '') ||
+//   (Array.isArray(this.selectedotherstoreids) && this.selectedotherstoreids.length > 0);
+
+// if (!hasStoreSelection) {
+
+//   return;
+// }
+
+  if(!this.storeIds || this.storeIds.length === 0){
+
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     }
-    else if (this.selectedlabortypevalues.length == 0) {
-      // this.toast.warning('Please select any labor type');
-    } else {
+ else 
+  
+  if (!this.selectedlabortypevalues || this.selectedlabortypevalues.length === 0) {
+  
+    this.toast.show('Please select any labor type', 'warning', 'Warning');
+    return;
+  }
+
+ else if (
+    !this.Paytype ||
+    (Array.isArray(this.Paytype) && this.Paytype.length === 0)
+  ) {
+  
+    this.toast.show('Please select any Pay Type', 'warning', 'Warning');
+    return;
+  }
+    else {
       const data = {
         Reference: 'Service Advisor Rankings',
         FromDate: this.FromDate,
         ToDate: this.ToDate,
         TotalReport: this.toporbottom[0],
-        storeValues: this.selectedstorevalues.toString(),
+        storeValues: this.storeIds.toString(),
         labortypeValues:
           this.selectedlabortypevalues.toString(),
         //  == '0'
@@ -912,10 +989,12 @@ export class Dashboard {
       this.shared.api.SetReports({
         obj: data,
       });
-    }
           this.GetData(this.columnName, this.columnState);
 
+    }
+
   }
+  ExcelStoreNames: any = []
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('Service Advisor Rankings');
@@ -961,20 +1040,27 @@ export class Dashboard {
                              this.zeroro === 'I' ? 'Include' :
                              this.zeroro;
       }
-      let storeValue = 'All Stores';
-      if (
-        this.storeIds &&
-        this.storeIds.length > 0 &&
-        this.storeIds.length !== this.stores.length
-      ) {
+      
+      let storeValue = '';
+
+      if (!this.storeIds || this.storeIds.length === 0) {
+        // No selection → All stores
+        storeValue = this.stores.map((s: any) => s.storename).join(', ');
+      }
+      else if (this.storeIds.length === this.stores.length) {
+        // All selected → bind all store names
+        storeValue = this.stores.map((s: any) => s.storename).join(', ');
+      }
+      else {
+        // Partial selection
         storeValue = this.stores
           .filter((s: any) => this.storeIds.includes(s.ID))
           .map((s: any) => s.storename)
           .join(', ');
       }
-      // Then use the formatted values in the filter section
-      const filters = [
-        { name: 'Store:', values:storeValue },
+      
+          const filters = [
+            { name: 'Store:', values: storeValue },
         { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
         { name: 'Labor Types:', values: this.selectedlabortypevalues },
         { name: 'Zero Hours:', values: formattedZeroHours },

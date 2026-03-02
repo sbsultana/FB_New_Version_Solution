@@ -1,0 +1,78 @@
+//////////////////////////////////// REPORT BAR ////////////////////////////////////////
+/// 
+/// 
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+
+
+
+
+//////////////////////////////////// SALES PERSON GRID ////////////////////////////////////////
+.negative {
+    color: red;
+}
+
+
+
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+        /* Adjust the margin as needed */
+    }
+
+    .NavBarHide {
+        display: none;
+    }
+
+    #ServiceAdvisorRankings {
+        .performance-scorecard {
+            width: 100%;
+            height: auto;
+
+            table,
+            td,
+            th {
+                border-collapse: collapse;
+            }
+
+            tr:nth-child(1) th {
+                .HideItems {
+                    display: none;
+                }
+            }
+
+            th {
+                padding: 2px 4px;
+                font-size: 0.75vw;
+            }
+
+            tr th:last-child {
+                padding-right: 6px;
+            }
+
+            td {
+                padding: 2px 4px;
+                font-size: 0.75vw;
+            }
+
+            .HideItems {
+                display: none;
+            }
+        }
+    }
+}
+
+.divBold {
+    font-family: 'RobotoBold' !important;
+}

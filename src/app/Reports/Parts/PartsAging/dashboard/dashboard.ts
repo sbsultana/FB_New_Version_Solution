@@ -83,7 +83,7 @@ export class Dashboard {
     return new Promise((resolve) => {
       this.shared.spinner.show();
 
-      this.http.post('Western/GetStoresList', { userid: 1 }).subscribe({
+      this.http.post('SilverTip/GetStoresList', { userid: 1 }).subscribe({
         next: (res: any) => {
           this.shared.spinner.hide();
           const storeData = res?.response || res || [];
@@ -410,7 +410,7 @@ this.groupedParts = rawParts.reduce((acc: any, item: any) => {
       this.selectedStoreSources.length ? this.selectedStoreSources.join(", ") : "ALL",
     ]);
 
-    worksheet.addRow(["Selected Stores:", 'WesternAuto']);
+    worksheet.addRow(["Selected Stores:", 'Silvertip']);
     worksheet.addRow(["Generated On:", this.datepipe.transform(new Date(), "MM/dd/yyyy h:mm a")]);
 
     worksheet.addRow([]);

@@ -5,32 +5,60 @@
 <main>
   <div class="container-fluid">
     <div class="col-12">
-      <div class="filter-dropdowns">
-        <div class="date-filter-card d-flex align-items-center justify-content-start">
-          <div class="open-calendar position-relative">
-            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
-              [bsConfig]="bsConfig" [(ngModel)]="StartDate" readonly (keydown)="$event.preventDefault()" />
+      <div class="reports-bar">
+        <div class="filter-dropdowns">
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">( {{storecount}}
+                {{storedisplayname}} )</span>
+              <span class="arrow"></span></button>
+            <app-stores
+              [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+              [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
           </div>
-        </div>
 
-        <div class="date-filter-card d-flex align-items-center justify-content-start">
-          <div class="open-calendar position-relative">
-            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
-              [bsConfig]="bsConfig" [(ngModel)]="EndDate" readonly (keydown)="$event.preventDefault()" />
+          <div class="dropdown me-2">
+
+            <button class="dropdown-toggle" (click)="fromDp.show()">
+              From Month
+              <span class="light-font">
+                ( {{ StartDate ? (StartDate | date:'MMMM/yyyy') : 'Select' }} )
+              </span>
+            </button>
+
+            <input #fromDp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="StartDate" [bsConfig]="bsConfig"
+              readonly (keydown)="$event.preventDefault()" style="position:absolute; opacity:0; height:0; width:0;" />
+
           </div>
-        </div>
-        <div class="dropdown">
-          <button class="apply-button" (click)="applyDateChange()"><span>Apply</span></button>
+
+          <div class="dropdown">
+
+            <button class="dropdown-toggle" (click)="toDp.show()">
+              To Month
+              <span class="light-font">
+                ( {{ EndDate ? (EndDate | date:'MMMM/yyyy') : 'Select' }} )
+              </span>
+            </button>
+
+            <input #toDp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="EndDate" [bsConfig]="bsConfig" readonly
+              (keydown)="$event.preventDefault()" style="position:absolute; opacity:0; height:0; width:0;" />
+
+          </div>
+          <div class="dropdown">
+            <button class="apply-button" (click)="applyDateChange()"><span>Apply</span></button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="performance-scorecard">
-      <table class="table mb-0">
+    <div class="scorecard-single-header incomestatementtrend-tbl">
+      <table class="table mb-0 w-100">
         <thead>
           <tr>
-            <th class="text-start">WesternAuto</th>
-            <th></th>
-            <th *ngFor="let item of ExpenseTrendByStoreKeysMonth.slice(0, ExpenseTrendByStoreKeysMonth.length - 1)">
+            <th class="text-start">
+              Silvertip</th>
+            <th>
+            </th>
+            <th
+              *ngFor="let item of ExpenseTrendByStoreKeysMonth.slice(0, ExpenseTrendByStoreKeysMonth.length - 1); let i = index">
               <span>{{ item }}</span>
             </th>
           </tr>
@@ -39,7 +67,10 @@
           <ng-container *ngFor="let item of ExpenseTrendByStoreMonth; let i = index">
             <tr [id]="i" [ngClass]="{ 
                 store: ['Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed', 'Total Store Gross', 'Total Expenses', 'Operating Profit', 'Net Adds/Deducts', 'Net Profit'].includes(item.LABLE) 
-              }">
+              }" [ngStyle]="{
+                            'pointer-events': item.LABLE === 'Bonuses' ? 'none' : 'auto',
+                            'cursor': item.LABLE === 'Bonus' ? 'not-allowed' : 'pointer'
+                            }">
               <td>
                 <span style="white-space: nowrap;" [ngClass]="{ 
                     bold: ['Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed', 'Total Store Gross', 'Total Expenses', 'Operating Profit', 'Net Adds/Deducts', 'Net Profit'].includes(item.LABLE), 

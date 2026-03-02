@@ -6,9 +6,11 @@ import { Setdates } from '../../../../Core/Providers/SetDates/setdates';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
 @Component({
   selector: 'app-salesgross-reports',
-  imports: [SharedModule, DateRangePicker, Stores],
+  imports: [SharedModule, DateRangePicker, Stores,ToastContainer],
   templateUrl: './salesgross-reports.html',
   styleUrl: './salesgross-reports.scss'
 })
@@ -19,7 +21,7 @@ export class SalesgrossReports {
   // Report Popup
   @Input() header: any;
   groupId: any = [1];
-  storeIds: any = [2]
+  storeIds: any = [1]
   stores: any = []
   groupsArray: any = [];
   storename: any = ''
@@ -107,15 +109,16 @@ export class SalesgrossReports {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // console.log(changes, 'Report');
+    console.log(changes, 'Report');
     this.ngChanges = changes['header'].currentValue[0];
     this.FromDate = this.ngChanges.fromDate;
     this.ToDate = this.ngChanges.toDate;
     this.DateType = this.ngChanges.datevaluetype;
+    this.groupId = this.ngChanges.groups
     this.setDates(this.ngChanges.datevaluetype)
     // this.StoresData(this.ngChanges)
     this.neworused = []
-    this.neworused = this.ngChanges.dealType
+    this.neworused = this.ngChanges.dealType;
     this.retailorlease = [];
     this.retailorlease = this.ngChanges.saleType
     this.dealstatus = [];
@@ -156,7 +159,7 @@ export class SalesgrossReports {
       this.selectedDataGrouping = this.datagrp;
     }
   }
-  constructor(private shared: Sharedservice, private datesSrvc: Setdates,) { }
+  constructor(private shared: Sharedservice, private datesSrvc: Setdates,private toast:ToastService) { }
 
   ngOnInit() {
     this.getDataGroupings();
@@ -246,7 +249,8 @@ export class SalesgrossReports {
           this.selectedDataGrouping = this.datagrp;
           // // console.log(this.selectedDataGrouping);
         } else {
-          alert('Invalid Details');
+     
+          this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
       (error) => {
@@ -257,7 +261,8 @@ export class SalesgrossReports {
   SelectedData(val: any) {
     if (val.state == false) {
       if (this.selectedDataGrouping.length >= 3) {
-        alert('Select up to 3 Filters only to Group your data');
+  
+        this.toast.show('Select up to 3 Filters only to Group your data', 'warning', 'Warning');
       } else {
         val.state = true;
         this.selectedDataGrouping.push(val);
@@ -281,7 +286,7 @@ export class SalesgrossReports {
   }
 
   employees(block: any, e: any) {
-    // alert(e)
+
     if (block == 'SP') {
       const index = this.selectedSalespersonvalues.findIndex(
         (i: any) => i == e
@@ -448,7 +453,8 @@ export class SalesgrossReports {
           this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
         } else {
-          alert('Invalid Details');
+       
+          this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
       (error) => {
@@ -459,7 +465,7 @@ export class SalesgrossReports {
   // Report popup Code
   activePopover: number = -1;
   togglePopover(popoverIndex: number) {
-    // alert('Hi')
+  
     if (this.activePopover === popoverIndex) {
       this.activePopover = -1;
     } else {
@@ -566,7 +572,7 @@ export class SalesgrossReports {
     // this.datevaluetype=
     // console.log(type);
     if (type != 'C') {
-      this.displaytime = 'Time Frame ( ' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ' )';
+      this.displaytime = '( ' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ' )';
     }
     this.maxDate = new Date();
     this.minDate = new Date();
@@ -667,24 +673,44 @@ export class SalesgrossReports {
     this.activePopover = -1
     let peoples = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
     let aqusrc: any = ['All']
-    if (this.selectedDataGrouping.length == 0) {
-      alert('Please select atleast one ');
+    if(!this.storeIds || this.storeIds.length === 0){
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
+    }
+    else if (this.selectedDataGrouping.length == 0) {
+      this.toast.show(
+        'Please Select Atleast One Grouping',
+        'warning',
+        'Warning'
+      );
     } else if (this.dealstatus.length == 0) {
-
-      alert('Please select atleast one Deal Status')
+      this.toast.show(
+        'Please Select Atleast One Deal Status',
+        'warning',
+        'Warning'
+      );
+     
     }
     else if (this.retailorlease.length == 0) {
-      alert('Please select atleast one Deal Type')
+      this.toast.show(
+        'Please Select Atleast One Deal Type',
+        'warning',
+        'Warning'
+      );
+     
     }
     else if (peoples == 0) {
-      alert('Please select atleast one from People Filter')
+      this.toast.show(
+        'Please Select Atleast One from People Filter',
+        'warning',
+        'Warning'
+      );
+      
     }
-    // if (this.storeIds.length == 0) {
-    //   alert('Please select atleast one store');
-    // }
-    // else if (this.Acquisition.length == 0) {
-    //   alert('Please select atleast one Acquisition Source');
-    // }
+  
     else {
       const data = {
         Reference: 'Sales Gross',

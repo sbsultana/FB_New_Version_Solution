@@ -73,6 +73,7 @@ export class Header {
         }
       });
     const storedUserInfo = localStorage.getItem('userInfo');
+
     if (storedUserInfo) {
       this.userInfo = JSON.parse(storedUserInfo);
       // ✅ Clean up token in URL
@@ -86,6 +87,13 @@ export class Header {
       }
 
       window.history.replaceState({}, document.title, cleanUrl);
+      this.userInfo.user_Info['Preferences'] = 1
+      this.userInfo.user_Info['Storeids'] = '71,8,7,4,35,1,32,40,50,25,18,31,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54'
+
+      console.log(this.userInfo);
+      
+      localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+      console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);
 
       this.afterUserLoad();
       this.getGruopsandStores()
@@ -140,6 +148,8 @@ export class Header {
 
     try {
       const decoded = JSON.parse(atob(token));
+      decoded.user_Info['Preferences'] = 1
+      decoded.user_Info['Storeids'] = '71,8,7,4,35,1,32,40,50,25,18,31,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54'
       localStorage.setItem('userInfo', JSON.stringify(decoded));
       this.userInfo = decoded;
       this.afterUserLoad();

@@ -11,36 +11,36 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { common } from '../../../../common';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import { Workbook } from 'exceljs';
+import * as FileSaver from 'file-saver';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, ToastContainer, NgxSpinnerModule, BsDatepickerModule],
+  imports: [SharedModule, ToastContainer, NgxSpinnerModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
 export class Dashboard {
   @ViewChild('chartContainer3') chartContainer3!: ElementRef<HTMLDivElement>;
   @ViewChild('chartContainer2') chartContainer2!: ElementRef<HTMLDivElement>;
-  // selectedYear: Date = new Date();
+  storeIds: any = [71];
+  stores: any = [];
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '71', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
+  ngChanges: any;
 
-  // isEditMode = false;
 
-  // Original data
-  AbingtonData = [
-    { variable: 'Wholesale', months: [1200, 1500, 1800, 2000, 1700, 2200, 2400, 2300, 2100, 2500, 2600, 2700] },
-    { variable: 'Inter-Company', months: [800, 750, 900, 1000, 950, 1100, 1050, 980, 1020, 1200, 1150, 1250] },
-  ];
-
-  PDCData = [
-    { variable: 'Wholesale', months: [1200, 1500, 1800, 2000, 1700, 2200, 2400, 2300, 2100, 2500, 2600, 2700] },
-    { variable: 'Dealer', months: [800, 750, 900, 1000, 950, 1100, 1050, 980, 1020, 1200, 1150, 1250] },
-    { variable: 'Fleet', months: [400, 750, 900, 1000, 750, 1100, 1350, 1320, 1080, 1300, 1450, 1450] },
-    { variable: 'Bulk', months: [2000, 2200, 2400, 2500, 2600, 2800, 3000, 3200, 3100, 3300, 3400, 3500] },
-    { variable: 'Aftermarket Powertrain', months: [5000, 0, 2000, 0, 0, 4500, 0, 0, 3000, 0, 1000, 0] },
-    { variable: 'Retail / Internet', months: [400, 750, 900, 1000, 750, 1100, 1350, 1320, 1080, 1300, 1450, 1450] },
-    { variable: 'Inter-Company', months: [2000, 2200, 2400, 2500, 2600, 2800, 3000, 3200, 3100, 3300, 3400, 3500] },
-  ];
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
@@ -53,7 +53,7 @@ export class Dashboard {
   constructor(
     public shared: Sharedservice,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private toastService: ToastService,
+    private toast: ToastService,
     private spinner: NgxSpinnerService,
     public apiSrvc: Api,
     private http: HttpClient,
@@ -64,11 +64,24 @@ export class Dashboard {
     private cd: ChangeDetectorRef,
   ) {
     this.shared.setTitle(this.shared.common.titleName + '- Budget Forecast');
+    if (localStorage.getItem('userInfo')) {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo')!);
+      this.storeIds = Number(
+        userInfo.user_Info.ustores.split(',').pop()
+      );
+    }
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
     let obj = {
       title: 'Budget Forecast',
+      stores: '71'
     }
     this.apiSrvc.SetHeaderData({ obj });
-    this.tableData = this.PDCData;
     this.bsConfig = {
       dateInputFormat: 'YYYY',
       minMode: 'year',
@@ -76,6 +89,67 @@ export class Dashboard {
     };
     this.getBudgetForecastData(this.selectedFilter, this.selectedYear);
   }
+
+  //////////////////////////////////////////Store Filter Code Start//////////////////////////////////////////////////
+  excel!: Subscription;
+  ngAfterViewInit() {
+
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Budget Forecast') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
+    this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: { obj: { title: string; state: boolean; }; }) => {
+      if (this.excel != undefined) {
+        if (res.obj.title == 'Budget Forecast') {
+          if (res.obj.state == true) {
+            this.exportToExcel();
+          }
+        }
+      }
+    });
+  }
+  togglePopover(popoverIndex: number) {
+    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
+  }
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'S', 'others': 'N'
+    };
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
+
+  //////////////////////////////////////////Store Filter End////////////////////////////////////////////////////
+
   PDCForecastData: any[] = [];
   NoPDCForecastdata = false;
   selectedstorevalues: number = 60;
@@ -87,15 +161,13 @@ export class Dashboard {
   selectedFilter: string = 'store';
 
   activePopover: number | null = null;
-  selectedYear!: number;
+  selectedYear: any = new Date().getFullYear();
 
   bsConfig!: Partial<BsDatepickerConfig>;
   maxDate: Date = new Date();
   bsValue: Date = new Date();
 
-  togglePopover(id: number) {
-    this.activePopover = this.activePopover === id ? null : id;
-  }
+
   selectFilter(f: string) {
     this.selectedFilter = f;
     this.activePopover = null;
@@ -107,9 +179,15 @@ export class Dashboard {
   }
   applyFilterAndYear() {
     if (!this.selectedYear) {
-      alert("Please select a year!");
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
       return;
     }
+    console.log('Filters', this.storeIds.toString(), this.selectedFilter, this.selectedYear);
+
     this.getBudgetForecastData(this.selectedFilter, this.selectedYear);
   }
   cancelEdit() {
@@ -165,17 +243,15 @@ export class Dashboard {
   selectedDt: number = 2025;
 
   getBudgetForecastData(type: string, year: number): void {
-
     this.variableType = type;
-
     const obj = {
-      IV_StoreID: 2,
+      IV_StoreID: this.storeIds.toString(),
       IV_V_Type: type,
       IV_Year: year?.toString() || new Date().getFullYear().toString()
     };
 
     this.spinner.show();
-    this.apiSrvc.postmethod('BudgetValues/GetBudgetValuesExpense', obj)
+    this.apiSrvc.postmethod('IncomeTargetValues/GetIncomeTargetValuesExpenseV2', obj)
       .subscribe({
         next: (res: any) => {
           this.spinner.hide();
@@ -188,7 +264,7 @@ export class Dashboard {
               return catA === catB ? seqA - seqB : catA - catB;
             });
             this.cd.detectChanges();
-            const userId = JSON.parse(localStorage.getItem('UserDetails') || '{}')?.userid;
+            const userId = JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.userid;
 
             this.PDCForecastData.forEach(ele => {
               if (!ele.IV_Variable_ID || ele.IV_Variable_ID === 'null') {
@@ -199,18 +275,15 @@ export class Dashboard {
                 ele.IV_User_ID = userId;
                 ele.IV_Year = year.toString();
               }
-
               const monthKeys = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-              // Keep empty if no value, otherwise convert to number
               monthKeys.forEach(key => {
                 ele[key] = ele[key] != null && ele[key] !== '' ? Number(ele[key]) : null;
               });
-
-              // Calculate sum treating empty as 0
               const monthValues = monthKeys.map(key => Number(ele[key]) || null);
               ele.sum = monthValues.reduce((a: any, b: any) => a + b, null);
             });
+            console.log('Forecast Data', this.PDCForecastData);
+
           } else {
             this.PDCForecastData = [];
           }
@@ -229,12 +302,11 @@ export class Dashboard {
       this.backupData = JSON.parse(JSON.stringify(this.PDCForecastData));
       this.isEditMode = true;
     } else {
-      const storeId = 2;
-      const userId = JSON.parse(localStorage.getItem('UserDetails') || '{}')?.userid;
+      const storeId = this.storeIds.toString();
+      const userId = JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.userid;
 
       const payload = this.PDCForecastData.map(ele => {
         const newRow = { ...ele };
-
         if (!newRow.IV_Variable_ID || newRow.IV_Variable_ID === 'null') {
           newRow.IV_Variable_ID = newRow.ITV_Id;
           newRow.IV_StoreID = storeId;
@@ -254,24 +326,23 @@ export class Dashboard {
 
         return newRow;
       });
-
-
+      console.log('Pay Load Obj', payload);
       this.spinner.show();
-      this.apiSrvc.postmethod('BudgetValues/AddBudgetValues', payload)
+      this.apiSrvc.postmethod('IncomeTargetValues/AddIncomeTargetValuesV2', payload)
         .subscribe({
           next: res => {
             this.spinner.hide();
             if (res.status === 200) {
-              this.toastService.show('Data saved successfully!', 'success', 'Success');
+              this.toast.show('Data saved successfully!', 'success', 'Success');
               this.onYearSelected(new Date(this.selectedYear, 0, 1));
               this.isEditMode = false;
             } else {
-              this.toastService.show('Invalid inputs!', 'danger', 'Error');
+              this.toast.show('Invalid inputs!', 'danger', 'Error');
             }
           },
           error: err => {
             console.error('API error: ', err);
-            this.toastService.show('Something went wrong!', 'danger', 'Error');
+            this.toast.show('Something went wrong!', 'danger', 'Error');
             this.spinner.hide();
           }
         });
@@ -283,27 +354,216 @@ export class Dashboard {
 
     const clipboardData = event.clipboardData || (window as any).clipboardData;
     const pastedText = clipboardData.getData('text');
-
     const rows = pastedText.split('\n').filter((r: any) => r.trim() !== '');
-    const values = rows[0].split('\t'); // Only first row for now
-
+    const values = rows[0].split('\t');
     if (!this.PDCForecastData[rowIndex]) return;
-
     for (let i = 0; i < values.length; i++) {
       const colIndex = startColIndex + i;
       if (colIndex >= this.monthsShort.length) break;
-
       const monthKey = this.monthsShort[colIndex];
       this.PDCForecastData[rowIndex][monthKey] = values[i].trim();
 
-      // Optional: call input handler if you have one
-      // this.onKeydownEvent(new InputEvent('input'), this.gridObj[rowIndex], rowIndex, monthKey, colIndex);
+      this.onKeydownEvent(
+        new InputEvent('input'),
+        this.PDCForecastData[rowIndex],
+        rowIndex,
+        monthKey,
+        colIndex
+      );
     }
+  }
+  private calcTimer: any;
+
+  onKeydownEvent(evnt: any, ele: any, ind1: any, mnth: any, ind2: any) {
+    if (evnt.type === 'input') {
+      if (
+        ele.ITV_Variable_Name?.toLowerCase().includes('advertising rebates') ||
+        ele.ITV_Variable_Name?.toLowerCase().includes('floor plan assistance')
+      ) {
+        let value = Number(ele[mnth]);
+        if (!isNaN(value) && value > 0) {
+          ele[mnth] = -value;
+        }
+      }
+      this.PDCForecastData.filter((vr: any) => {
+        if (vr.ITV_Formula_Status === 'Y' && vr.ITV_Formula) {
+          const result = vr.ITV_Formula.split(/(?<=\S) (\-|\+|\*) (?=\S)/).map((item: any) => item.trim());
+
+          if (this.PDCForecastData.length > 0 && result[0] && result[0] !== undefined) {
+            const variables: any[] = [];
+            const operators: string[] = [];
+
+            for (let i = 0; i < result.length; i++) {
+              if (i % 2 === 0) {
+                const idx = this.PDCForecastData.findIndex((x: any) => x.ITV_Variable_Name === result[i]);
+                if (idx > -1) {
+                  variables.push(this.PDCForecastData[idx][mnth]);
+                } else {
+                  return;
+                }
+              } else {
+                operators.push(result[i]);
+              }
+            }
+
+            let expression = '';
+            for (let j = 0; j < variables.length; j++) {
+              expression += variables[j];
+              if (j < operators.length) {
+                expression += ' ' + operators[j] + ' ';
+              }
+            }
+            try {
+              const value = new Function(`return (${expression});`)();
+              vr[mnth] = this.formatToTwoDecimal(value);
+            } catch (e) {
+              console.error('Invalid formula evaluation:', expression, e);
+            }
+          }
+        }
+      });
+    }
+  }
+
+  formatToTwoDecimal(value: any): number {
+    const num = Number(value);
+    return isNaN(num) ? 0 : Number(num.toFixed(2));
+  }
+
+
+  formatNumber(value: any): string {
+    const num = Number(value);
+    if (isNaN(num)) return '0.00';
+
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(num);
   }
 
   BacktoPDCDashboard() {
     this.router.navigate(['']);
   }
+  isEmptyValue(val: any): boolean {
+    return val === null || val === undefined || val === '' || val === 0 || val === '0';
+  }
 
+  exportToExcel(): void {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Budget Forecast - Input');
+
+    const isEditMode = this.isEditMode;
+    const isStore = this.variableType === 'store';
+    const data = isEditMode ? this.PDCForecastData : this.PDCForecastData;
+
+    const storeName = this.storename ?? 'Store Name';
+    const variableTypeLabel = isStore ? 'Store Variables' : 'Expense Variables';
+    const year = this.selectedYear ?? 'Year';
+
+    // 1. Add Filter Info Rows (top 3 rows)
+    worksheet.addRow(['Store Name:', storeName]);
+    worksheet.addRow(['Variable Type:', variableTypeLabel]);
+    const row = worksheet.addRow(['Year:', year]);
+    row.eachCell(cell => cell.alignment = { horizontal: 'left' });
+
+
+
+    // Style Filter Info Rows
+    for (let i = 1; i <= 3; i++) {
+      const row = worksheet.getRow(i);
+      row.getCell(1).font = { bold: true };
+      row.getCell(1).alignment = { indent: 1 };
+      row.getCell(2).alignment = { indent: 1 };
+    }
+
+    // 2. Header Row (row 4)
+    const headerRow = [
+      isStore ? 'Category' : 'FinSummary',
+      'Store Variables',
+      '', // Spacer
+      ...this.monthsShort
+    ];
+    if (!isEditMode) {
+      headerRow.push('Total');
+    }
+
+    const header = worksheet.addRow(headerRow);
+    header.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF337ab7' },
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    // 3. Data Rows
+    data.forEach((row: any, index: number) => {
+      const showCategory = index === 0 || row.Category !== data[index - 1]?.Category;
+      const showSummary = index === 0 || row.ITV_FinSummary !== data[index - 1]?.ITV_FinSummary;
+      const category = isStore ? (showCategory ? row.Category : '') : (showSummary ? row.ITV_FinSummary : '');
+
+      const rowData: (string | number | null)[] = [
+        category,
+        row.ITV_Variable_Name,
+        ''
+      ];
+
+      this.monthsShort.forEach((mn) => {
+        const val = row[mn];
+        rowData.push(val !== '' && val != null ? +val : '');
+      });
+
+      if (!isEditMode) {
+        const totalVal = row.sum;
+        rowData.push(totalVal !== '' && totalVal != null ? +totalVal : '');
+      }
+
+      const addedRow = worksheet.addRow(rowData);
+
+      const isGross = row.ITV_value_type === 'G' || row.ValueType === 'G';
+      const numFmt = isGross ? '"$"#,##0' : '#,##0';
+
+      this.monthsShort.forEach((_, i) => {
+        const cell = addedRow.getCell(4 + i);
+        if (typeof rowData[3 + i] === 'number') {
+          cell.numFmt = numFmt;
+          cell.alignment = { horizontal: 'right' };
+        }
+      });
+
+      if (!isEditMode) {
+        const totalCell = addedRow.getCell(4 + this.monthsShort.length);
+        const val = row.sum;
+        if (typeof val === 'number') {
+          totalCell.numFmt = numFmt;
+          totalCell.alignment = { horizontal: 'right' };
+          totalCell.font = { bold: true };
+        }
+      }
+    });
+
+    // 4. Auto width with minimum size
+    worksheet.columns.forEach((column: any) => {
+      let maxLength = 10;
+      column.eachCell({ includeEmpty: true }, (cell: any) => {
+        const val = cell.value ? cell.value.toString() : '';
+        maxLength = Math.max(maxLength, val.length);
+      });
+      column.width = Math.max(15, maxLength + 2); // set min width of 15 for better visibility
+    });
+
+    // 5. Freeze rows after filter + header (top 4 rows)
+    worksheet.views = [{ state: 'frozen', ySplit: 4 }];
+
+    // 6. Export as .xlsx
+    workbook.xlsx.writeBuffer().then((buffer: any) => {
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      FileSaver.saveAs(blob, `Budget_Forecast_${new Date().getTime()}.xlsx`);
+    });
+  }
 
 }

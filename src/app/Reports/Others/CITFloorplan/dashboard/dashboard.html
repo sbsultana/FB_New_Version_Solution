@@ -3,28 +3,28 @@
 </ngx-spinner>
 <main>
     <div class="container-fluid">
-
-        <div class="report-bar">
+        <div class="reports-bar">
             <div class="filter-dropdowns">
-
                 <div class="dropdown">
-                    <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
-                        {{storedisplayname}} )
+                    <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                            {{storecount}}
+                            {{storedisplayname}} )</span>
                         <span class="arrow"></span></button>
-                    <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
-                        (StoresData)="StoresData($event)"></app-stores>
+                    <app-stores
+                        [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                        [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
                 </div>
 
                 <!-- ========== Deal Status Dropdown ========== -->
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(3)">
-                        Deal Status:
-                        ({{ dealStatus.length == 1 ? dealStatus : 'Selected' }}
-                        <span *ngIf="dealStatus.length > 1"> {{dealStatus.length}} </span>)
+                        Deal Status <span class="light-font"> ( {{ dealStatus.length == 1 ? dealStatus : 'Selected' }}
+                            <span *ngIf="dealStatus.length > 1"> {{dealStatus.length}} </span>)</span>
+
                         <span class="arrow"></span>
                     </button>
 
-                    <div class="timeframe" *ngIf="activePopover === 3">
+                    <div class="timeframe mt-2" *ngIf="activePopover === 3">
                         <div class="date-filter-card">
                             <button class="outline-button" (click)="multipleorsingle('DS','Booked')"
                                 [ngClass]="{'active':dealStatus.indexOf('Booked')>=0}">
@@ -32,12 +32,12 @@
                             </button>
                             <button class="outline-button" (click)="multipleorsingle('DS','Finalized')"
                                 [ngClass]="{'active':dealStatus.indexOf('Finalized')>=0}">
-                                Finalized
+                                Closed or Sold
                             </button>
-                            <button class="outline-button" (click)="multipleorsingle('DS','Delivered')"
+                            <!-- <button class="outline-button" (click)="multipleorsingle('DS','Delivered')"
                                 [ngClass]="{'active':dealStatus.indexOf('Delivered')>=0}">
                                 Delivered
-                            </button>
+                            </button> -->
                         </div>
                     </div>
                 </div>
@@ -48,16 +48,17 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(4)">
-                        People:
-                        ({{ selectedFiManagersvalues.length == 1 ? selectedFiManagersname : 'Selected' }}
-                        <span *ngIf="selectedFiManagersvalues.length > 1"> {{ selectedFiManagersvalues.length }}
-                        </span>)
+                        People <span class="light-font">
+                            ( {{ selectedFiManagersvalues.length == 1 ? selectedFiManagersname : 'Selected' }}
+                            <span *ngIf="selectedFiManagersvalues.length > 1"> {{ selectedFiManagersvalues.length }}
+                            </span>)
+                        </span>
                         <span class="arrow"></span>
                     </button>
-                    <div class="reportstores-card my-3" *ngIf="activePopover ===4">
+                    <div class="reportstores-card mt-2" *ngIf="activePopover ===4">
 
-                        <div class="stores d-flex flex-column ps-0">
-                            <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                        <div class="stores d-flex flex-column border-0">
+                            <div class="stores-wrapper flex-grow-1 d-flex flex-column ">
 
                                 <div class="allstores text-start">
                                     <a class="text-primary text-decoration-none cursor-pointer me-2"
@@ -68,14 +69,14 @@
                                         All</a>
                                 </div>
                                 <div class="store-columns flex-grow-1">
-                                    
-                                    <!-- <ng-container *ngIf="storeIds.length > 0">                               
-                                    <div class="allstores text-start" *ngIf="salesPersons.length == 0">
-                                        <a class="text-primary text-decoration-none cursor-pointer me-2"
-                                            style="pointer-events: none;">No Sales Persons
-                                        </a>
-                                    </div>
-                                </ng-container> -->
+
+                                    <ng-container *ngIf="storeIds.length > 0">
+                                        <div class="allstores text-start" *ngIf="selectedFiManagersvalues.length == 0">
+                                            <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                                style="pointer-events: none;">No Records Found
+                                            </a>
+                                        </div>
+                                    </ng-container>
 
 
                                     <ng-container *ngIf="activePopover==4">
@@ -92,108 +93,126 @@
                         </div>
                     </div>
                 </div>
-            
 
 
 
-            <!-- Retail/Fleet Dropdown -->
-            <div class="dropdown">
-                <button class="dropdown-toggle" (click)="togglePopover(5)">
-                    Sale Type:
-                    ({{ saleType.length == 1 ? saleType : 'Selected' }}
-                    <span *ngIf="saleType.length > 1"> {{saleType.length}} </span>)
-                    <span class="arrow"></span>
-                </button>
 
-                <div class="timeframe" *ngIf="activePopover === 5">
-                    <div class="date-filter-card">
-                        <button class="outline-button" (click)="multipleorsingle('ST','Retail')"
-                            [ngClass]="{'active': saleType.indexOf('Retail') >= 0}">
-                            Retail
-                        </button>
-                        <button class="outline-button" (click)="multipleorsingle('ST','Fleet')"
-                            [ngClass]="{'active': saleType.indexOf('Fleet') >= 0}">
-                            Fleet
-                        </button>
+                <!-- Retail/Fleet Dropdown -->
+                <div class="dropdown d-none">
+                    <button class="dropdown-toggle" (click)="togglePopover(5)">
+                        Sale Type:
+                        ({{ saleType.length == 1 ? saleType : 'Selected' }}
+                        <span *ngIf="saleType.length > 1"> {{saleType.length}} </span>)
+                        <span class="arrow"></span>
+                    </button>
+
+                    <div class="timeframe mt-2" *ngIf="activePopover === 5">
+                        <div class="date-filter-card">
+                            <button class="outline-button" (click)="multipleorsingle('ST','Retail')"
+                                [ngClass]="{'active': saleType.indexOf('Retail') >= 0}">
+                                Retail
+                            </button>
+                            <button class="outline-button" (click)="multipleorsingle('ST','Fleet')"
+                                [ngClass]="{'active': saleType.indexOf('Fleet') >= 0}">
+                                Fleet
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+                &nbsp;
+                <div class="all-debits">
+                    <label>
+                        <input type="radio" name="balanceFilter" value="all" (change)="AllorDebit('all')"
+                            [checked]="allordebit == 'all'" />
+                        All
+                    </label>
+                    &nbsp; &nbsp;
+                    <label>
+                        <input type="radio" name="balanceFilter" value="dr" (change)="AllorDebit('dr')"
+                            [checked]="allordebit == 'dr'" />
+                        Debits Only
+                    </label>
+                </div>
+                &nbsp;
+                <!-- ========== Apply Button ========== -->
+                <div class="dropdown">
+                    <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                </div>
 
-            <!-- ========== Apply Button ========== -->
-            <div class="dropdown">
-                <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
             </div>
-
         </div>
-    </div>
 
 
 
-    <div class="" id="CITreport">
-        <div class="d-flex justify-content-between">
-            <div class="Benchmark-tbl">
-                <div>
+        <div class="" id="CITreport">
+            <div class="d-flex justify-content-between">
+                <div class="scorecard-aging-header">
                     <table class="table mb-0">
                         <thead>
                             <tr>
                                 <th colspan="2">&nbsp;</th>
-                                <th>Total</th>
-                                <th>0-5</th>
-                                <th>6-10</th>
-                                <th>11-15</th>
-                                <th>15+</th>
+                                <th (click)="applyAgingFilter(0, 0)" class="aging-link" [class.aging-active]="selectedAgingFrom === 0 && selectedAgingTo === 0">Total</th>
+                                <th (click)="applyAgingFilter(0, 5)" class="aging-link"   [class.aging-active]="selectedAgingFrom === 0 && selectedAgingTo === 5">0-5</th>
+                                <th (click)="applyAgingFilter(6, 10)" class="aging-link"  [class.aging-active]="selectedAgingFrom === 6 && selectedAgingTo === 10">6-10</th>
+                                <th (click)="applyAgingFilter(11, 15)" class="aging-link" [class.aging-active]="selectedAgingFrom === 11 && selectedAgingTo === 15">11-15</th>
+                                <th (click)="applyAgingFilter(15, null)" class="aging-link" [class.aging-active]="selectedAgingFrom === 15 && selectedAgingTo === null">15+</th>
                             </tr>
                         </thead>
                         <tbody *ngIf="FloorPlanData?.length > 0">
                             <tr *ngIf="FloorPlanData?.length > 0 && FloorPlanData[0]?.AgeData?.length > 0">
                                 <td colspan="2">CIT Aging</td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.TOTAL) }">
+                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.TOTAL) }"
+                                    (click)="applyAgingFilter(0, 0)" class="aging-link" >
                                     <span class="d-flex justify-content-between">
-                                        {{ FloorPlanData[0]?.AgeData?.[0]?.TOTAL ? '$' : '' }}
                                         <span>
                                             {{ FloorPlanData[0]?.AgeData?.[0]?.TOTAL != null ?
-                                            (FloorPlanData[0].AgeData[0].TOTAL | number:'1.0-0') : '-' }}
+                                            (FloorPlanData[0].AgeData[0].TOTAL | currency:'USD':'symbol':'1.0-0') :
+                                            '-' }}
                                         </span>
                                     </span>
                                 </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D1) }">
+                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D1) }"
+                                    (click)="applyAgingFilter(0, 5)" class="aging-link"  >
                                     <span class="d-flex justify-content-between">
-                                        {{ FloorPlanData[0]?.AgeData?.[0]?.D1 ? '$' : '' }}
                                         <span>
                                             {{ FloorPlanData[0]?.AgeData?.[0]?.D1 != null ?
-                                            (FloorPlanData[0].AgeData[0].D1 | number:'1.0-0') : '-' }}
+                                            (FloorPlanData[0].AgeData[0].D1 | currency:'USD':'symbol':'1.0-0') : '-'
+                                            }}
                                         </span>
                                     </span>
                                 </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D2) }">
+                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D2) }"
+                                    (click)="applyAgingFilter(6, 10)" class="aging-link">
                                     <span class="d-flex justify-content-between">
-                                        {{ FloorPlanData[0]?.AgeData?.[0]?.D2 ? '$' : '' }}
                                         <span>
                                             {{ FloorPlanData[0]?.AgeData?.[0]?.D2 != null ?
-                                            (FloorPlanData[0].AgeData[0].D2 | number:'1.0-0') : '-' }}
+                                            (FloorPlanData[0].AgeData[0].D2 | currency:'USD':'symbol':'1.0-0') : '-'
+                                            }}
                                         </span>
                                     </span>
                                 </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D3) }">
+                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D3) }"
+                                    (click)="applyAgingFilter(11, 15)" class="aging-link">
                                     <span class="d-flex justify-content-between">
-                                        {{ FloorPlanData[0]?.AgeData?.[0]?.D3 ? '$' : '' }}
                                         <span>
                                             {{ FloorPlanData[0]?.AgeData?.[0]?.D3 != null ?
-                                            (FloorPlanData[0].AgeData[0].D3 | number:'1.0-0') : '-' }}
+                                            (FloorPlanData[0].AgeData[0].D3 | currency:'USD':'symbol':'1.0-0') : '-'
+                                            }}
                                         </span>
                                     </span>
                                 </td>
 
-                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D4) }">
+                                <td [ngClass]="{ negative: !inTheGreen(FloorPlanData[0]?.AgeData?.[0]?.D4) }"
+                                    (click)="applyAgingFilter(15, null)" class="aging-link">
                                     <span class="d-flex justify-content-between">
-                                        {{ FloorPlanData[0]?.AgeData?.[0]?.D4 ? '$' : '' }}
                                         <span>
                                             {{ FloorPlanData[0]?.AgeData?.[0]?.D4 != null ?
-                                            (FloorPlanData[0].AgeData[0].D4 | number:'1.0-0') : '-' }}
+                                            (FloorPlanData[0].AgeData[0].D4 | currency:'USD':'symbol':'1.0-0') : '-'
+                                            }}
                                         </span>
                                     </span>
                                 </td>
@@ -202,270 +221,304 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Side Info Section -->
-
-            </div>
-            <div style="color: #ffffff;">
-                <div class="fw-bold">
-                    As of {{ FloorPlanData[0]?.AgeData?.[0]?.D5 | timeconversion}}
+                <div class="asofnow">
+                    <div class="text-end">
+                        As of {{ FloorPlanData[0]?.AgeData?.[0]?.D5 | timeconversion}}
+                    </div>
+                    <div class="fw-bold">
+                        Count: {{ FloorPlanData[0]?.AgeData?.[0]?.D6 != null ? FloorPlanData[0].AgeData[0].D6 : '-'
+                        }}
+                    </div>
                 </div>
-                <div class="fw-bold">
-                    Count: {{ FloorPlanData[0]?.AgeData?.[0]?.D6 != null ? FloorPlanData[0].AgeData[0].D6 : '-'
-                    }}
-                </div>
-
             </div>
+            <div class="scorecard-single-header cit-tbl mt-2">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th *ngIf="Role=='Super Admin' || userid=='8'"> <i alt="" *ngIf="hideVisibility">
+                                    <input type="checkbox" id="symbol" [checked]="check"
+                                        (change)="collectHidevalues($event,'',confirm,'multi','')"> Hide
+                                </i>
+                                <i alt="" *ngIf="!hideVisibility" aria-hidden="true">Hide</i>
+                            </th>
+                            <th (click)="openComments()" style="cursor: pointer;">Notes
+                                <i alt="" class="fa fa-eye" *ngIf="!commentsVisibility" aria-hidden="true"></i>
+                                <i alt="" class="fa-solid fa-eye-slash" *ngIf="commentsVisibility"></i>
+                            </th>
+                            <th (click)="sort('AGE')" style="cursor: pointer;">Age</th>
+                            <th (click)="sort('AgeDate')" style="cursor: pointer;">Date</th>
+                            <th (click)="sort('Control')" style="cursor: pointer;">Control</th>
+                            <th (click)="sort('Control2')" style="cursor: pointer;">Control 2</th>
+                            <th (click)="sort('CIT_Account')" style="cursor: pointer;">CIT Acct</th>
+
+                            <th (click)="sort('CIT_Balance')" style="cursor: pointer;">CIT</th>
+
+                            <th (click)="sort('Vehicle_Account')" style="cursor: pointer;">Vehicle Acct</th>
+                            <th (click)="sort('Vehicle_Balance')" style="cursor: pointer;">Vehicle</th>
+
+                            <th (click)="sort('CIT_Vehicle Balance')" style="cursor: pointer;">Balance</th>
+
+
+                            <!-- <th (click)="sort('BalFloorplan')" style="cursor: pointer;">Floorplan</th> -->
+                            <th (click)="sort('CustomerName')" style="cursor: pointer;">Customer</th>
+                            <th (click)="sort('CustomerNumber')" style="cursor: pointer;">Number</th>
+                            <th (click)="sort('store')" style="cursor: pointer;">Store</th>
+                            <th (click)="sort('StockNumner')" style="cursor: pointer;">Stock #</th>
+                            <th (click)="sort('Deal')" style="cursor: pointer;">Deal #</th>
+                            <th (click)="sort('Stage')" style="cursor: pointer;">Stage</th>
+                            <th (click)="sort('FIManager')" style="cursor: pointer;">F&I Mgr</th>
+                            <th (click)="sort('SalesManager')" style="cursor: pointer;">Sales Mgr</th>
+                            <th (click)="sort('SP1')" style="cursor: pointer;">Sales Person</th>
+                            <th (click)="sort('DealType')" style="cursor: pointer;">New/Used</th>
+
+                            <th (click)="sort('SaleType')" style="cursor: pointer;">Type</th>
+                            <th (click)="sort('DealStatus')" style="cursor: pointer;">Status</th>
+                            <th (click)="sort('BankName')" style="cursor: pointer;">Bank Name</th>
+                            <th (click)="sort('VehicleYear')" style="cursor: pointer;">Year</th>
+                            <th (click)="sort('VehicleMake')" style="cursor: pointer;">Make</th>
+                            <th (click)="sort('VehicleModel')" style="cursor: pointer;">Model</th>
+                            <th (click)="sort('DeliveryDate')" style="cursor: pointer;">Delivery</th>
+                            <th (click)="sort('DateSale')" style="cursor: pointer;">Sale</th>
+                            <th (click)="sort('FundingDate')" style="cursor: pointer;">Funding</th>
+                            <th (click)="sort('trade1year')" style="cursor: pointer;">Trade</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <ng-container *ngFor="let fp of FloorPlanData | filter: QISearchName; let i = index">
+                            <tr [ngClass]="{ even: i % 2 == 0, odd: i % 2 != 0 }">
+                                <td *ngIf="Role=='Super Admin' || userid=='8'">
+
+                                    <input type="checkbox" style="color:#2d91f1" id="symbols" [checked]="fp.check"
+                                        (change)="collectHidevalues($event,fp,confirm,'single',fp.StockNumner)">
+                                </td>
+                                <td class="text-center">
+                                    <img *ngIf="fp.NotesStatus == 'N'" src="/images/Actionblack.png " title="Add Notes"
+                                        (click)="addNotes(fp)" style="cursor: pointer;" data-bs-toggle="modal"
+                                        data-bs-target="#payplan">
+                                    <img *ngIf="fp.NotesStatus == 'Y'" src="/images/notes_unread.png " title="Add Notes"
+                                        (click)="addNotes(fp)" style="cursor: pointer;" data-bs-toggle="modal"
+                                        data-bs-target="#payplan">
+                                </td>
+
+                                <td class="text-center">{{ fp.AGE || '-' }}</td>
+                                <td class="text-center">
+                                    {{ fp.AgeDate ? (fp.AgeDate | date:'MM/dd/yyyy') : '-' }}
+                                </td>
+                                <td class="text-center">{{ fp.Control || '-' }}</td>
+                                <td class="text-start">
+                                    <span class="ellipsis" [class.ellipsis]="fp.Control2?.length > 15"
+                                        [title]="fp.Control2?.length > 15 ? fp.Control2 : null">
+                                        {{ fp.Control2 || '-' }}
+                                    </span>
+                                </td>
+                                <td class="text-center">{{ fp.CIT_Account || '-' }}</td>
+
+                                <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(fp.CIT_Balance) }"> {{
+                                    fp.CIT_Balance && fp.CIT_Balance !== 0
+                                    ? (fp.CIT_Balance | currency:'USD':'symbol':'1.2-2')
+                                    : '-'
+                                    }}</td>
+
+                                <td class="text-center">{{ fp.Vehicle_Account || '-' }}</td>
+
+                                <td style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(fp.Vehicle_Balance) }"> {{
+                                    fp.Vehicle_Balance && fp.Vehicle_Balance !== 0
+                                    ? (fp.Vehicle_Balance | currency:'USD':'symbol':'1.2-2')
+                                    : '-'
+                                    }}</td>
+
+                                <td style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(fp.CIT_Vehicle_Balance) }"> {{
+                                    fp.CIT_Vehicle_Balance && fp.CIT_Vehicle_Balance !== 0
+                                    ? (fp.CIT_Vehicle_Balance | currency:'USD':'symbol':'1.2-2')
+                                    : '-'
+                                    }}</td>
+                                <!-- <td class="alignright" [ngClass]="{ negative: !inTheGreen(fp.BalFloorplan) }"> {{
+                            fp.BalFloorplan ? ('$' + (fp.BalFloorplan | number:'1.2-2')) : '-' }} </td> -->
+                                <td class="text-start">
+                                    <span class="ellipsis" [class.ellipsis]="fp.CustomerName?.length > 15"
+                                        [title]="fp.CustomerName?.length > 15 ? fp.CustomerName : null">
+                                        {{ fp.CustomerName || '-' }}
+                                    </span>
+                                </td>
+                                <td class="text-center">{{ fp.CustomerNumber || '-' }}</td>
+                                <td class="text-start">{{ fp.store || '-'
+                                    }}
+                                </td>
+                                <td class="text-start">{{ fp.StockNumner || '-' }}</td>
+                                <td class="text-center popuppointer" (click)="viewDeal(fp)">{{ fp.Deal || '-' }}</td>
+                                <td class="text-start">{{ fp.Stage || '-' }}</td>
+                                <td class="text-start">{{ fp.FIManager || '-' }}</td>
+                                <td class="text-start">{{ fp.SalesManager || '-' }}</td>
+                                <td class="text-start">{{ fp.SP1 || '-' }}</td>
+                                <td class="text-center">{{ fp.SaleType || '-' }}</td>
+                                <td class="text-center">{{ fp.DealType || '-' }}</td>
+                                <td class="text-center">{{ fp.DealStatus || '-' }}</td>
+                                <td class="text-start">{{ fp.BankName || '-' }}</td>
+                                <td class="text-center">{{ fp.VehicleYear || '-' }}</td>
+                                <td class="text-start">{{ fp.VehicleMake || '-' }}</td>
+                                <td class="text-start">{{ fp.VehicleModel || '-' }}</td>
+                                <td class="text-center">
+                                    {{ fp.DeliveryDate ? (fp.DeliveryDate | date:'MM/dd/yyyy') : '-' }}
+                                </td>
+                                <td class="text-center">
+                                    {{ fp.DateSale ? (fp.DateSale | date:'MM/dd/yyyy') : '-' }}
+                                </td>
+                                <td class="text-center">
+                                    {{ fp.FundingDate ? (fp.FundingDate | date:'MM/dd/yyyy') : '-' }}
+                                </td>
+                                <td class="text-start">
+                                    {{ fp.trade1year ? fp.trade1year + ' ' + fp.trade1modelname : '-' }}
+                                </td>
+                            </tr>
+
+                            <!-- Notes Row -->
+                            <tr *ngIf="fp.duplicateNotes && commentsVisibility">
+                                <td colspan="33" class="text-start ps-5">
+                                    <h6 class="small fw-bold">Notes</h6>
+
+                                    <div *ngFor="let notes of fp.duplicateNotes" class="ps-4">
+                                        {{ notes.NOTES || '-' }}
+                                    </div>
+
+                                    <div *ngIf="fp.Notes?.length > 3" class="ps-4">
+                                        <a style="color:#337ab7; cursor:pointer;" (click)="viewmoreAction(fp)">
+                                            {{ fp.Notesstate === '+' ? 'View More' : 'View Less' }}
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                    <tbody
+                        style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
+                        <tr class="divBold even" *ngIf="FloorPlanTotalData.length > 0">
+                            <td></td>
+                            <td colspan="6" class="text-end">Totals</td>
+                            <td class="alignright"
+                                [ngClass]="{ negative: !inTheGreen(FloorPlanTotalData[0].CIT_Balance)}">{{
+                                FloorPlanTotalData[0].CIT_Balance | currency:'USD':'symbol':'1.2-2'
+                                }}
+                            </td>
+                            <td></td>
+                            <td class="alignright"
+                                [ngClass]="{ negative: !inTheGreen(FloorPlanTotalData[0].Vehicle_Balance)}">{{
+                                FloorPlanTotalData[0].Vehicle_Balance |
+                                currency:'USD':'symbol':'1.2-2' }}</td>
+                            <td class="alignright"
+                                [ngClass]="{ negative: !inTheGreen(FloorPlanTotalData[0].CIT_Vehicle_Balance)}">{{
+                                FloorPlanTotalData[0].CIT_Vehicle_Balance |
+                                currency:'USD':'symbol':'1.2-2' }}</td>
+
+                            <td colspan="20"></td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="33" class="text-center">No Records Found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
-
-        <!-- Main Table -->
-
-        <div class="det_cont mt-4">
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th *ngIf="Role=='Super Admin' || userid=='8'"> <i alt="" *ngIf="hideVisibility">
-                    <input type="checkbox" id="symbol" [checked]="check"
-                      (change)="collectHidevalues($event,'',confirm,'multi','')"> Hide
-                  </i>
-                  <i alt="" *ngIf="!hideVisibility" aria-hidden="true">Hide</i></th>
-                        <th (click)="openComments()" style="cursor: pointer;">Notes
-                            <i alt="" class="fa fa-eye" *ngIf="!commentsVisibility" aria-hidden="true"></i>
-                  <i alt="" class="fa-solid fa-eye-slash" *ngIf="commentsVisibility"></i>
-                        </th>
-                        <th (click)="sort('AGE')" style="cursor: pointer;">CIT Age</th>
-                        <th (click)="sort('AgeDate')" style="cursor: pointer;">Date</th>
-                        <th (click)="sort('Account')" style="cursor: pointer;">Account</th>
-                        <th (click)="sort('Control')" style="cursor: pointer;">Control</th>
-                        <th (click)="sort('Control2')" style="cursor: pointer;">Control 2</th>
-                        <th (click)="sort('BalCIT')" style="cursor: pointer;">CIT</th>
-                        <th (click)="sort('BalFloorplan')" style="cursor: pointer;">Floorplan</th>
-                        <th (click)="sort('CustomerName')" style="cursor: pointer;">Customer</th>
-                        <th (click)="sort('CustomerNumber')" style="cursor: pointer;">Number</th>
-                        <th *ngIf="StoreVal.toString().indexOf(',') > 0" (click)="sort('store')"
-                            style="cursor: pointer;">Store</th>
-                        <th (click)="sort('StockNumner')" style="cursor: pointer;">Stock #</th>
-                        <th (click)="sort('Deal')" style="cursor: pointer;">Deal #</th>
-                        <th (click)="sort('Stage')" style="cursor: pointer;">Stage</th>
-                        <th (click)="sort('FIManager')" style="cursor: pointer;">F&I Mgr</th>
-                        <th (click)="sort('SalesManager')" style="cursor: pointer;">Sales Mgr</th>
-                        <th (click)="sort('SP1')" style="cursor: pointer;">Sales Person</th>
-                        <th (click)="sort('SaleType')" style="cursor: pointer;">Type</th>
-                        <th (click)="sort('DealType')" style="cursor: pointer;">New/Used</th>
-                        <th (click)="sort('DealStatus')" style="cursor: pointer;">Status</th>
-                        <th (click)="sort('BankName')" style="cursor: pointer;">Bank Name</th>
-                        <th (click)="sort('VehicleYear')" style="cursor: pointer;">Year</th>
-                        <th (click)="sort('VehicleMake')" style="cursor: pointer;">Make</th>
-                        <th (click)="sort('VehicleModel')" style="cursor: pointer;">Model</th>
-                        <th (click)="sort('DeliveryDate')" style="cursor: pointer;">Delivery</th>
-                        <th (click)="sort('DateSale')" style="cursor: pointer;">Sale</th>
-                        <th (click)="sort('FundingDate')" style="cursor: pointer;">Funding</th>
-                        <th>Trade</th>
-                    </tr>
-                </thead>
-
-                <tbody *ngFor="let fp of FloorPlanData | filter: QISearchName; let i = index">
-                    <tr [ngClass]="{ even: i % 2 == 0, odd: i % 2 != 0 }">
-                        <td *ngIf="Role=='Super Admin' || userid=='8'">
-                             
-
-                            
-                          <input type="checkbox" style="color:#2d91f1" id="symbols" [checked]="fp.check"
-                      (change)="collectHidevalues($event,fp,confirm,'single',fp.StockNumner)">
-                        </td>
-                        <td>
-                            <img *ngIf="fp.NotesStatus == 'N'" src="/images/Actionblack.png " title="Add Notes"
-                                (click)="addNotes(fp)" style="cursor: pointer;"  data-bs-toggle="modal" data-bs-target="#payplan">
-                            <img *ngIf="fp.NotesStatus == 'Y'" src="/images/notes_unread.png " title="Add Notes"
-                                (click)="addNotes(fp)" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#payplan">
-                        </td>
-
-                        <td class="aligncenter">{{ fp.AGE || '-' }}</td>
-                        <td class="aligncenter">
-                            {{ fp.AgeDate ? (fp.AgeDate | date:'MM.dd.yyyy') : '-' }}
-                        </td>
-                        <td class="aligncenter">{{ fp.Account || '-' }}</td>
-                        <td class="aligncenter">{{ fp.Control || '-' }}</td>
-                        <td class="aligncenter">{{ fp.Control2 || '-' }}</td>
-                        <td class="alignright" [ngClass]="{ negative: !inTheGreen(fp.BalCIT) }"> {{ fp.BalCIT ?
-                            ('$'
-                            + (fp.BalCIT | number:'1.2-2')) : '-' }} </td>
-                        <td class="alignright" [ngClass]="{ negative: !inTheGreen(fp.BalFloorplan) }"> {{
-                            fp.BalFloorplan ? ('$' + (fp.BalFloorplan | number:'1.2-2')) : '-' }} </td>
-                        <td class="text-start">{{ fp.CustomerName || '-' }}</td>
-                        <td class="aligncenter">{{ fp.CustomerNumber || '-' }}</td>
-                        <td *ngIf="StoreVal.toString().indexOf(',') > 0" class="text-start">{{ fp.store || '-'
-                            }}
-                        </td>
-                        <td class="text-start">{{ fp.StockNumner || '-' }}</td>
-                        <td class="aligncenter popuppointer" (click)="viewDeal(fp)">{{ fp.Deal || '-' }}</td>
-                        <td class="text-start">{{ fp.Stage || '-' }}</td>
-                        <td class="text-start">{{ fp.FIManager || '-' }}</td>
-                        <td class="text-start">{{ fp.SalesManager || '-' }}</td>
-                        <td class="text-start">{{ fp.SP1 || '-' }}</td>
-                        <td class="aligncenter">{{ fp.SaleType || '-' }}</td>
-                        <td class="aligncenter">{{ fp.DealType || '-' }}</td>
-                        <td class="aligncenter">{{ fp.DealStatus || '-' }}</td>
-                        <td class="text-start">{{ fp.BankName || '-' }}</td>
-                        <td class="aligncenter">{{ fp.VehicleYear || '-' }}</td>
-                        <td class="text-start">{{ fp.VehicleMake || '-' }}</td>
-                        <td class="text-start">{{ fp.VehicleModel || '-' }}</td>
-                        <td class="aligncenter">
-                            {{ fp.DeliveryDate ? (fp.DeliveryDate | date:'MM.dd.yyyy') : '-' }}
-                        </td>
-                        <td class="aligncenter">
-                            {{ fp.DateSale ? (fp.DateSale | date:'MM.dd.yyyy') : '-' }}
-                        </td>
-                        <td class="aligncenter">
-                            {{ fp.FundingDate ? (fp.FundingDate | date:'MM.dd.yyyy') : '-' }}
-                        </td>
-                        <td class="text-start">
-                            {{ fp.trade1year ? fp.trade1year + ' ' + fp.trade1modelname : '-' }}
-                        </td>
-                    </tr>
-
-                    <!-- Notes Row -->
-                  <tr *ngIf="fp.duplicateNotes && commentsVisibility">
-  <td colspan="34" class="text-start ps-5">
-    <h6 class="small fw-bold">Notes</h6>
-
-    <div *ngFor="let notes of fp.duplicateNotes" class="ps-4">
-      {{ notes.NOTES || '-' }}
     </div>
 
-    <div *ngIf="fp.Notes?.length > 3" class="ps-4">
-      <a style="color:#337ab7; cursor:pointer;" (click)="viewmoreAction(fp)">
-        {{ fp.Notesstate === '+' ? 'View More' : 'View Less' }}
-      </a>
-    </div>
-  </td>
-</tr>
 
-                </tbody>
-
-                <!-- Total Row -->
-                <tbody style="position: sticky; top:0; bottom: 0; left: 0; right: 0;background-color: #ffffff;">
-                    <tr class="even fw-bold" *ngIf="FloorPlanTotalData.length > 0">
-                        <td colspan="7" class="text-end">Totals</td>
-                        <td class="alignright">{{ FloorPlanTotalData[0].BalCIT | currency:'USD':'symbol':'1.2-2'
-                            }}
-                        </td>
-                        <td class="alignright">{{ FloorPlanTotalData[0].BalFloorplan |
-                            currency:'USD':'symbol':'1.2-2' }}</td>
-                        <td colspan="20"></td>
-                    </tr>
-                </tbody>
-
-                <!-- No Data -->
-                <tbody *ngIf="NoData">
-                    <tr>
-                        <td colspan="34" class="text-center">No Records Found</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-    </div>
-
-  
 </main>
-  <ng-template #confirm let-modal>
- <div class="recap position-relative">
-  <div class="modal-dialog-centered">
-    <div class="modal-content p-3" style="border-radius: 12px; border: 1px solid #2b91f0;">
-      
-      <!-- Header -->
-      <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
-        <h5 class="fw-bold m-0">Confirmation</h5>
-        <button type="button" class="btn-close" (click)="modal.dismiss(); onclose()"></button>
-      </div>
+<ng-template #confirm let-modal>
+    <div class="recap position-relative">
+        <div class="modal-dialog-centered">
+            <div class="modal-content p-3" style="border-radius: 12px; border: 1px solid #2b91f0;">
 
-      <!-- Body -->
-      <div class="text-center px-3">
-        <p class="mb-3 fs-6 text-secondary">
-        Do you want to hide the selected item(s)?
-        </p>
-      </div>
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                    <h5 class="fw-bold m-0">Confirmation</h5>
+                    <button type="button" class="btn-close" (click)="modal.dismiss(); onclose()"></button>
+                </div>
 
-      <!-- Footer -->
-      <div class="d-flex justify-content-end gap-2 pt-2 border-top mt-3 pt-3">
-        <button class="btn btn-primary px-4" (click)="hideAdd()">Save</button>
-        <button class="btn btn-outline-secondary px-4" (click)="modal.dismiss(); onclose()">Cancel</button>
-      </div>
+                <!-- Body -->
+                <div class="text-center px-3">
+                    <p class="mb-3 fs-6 text-secondary">
+                        Do you want to hide the selected item(s)?
+                    </p>
+                </div>
 
+                <!-- Footer -->
+                <div class="d-flex justify-content-end gap-2 pt-2 border-top mt-3 pt-3">
+                    <button class="btn btn-primary px-4" (click)="hideAdd()">Save</button>
+                    <button class="btn btn-outline-secondary px-4" (click)="modal.dismiss(); onclose()">Cancel</button>
+                </div>
+
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
 </ng-template>
 
 <div class="modal fade" id="payplan" tabindex="-1" aria-labelledby="logoutLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
-    <div class="modal-content shadow-sm border-0" style="border-radius: 12px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 700px;">
+        <div class="modal-content shadow-sm border-0" style="border-radius: 12px;">
 
-      <!-- Header -->
-      <div class="modal-header border-0 pb-0">
-        <h5 class="modal-title fw-semibold">
-          Notes
-          <span class="text-primary fw-normal fs-6 ms-2">
-            {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
-          </span>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onclose()"></button>
-      </div>
-
-      <!-- Body -->
-      <div class="modal-body bg-light rounded-3 p-4" style="max-height: 70vh; overflow-y: auto;">
-
-        <!-- Notes Input -->
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Add Note</label>
-          <textarea
-            class="form-control"
-            rows="3"
-            [(ngModel)]="notesStageText"
-            placeholder="Enter your notes here"
-            style="border-radius: 8px;"
-          ></textarea>
-        </div>
-
-        <!-- Stage Selector -->
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Stage</label>
-          <select class="form-select" [(ngModel)]="notesStageValue" style="border-radius: 8px;">
-            <option selected disabled value="">Select Stage</option>
-            <option *ngFor="let s of notesstage" [value]="s.NS_ID">{{ s.NS_Text }}</option>
-          </select>
-        </div>
-
-        <!-- Extra Info -->
-        <div class="text-secondary small">
-          <div>Control: <span class="fw-medium text-dark">{{ selecteddata.Control }}</span></div>
-          <div>Post Date: <span class="fw-medium text-dark">{{ selecteddata.FundingDate | date: 'MM.dd.yyyy' }}</span></div>
-        </div>
-
-        <!-- Existing Notes -->
-        <div class="mt-3" *ngIf="selecteddata.Notes?.length > 0">
-          <h6 class="fw-semibold border-bottom pb-2">Previous Notes</h6>
-          <div class="p-2 bg-white rounded shadow-sm" style="max-height: 20vh; overflow-y: auto;">
-            <div *ngFor="let notes of selecteddata.Notes" class="py-1 border-bottom small text-dark">
-              {{ notes.NOTES || '-' }}
+            <!-- Header -->
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-semibold">
+                    Notes
+                    <span class="text-primary fw-normal fs-6 ms-2">
+                        {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
+                    </span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="onclose()"></button>
             </div>
-          </div>
+
+            <!-- Body -->
+            <div class="modal-body bg-light rounded-3 p-4" style="max-height: 70vh; overflow-y: auto;">
+
+                <!-- Notes Input -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Add Note</label>
+                    <textarea class="form-control" rows="3" [(ngModel)]="notesStageText"
+                        placeholder="Enter your notes here" style="border-radius: 8px;"></textarea>
+                </div>
+
+                <!-- Stage Selector -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Stage</label>
+                    <select class="form-select" [(ngModel)]="notesStageValue" style="border-radius: 8px;">
+                        <option selected disabled value="">Select Stage</option>
+                        <option *ngFor="let s of notesstage" [value]="s.NS_ID">{{ s.NS_Text }}</option>
+                    </select>
+                </div>
+
+                <!-- Extra Info -->
+                <div class="text-secondary small">
+                    <div>Control: <span class="fw-medium text-dark">{{ selecteddata.Control }}</span></div>
+                    <div>Post Date: <span class="fw-medium text-dark">{{ selecteddata.FundingDate | date: 'MM/dd/yyyy'
+                            }}</span></div>
+                </div>
+
+                <!-- Existing Notes -->
+                <div class="mt-3" *ngIf="selecteddata.Notes?.length > 0">
+                    <h6 class="fw-semibold border-bottom pb-2">Previous Notes</h6>
+                    <div class="p-2 bg-white rounded shadow-sm" style="max-height: 20vh; overflow-y: auto;">
+                        <div *ngFor="let notes of selecteddata.Notes" class="py-1 border-bottom small text-dark">
+                            {{ notes.NOTES || '-' }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer border-0 d-flex justify-content-center pt-0 pb-4">
+                <button class="btn btn-primary px-4" (click)="save()">Save</button>
+                <button class="btn btn-outline-secondary px-4" data-bs-dismiss="modal" (click)="onclose()"
+                    id="close">Cancel</button>
+            </div>
+
         </div>
-
-      </div>
-
-      <!-- Footer -->
-      <div class="modal-footer border-0 d-flex justify-content-center pt-0 pb-4">
-        <button class="btn btn-primary px-4" (click)="save()">Save</button>
-        <button class="btn btn-outline-secondary px-4" data-bs-dismiss="modal" (click)="onclose()"  id="close">Cancel</button>
-      </div>
-
     </div>
-  </div>
 </div>
-
-
-

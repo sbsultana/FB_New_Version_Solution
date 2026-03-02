@@ -8,6 +8,7 @@ import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/dat
 import { Subscription } from 'rxjs';
 import { FilterPipe } from '../../../../Core/Providers/filterpipe/filter.pipe';
 import { Stores } from '../../../../CommonFilters/stores/stores';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -22,15 +23,14 @@ export class Dashboard {
   appointment: any = [];
   selectedStore = '0';
   selectedstrid = 0;
-  stores: any = [];
+  // stores: any = [];
   PageCount = 1;
   LastCount!: boolean;
   Pagination: boolean = false;
   storeIds: any = '0';
-  storeId: any = '0';
   // lenders edit
 
-  groups: any = 1
+  // groups: any = 1
   filteredCustomers: any;
   Appointmentsearch: any;
   searcdata: any;
@@ -62,29 +62,34 @@ export class Dashboard {
     ]
   }
   bsRangeValue!: Date[];
+  StoreValues: any = '0';
+  popup: any = [{ type: 'Popup' }];
+  groups: any = 1;
+  gridvisibility: any;
+  // bsRangeValue!: Date[];
   groupsArray: any = [];
   storename: any = ''
   storecount: any = null;
   storedisplayname: any = '';
   groupName: any = '';
-  groupId: any = 8;
-
+  groupId: any = 0;
+  stores: any = []
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
   constructor(
-    public shared: Sharedservice, public setdates: Setdates, private comm: common
+    public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,
   ) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
-    }
-    if (this.shared.common.groupsandstores.length > 0) {
-      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
-      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-      this.getStoresandGroupsValues()
+      // this.StoreValues = '1,2';
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.StoreValues = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      if (this.StoreValues.toString().indexOf(',') > 0) {
+        this.gridvisibility = 'DL';
+      } else {
+        this.gridvisibility = 'SL';
+      }
     }
     this.titleSetting()
     this.shared.setTitle(this.shared.common.titleName + '- Service Appointments');
@@ -113,7 +118,7 @@ export class Dashboard {
 
     const data = {
       title: this.dynamicTitle,
-      stores: this.storeIds,
+      stores: '2',
       groups: this.groups,
       count: 0,
       fromdate: this.FromDate,
@@ -172,15 +177,13 @@ export class Dashboard {
       // console.log('locstg', JSON.parse(localStorage.getItem('DetailsObject')!));
       const InvObj = JSON.parse(localStorage.getItem('DetailsObject')!);
       obj = {
-        DealerId: this.storeIds,
+        DealerId: InvObj.dataobj.Data1,
         StartDate: InvObj.dataobj.Data2,
         EndDate: InvObj.dataobj.Data2,
       };
       this.FromDate = InvObj.dataobj.Data2
       this.ToDate = InvObj.dataobj.Data2
-      // this.storeIds =this.storeIds
-      this.storeId= this.storeIds
-      console.log( this.storeId,' this.storeId');
+      this.storeIds =  InvObj.dataobj.Data1
       if (this.todaytitle == this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') && this.todaytitle == this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy')) {
         this.dynamicTitle = 'Service Appointments'
       }
@@ -190,17 +193,13 @@ export class Dashboard {
       this.setHeaderData()
     } else {
       obj = {
-        DealerId: this.storeIds,
+        DealerId: this.StoreValues,
         StartDate: this.FromDate,
         EndDate: this.ToDate,
       };
       console.log(obj);
-      this.storeId = this.storeIds.map((_arrayElement: any) =>
-      Object.assign({}, _arrayElement)
-    );
-      console.log( this.storeId,' this.storeId');
+
     }
- 
     const curl = this.shared.getEnviUrl() + this.comm.routeEndpoint + 'GetServiceAppointments';
     this.shared.api.postmethod(this.comm.routeEndpoint + 'GetServiceAppointments', obj).subscribe(
       (res: { message: any; status: number; response: string | any[] | undefined; }) => {
@@ -253,14 +252,13 @@ export class Dashboard {
 
   ngAfterViewInit() {
 
-
     this.shared.api.getStores().subscribe((res: any) => {
-      if (this.shared.common.pageName == 'Service Appointments') {
-       if (res.obj.storesData != undefined) {
+      if (this.shared.common.pageName == this.dynamicTitle) {
+        if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
-          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.StoreValues.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.StoreValues.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.StoreValues)[0].storename : this.storename = ''
           this.getStoresandGroupsValues()
         }
       }
@@ -304,7 +302,40 @@ export class Dashboard {
       }
     });
   }
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.StoreValues;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
 
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.StoreValues,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.StoreValues = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
   ngOnDestroy() {
     if (this.excel != undefined) {
       this.excel.unsubscribe()
@@ -355,40 +386,6 @@ export class Dashboard {
   }
 
 
-  getStoresandGroupsValues() {
-    this.storesFilterData.groupsArray = this.groupsArray;
-    this.storesFilterData.groupId = this.groupId;
-    this.storesFilterData.storesArray = this.stores;
-    this.storesFilterData.storeids = this.storeIds;
-    this.storesFilterData.groupName = this.groupName;
-    this.storesFilterData.storename = this.storename;
-    this.storesFilterData.storecount = this.storecount;
-    this.storesFilterData.storedisplayname = this.storedisplayname;
-
-    this.storesFilterData = {
-      groupsArray: this.groupsArray,
-      groupId: this.groupId,
-      storesArray: this.stores,
-      storeids: this.storeIds,
-      groupName: this.groupName,
-      storename: this.storename,
-      storecount: this.storecount,
-      storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
-    };
-
-    // this.setHeaderData();
-    // this.GetData();
-
-  }
-  StoresData(data: any) {
-    this.storeIds = data.storeids;
-    this.groupId = data.groupId;
-    this.storename = data.storename;
-    this.groupName = data.groupName;
-    this.storecount = data.storecount;
-    this.storedisplayname = data.storedisplayname;
-  }
 
   updatedDates(data: any) {
     console.log(data);
@@ -431,6 +428,12 @@ export class Dashboard {
   }
 
   viewreport() {
+    if (!this.StoreValues || this.StoreValues.length === 0) {
+    
+      this.toast.show('Please select at least one store', 'warning', 'Warning');
+      return; 
+    }
+   
     this.activePopover = -1
     this.titleSetting()
     this.setHeaderData()
@@ -456,10 +459,28 @@ export class Dashboard {
     const FromDate = this.shared.datePipe.transform(this.FromDate, 'dd');
     const ToDate = this.shared.datePipe.transform(this.ToDate, 'dd');
     const PresentMonth = this.shared.datePipe.transform(this.FromDate, 'MMMM');
+  
+     let storeValue = '';
 
-    let filters: any = [
-      { name: 'Store :', values: 'WesternAuto' },
-      { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate }
+      if (!this.StoreValues || this.StoreValues.length === 0) {
+        // No selection → All stores
+        storeValue = this.stores.map((s: any) => s.storename).join(', ');
+      }
+      else if (this.StoreValues.length === this.stores.length) {
+        // All selected → bind all store names
+        storeValue = this.stores.map((s: any) => s.storename).join(', ');
+      }
+      else {
+        // Partial selection
+        storeValue = this.stores
+          .filter((s: any) => this.StoreValues.includes(s.ID))
+          .map((s: any) => s.storename)
+          .join(', ');
+      }
+      
+          const filters = [
+            { name: 'Store:', values: storeValue },
+    { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate }
     ]
     // const ReportFilter = worksheet.addRow(['Service Appointments']);
     // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };

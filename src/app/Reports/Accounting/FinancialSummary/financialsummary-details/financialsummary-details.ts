@@ -135,7 +135,15 @@ export class FinancialsummaryDetails {
       .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
-          this.FSDetailsData = res.response;
+          this.FSDetailsData = res.response.map((item: any) => ({
+            ...item,
+            AccountDescription: item.AccountDescription
+              ? item.AccountDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : item.AccountDescription
+          }));
+
           // this.filterData();
           this.filteredFSdetailsData = this.FSDetailsData || [];
           console.log(this.FSDetailsData);
@@ -188,7 +196,14 @@ export class FinancialsummaryDetails {
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {
-          this.FSSubDetailsMap[index] = res.response;
+          this.FSSubDetailsMap[index] = res.response.map((sub: any) => ({
+            ...sub,
+            DetailDescription: sub.DetailDescription
+              ? sub.DetailDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : sub.DetailDescription
+          }));
         }
       });
   }
@@ -377,7 +392,7 @@ export class FinancialsummaryDetails {
   Details_ExportAsXLSX() {
     const FSDetailsData = [...this.filteredFSdetailsData];
     const FSSubDetailsMap = this.FSSubDetailsMap;
-   
+
     // Setup Excel
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Financial Summary Details');
@@ -395,7 +410,7 @@ export class FinancialsummaryDetails {
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.Fsdetails.NAME]);
     worksheet.addRow(['Date:', this.LatestDate]);
-    worksheet.addRow(['Store:', 'WESTERN AUTO']);
+    worksheet.addRow(['Store:', 'Silvertip']);
     worksheet.addRow([]);
 
     // Grid Header

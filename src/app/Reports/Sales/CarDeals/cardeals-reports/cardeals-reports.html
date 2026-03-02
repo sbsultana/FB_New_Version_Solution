@@ -1,31 +1,35 @@
-<div class="report-bar">
+<app-toast-container></app-toast-container>
+<div class="reports-bar">
     <div class="filter-dropdowns">
-           <!-- Store Dropdown -->
-          <div class="dropdown">
-                <button class="dropdown-toggle" (click)="togglePopover(0)">Stores ( {{storecount}}
-                    {{storedisplayname}} )
-                    <span class="arrow"></span></button>
-                <app-stores [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none'}" [storesFilterData]="storesFilterData"
-                    (StoresData)="StoresData($event)"></app-stores>
-            </div>
-       
+        <!-- Store Dropdown -->
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">( {{storecount}}
+                    {{storedisplayname}} )</span>
+                <span class="arrow"></span></button>
+            <app-stores
+                [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+        </div>
+
         <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(1)">
-                <span> {{displaytime}}</span>
+                Time Frame <span class="light-font"> {{displaytime}}</span>
                 <span class="arrow"></span></button>
             <div class="timeframe" *ngIf="activePopover === 1">
                 <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
             </div>
         </div>
         <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(2)">New / Used ( {{neworused.length == 1 && neworused
-                == 'C' ? 'Commercial Only' : (neworused.length == 1 && neworused != 'C' ? neworused : (neworused.length
-                > 1 ? 'Selected' : 'None'))}}
-                {{neworused.length > 1 ? +neworused.length:'' }} )
+            <button class="dropdown-toggle" (click)="togglePopover(2)">New / Used <span class="light-font">(
+                    {{neworused.length == 1 && neworused
+                    == 'C' ? 'Commercial Only' : (neworused.length == 1 && neworused != 'C' ? neworused :
+                    (neworused.length
+                    > 1 ? 'Selected' : 'None'))}}
+                    {{neworused.length > 1 ? +neworused.length:'' }} )</span>
                 <span class="arrow"></span></button>
             <div class="reportstores-card my-2" *ngIf="activePopover === 2">
                 <div class="row h-100">
-                    <div class="stores d-flex flex-column ">
+                    <div class="stores d-flex flex-column border-0">
                         <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                             <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
                                 <ng-container>
@@ -50,14 +54,15 @@
         </div>
 
         <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(3)">Deal Type ( {{retailorlease.indexOf('All')>=0 ?
-                'All' : (retailorlease.length==0 ? 'NONE' :
-                'Selected')}}
-                {{ retailorlease.indexOf('All') < 0 && retailorlease.length !=0 ? retailorlease.length :'' }} ) <span
-                    class="arrow"></span></button>
+            <button class="dropdown-toggle" (click)="togglePopover(3)">Deal Type <span class="light-font">(
+                    {{retailorlease.indexOf('All')>=0 ?
+                    'All' : (retailorlease.length==0 ? 'None' :
+                    'Selected')}}
+                    {{ retailorlease.indexOf('All') < 0 && retailorlease.length !=0 ? retailorlease.length :'' }}
+                        )</span> <span class="arrow"></span></button>
             <div class="reportstores-card my-2" *ngIf="activePopover === 3">
                 <div class="row h-100">
-                    <div class="stores d-flex flex-column ">
+                    <div class="stores d-flex flex-column border-0">
                         <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                             <div class="store-columns flex-grow-1">
                                 <ng-container>
@@ -98,7 +103,8 @@
 
                                     <button class="btn btn-outline-primary store-button"
                                         (click)="multipleorsingle('RL','Special Order')"
-                                        [ngClass]="{'active':retailorlease.indexOf('Special Order')>=0, 'inactive':retailorlease.indexOf('Special Order')<0}">Special Order
+                                        [ngClass]="{'active':retailorlease.indexOf('Special Order')>=0, 'inactive':retailorlease.indexOf('Special Order')<0}">Special
+                                        Order
                                     </button>
                                     <button class="btn btn-outline-primary store-button"
                                         (click)="multipleorsingle('RL','Rental')"
@@ -118,15 +124,17 @@
             </div>
         </div>
 
-          <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(4)">Deal Status ( {{dealstatus.length ==
-                                1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ? 'NONE' : 'Selected')}}
-              {{                                    dealstatus.length
-                                    > 1 ? dealstatus.length  :'' }} )
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(4)">Deal Status <span class="light-font">(
+                    {{dealstatus.length ==
+                    1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ? 'None' :
+                    'Selected')}}
+                    {{ dealstatus.length
+                    > 1 ? dealstatus.length :'' }} )</span>
                 <span class="arrow"></span></button>
             <div class="reportstores-card my-2" *ngIf="activePopover === 4">
                 <div class="row h-100">
-                    <div class="stores d-flex flex-column ">
+                    <div class="stores d-flex flex-column border-0">
                         <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                             <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
                                 <ng-container>
@@ -140,7 +148,7 @@
                                     </button>
                                     <button class="btn btn-outline-primary store-button"
                                         [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0,'inactive':dealstatus.indexOf('Finalized')<0}"
-                                        (click)="multipleorsingle('DS','Finalized')"> Finalized
+                                        (click)="multipleorsingle('DS','Finalized')"> Closed or Sold
                                     </button>
                                 </ng-container>
                             </div>

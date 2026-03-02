@@ -9,11 +9,10 @@ import { Subscription } from 'rxjs';
 import { FilterPipe } from '../../../../Core/Providers/filterpipe/filter.pipe';
 import { Options, LabelType } from "@angular-slider/ngx-slider";
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { Stores } from '../../../../CommonFilters/stores/stores';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule,NgxSliderModule,Stores],
+  imports: [SharedModule, BsDatepickerModule,NgxSliderModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -38,58 +37,14 @@ export class Dashboard {
   header: any = [{ type: 'Bar', StoreValues: this.StoreValues, Month: this.Month, DealType: this.DealType, AgeFrom: this.AgeFrom, AgeTo: this.AgeTo, groups: this.groups }];
   popup: any = [{ type: 'Popup' }];
   @ViewChild('content', { static: false }) content!: ElementRef;
-  groupsArray: any = [];
-  storename: any = ''
-  storecount: any = null;
-  storedisplayname: any = '';
-  groupName: any = '';
-  groupId: any = 8;
-  stores: any = [];
-  storeIds: any = '0';
-  storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
-  };
   constructor(
     public shared: Sharedservice, public setdates: Setdates, private comm: common
   ) {
 
-    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
-    }
-    if (this.shared.common.groupsandstores.length > 0) {
-      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
-      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-      this.getStoresandGroupsValues()
-    }
+    
     this.shared.setTitle(this.shared.common.titleName + '-Inventory Browser');
     this.date = new Date();
-    // let stores = environment.stores
-    // if (stores != undefined) {
-    //   this.StoreValues = stores
-    //     .map(function (a: any) {
-    //       return a.AS_ID;
-    //     })
-    //     .toString();
-    // }
-    // console.log(stores);
-    // console.log(stores);
 
-    if (localStorage.getItem('UserDetails') != null) {
-      this.StoreValues = JSON.parse(
-        localStorage.getItem('UserDetails')!
-      ).Store_Ids;
-      // console.log('.....',JSON.parse(
-      //   localStorage.getItem('UserDetails')!
-      // ).Store_Ids);
-
-    }
-
-    // console.log('After',JSON.parse(
-    //   localStorage.getItem('UserDetails')!
-    // ).Store_Ids);
 
     if (localStorage.getItem('Fav') != 'Y') {
       const data = {
@@ -187,7 +142,7 @@ export class Dashboard {
       };
     } else {
       obj = {
-        DealerId:this.storeIds,
+        DealerId: '2',
         // DealerId: '8',
 
         DealType: this.DealType.join(','),
@@ -260,7 +215,7 @@ export class Dashboard {
       // mainkey: data.StockNo,
       // module: 'IN',
       // apiRoute:'AddNotesAction'
-      store: this.storeIds,
+      store: '2',
       title1: data.StockNo,
       title2: '',
       apiRoute: 'AddGeneralNotes'
@@ -383,17 +338,6 @@ export class Dashboard {
   }
   QIClick: any;
   ngAfterViewInit(): void {
-    this.shared.api.getStores().subscribe((res: any) => {
-      if (this.shared.common.pageName == 'Inventory Browser') {
-       if (res.obj.storesData != undefined) {
-          this.groupsArray = res.obj.storesData;
-          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
-          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-          this.getStoresandGroupsValues()
-        }
-      }
-    })
     this.reportOpenSub = this.shared.api.GetReportOpening().subscribe((res) => {
       if (this.reportOpenSub != undefined) {
         if (res.obj.Module == 'Inventory Browser') {
@@ -578,7 +522,7 @@ export class Dashboard {
     // DetailsSF.result.then(
     //   (data) => {},
     //   (reason) => {
-    //     // alert('close');
+
     //     // // on dismiss
     //     // const Data = {
     //     //   state: true,
@@ -587,7 +531,7 @@ export class Dashboard {
     //     this.GetData();
     //   }
     // );
-    //alert(this.index);
+
   }
 
   index = '';
@@ -660,41 +604,6 @@ togglePopover(popoverIndex: number) {
     this.activePopover = popoverIndex;
   }
 }
-getStoresandGroupsValues() {
-  this.storesFilterData.groupsArray = this.groupsArray;
-  this.storesFilterData.groupId = this.groupId;
-  this.storesFilterData.storesArray = this.stores;
-  this.storesFilterData.storeids = this.storeIds;
-  this.storesFilterData.groupName = this.groupName;
-  this.storesFilterData.storename = this.storename;
-  this.storesFilterData.storecount = this.storecount;
-  this.storesFilterData.storedisplayname = this.storedisplayname;
-
-  this.storesFilterData = {
-    groupsArray: this.groupsArray,
-    groupId: this.groupId,
-    storesArray: this.stores,
-    storeids: this.storeIds,
-    groupName: this.groupName,
-    storename: this.storename,
-    storecount: this.storecount,
-    storedisplayname: this.storedisplayname,
-    'type': 'M', 'others': 'N'
-  };
-
-  // this.setHeaderData();
-  // this.GetData();
-
-}
-StoresData(data: any) {
-  this.storeIds = data.storeids;
-  this.groupId = data.groupId;
-  this.storename = data.storename;
-  this.groupName = data.groupName;
-  this.storecount = data.storecount;
-  this.storedisplayname = data.storedisplayname;
-}
-
 getDealTypeLabel(): string {
   if (this.DealType.length === 3) {
     return 'All Types';
@@ -768,7 +677,7 @@ viewreport() {
  
     const data = {
       Reference: 'Inventory Browser',
-      storeValues:this.storeIds,
+      storeValues: '2',
       month: '',
       storeName: '',
       AgeFrom: this.AgeFrom,
@@ -815,19 +724,9 @@ viewreport() {
         dealTypesFormatted = dealTypeMaps[key] || key;
       }
     }
-    let storeValue = 'All Stores';
-    if (
-      this.storeIds &&
-      this.storeIds.length > 0 &&
-      this.storeIds.length !== this.stores.length
-    ) {
-      storeValue = this.stores
-        .filter((s: any) => this.storeIds.includes(s.ID))
-        .map((s: any) => s.storename)
-        .join(', ');
-    }
+    
     const filters: any = [
-      { name: 'Store :', values:storeValue },
+      { name: 'Store :', values: 'Silvertip' },
       { name: 'Stock Type:', values: dealTypesFormatted }
     ];
     

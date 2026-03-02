@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, HostListener, Injector } from '@angular/core';
 import { Api } from '../../../../Core/Providers/Api/api';
 import { common } from '../../../../common';
 import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
@@ -21,11 +21,13 @@ import numeral from 'numeral';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { IncomestatementstoreDetails } from '../incomestatementstore-details/incomestatementstore-details';
 import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule, ToastContainer],
+  imports: [SharedModule, BsDatepickerModule, ToastContainer, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -53,7 +55,6 @@ export class Dashboard {
   SelectedTab: any = [];
   SubSelectedTab1: any = [];
   Month: any;
-  stores: any;
   selectedstorevalues: any;
   selectedstorename: any;
   StoreValues: any = '0';
@@ -66,6 +67,20 @@ export class Dashboard {
   header: any = [{ type: 'Bar', storeIds: this.StoreValues, Month: this.date, groups: this.groups, ShowHideBudget: this.ShowHideBudget }]
   selectedDate: Date = new Date();
   currentMonth!: Date;
+
+  activePopover: number = -1;
+  storeIds: any = '0';
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  stores: any = [];
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
   constructor(
     private datepipe: DatePipe,
     public apiSrvc: Api,
@@ -75,22 +90,26 @@ export class Dashboard {
     private title: Title,
     private toast: ToastService,
     private comm: common,
-    private injector: Injector
+    private injector: Injector,
+    public shared: Sharedservice,
   ) {
-    if (localStorage.getItem('UserDetails') != null) {
-      this.StoreValues = JSON.parse(
-        localStorage.getItem('UserDetails')!
-      ).Store_Ids;
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+    }
+    console.log('store displayname', this.storedisplayname);
 
-      if (this.StoreValues.toString().indexOf(',') > 0) {
-        this.gridvisibility = 'DL';
-      } else {
-        this.gridvisibility = 'SL';
-      }
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
     }
     const lastMonth = new Date();
     let today = new Date();
-    if (today.getDate() < 5) {
+    if (today.getDate() < 7) {
       this.date = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
     } else {
       this.date = new Date(lastMonth.setMonth(lastMonth.getMonth()));
@@ -110,12 +129,10 @@ export class Dashboard {
         path2: '',
         path3: '',
         Month: this.date,
-        // stores: 0,
-        filter: this.Filter,
-        stores: 2,
-        ShowHideBudget: this.ShowHideBudget,
+        stores: this.StoreValues.toString(),
+        store: this.storeIds,
         groups: this.groups,
-        count: 0
+        count: 0,
       };
       this.apiSrvc.SetHeaderData({
         obj: data,
@@ -129,6 +146,7 @@ export class Dashboard {
         type: 'Bar', storeIds: this.StoreValues, Month: this.date, groups: this.groups,
         ShowHideBudget: this.ShowHideBudget,
       }]
+      this.selectedDate = this.date
       this.currentMonth = this.selectedDate;
       this.GetData(this.currentMonth);
     } else {
@@ -197,16 +215,44 @@ export class Dashboard {
     minMode: 'month',
     maxDate: new Date()
   };
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
 
+  togglePopover(popoverIndex: number) {
+    this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
+  }
+  storesWidth: string = '60%';
 
   applyDateChange() {
-    this.currentMonth = this.selectedDate;
-    this.GetData(this.currentMonth);
+    if (!this.storeIds || this.storeIds.length === 0) {
+     
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
+      return;
+    }
+    else {
+      this.currentMonth = this.selectedDate;
+
+      // set width based on storeIds length
+      this.storesWidth = this.storeIds?.toString().length > 3 ? '75%' : '60%';
+
+      this.GetData(this.currentMonth);
+    }
   }
+
   GetData(date: any) {
     ////console.log(this.Month)
     this.spinner.show();
     this.ExpenseTrendByStoreKeys = [];
+    this.ExpenseTrendByStore = [];
     this.AllDatakeys = [];
     const DateToday = this.datepipe.transform(
       new Date(date),
@@ -214,7 +260,7 @@ export class Dashboard {
     );
     const obj = {
       SalesDate: DateToday,
-      Stores: 2,
+      Stores: this.storeIds.toString(),
       UserID: 0,
     };
     let startFrom = new Date().getTime();
@@ -224,7 +270,6 @@ export class Dashboard {
       .subscribe(
         (x) => {
           const currentTitle = document.title;
-          this.apiSrvc.logSaving(curl, {}, '', x.message, currentTitle);
           if (x.status == 200) {
             if (x.response != undefined) {
               if (x.response.length > 0) {
@@ -342,6 +387,15 @@ export class Dashboard {
   }
   openDetails(Object: any, storename: any, ref: any, date: any) {
     console.log(Object, storename);
+    const storeId =
+      this.shared.common.groupsandstores
+        .find((g: any) => g.sg_id == this.groupId)
+        ?.Stores
+        ?.find((s: any) =>
+          s.storename.toLowerCase() === storename.toLowerCase()
+        )
+        ?.ID ?? 0;
+    console.log('store Id', storeId);
     if (ref == 'store') {
       const dateMonth =
         date.toString().substr(8, 2) +
@@ -359,15 +413,23 @@ export class Dashboard {
           parent: this.injector
         })
       });
+
+
       DetailsSF.componentInstance.Fsdetails = {
         TYPE: Object.LABLEVAL,
         NAME: Object.LABLE,
-        STORES: 2,
+        STORES: storeId,
         LatestDate: dateMonth,
         Group: this.groups,
       };
     }
   }
+  capitalizeWords(value: string): string {
+    return value
+      .toLowerCase()
+      .replace(/\b\w/g, char => char.toUpperCase());
+  }
+
   selBlock: any;
   commentopen(item: any, i: any, slblock: any = '') {
     this.index = '';
@@ -403,7 +465,7 @@ export class Dashboard {
     // DetailsSF.result.then(
     //   (data) => {},
     //   (reason) => {
-    //     // alert('close');
+    
     //     // // on dismiss
     //     // const Data = {
     //     //   state: true,
@@ -412,7 +474,7 @@ export class Dashboard {
     //     this.GetData();
     //   }
     // );
-    //alert(this.index);
+   
   }
   index = '';
   commentobj: any = {};
@@ -465,6 +527,18 @@ export class Dashboard {
   }
   SFstate: any;
   ngAfterViewInit(): void {
+
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Income Statement Store') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
     this.apiSrvc.GetReportOpening().subscribe((res) => {
       // //console.log(res);
       // if (res.obj.Module == 'Income Statement Store') {
@@ -518,7 +592,7 @@ export class Dashboard {
           path3: '',
           Month: this.Month,
           filter: this.Filter,
-          stores: this.StoreValues,
+          stores: this.storeIds,
           ShowHideBudget: this.ShowHideBudget,
 
           groups: this.groups,
@@ -562,6 +636,42 @@ export class Dashboard {
       }
     });
   }
+
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
+
   reportOpen(temp: any) {
     this.ngbmodalActive = this.ngbmodal.open(temp, {
       size: 'xl',
@@ -569,48 +679,19 @@ export class Dashboard {
     });
   }
   LogCount = 1;
-  logSaving(url: any, object: any, time: any, status: any) {
-    let ip = localStorage.getItem('Browser');
-    // //console.log(object);
-    const data = JSON.parse(localStorage.getItem('UserDetails')!);
-    // //console.log(data);
-    if (
-      data != 'None' &&
-      data != undefined &&
-      data != null &&
-      data != '' &&
-      this.LogCount == 1
-    ) {
-      const obj = {
-        UL_DealerId: '1',
-        UL_GroupId: '',
-        UL_UserId: data.userid,
-        UL_IpAddress: ip!.split(',')[1],
-        UL_Browser: ip!.split(',')[0],
-        UL_Absolute_URL: window.location.href,
-        UL_Api_URL: url,
-        UL_Api_Request: JSON.stringify(object),
-        UL_PageName: 'Income Statement Store',
-        UL_ResponseTime: time,
-        UL_Token: '',
-        UL_ResponseStatus: status,
-        UL_Groupings: '',
-        UL_Timeframe: '',
-        UL_Stores: '',
-        UL_Filters: '',
-        UL_Teams: '',
-        UL_Status: 'Y',
-      };
-      this.apiSrvc.postmethod('useractivitylog', obj).subscribe((val) => {
-        this.LogCount = 0;
-      });
-    }
-  }
+
   close(data: any) {
     this.index = '';
   }
 
-
+  isUnitRow(label: string): boolean {
+    return ['New Units', 'Pre-Owned Units', 'Unit Retail Sales', 'Fleet Units', 'Variable Expenses%',
+      'Personnel Expenses%', 'Semi-Fixed Expenses%', 'Fixed Expenses%', 'Other Expenses%'].includes(label);
+  }
+  isNonClickable(value: any, itemKey: string, label: string): boolean {
+    return value === null || value === undefined || value === '' ||
+      itemKey === 'Report Total' || this.isUnitRow(label);
+  }
   isBoldRow(label: string): boolean {
     const boldLabels = [
       'Unit Retail Sales', 'Pure Gross', 'Variable Gross', 'Total Fixed',
@@ -641,6 +722,22 @@ export class Dashboard {
 
 
   exportAsXLSX(): void {
+
+    let storeValue = '';
+    const selectedStoreIds: string[] =
+      this.storeIds && this.storeIds.length
+        ? this.storeIds.map((id: any) => id.toString())
+        : [];
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
+    storeValue = allStores
+      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+      .map((s: any) => s.storename.trim())
+      .filter(Boolean)
+      .join(', ');
+    if (!storeValue && selectedStoreIds.length) {
+      storeValue = selectedStoreIds.join(', ');
+    }
+
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet(
       'Income Statement Store'
@@ -663,7 +760,7 @@ export class Dashboard {
     worksheet.addRow('');
     const DateToday = this.datepipe.transform(
       new Date(),
-      'MM/dd/yyyy h:mm:ss a'
+      'MM.dd.yyyy h:mm:ss a'
     );
     const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
     worksheet.addRow([DateToday]).font = {
@@ -735,7 +832,7 @@ export class Dashboard {
     Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
     const groups = worksheet.getCell('B8');
     groups.value =
-      'WesternAuto';
+      'Silvertip';
     groups.font = { name: 'Arial', family: 4, size: 9 };
     groups.alignment = {
       vertical: 'middle',
@@ -746,7 +843,7 @@ export class Dashboard {
     const Stores = worksheet.getCell('A9');
     Stores.value = 'Store :';
     const stores = worksheet.getCell('B9');
-    stores.value = 'WesternAuto';
+    stores.value = storeValue;
     stores.font = { name: 'Arial', family: 4, size: 9 };
     stores.alignment = {
       vertical: 'top',
@@ -1435,10 +1532,11 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-              // alert(res.response);
+           
               this.toast.success(res.response)
             } else {
-              alert('Invalid Details');
+           
+              this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },
           (error) => {

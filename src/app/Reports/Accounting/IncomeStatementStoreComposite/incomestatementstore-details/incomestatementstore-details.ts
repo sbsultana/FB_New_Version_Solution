@@ -134,7 +134,14 @@ export class IncomestatementstoreDetails {
       .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
-          this.FSDetailsData = res.response;
+          this.FSDetailsData = res.response.map((item: any) => ({
+            ...item,
+            AccountDescription: item.AccountDescription
+              ? item.AccountDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : item.AccountDescription
+          }));
           // this.filterData();
           this.filteredFSdetailsData = this.FSDetailsData || [];
           console.log(this.FSDetailsData);
@@ -187,7 +194,15 @@ export class IncomestatementstoreDetails {
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {
-          this.FSSubDetailsMap[index] = res.response;
+          this.FSSubDetailsMap[index] = res.response.map((sub: any) => ({
+            ...sub,
+            DetailDescription: sub.DetailDescription
+              ? sub.DetailDescription
+                .toLowerCase()
+                .replace(/\b\w/g, (char: string) => char.toUpperCase())
+              : sub.DetailDescription
+          }));
+
         }
       });
   }
@@ -371,15 +386,32 @@ export class IncomestatementstoreDetails {
     localStorage.setItem('Id', JSON.stringify(this.Obj));
     localStorage.setItem('date', this.Fsdetails.LatestDate);
   }
+  getSelectedStoreLabel(): string {
+    const data = this.filteredFSdetailsData;
+
+    if (!data || data.length === 0) {
+      return 'Selected (0)';
+    }
+
+    const uniqueStores = [
+      ...new Set(data.map((x: any) => x.StoreName).filter(Boolean))
+    ];
+
+    if (uniqueStores.length === 1) {
+      return uniqueStores[0]; // Single store name
+    }
+
+    return `Selected (${uniqueStores.length})`;
+  }
 
   ExcelStoreNames: any = [];
   Details_ExportAsXLSX() {
     const FSDetailsData = [...this.filteredFSdetailsData];
     const FSSubDetailsMap = this.FSSubDetailsMap;
-   
+
     // Setup Excel
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Financial Summary Details');
+    const worksheet = workbook.addWorksheet('Income Statement Store Details');
     const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
     const DateToday = this.datepipe.transform(new Date(), 'MM/dd/yyyy h:mm:ss a');
 
@@ -387,14 +419,14 @@ export class IncomestatementstoreDetails {
 
     // Header section (above grid)
     worksheet.addRow([]);
-    const titleRow = worksheet.addRow(['Financial Summary Details']);
+    const titleRow = worksheet.addRow(['Income Statement Store Details']);
     titleRow.font = { bold: true, size: 12 };
     worksheet.addRow([]);
     worksheet.addRow([DateToday]).font = { size: 9 };
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.Fsdetails.NAME]);
     worksheet.addRow(['Date:', this.LatestDate]);
-    worksheet.addRow(['Store:', 'WESTERN AUTO']);
+    worksheet.addRow(['Store:', this.getSelectedStoreLabel()]);
     worksheet.addRow([]);
 
     // Grid Header

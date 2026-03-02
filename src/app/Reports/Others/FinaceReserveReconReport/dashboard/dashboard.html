@@ -1,0 +1,231 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div class="container-fluid">
+
+        <div class="reports-bar">
+            <div class="filter-dropdowns">
+
+                <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                            {{storecount}}
+                            {{storedisplayname}} )</span>
+                        <span class="arrow"></span></button>
+                    <app-stores
+                        [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                        [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                </div>
+
+
+                <!-- <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="togglePopover(1)">
+                        <span> {{selectedMonth | date: 'MMMM/yyyy'}}</span>
+                        <span class="arrow"></span></button>
+                    <div class="timeframe" *ngIf="activePopover === 1">
+                        <input type="text" class="form-control custon-height" bsDatepicker [(ngModel)]="selectedMonth"
+                            [bsConfig]="monthPickerConfig" (bsValueChange)="monthSelected($event)"
+                            placeholder="Select Month" class="d-none"/>
+                    </div>
+
+
+                </div> -->
+
+
+                <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="openMonthPicker()">
+                        Month <span class="light-font">( {{ selectedMonth | date:'MMMM/yyyy' }} )</span>
+                    </button>
+                    <div class="timeframe">
+                        <input type="text" class="d-none" bsDatepicker [(ngModel)]="selectedMonth"
+                            [bsConfig]="monthPickerConfig"  (bsValueChange)="monthSelected($event)" />
+                    </div>
+                </div>
+
+                <!-- ==========  Status Dropdown ========== -->
+                <!-- <div class="dropdown">
+                    <button class="dropdown-toggle" (click)="togglePopover(3)">
+                        Status:
+                        ({{ dealStatus.length == 1 ? dealStatus : 'Selected' }}
+                        <span *ngIf="dealStatus.length > 1"> {{dealStatus.length}} </span>)
+                        <span class="arrow"></span>
+                    </button>
+
+                    <div class="timeframe mt-2" *ngIf="activePopover === 3">
+                        <div class="date-filter-card">
+                            <button class="outline-button" (click)="multipleorsingle('DS','InClosed')"
+                                [ngClass]="{'active':dealStatus.indexOf('InClosed')>=0}">
+                                IN Closed
+                            </button>
+                            <button class="outline-button" (click)="multipleorsingle('DS','Sold')"
+                                [ngClass]="{'active':dealStatus.indexOf('Sold')>=0}">
+                                Sold
+                            </button>
+
+                        </div>
+                    </div>
+                </div> -->
+
+
+                <!-- ========== Apply Button ========== -->
+                <div class="dropdown">
+                    <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <div class="" id="CITreport">
+            <div class="scorecard-double-header">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th (click)="openComments()" style="cursor: pointer;">Notes
+                                <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
+                                    (click)="notesView()"></i>
+                                <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState"
+                                    (click)="notesView()"></i>
+                            </th>
+                            <th (click)="sort('STORE_NAME')" style="cursor: pointer;">Store</th>
+
+                            <th (click)="sort('FINANCE_RESERVE')" style="cursor: pointer;">Finance Reserve</th>
+
+
+                            <th (click)="sort('DEAL_NUMBER')" style="cursor: pointer;">Deal #</th>
+                            <th (click)="sort('CUSTOMER')" style="cursor: pointer;">Customer</th>
+                            <th (click)="sort('LENDER')" style="cursor: pointer;">Lender</th>
+                            <th (click)="sort('FINANCE_RSV_PER_ROUTEONE')" style="cursor: pointer;">Finance RSV Per
+                                Route One</th>
+                            <th (click)="sort('DIFF')" style="cursor: pointer;">Diff</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let fp of FinanceReserveReconData | filter: QISearchName; let i = index">
+                            <tr
+                                [ngClass]="{'divBold': fp?.STORE_NAME === 'Report Totals','lightblue-bg text-bold': fp?.AS_ID === -1  }">
+
+                                <td class="text-center" *ngIf="fp?.STORE_NAME !== 'Report Totals' && fp?.AS_ID !== -1">
+                                    <img *ngIf="fp.NOTES_STATUS == 'N'" src="/images/Actionblack.png" title="Add Notes"
+                                        (click)="addNotes(fp,notes)" style="cursor: pointer;">
+                                    <img *ngIf="fp.NOTES_STATUS == 'Y'" src="/images/notes_unread.png" title="Add Notes"
+                                        (click)="addNotes(fp,notes)" style="cursor: pointer;">
+                                </td>
+
+                                <td class="text-center" *ngIf="fp?.STORE_NAME === 'Report Totals' || fp?.AS_ID === -1">
+                                </td>
+                                <td class="text-start">{{ fp.STORE_NAME || '-' }}</td>
+
+                                <td style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(fp.FINANCE_RESERVE) }"> {{
+                                    fp.FINANCE_RESERVE && fp.FINANCE_RESERVE !== 0
+                                    ? (fp.FINANCE_RESERVE | currency:'USD':'symbol':'1.2-2')
+                                    : '-'
+                                    }}</td>
+
+
+
+                                <td class="text-center popuppointer" (click)="viewDeal(fp)">{{ fp.DEAL_NUMBER || '-' }}
+                                </td>
+                                <td class="text-start">{{ fp.CUSTOMER || '-' }}</td>
+                                <td class="text-start">{{ fp.LENDER || '-' }}</td>
+                                <!-- <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(fp.FINANCE_RSV_PER_ROUTEONE) }"> {{
+                                fp.FINANCE_RSV_PER_ROUTEONE && fp.FINANCE_RSV_PER_ROUTEONE !== 0
+                                ? (fp.FINANCE_RSV_PER_ROUTEONE | currency:'USD':'symbol':'1.2-2')
+                                : '-'
+                                }}</td> -->
+
+                                <td class="finance-rsv" style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(fp.FINANCE_RSV_PER_ROUTEONE) ,  'total-row': fp?.STORE_NAME === 'Report Totals'}">
+
+                                    <!-- VIEW MODE -->
+                                    <ng-container *ngIf="!fp.isEditing; else editMode">
+                                        {{
+                                        fp.FINANCE_RSV_PER_ROUTEONE && fp.FINANCE_RSV_PER_ROUTEONE !== 0
+                                        ? (fp.FINANCE_RSV_PER_ROUTEONE | currency:'USD':'symbol':'1.2-2')
+                                        : '-'
+                                        }}
+                                        <button class="btn btn-link p-0 ms-2" (click)="enableEdit(fp)"
+                                            *ngIf="fp?.STORE_NAME !== 'Report Totals' && fp?.AS_ID !== -1">
+                                            ✏️
+                                        </button>
+                                    </ng-container>
+
+                                    <!-- EDIT MODE -->
+                                    <ng-template #editMode>
+                                        <input type="number" class="form-control form-control-sm d-inline-block me-1"
+                                            style="width: 120px;" [(ngModel)]="fp.editValue" />
+
+                                        <button class="btn btn-success editbtn mx-1" (click)="saveFinanceRouteOne(fp)">
+                                            Save
+                                        </button>
+
+                                        <button class="btn btn-secondary cancelbtn ms-1" (click)="cancelEdit(fp)">
+                                            Cancel
+                                        </button>
+                                    </ng-template>
+
+                                </td>
+                                <td style="text-align: right;" [ngClass]="{
+    negative: fp.DIFF < 0,
+    highlight: fp.IS_HIGHLIGHT === 'Y'
+    
+  }">
+                                    {{
+                                    fp.DIFF !== null && fp.DIFF !== undefined
+                                    ? (fp.DIFF | currency:'USD':'symbol':'1.2-2')
+                                    : '-'
+                                    }}
+                                </td>
+
+                                
+
+                            </tr>
+
+                            <!-- Notes Row -->
+                            <ng-container *ngIf="notesViewState && 
+    (fp.COMMENT?.length > 0 || 
+     fp.History_FINANCE_RSV_PER_ROUTEONE?.length > 0)">
+                                <tr class="notes-block" style="background-color: #fff !important;pointer-events: none;">
+                                    <td colspan="8">
+                                        <div class="row">
+
+                                            <div class="col-md-6" *ngIf="fp.COMMENT?.length > 0  && notesViewState">
+                                                <div class="title">Notes</div>
+                                                <div class="notes" *ngFor="let notes of fp.COMMENT">
+                                                    {{ notes.GN_TEXT }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6" *ngIf="fp.COMMENT?.length <= 0"></div>
+                                            <div class="col-md-6 text-end"
+                                                *ngIf="fp.History_FINANCE_RSV_PER_ROUTEONE?.length > 0 && notesViewState">
+                                                <div class="title"> FINANCE RSV PER ROUTEONE History</div>
+                                                <div class="notes"
+                                                    *ngFor="let history of fp.History_FINANCE_RSV_PER_ROUTEONE">
+                                                    {{ history.History_Details }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                    </tbody>
+                    <!-- No Data -->
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="8" class="text-center">No Records Found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<ng-template #notes>
+    <app-notes [notesData]="notesData" (onClose)="closeNotes($event)"></app-notes>
+</ng-template>

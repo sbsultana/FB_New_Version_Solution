@@ -1,0 +1,600 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+  <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+  <div class="container-fluid">
+    <div class="reports-bar">
+      <div class="filter-dropdowns">
+
+        <!-- STORES -->
+        <div class="dropdown">
+          <button class="dropdown-toggle" (click)="togglePopover(0)">
+            Stores <span class="light-font">( {{storecount}} {{storedisplayname}} )</span>
+            <span class="arrow"></span>
+          </button>
+
+          <app-stores
+            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropdown-toggle" (click)="dp.show()">
+            Month
+            <span class="light-font">
+              ( {{ selectedDate | date:'MMMM/yyyy' }} )
+            </span>
+          </button>
+          <input #dp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="selectedDate" [bsConfig]="bsConfig" readonly
+            (keydown)="$event.preventDefault()" style="position: absolute; opacity: 0; height: 0; width: 0;" />
+        </div>
+
+        <!-- DEAL TYPE -->
+        <div class="dropdown">
+          <button class="dropdown-toggle" (click)="togglePopover(1)">
+            Deal Type <span class="light-font"> (
+              {{
+              DealType.length === 1
+              ? DealType[0]
+              : 'Selected ' + DealType.length
+              }}
+              ) </span>
+            <span class="arrow"></span>
+          </button>
+          <div class="timeframe my-2" *ngIf="activePopover === 1">
+            <div class="date-filter-card">
+
+              <button class="outline-button" (click)="multipleorsingle('DT','Retail')"
+                [ngClass]="{'active':DealType.indexOf('Retail') >= 0}">
+                Retail
+              </button>
+
+              <button class="outline-button" (click)="multipleorsingle('DT','Wholesale')"
+                [ngClass]="{'active':DealType.indexOf('Wholesale') >= 0}">
+                Wholesale
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- DEAL STATUS -->
+        <div class="dropdown">
+          <button class="dropdown-toggle" (click)="togglePopover(2)">
+            Deal Status <span class="light-font">
+              (
+              {{
+              DealStatus.length === 1
+              ? DealStatus[0]
+              : 'Selected ' + DealStatus.length
+              }}
+              )
+            </span>
+            <span class="arrow"></span>
+          </button>
+
+          <div class="timeframe my-2" *ngIf="activePopover === 2">
+            <div class="date-filter-card">
+
+              <button class="outline-button" (click)="multipleorsingle('DS','Booked')"
+                [ngClass]="{'active':DealStatus.indexOf('Booked') >= 0}">
+                Booked
+              </button>
+
+              <button class="outline-button" (click)="multipleorsingle('DS','Finalized')"
+                [ngClass]="{'active':DealStatus.indexOf('Finalized') >= 0}">
+                Closed or Sold
+              </button>
+
+              <button class="outline-button" (click)="multipleorsingle('DS','Delivered')"
+                [ngClass]="{'active':DealStatus.indexOf('Delivered') >= 0}">
+                Delivered
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ZERO DIFFERENCE -->
+        <div class="dropdown">
+          <button class="dropdown-toggle" (click)="togglePopover(3)">
+            Zero Difference <span class="light-font">
+              ( {{ ZeroDifference === 'Y' ? 'Include' : 'Exclude' }} )
+            </span>
+            <span class="arrow"></span>
+          </button>
+          <div class="timeframe my-2" *ngIf="activePopover === 3">
+            <div class="date-filter-card">
+              <button class="outline-button" [ngClass]="{'active':ZeroDifference === 'Y'}"
+                (click)="multipleorsingle('ZD','Y')">
+                Include
+              </button>
+              <button class="outline-button" [ngClass]="{'active':ZeroDifference === 'N'}"
+                (click)="multipleorsingle('ZD','N')">
+                Exclude
+              </button>
+
+            </div>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="apply-button" (click)="applyDateChange()">
+            <span>Apply</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+
+    <div class="scorecard-multi-header bookedtoclosedreconciliation-tbl">
+      <table class="table mb-0 w-100">
+        <thead>
+          <tr>
+            <th colspan="1"></th>
+            <th colspan="6"></th>
+            <th colspan="3"> Transactional</th>
+            <th colspan="3"> Accounting </th>
+            <th colspan="3">Difference</th>
+          </tr>
+          <tr>
+            <th> NOTES&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
+                (click)="notesView()" style="cursor: pointer;"></i>
+              <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState" (click)="notesView()"
+                style="cursor: pointer;"></i>
+            </th>
+            <th>Store</th>
+            <th>Stock #</th>
+            <th>New/Used</th>
+            <th>Deal Status</th>
+            <th>Deal ID</th>
+            <th>Date</th>
+
+            <th>Front Gross</th>
+            <th>Back Gross</th>
+            <th>Total Gross</th>
+            <th>Front Gross</th>
+            <th>Back Gross</th>
+            <th>Total Gross</th>
+            <th>Front Gross</th>
+            <th>Back Gross</th>
+            <th>Total Gross</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let dealType of objectKeys(groupedRows)">
+            <tr>
+              <td colspan="17" class="lightblue-bg text-bold sticky-total-header" style="text-transform: uppercase">
+                {{ dealType }}
+              </td>
+            </tr>
+            <ng-container *ngIf="BookedReconciliattionData.length > 0; else NoSRdata">
+              <ng-container *ngFor="let SR of groupedRows[dealType]; let i = index">
+                <tr [ngClass]="{
+                      'sticky-total-cell': SR.Custom_DealType === 'Report Total', 'bold-row': SR.NotesStatus === null
+                    }">
+                  <td class="text-center">
+                    <img *ngIf="SR.NotesStatus == 'N'" src="images/Actionblack.png " data-bs-toggle="modal"
+                      data-bs-target="#payplan" (click)="addNotes(SR)" style="cursor: pointer" />
+
+                    <img *ngIf="SR.NotesStatus == 'Y'" src="images/notes_unread.png " data-bs-toggle="modal"
+                      data-bs-target="#payplan" (click)="addNotes(SR)" style="cursor: pointer" />
+                  </td>
+
+                  <td class="text-start">
+                    {{
+                    SR.Store == 0 ||
+                    SR.Store == null ||
+                    SR.Store == undefined ||
+                    SR.Store == ""
+                    ? "-"
+                    : SR.Store
+                    }}
+                  </td>
+                  <td class="text-start">
+                    {{
+                    SR.Stockno == 0 ||
+                    SR.Stockno == null ||
+                    SR.Stockno == undefined ||
+                    SR.Stockno == ""
+                    ? "-"
+                    : SR.Stockno
+                    }}
+                  </td>
+                  <td class="text-start">
+                    {{
+                    SR.Dealtype == 0 ||
+                    SR.Dealtype == null ||
+                    SR.Dealtype == undefined ||
+                    SR.Dealtype == ""
+                    ? "-"
+                    : SR.Dealtype
+                    }}
+                  </td>
+
+                  <td class="text-start">
+                    {{
+                    SR.Deal_Status == 0 ||
+                    SR.Deal_Status == null ||
+                    SR.Deal_Status == undefined ||
+                    SR.Deal_Status == ""
+                    ? "-"
+                    : SR.Deal_Status
+                    }}
+                  </td>
+                  <td class="text-center"
+                    (click)="openSalesModal(SR.Deal_DealID,SR.Vin,SR.Storeid,SR.Stockno,SR?.source,SR?.Custid)"
+                    [ngClass]="[
+                        SR.Deal_DealID != 0 &&
+                        SR.Deal_DealID != null &&
+                        SR.Deal_DealID != undefined &&
+                        SR.Deal_DealID != '' &&
+                        SR.Deal_DealID != '-'
+                          ? 'popuppointer'
+                          : 'popupdisable'
+                      ]">
+                    <span [class.deal-link]="SR.Deal_DealID">
+                      {{ SR.Deal_DealID || '-' }}
+                    </span>
+
+                  </td>
+                  <td class="text-center">
+                    {{
+                    SR.Deal_Date == 0 ||
+                    SR.Deal_Date == null ||
+                    SR.Deal_Date == undefined ||
+                    SR.Deal_Date == ""
+                    ? "-"
+                    : (SR.Deal_Date | date : "MM.dd.yyyy")
+                    }}
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Deal_FEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Deal_FEG == 0 || SR.Deal_FEG == null
+                        ? "-"
+                        : (SR.Deal_FEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Deal_BEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Deal_BEG == 0 || SR.Deal_BEG == null
+                        ? "-"
+                        : (SR.Deal_BEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Deal_Total) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Deal_Total == 0 || SR.Deal_Total == null
+                        ? "-"
+                        : (SR.Deal_Total | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Acct_FEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Acct_FEG == 0 || SR.Acct_FEG == null
+                        ? "-"
+                        : (SR.Acct_FEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Acct_BEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Acct_BEG == 0 || SR.Acct_BEG == null
+                        ? "-"
+                        : (SR.Acct_BEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Acct_Total) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Acct_Total == 0 || SR.Acct_Total == null
+                        ? "-"
+                        : (SR.Acct_Total | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Diff_FEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Diff_FEG == 0 || SR.Diff_FEG == null
+                        ? "-"
+                        : (SR.Diff_FEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Diff_BEG) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Diff_BEG == 0 || SR.Diff_BEG == null
+                        ? "-"
+                        : (SR.Diff_BEG | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                  <td [ngClass]="{ negative: !inTheGreen(SR.Diff_Total) }">
+                    <span class="d-flex justify-content-between">
+                      $<span>{{
+                        SR.Diff_Total == 0 || SR.Diff_Total == null
+                        ? "-"
+                        : (SR.Diff_Total | number : "1.0-0")
+                        }}</span>
+                    </span>
+                  </td>
+                </tr>
+                <ng-container *ngIf="SR.NOTES != undefined && SR.NOTES != ''">
+                  <!--  -->
+                  <ng-container *ngIf="SR.NOTES != null && notesViewState">
+                    <tr style="background-color: #fff !important">
+                      <td colspan="18">
+                        <div class="title">Notes</div>
+                        <div class="gross-tbl-main table-responsive fs-tbl pt-1">
+                          <table style="width: 100%">
+                            <tbody>
+                              <ng-container *ngIf="SR.notesView == '+'" style="white-space: initial">
+                                <ng-container *ngFor="
+                                      let notes of SR.NOTES.slice(0, 2);
+                                      let i = index
+                                    ">
+                                  <tr class="sub-title">
+                                    <td style="text-align: left">
+                                      {{
+                                      notes.NOTES == "" ||
+                                      notes.NOTES == undefined
+                                      ? "-"
+                                      : notes.NOTES
+                                      }}
+                                    </td>
+                                  </tr>
+                                </ng-container>
+                              </ng-container>
+                              <ng-container *ngIf="SR.notesView == '-'" style="white-space: initial">
+                                <ng-container *ngFor="
+                                      let notes of SR.NOTES;
+                                      let i = index
+                                    ">
+                                  <tr class="sub-title">
+                                    <td style="text-align: left">
+                                      {{
+                                      notes.NOTES == "" ||
+                                      notes.NOTES == undefined
+                                      ? "-"
+                                      : notes.NOTES
+                                      }}
+                                    </td>
+                                  </tr>
+                                </ng-container>
+                              </ng-container>
+                              <tr *ngIf="SR.NOTES.length > 2">
+                                <td colspan="18" class="text-start" style="
+                                      z-index: 999;
+                                      cursor: pointer;
+                                      color: #2b91f0;
+                                      text-decoration: underline;
+                                      border: 1px solid white;
+                                    ">
+                                  <span *ngIf="SR.notesView == '+'" (click)="toggleView(SR)">View More</span>
+                                  <span *ngIf="SR.notesView == '-'" (click)="toggleView(SR)">
+                                    View Less</span>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </tbody>
+        <tbody>
+          <ng-template #NoSRdata>
+            <tr *ngIf="NoData" style="background-color: #fff">
+              <td colspan="15" style="
+                    text-align: center;
+                    font-size: 14px;
+                    background: transparent !important;
+                    color: black;
+                    display: revert;
+                  ">
+                <label>No Data Found</label>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  <!-- <div class="modal fade" id="payplan" tabindex="-1" role="dialog" aria-labelledby="logoutLabel" aria-hidden="true">
+    <div class="modal-dialog WR-draggable-modal" style="width: 55% !important">
+      <div class="modal-content" style="background-color: white !important">
+        <div class="modal-header" style="padding: 0.5rem 1rem">
+          <h5 class="modal-title" id="myModalLabel">
+            <span class="slash">//</span>NOTES &nbsp;&nbsp;
+            <span class="slash">#</span> {{ selecteddata.Stockno }}
+          </h5>
+          <span class="close ms-auto" data-bs-dismiss="modal" aria-hidden="true"
+            style="font-size: x-large; cursor: pointer" id="close">&times;</span>
+        </div>
+        <div class="modal-body" style="max-height: 69vh; min-height: 35vh; overflow: auto">
+          <div class="row mt-2">
+            <div class="col-8">
+              <textarea class="form-control" rows="3" cols="10" [(ngModel)]="notesStageText"
+                placeholder="Add Note"></textarea>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-4">
+              Stage:
+              <div class="acc-select">
+                <select class="form-select _dropdwn" [(ngModel)]="notesStageValue">
+                  <option selected disabled value="">Select Stage</option>
+                  <option *ngFor="let s of notesstage" [value]="s.NS_ID">
+                    {{ s.NS_Text }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div style="font-size: 1rem; font-family: 'Roboto'">
+              Control: {{ selecteddata.Stockno }}
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div style="font-size: 1rem; font-family: 'Roboto'">
+              Post Date: {{ selecteddata.DATE | date : "MM.dd.yyyy" }}
+            </div>
+          </div>
+          <div class="row mt-1" *ngIf="selecteddata.NOTES != null">
+            <div class="col-10" *ngIf="selecteddata.NOTES.length > 0">
+              <div *ngFor="let notes of selecteddata.NOTES">
+                {{
+                notes.NOTES == "" || notes.NOTES == undefined
+                ? "-"
+                : notes.NOTES
+                }}
+              </div>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="row mt-3 align-items-center justify-content-center">
+              <div class="text-center d-flex align-items-center col-4">
+                <button type="button" class="btn btn-view mx-1" (click)="save()">
+                  Save
+                </button>
+                <div class="cancel-txt col-4" data-bs-dismiss="modal" aria-hidden="true" id="close">
+                  Cancel
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="modal fade" id="payplan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="recap position-relative">
+          <div class="row d-flex w-100 m-0">
+            <div class="col-lg-12" style="overflow: auto; max-height: calc(100vh - 80px);">
+
+              <div class="row">
+                <div class="col-lg-5 col-12">
+                  <div class="col-lg-12 d-flex align-items-center justify-content-between">
+                    <div class="mx-4 m-2 ps-0 p-2">
+                      <h2 class="m-0 p-0">
+                        Control #: <span>{{ selecteddata.Stockno }}</span>
+                      </h2>
+                    </div>
+                  </div>
+                  <div class="p-4">
+                    <div class="mb-3 noteblock">
+                      <label class="form-label">Add Note</label>
+                      <textarea class="form-control" rows="4" [(ngModel)]="notesStageText"
+                        placeholder="Enter your notes here">
+                    </textarea>
+                    </div>
+                    <div class="mb-3 noteblock">
+                      <label class="form-label">Stage</label>
+                      <select class="form-control stagedropdown" [(ngModel)]="notesStageValue">
+                        <option disabled value="">Select Stage</option>
+                        <option *ngFor="let s of notesstage" [value]="s.NS_ID">
+                          {{ s.NS_Text }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="mb-2 noteblock">
+                      <strong>Post Date:</strong>
+                      {{ selecteddata.DATE | date : 'MM.dd.yyyy' }}
+                    </div>
+
+                  </div>
+                  <div class="col-lg-12 d-flex align-items-center">
+                    <div class="m-3 w-100">
+                      <div class="d-flex justify-content-end gap-2 mt-2">
+                        <button class="btn btn-outline-primary editbtn" (click)="save()">
+                          Save
+                        </button>
+
+                        <button class="btn btn-outline-danger cancelbtn" data-bs-dismiss="modal">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-lg-7 col-12 p-0">
+                  <div class="row mt-3 float-end m-0 position-absolute" style="right:0;">
+                    <div class="col-lg-12">
+                      <button type="button" class="btn-close" data-bs-dismiss="modal">
+                      </button>
+                    </div>
+                  </div>
+                  <div class="p-4">
+                    <div class="pt-4 mt-3 w-100">
+                      <strong class="form-label" style="color:#0554ef;">
+                        Previous Notes
+                      </strong>
+
+                      <table class="recap-table w-100">
+                        <tbody>
+                          <tr class="notes-row">
+                            <td colspan="10">
+                              <div class="box p-2" style="overflow:auto; max-height: 300px;">
+
+                                <div *ngIf="selecteddata.NOTES != null && selecteddata.NOTES.length > 0">
+                                  <ul class="mb-0 ps-3">
+                                    <li *ngFor="let notes of selecteddata.NOTES">
+                                      {{
+                                      notes.NOTES == '' || notes.NOTES == undefined
+                                      ? '-'
+                                      : notes.NOTES
+                                      }}
+                                    </li>
+                                  </ul>
+                                </div>
+
+                                <div class="text-center text-muted mt-3"
+                                  *ngIf="selecteddata.NOTES == null || selecteddata.NOTES.length == 0">
+                                  No notes available
+                                </div>
+
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</main>

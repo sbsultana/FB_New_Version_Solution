@@ -5,57 +5,89 @@
 <main>
   <div class="container-fluid" *ngIf="ExpenseTrend">
     <div class="col-12">
-      <div class="filter-dropdowns">
-        <div class="date-filter-card d-flex align-items-center justify-content-start">
-          <div class="open-calendar position-relative">
-            <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
-              [bsConfig]="bsConfig" [(ngModel)]="selectDate" readonly (keydown)="$event.preventDefault()" />
+      <div class="reports-bar">
+        <div class="filter-dropdowns">
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">( {{storecount}}
+                {{storedisplayname}} )</span>
+              <span class="arrow"></span></button>
+            <app-stores
+              [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+              [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
           </div>
-        </div>
-        <div class="dropdown">
-          <button class="dropdown-toggle" (click)="togglePopover(1)">
-            {{ selectedLabel }} <span class="arrow"></span>
-          </button>
 
-          <div class="timeframe" *ngIf="activePopover === 1">
-            <div class="date-filter-card mt-2">
-              <button class="outline-button" *ngFor="let f of filters" [class.active-filter]="isSelected(f)"
-                (click)="toggleFilter(f)">
-                {{ f }}
-              </button>
+          <!-- <div class="date-filter-card d-flex align-items-center justify-content-start">
+            <div class="open-calendar position-relative">
+              <input type="text" class="form-control year-input" placeholder="Select month" bsDatepicker
+                [bsConfig]="bsConfig" [(ngModel)]="selectDate" readonly (keydown)="$event.preventDefault()" />
+            </div>
+          </div> -->
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="dp.show()">
+              Month
+              <span class="light-font">
+                ( {{ selectDate | date:'MMMM/yyyy' }} )
+              </span>
+            </button>
+            <input #dp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="selectDate" [bsConfig]="bsConfig" readonly
+              (keydown)="$event.preventDefault()" style="position: absolute; opacity: 0; height: 0; width: 0;" />
+          </div>
+          <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(1)">
+              Department <span class="light-font"> {{ selectedLabel }} </span> <span class="arrow"></span>
+            </button>
+
+            <div class="timeframe" *ngIf="activePopover === 1">
+              <div class="date-filter-card mt-2">
+                <button class="outline-button" *ngFor="let f of filters" [class.active]="isSelected(f)"
+                  (click)="toggleFilter(f)">
+                  {{ f }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="dropdown">
-          <button class="apply-button" (click)="applyDateChange()">
-            <span>Apply</span>
-          </button>
+          <div class="dropdown">
+            <button class="apply-button" (click)="applyDateChange()">
+              <span>Apply</span>
+            </button>
+          </div>
         </div>
       </div>
-
     </div>
-    <div class="performance-scorecard">
-      <table class="table mb-0">
+    <div class="scorecard-multi-header expensetrend-tbl" (scroll)="updateVerticalScroll($event)" #scrollcent
+      id="scrollcent">
+      <table class="table mb-0 w-100">
         <thead>
           <tr>
             <th class="text-start">For the period ending</th>
             <th></th>
             <th colspan="4"></th>
-            <th colspan="12"></th>
+            <th [attr.colspan]="ExpenseTrendKeys.length"></th>
           </tr>
+
           <tr>
-            <th class="text-start">{{ ExpenseTrendKeys[0] }}<span> to </span>{{
-              ExpenseTrendKeys[this.ExpenseTrendKeys.length - 1]}}</th>
+            <th class="text-start">
+              {{ ExpenseTrendKeys[0] }}
+              <span> to </span>
+              {{ ExpenseTrendKeys[this.ExpenseTrendKeys.length - 1] }}
+            </th>
+
             <th><span>&nbsp;</span></th>
             <th><span>YTD</span></th>
             <th><span>PYTD</span></th>
             <th><span>Pace</span></th>
-            <th><span>Average</span></th>
-            <th *ngFor="let date of ExpenseTrendKeys"><span>{{ date | date:'MMM yyyy'}}</span></th>
+            <th>
+              <span>Average</span>
+            </th>
+
+            <th *ngFor="let date of ExpenseTrendKeys" style="box-shadow: inset 0 0 0 0.3px #e0edff;">
+              <span>{{ date | date:'MMM yyyy' }}</span>
+            </th>
           </tr>
+
         </thead>
         <tbody>
-          <ng-container *ngIf="ExpenseTrendByStoreMonth.length > 0; else NoExpenseTrendData">
+          <ng-container *ngIf="ExpenseTrendByStoreMonth.length > 6; else NoExpenseTrendData">
             <tr *ngFor="let data of ExpenseTrendByStoreMonth; let j=index"
               [ngClass]="{'lightblue-bg': data.DISPLAYHEAD_FLAG === 1,'padding': data.ISHEAD_TOTAL === 'Y','extra-padding': data.ISHEAD_TOTAL === 'N',
                   'parentheses': data.DISPLAY_LABLE == 'Advertising Rebates' || data.DISPLAY_LABLE == 'Interest Floor Plan Credit'}">
@@ -64,18 +96,18 @@
                 <span style="white-space: nowrap;">{{data.DISPLAY_LABLE}}</span>
               </td>
               <td>
-                <span [ngStyle]="{
+
+                <i class="fa fa-area-chart" [ngStyle]="{
                     'display': data.DISPLAYHEAD_FLAG === 1 ? 'none' : 'block'
-                  }">
-                  <i class="fa fa-area-chart" style="font-size:15px; color:#0554ef; cursor: pointer;"
-                    (click)="openGraph(Month,dates,data,data.DISPLAY_LABLE)"></i>
-                </span>
+                  }" style="font-size:15px; color:#0554ef; cursor: pointer;"
+                  (click)="openGraph(Month,dates,data,data.DISPLAY_LABLE)"></i>
+
               </td>
               <td *ngIf="!data.DISPLAY_LABLE.includes('%')" [ngStyle]="{
                     'cursor': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'not-allowed' : 'pointer',
                     'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                   }" (click)="openMonthDetails(data,currentMonth,data.DISPLAY_LABLE,data.ROWID,'YTD')"
-                [ngClass]="{ negative: !inTheGreen(data.YTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.YTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 <span class="d-flex justify-content-between">
                   $<span>{{ data.YTD ?
                     (data.YTD | number: '1.0-0') :
@@ -86,7 +118,7 @@
                     'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                   }" (click)="openMonthDetails(data,currentMonth,data.DISPLAY_LABLE,data.ROWID,'YTD')"
                 *ngIf="data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.YTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.YTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 {{ data.YTD !=
                 null
                 ? data.YTD + '%' : '-' }}</td>
@@ -95,7 +127,7 @@
                     'cursor': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'not-allowed' : 'pointer',
                     'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                   }" (click)="openMonthDetails(data,currentMonth,data.DISPLAY_LABLE,data.ROWID,'PYTD')"
-                [ngClass]="{ negative: !inTheGreen(data.PYTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.PYTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 <span class="d-flex justify-content-between">
                   $<span>{{ data.PYTD ?
                     (data.PYTD | number: '1.0-0') :
@@ -106,30 +138,30 @@
                     'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                   }" (click)="openMonthDetails(data,Month,data.DISPLAY_LABLE,data.ROWID,'PYTD')"
                 *ngIf="data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.PYTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.PYTD)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 {{ data.PYTD
                 !=
                 null ? data.PYTD + '%' : '-' }}</td>
 
               <td class="text-end" *ngIf="!data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.PACE)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.PACE)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 <span class="d-flex justify-content-between">
                   $<span>{{ data.PACE ?
                     (data.PACE | number: '1.0-0') :
                     '-' }}</span></span>
               </td>
               <td class="text-end" *ngIf="data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.PACE)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.PACE)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 {{ data.PACE !=
                 null ? data.PACE + '%' : '-' }}</td>
 
               <td *ngIf="!data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.AVG)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.AVG)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 <span class="d-flex justify-content-between"> $<span>{{
                     data.AVG ? (data.AVG | number: '1.0-0') : '-' }}</span></span>
               </td>
               <td class="text-end" *ngIf="data.DISPLAY_LABLE.includes('%')"
-                [ngClass]="{ negative: !inTheGreen(data.AVG)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                [ngClass]="{ negative: !inTheGreen(data.AVG)  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                 {{
                 data.AVG != null ? data.AVG + '%' : '-' }}</td>
               <ng-container *ngFor="let key of ExpenseTrendKeys;let i = index">
@@ -137,7 +169,7 @@
                       'cursor': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'not-allowed' : 'pointer',
                       'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                     }" *ngIf="!data.DISPLAY_LABLE.includes('%')"
-                  [ngClass]="{ negative: !inTheGreen(data[key])  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                  [ngClass]="{ negative: !inTheGreen(data[key])  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                   <span class="d-flex justify-content-between"> $<span>{{ data[key] ?
                       (data[key] | number: '1.0-0') :
                       '-' }}</span></span>
@@ -147,7 +179,7 @@
                         'cursor': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'not-allowed' : 'pointer',
                         'pointer-events': data.PARENTLABLECODE === '' ||  data.ISHEAD_TOTAL === 'Y' || data.DISPLAY_PARENTLABLE === 'IncomeSummary' || data.DISPLAY_PARENTLABLE === '' ? 'none' : 'auto'
                       }" *ngIf="data.DISPLAY_LABLE.includes('%')"
-                  [ngClass]="{ negative: !inTheGreen(data[key])  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit(Loss)')}">
+                  [ngClass]="{ negative: !inTheGreen(data[key])  && (data.DISPLAY_LABLE === 'Operating Profit' || data.DISPLAY_LABLE === 'Net Profit (Loss)')}">
                   {{
                   data[key] !=
                   null ? data[key] + '%' : '-' }}</td>
@@ -156,10 +188,9 @@
           </ng-container>
 
           <ng-template #NoExpenseTrendData>
-            <tr *ngIf="NoData">
-              <td></td>
-              <td colspan="19" style="text-align: center;font-size: 14px;pointer-events: none;">
-                <label>No Data Found</label>
+            <tr *ngIf="!isLoading">
+              <td class="text-center fw-bold" [attr.colspan]="ExpenseTrendKeys.length+6">
+                No Data Found
               </td>
             </tr>
           </ng-template>
@@ -170,7 +201,7 @@
   <div class="container-fluid" id="ExpenseTrendDetails" *ngIf="ExpenseTrendDetails">
     <div class="col-12">
       <div class="divBold mb-2 p-2 d-flex align-items-center justify-content-flex-start">
-        <span class="printHide" style="cursor: pointer;" (click)="backtoWR()">
+        <span class="printHide back-button" style="cursor: pointer;" (click)="backtoWR()">
           <i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back
         </span>
         <h5 class="title text-capitalize m-0 ms-3">
@@ -194,111 +225,108 @@
       </div>
     </div>
     <div class="col-12" id="ExpenseTrendDetailsDownload">
-      <div class="d-flex">
-        <div class="performance-scorecard-details">
-          <table class="table table-borderless mb-0">
-            <thead>
-              <tr>
-                <th class="text-start">Store Name</th>
-                <th class="text-center">Account Number</th>
-                <th class="alignleft"><span>Account Description</span></th>
-                <th class="alignright" style="border-radius: 0 10px 0 0;border-right: none;">
-                  <span>Balance </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody *ngIf="paginatedItems.length > 0; else ifNotShow">
-              <ng-container *ngFor="let data of paginatedItems; let j = index">
-                <tr [ngClass]="{ 'even': j % 2 === 0, 'highlight-row': expandedIndex === j }">
-                  <td style="text-align: left !important;">
-                    <span style="white-space: nowrap;">{{ data.StoreName || '-' }}</span>
-                  </td>
-                  <td
-                    style="text-align: center !important; cursor: pointer; text-decoration: underline; color: #337ab7;"
-                    (click)="GetSubDetails(data['AccountNumber'],data['StoreName'], j)">
-                    <span style="white-space: nowrap;">{{ data['AccountNumber'] || '-' }}</span>
-                  </td>
-                  <td style="text-align: left !important;">
-                    <span style="white-space: normal; display: block;">{{ data['AccountDescription'] || '-' }}</span>
-                  </td>
-                  <td style="text-align: end !important;width: 15%;"
-                    [ngClass]="{ negative: !inTheGreen(data['PostingAmount']) }">
-                    <span class="d-flex justify-content-between">
-                      $<span>{{ data['PostingAmount'] !== null && data['PostingAmount'] !== undefined ?
-                        (data['PostingAmount'] | number) : '-' }}</span>
-                    </span>
-                  </td>
-                </tr>
-                <ng-container *ngIf="expandedIndex === j && FSSubDetailsMap[j]?.length">
-                  <tr>
-                    <td colspan="4" style="padding: 0;">
-                      <div class="nested-table-container">
-                        <table class="table table-borderless mb-0 inner-table">
-                          <thead>
-                            <tr>
-                              <th class="alignleft">Control</th>
-                              <th class="text-center">Date</th>
-                              <th class="alignleft">Detail Description</th>
-                              <th class="alignright">Balance</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let sub of FSSubDetailsMap[j]">
-                              <td style="text-align: left !important;">
-                                <span>{{ sub.Control || '-' }}</span>
-                              </td>
-                              <td style="text-align: center !important;">
-                                <span>{{ sub.AccountingDate | date: 'MM.dd.yyyy' }}</span>
-                              </td>
-                              <td style="text-align: left !important;">
-                                <span style="white-space: normal; width: 400px; display: block;">{{
-                                  sub.DetailDescription || '-' }}</span>
-                              </td>
-                              <td style="text-align: end !important;width: 15%;"
-                                [ngClass]="{ negative: !inTheGreen(sub.PostingAmount) }">
-                                <span class="d-flex justify-content-between">
-                                  $<span>{{ sub.PostingAmount !== null && sub.PostingAmount !== undefined ?
-                                    (sub.PostingAmount | number) : '-' }}</span>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                          <tfoot>
-                            <tr>
-                              <td colspan="3" class="text-end">Sub Total:</td>
-                              <td class="px-2 py-1" [ngClass]="{ negative: !inTheGreen(getPostingSubAmountTotal(j)) }">
-                                <span class="d-flex justify-content-between">
-                                  $<span>{{ getPostingSubAmountTotal(j) | number }}</span>
-                                </span>
-                              </td>
-                            </tr>
-                          </tfoot>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                </ng-container>
-              </ng-container>
-            </tbody>
-            <tfoot *ngIf="paginatedItems.length > 0">
-              <tr>
-                <td colspan="3" class="sticky-footer text-end pe-3 py-1" style="border-radius: 0 0 0 10px;">Total:</td>
-                <td class="sticky-footer px-2 py-1" [ngClass]="{ negative: !inTheGreen(postingAmountTotal) }"
-                  style="border-radius: 0 0 10px 0;">
+      <div class="scorecard-single-header expensetrenddetails-tbl">
+        <table class="table mb-0 w-100">
+          <thead>
+            <tr>
+              <th class="text-start">Store Name</th>
+              <th class="text-center">Account Number</th>
+              <th class="alignleft"><span>Account Description</span></th>
+              <th class="alignright" style="border-radius: 0 10px 0 0;border-right: none;">
+                <span>Balance </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody *ngIf="paginatedItems.length > 0; else ifNotShow">
+            <ng-container *ngFor="let data of paginatedItems; let j = index">
+              <tr [ngClass]="{ 'even': j % 2 === 0, 'highlight-row': expandedIndex === j }">
+                <td style="text-align: left !important;">
+                  <span style="white-space: nowrap;">{{ data.StoreName || '-' }}</span>
+                </td>
+                <td style="text-align: center !important; cursor: pointer; text-decoration: underline; color: #337ab7;"
+                  (click)="GetSubDetails(data['AccountNumber'],data['StoreName'], j)">
+                  <span style="white-space: nowrap;">{{ data['AccountNumber'] || '-' }}</span>
+                </td>
+                <td style="text-align: left !important;">
+                  <span style="white-space: normal; display: block;">{{ data['AccountDescription'] || '-' }}</span>
+                </td>
+                <td style="text-align: end !important;width: 15%;"
+                  [ngClass]="{ negative: !inTheGreen(data['PostingAmount']) }">
                   <span class="d-flex justify-content-between">
-                    $<span>{{ postingAmountTotal | number }}</span>
+                    $<span>{{ data['PostingAmount'] !== null && data['PostingAmount'] !== undefined ?
+                      (data['PostingAmount'] | number) : '-' }}</span>
                   </span>
                 </td>
               </tr>
-            </tfoot>
-            <ng-template #ifNotShow>
-              <tr *ngIf="NoData">
-                <td colspan="4" style="text-align: center; font-size: 1rem; font-family: 'Roboto';font-weight: 700;">No
-                  Data Found!!!</td>
-              </tr>
-            </ng-template>
-          </table>
-        </div>
+              <ng-container *ngIf="expandedIndex === j && FSSubDetailsMap[j]?.length">
+                <tr>
+                  <td colspan="4" style="padding: 0;">
+                    <div class="nested-table-container">
+                      <table class="table table-borderless mb-0 inner-table">
+                        <thead>
+                          <tr>
+                            <th class="alignleft">Control</th>
+                            <th class="text-center">Date</th>
+                            <th class="alignleft">Detail Description</th>
+                            <th class="alignright">Balance</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let sub of FSSubDetailsMap[j]">
+                            <td style="text-align: left !important;">
+                              <span>{{ sub.Control || '-' }}</span>
+                            </td>
+                            <td style="text-align: center !important;">
+                              <span>{{ sub.AccountingDate | date: 'MM/dd/yyyy' }}</span>
+                            </td>
+                            <td style="text-align: left !important;">
+                              <span style="white-space: normal; width: 400px; display: block;">{{
+                                sub.DetailDescription || '-' }}</span>
+                            </td>
+                            <td style="text-align: end !important;width: 15%;"
+                              [ngClass]="{ negative: !inTheGreen(sub.PostingAmount) }">
+                              <span class="d-flex justify-content-between">
+                                $<span>{{ sub.PostingAmount !== null && sub.PostingAmount !== undefined ?
+                                  (sub.PostingAmount | number) : '-' }}</span>
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="3" class="text-end">Sub Total:</td>
+                            <td class="px-2 py-1" [ngClass]="{ negative: !inTheGreen(getPostingSubAmountTotal(j)) }">
+                              <span class="d-flex justify-content-between">
+                                $<span>{{ getPostingSubAmountTotal(j) | number }}</span>
+                              </span>
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+          <tfoot *ngIf="paginatedItems.length > 0">
+            <tr>
+              <td colspan="3" class="sticky-footer text-end pe-3 py-1" style="border-radius: 0 0 0 10px;">Total:</td>
+              <td class="sticky-footer px-2 py-1" [ngClass]="{ negative: !inTheGreen(postingAmountTotal) }"
+                style="border-radius: 0 0 10px 0;">
+                <span class="d-flex justify-content-between">
+                  $<span>{{ postingAmountTotal | number }}</span>
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+          <ng-template #ifNotShow>
+            <tr *ngIf="NoData">
+              <td colspan="4" style="text-align: center; font-size: 1rem; font-family: 'Roboto';font-weight: 700;">No
+                Data Found!!!</td>
+            </tr>
+          </ng-template>
+        </table>
       </div>
     </div>
     <div class="container-fluid mt-1 HideItems">

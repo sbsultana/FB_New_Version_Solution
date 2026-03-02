@@ -1,4 +1,4 @@
-import { Component, HostListener, Injector } from '@angular/core';
+import { Component, ElementRef, HostListener, Injector, ViewChild } from '@angular/core';
 import { Api } from '../../../../Core/Providers/Api/api';
 import { common } from '../../../../common';
 import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
@@ -18,14 +18,17 @@ const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 const EXCEL_EXTENSION = '.xlsx';
 import numeral from 'numeral';
-import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { BsDatepickerConfig, BsDatepickerDirective, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { Router } from '@angular/router';
 import { ExpensetrendGraph } from '../expensetrend-graph/expensetrend-graph';
+import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -39,7 +42,6 @@ export class Dashboard {
   // gridshow:boolean=false
   // monthgridshow:boolean=false
   FSData: any = [];
-  NoData: boolean = false;
   date: any;
   ExpenseTrendByStoreKeys: any = [];
   AllDatakeys: any = [];
@@ -54,10 +56,11 @@ export class Dashboard {
   SubFilter: any;
   SelectedTab: any = [];
   Month!: any;
-  stores: any;
+  // stores: any;
   selectedstorevalues: any = [];
   selectedstorename: any;
-
+  selectedFilters: string[] = [];
+  selectedLabel: string = '( All )';
   StoreName: any = 'All Stores';
   Filter: any = ['New', 'Used', 'Service', 'Parts', 'Collision'];
   StoreValues: any = 2;
@@ -71,8 +74,22 @@ export class Dashboard {
       this.activePopover = -1;
     }
   }
+
+
+  stores: any = [];
   selectDate: Date = new Date();
   currentMonth: any = '';
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storeIds: any = '0';
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
   constructor(
     private datepipe: DatePipe,
     public apiSrvc: Api,
@@ -83,20 +100,29 @@ export class Dashboard {
     private comm: common,
     private router: Router,
     private toast: ToastService,
-    private injector: Injector
+    private injector: Injector,
+    public shared: Sharedservice,
   ) {
     const lastMonth = new Date();
     let today = new Date();
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.ustores.split(',')
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
 
+    }
+
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
     if (today.getDate() < 5) {
       this.date = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
     } else {
       this.date = new Date(lastMonth.setMonth(lastMonth.getMonth()));
-    }
-    if (localStorage.getItem('UserDetails') != null) {
-      this.StoreValues = JSON.parse(
-        localStorage.getItem('UserDetails')!
-      ).Store_Ids;
     }
     this.title.setTitle(this.comm.titleName + '-Expense Trend');
     if (localStorage.getItem('Fav') != 'Y') {
@@ -106,8 +132,8 @@ export class Dashboard {
         path2: '',
         path3: '',
         Month: this.date,
-        stores: this.StoreValues.toString(),
-        store: 2,
+        stores: this.storeIds.toString(),
+        store: this.storeIds,
         filter: this.Filter,
         groups: 1,
         count: 0,
@@ -121,7 +147,9 @@ export class Dashboard {
     const myDate = new Date();
     const formattedDate = formatDate(myDate, format, locale);
     this.PresentDayDate = formattedDate;
+    this.selectDate = this.date
     this.currentMonth = this.selectDate;
+    this.selectedFilters = [...this.filters];
     this.GetDataByMonths(this.currentMonth, this.selectedFilters);
   }
   roleId: any;
@@ -136,62 +164,86 @@ export class Dashboard {
   MonthsHeadings: any = [];
 
   Scrollpercent: any = 0;
-  // updateVerticalScroll(event: any): void {
-  //   const scrollDemo = document.querySelector('#scrollcent') as HTMLElement;
-  //   this.Scrollpercent = Math.round(
-  //     (event.target.scrollTop /
-  //       (event.target.scrollHeight - scrollDemo.clientHeight)) *
-  //       100
-  //   );
-  // }
+  scrollPositionStoring: number = 0;
+  scrollCurrentPosition: number = 0;
+
+  @ViewChild('scrollcent') scrollcent!: ElementRef;
+
+  updateVerticalScroll(event: any): void {
+    this.scrollCurrentPosition = event.target.scrollTop;
+  }
+
   // Filters list
   filters: string[] = ['New', 'Used', 'Service', 'Parts', 'Collision'];
-  selectedFilters: string[] = [...this.filters];
-  selectedLabel: string = 'Selected (All)';
   activePopover: number | null = null;
   bsConfig: Partial<BsDatepickerConfig> = {
     dateInputFormat: 'MMMM/YYYY',
     minMode: 'month',
     maxDate: new Date()
   };
+  monthPicker!: BsDatepickerDirective;
+  openMonthPicker() {
+    if (this.monthPicker) {
+      this.monthPicker.show();
+    }
+  }
 
   togglePopover(index: number) {
     this.activePopover = this.activePopover === index ? null : index;
   }
 
-  toggleFilter(filter: string) {
-    if (this.isSelected(filter)) {
-      this.selectedFilters = this.selectedFilters.filter(f => f !== filter);
-    } else {
-      this.selectedFilters.push(filter);
-    }
-    if (this.selectedFilters.length === 0) {
-      this.selectedFilters = [...this.filters];
-    }
-    this.updateLabel();
-  }
 
   isSelected(filter: string): boolean {
     return this.selectedFilters.includes(filter);
   }
 
-  updateLabel() {
-    this.selectedLabel =
-      this.selectedFilters.length === this.filters.length
-        ? 'Selected (All)'
-        : `Selected (${this.selectedFilters.length})`;
+  toggleFilter(filter: string) {
+    const index = this.selectedFilters.indexOf(filter);
+    if (index >= 0) {
+      this.selectedFilters.splice(index, 1);
+    } else {
+      this.selectedFilters.push(filter);
+    }
+    this.updateLabel();
   }
 
+  updateLabel() {
+    if (!this.selectedFilters || this.selectedFilters.length === 0) {
+      this.selectedLabel = '( Select )';
+    } else if (this.selectedFilters.length === this.filters.length) {
+      this.selectedLabel = '( All )';
+    } else if (this.selectedFilters.length === 1) {
+      this.selectedLabel = `( ${this.selectedFilters[0]} )`;
+    } else {
+      this.selectedLabel = `( Selected ${this.selectedFilters.length} )`;
+    }
+  }
+
+
+
   applyDateChange() {
-    this.currentMonth = this.formatMonth(this.selectDate);
-    this.GetDataByMonths(this.currentMonth, this.selectedFilters);
-    this.activePopover = null;
+    if (!this.storeIds || this.storeIds.length === 0) {
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
+      return;
+    }
+    if (!this.selectedFilters || this.selectedFilters.length === 0) {
+      this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
+      return;
+    }
+    else {
+      this.currentMonth = this.formatMonth(this.selectDate);
+      this.GetDataByMonths(this.currentMonth, this.selectedFilters);
+      this.activePopover = null;
+      this.isLoading = true;
+    }
   }
   formatMonth(date: Date): string {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
     return `${year}-${month}`;
   }
+  isLoading = true;
+  NoData = false;
   EndDate: any;
   dates: any;
   storeName: any;
@@ -212,7 +264,7 @@ export class Dashboard {
       'yyyy-MM-dd'
     );
     const obj = {
-      AS_IDS: 2,
+      AS_IDS: this.storeIds.toString(),
       DATE: DateToday,
       DEPARTMENT: filters.toString()
     };
@@ -222,11 +274,12 @@ export class Dashboard {
       .postmethod(this.comm.routeEndpoint + 'GetExpenseTrendReport', obj)
       .subscribe(
         (x: any) => {
+          this.isLoading = false;
           const currentTitle = document.title;
           this.apiSrvc.logSaving(curl, {}, '', x.message, currentTitle);
           if (x.status == 200) {
             this.ExpenseTrendByStoreMonth = x.response;
-            const serviceKeys = Object.keys(x.response[0]).slice(11);
+            const serviceKeys = Object.keys(x.response[0]).slice(12);
             this.ExpenseTrendKeys = serviceKeys;
             console.log(
               'ExpenseTrendByStoreMonth',
@@ -234,16 +287,19 @@ export class Dashboard {
             );
             console.log('ExpenseTrendByMonthKeys', this.ExpenseTrendKeys);
             this.spinner.hide();
-            this.NoData = !(
-              this.ExpenseTrendKeys && this.ExpenseTrendKeys.length > 0
-            );
+            this.NoData = this.ExpenseTrendByStoreMonth.length > 6;
           } else {
-            this.NoData = true;
-            this.spinner.hide();
+            this.ExpenseTrendByStoreMonth = [];
+            this.ExpenseTrendKeys = [];
+            this.NoData = false;
           }
+          this.spinner.hide();
         },
         () => {
-          this.NoData = true;
+          this.isLoading = false;
+          this.NoData = false;
+          this.ExpenseTrendByStoreMonth = [];
+          this.ExpenseTrendKeys = [];
           this.spinner.hide();
         }
       );
@@ -268,6 +324,17 @@ export class Dashboard {
   block: any = '';
   Report: any = '';
   ngAfterViewInit(): void {
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Expense Trend') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
     this.subscriptionReport = this.apiSrvc
       .GetReportOpening()
       .subscribe((res) => {
@@ -390,7 +457,40 @@ export class Dashboard {
     });
   }
 
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
 
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+
+    // this.setHeaderData();
+    // this.GetData();
+
+  }
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
   closeReport() {
     this.Report = '';
   }
@@ -422,6 +522,7 @@ export class Dashboard {
     DateMethod: any
   ) {
     this.spinner.show();
+    this.scrollPositionStoring = this.scrollCurrentPosition;
     this.ExpenseTrend = false;
     this.ExpenseTrendDetails = true;
     // this.ETdetailsData = [];
@@ -443,9 +544,9 @@ export class Dashboard {
     this.SubtypeDetailLable = Object.DISPLAY_LABLE;
     this.FinSummaryLable = Object.DISPLAY_PARENTLABLE;
     const Obj = {
-      as_ids: 2,
+      as_ids: this.storeIds.toString(),
       // dept: this.selectedFilters.toString(),
-      dept: '',
+      dept: this.selectedFilters.toString(),
       subtype: '',
       subtypedetail: Object.DISPLAY_LABLE,
       FinSummary: Object.DISPLAY_PARENTLABLE,
@@ -480,7 +581,7 @@ export class Dashboard {
     const Obj = {
       as_ids: StoreName,
       // dept: this.selectedFilters.toString(),
-      dept: '',
+      dept: this.selectedFilters.toString(),
       subtype: '',
       subtypedetail: this.SubtypeDetailLable,
       FinSummary: this.FinSummaryLable,
@@ -507,6 +608,11 @@ export class Dashboard {
     if (this.StoreValues != '') {
       this.goToFirstPage();
     }
+    setTimeout(() => {
+      if (this.scrollcent && this.scrollcent.nativeElement) {
+        this.scrollcent.nativeElement.scrollTop = this.scrollPositionStoring;
+      }
+    });
   }
 
   get postingAmountTotal(): number {
@@ -705,25 +811,25 @@ export class Dashboard {
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
     let storeNames: any = [];
-    let store = this.StoreValues.split(',');
-    storeNames = this.comm.groupsandstores
-      .filter((v: any) => v.sg_id == this.groups)[0]
-      .Stores.filter((item: any) =>
-        store.some((cat: any) => cat === item.ID.toString())
-      );
-    console.log(storeNames);
+    // let store = this.StoreValues.split(',');
+    // storeNames = this.comm.groupsandstores
+    //   .filter((v: any) => v.sg_id == this.groups)[0]
+    //   .Stores.filter((item: any) =>
+    //     store.some((cat: any) => cat === item.ID.toString())
+    //   );
+    // console.log(storeNames);
 
-    if (
-      store.length ==
-      this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0]
-        .Stores.length
-    ) {
-      this.ExcelStoreNames = 'All Stores';
-    } else {
-      this.ExcelStoreNames = storeNames.map(function (a: any) {
-        return a.storename;
-      });
-    }
+    // if (
+    //   store.length ==
+    //   this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0]
+    //     .Stores.length
+    // ) {
+    //   this.ExcelStoreNames = 'All Stores';
+    // } else {
+    //   this.ExcelStoreNames = storeNames.map(function (a: any) {
+    //     return a.storename;
+    //   });
+    // }
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Expense Trend');
     worksheet.views = [
@@ -745,7 +851,7 @@ export class Dashboard {
     worksheet.addRow('');
     const DateToday = this.datepipe.transform(
       new Date(),
-      'MM/dd/yyyy h:mm:ss a'
+      'MM.dd.yyyy h:mm:ss a'
     );
     worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
     const ExpenseTrendByStoreMonth = this.ExpenseTrendByStoreMonth.map(
@@ -771,39 +877,57 @@ export class Dashboard {
       size: 9,
       bold: true,
     };
-    const DateMonth = worksheet.addRow(['Month :']);
+    const DateMonth = worksheet.addRow(['Time Frame :']);
     const datemonth = worksheet.getCell('B7');
-    datemonth.value = this.Month;
+    datemonth.value = StartDate;
     datemonth.font = { name: 'Arial', family: 4, size: 9 };
-    datemonth.alignment = { vertical: 'middle', horizontal: 'left' };
+    datemonth.alignment = { vertical: 'top', horizontal: 'left' };
     DateMonth.getCell(1).font = {
       name: 'Arial',
       family: 4,
       size: 9,
       bold: true,
     };
-    const Groups = worksheet.getCell('A8');
-    Groups.value = 'Group :';
-    const groups = worksheet.getCell('B8');
-    groups.value = this.comm.groupsandstores.filter(
-      (val: any) => val.sg_id == this.groups.toString()
-    )[0].sg_name;
-    groups.font = { name: 'Arial', family: 4, size: 9 };
-    groups.alignment = {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-    };
+    // const Groups = worksheet.getCell('A8');
+    // Groups.value = 'Group :';
+    // const groups = worksheet.getCell('B8');
+    // groups.value = this.comm.groupsandstores.filter(
+    //   (val: any) => val.sg_id == this.groups.toString()
+    // )[0].sg_name;
+    // groups.font = { name: 'Arial', family: 4, size: 9 };
+    // groups.alignment = {
+    //   vertical: 'middle',
+    //   horizontal: 'left',
+    //   wrapText: true,
+    // };
+    // ===== STORE VALUE FOR EXCEL (FROM UI SELECTION) =====
+
+    let storeValue = '';
+
+    const selectedStoreIds: string[] =
+      this.storeIds && this.storeIds.length
+        ? this.storeIds.map((id: any) => id.toString())
+        : [];
+
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
+
+    // ✅ Bind ONLY selected store names
+    storeValue = allStores
+      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+      .map((s: any) => s.storename.trim())
+      .filter(Boolean)
+      .join(', ');
+
+    // ✅ Final fallback (safety)
+    if (!storeValue && selectedStoreIds.length) {
+      storeValue = selectedStoreIds.join(', ');
+    }
     worksheet.mergeCells('B9', 'K11');
     const Stores = worksheet.getCell('A9');
     Stores.value = 'Stores :';
     const stores = worksheet.getCell('B9');
     stores.value =
-      this.ExcelStoreNames == 0
-        ? '-'
-        : this.ExcelStoreNames == null
-          ? '-'
-          : this.ExcelStoreNames.toString().replaceAll(',', ', ');
+      storeValue;
     stores.font = { name: 'Arial', family: 4, size: 9 };
     stores.alignment = {
       vertical: 'top',
@@ -1425,10 +1549,11 @@ export class Dashboard {
             (res: any) => {
               console.log('Response:', res);
               if (res.status === 200) {
-                // alert(res.response);
+               
                 this.toast.success(res.response);
               } else {
-                alert('Invalid Details');
+                
+                this.toast.show('Invalid Details.', 'danger', 'Error');
               }
             },
             (error) => {
@@ -1455,27 +1580,32 @@ export class Dashboard {
     const FSDetailsData = [...this.filteredETdetailsData];
     const FSSubDetailsMap = this.FSSubDetailsMap;
 
-    // Extract store names
-    let storeNames: any[] = [];
-    const store = this.StoreValues.split(',');
+    let storeValue = '';
 
-    const groupStores = this.comm.groupsandstores.find(
-      (v: any) => v.sg_id == this.groups
-    )?.Stores || [];
+    const selectedStoreIds: string[] =
+      this.storeIds && this.storeIds.length
+        ? this.storeIds.map((id: any) => id.toString())
+        : [];
 
-    storeNames = groupStores.filter((item: any) =>
-      store.includes(item.ID?.toString())
-    );
+    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
 
-    this.ExcelStoreNames = (store.length === groupStores.length)
-      ? 'All Stores'
-      : storeNames.map((a: any) => a.storename).join(', ');
+    // ✅ Bind ONLY selected store names
+    storeValue = allStores
+      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
+      .map((s: any) => s.storename.trim())
+      .filter(Boolean)
+      .join(', ');
+
+    // ✅ Final fallback (safety)
+    if (!storeValue && selectedStoreIds.length) {
+      storeValue = selectedStoreIds.join(', ');
+    }
 
     // Setup Excel
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Expense Trend Details');
     const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    const DateToday = this.datepipe.transform(new Date(), 'MM/dd/yyyy h:mm:ss a');
+    const DateToday = this.datepipe.transform(new Date(), 'MM.dd.yyyy h:mm:ss a');
 
     worksheet.views = [{ state: 'frozen', ySplit: 10, topLeftCell: 'A11', showGridLines: false }];
 
@@ -1488,7 +1618,7 @@ export class Dashboard {
     worksheet.addRow(['Selected Details:']).font = { bold: true, size: 10 };
     worksheet.addRow(['Type:', this.Lable]);
     worksheet.addRow(['Date:', this.selectedDate]);
-    worksheet.addRow(['Store:', 'WesternAuto']);
+    worksheet.addRow(['Store:', storeValue]);
     worksheet.addRow([]);
 
     // Grid Header
@@ -2181,10 +2311,11 @@ export class Dashboard {
             (res: any) => {
               console.log('Response:', res);
               if (res.status === 200) {
-                // alert(res.response);
+              
                 this.toast.success(res.response);
               } else {
-                alert('Invalid Details');
+               
+                this.toast.show('Invalid Details.', 'danger', 'Error');
               }
             },
             (error) => {
