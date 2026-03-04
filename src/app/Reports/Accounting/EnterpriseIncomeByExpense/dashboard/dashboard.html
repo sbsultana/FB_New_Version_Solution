@@ -40,14 +40,53 @@
 
                         <div class="timeframe" *ngIf="activePopover === 1">
                             <div class="date-filter-card mt-2">
-                                <button class="outline-button" *ngFor="let f of filters"
-                                    [class.active]="isSelected(f)" (click)="toggleFilter(f)">
+                                <button class="outline-button" *ngFor="let f of filters" [class.active]="isSelected(f)"
+                                    (click)="toggleFilter(f)">
                                     {{ f }}
                                 </button>
                             </div>
                         </div>
                     </div>
 
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(2)">
+                            % of GP <span class="light-font"> ( {{ ShowHideGP === 'Show' ? 'Show' :
+                                ShowHideGP === 'Hide' ? 'Hide' : 'Select' }} ) </span> <span class="arrow"></span>
+                        </button>
+                        <div class="timeframe mt-2">
+                            <div class="date-filter-card" *ngIf="activePopover === 2">
+                                <button class="outline-button" [class.active]="ShowHideGP === 'Show'"
+                                    (click)="showhideGP('Show')">
+                                    Show
+                                </button>
+                                <button class="outline-button" [class.active]="ShowHideGP === 'Hide'"
+                                    (click)="showhideGP('Hide')">
+                                    Hide
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            Budget
+                            <span class="light-font">( {{ ShowHideBudget }} )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 3">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" [class.active]="ShowHideBudget === 'Show'"
+                                    (click)="showhideBudget('Show')">
+                                    Show
+                                </button>
+                                <button class="outline-button" [class.active]="ShowHideBudget === 'Hide'"
+                                    (click)="showhideBudget('Hide')">
+                                    Hide
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
                     <div class="dropdown">
                         <button class="apply-button" (click)="applyDateChange()">
                             <span>Apply</span>
@@ -58,10 +97,10 @@
 
         </div>
         <div class="scorecard-triple-header enterpriseincome-tbl">
-            <table class="table mb-0 w-100">
+            <table class="table mb-0">
                 <thead>
                     <tr>
-                        <th class="text-start">{{currentMonth | date: 'MMMM - yyyy'}}</th>
+                        <th>{{currentMonth | date: 'MMMM - yyyy'}}</th>
                         <th>Total</th>
                         <th>Average</th>
                         <ng-container *ngFor="let key of IncomeSummaryDataKeys">

@@ -115,7 +115,7 @@ export class EnterprisetrackingDetails {
     console.log(Obj);
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetEnterpriseTrackingNetprofitDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetEnterpriseTrackingNetprofitDetailsV1', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
           this.FSDetailsData = res.response;
@@ -162,7 +162,7 @@ export class EnterprisetrackingDetails {
     console.log(Obj);
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetEnterpriseTrackingNetprofitDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetEnterpriseTrackingNetprofitDetailsV1', Obj)
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {

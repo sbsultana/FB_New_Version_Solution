@@ -266,14 +266,14 @@ export class Dashboard {
       'yyyy-MM-dd'
     );
     let Obj = {
-      as_Id: this.storeIds,
+      as_Id: this.storeIds.toString(),
       SalesDate: DateToday,
-      UserID: 0,
+      // UserID: 0,
     };
     console.log(Obj);
-    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetFinancialSummaryReport';
+    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetFinancialSummaryReportfb';
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryReport', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryReportfb', Obj)
       .subscribe(
         (res) => {
           const currentTitle = document.title;

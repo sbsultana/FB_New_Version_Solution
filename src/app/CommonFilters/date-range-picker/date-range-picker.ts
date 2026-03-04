@@ -92,7 +92,7 @@ export class DateRangePicker {
       console.log(this.FromDate, this.ToDate, ' Display Time Function ')
 
     } else {
-      this.Dates.DisplayTime = 'Time Frame (  ' + this.Dates.Types.filter((val: any) => val.code == this.DateType)[0].name + '  )';
+      this.Dates.DisplayTime = '( ' + this.Dates.Types.filter((val: any) => val.code == this.DateType)[0].name + ' )';
     }
     this.Dates.FromDate = this.FromDate;
     this.Dates.ToDate = this.ToDate;

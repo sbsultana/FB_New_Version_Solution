@@ -980,6 +980,7 @@ select:focus {
 
 .nocursor-pointer {
   pointer-events: none;
+  cursor: default;
 }
 
 .nobox-shadow {

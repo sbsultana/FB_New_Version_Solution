@@ -43,6 +43,7 @@ export class FinancialsummaryDetails {
   control: any;
   DetailsSearchName: any;
   SubDetailsSearchName: any;
+  payrollInfo: string = 'N';
   constructor(
     private ngbmodel: NgbModal,
     private renderer: Renderer2,
@@ -67,6 +68,9 @@ export class FinancialsummaryDetails {
       if (TagName.className === 'close-btn ms-auto me-0') {
         this.Opacity = 'N';
       }
+    });
+    this.apiSrvc.payroll$.subscribe(value => {
+      this.payrollInfo = value;
     });
   }
 
@@ -132,7 +136,7 @@ export class FinancialsummaryDetails {
     console.log(Obj);
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetailsV2', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
           this.FSDetailsData = res.response.map((item: any) => ({
@@ -192,7 +196,7 @@ export class FinancialsummaryDetails {
     };
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetailsV2', Obj)
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {
@@ -243,7 +247,19 @@ export class FinancialsummaryDetails {
 
     this.currentPage = 1;
   }
-
+  get hasPayrollData(): boolean {
+    if (this.payrollInfo === 'Y') {
+      return this.paginatedItems?.some(
+        (item: any) => item.HasPayroll === ''
+      ) || false;
+    }
+    if (this.payrollInfo === 'N') {
+      return this.paginatedItems?.some(
+        (item: any) => item.HasPayroll === 'Y'
+      ) || false;
+    }
+    return false;
+  }
   get paginatedItems() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredFSdetailsData.slice(start, start + this.itemsPerPage);

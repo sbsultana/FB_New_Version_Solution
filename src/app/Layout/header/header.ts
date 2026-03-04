@@ -148,7 +148,7 @@ export class Header {
     try {
       const decoded = JSON.parse(atob(token));
       decoded.user_Info['Preferences'] = 1
-      decoded.user_Info['Storeids'] = '71,8,7,4,35,1,32,40,50,25,18,31,70,72,2,17,41,42,51,12,73,9,15,5,14,30,11,53,55,54'
+      decoded.user_Info['Storeids'] = '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11'
       localStorage.setItem('userInfo', JSON.stringify(decoded));
       this.userInfo = decoded;
       this.afterUserLoad();

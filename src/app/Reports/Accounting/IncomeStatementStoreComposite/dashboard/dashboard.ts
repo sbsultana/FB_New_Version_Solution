@@ -59,7 +59,7 @@ export class Dashboard {
   selectedstorename: any;
   StoreValues: any = '0';
   popup: any = [{ type: 'Popup' }];
-  groups: any = 1;
+  groups: any = 0;
   gridvisibility: any;
   newdate: Date = new Date();
   ShowHideBudget: any = 'Hide';
@@ -242,7 +242,7 @@ export class Dashboard {
       this.currentMonth = this.selectedDate;
 
       // set width based on storeIds length
-      this.storesWidth = this.storeIds?.toString().length > 3 ? '75%' : '60%';
+      this.storesWidth = this.storeIds?.toString().length > 3 ? '100%' : '60%';
 
       this.GetData(this.currentMonth);
     }
@@ -264,7 +264,6 @@ export class Dashboard {
       UserID: 0,
     };
     let startFrom = new Date().getTime();
-    const curl = environment.apiUrl + 'WesternAuto/GetIncomeStatementStoreComposite';
     this.apiSrvc
       .postmethod(this.comm.routeEndpoint + 'GetIncomeStatementStoreComposite', obj)
       .subscribe(

@@ -42,6 +42,7 @@ export class IncomestatementtrendDetails {
   control: any;
   DetailsSearchName: any;
   SubDetailsSearchName: any;
+  payrollInfo: string = 'N';
   constructor(
     private ngbmodel: NgbModal,
     private renderer: Renderer2,
@@ -66,6 +67,9 @@ export class IncomestatementtrendDetails {
       if (TagName.className === 'close-btn ms-auto me-0') {
         this.Opacity = 'N';
       }
+    });
+    this.apiSrvc.payroll$.subscribe(value => {
+      this.payrollInfo = value;
     });
   }
 
@@ -131,7 +135,7 @@ export class IncomestatementtrendDetails {
     console.log(Obj);
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetailsV2', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
           this.FSDetailsData = res.response.map((item: any) => ({
@@ -142,6 +146,7 @@ export class IncomestatementtrendDetails {
                 .replace(/\b\w/g, (char: string) => char.toUpperCase())
               : item.AccountDescription
           }));
+
           // this.filterData();
           this.filteredFSdetailsData = this.FSDetailsData || [];
           console.log(this.FSDetailsData);
@@ -190,7 +195,7 @@ export class IncomestatementtrendDetails {
     };
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetFinancialSummaryDetailsV2', Obj)
       .subscribe((res) => {
         this.spinnerLoader = false;
         if (res.status === 200) {
@@ -202,7 +207,6 @@ export class IncomestatementtrendDetails {
                 .replace(/\b\w/g, (char: string) => char.toUpperCase())
               : sub.DetailDescription
           }));
-
         }
       });
   }
@@ -242,7 +246,19 @@ export class IncomestatementtrendDetails {
 
     this.currentPage = 1;
   }
-
+  get hasPayrollData(): boolean {
+    if (this.payrollInfo === 'Y') {
+      return this.paginatedItems?.some(
+        (item: any) => item.HasPayroll === ''
+      ) || false;
+    }
+    if (this.payrollInfo === 'N') {
+      return this.paginatedItems?.some(
+        (item: any) => item.HasPayroll === 'Y'
+      ) || false;
+    }
+    return false;
+  }
   get paginatedItems() {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredFSdetailsData.slice(start, start + this.itemsPerPage);
@@ -555,8 +571,161 @@ export class IncomestatementtrendDetails {
       const blob = new Blob([data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-      FileSaver.saveAs(blob, `Income Statement Trend Details ${DATE_EXTENSION}.xlsx`);
+      FileSaver.saveAs(blob, `Financial summary details ${DATE_EXTENSION}.xlsx`);
     });
   }
 
+
+
+
+
+  AcctDetasil_ExportAsXLSX() {
+    let AcctDetails = this.AcctDetails.map((_arrayElement: any) =>
+      Object.assign({}, _arrayElement)
+    );
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Income Statement Trend Details');
+    worksheet.views = [
+      {
+        state: 'frozen',
+        ySplit: 9,
+        topLeftCell: 'A10',
+        showGridLines: false,
+      },
+    ];
+    worksheet.addRow('');
+    const titleRow = worksheet.addRow(['Income Statement Trend Account Details']);
+    titleRow.eachCell((cell, number) => {
+      cell.alignment = { indent: 1, vertical: 'middle', horizontal: 'left' };
+    });
+    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
+    worksheet.addRow('');
+
+    const DateToday = this.datepipe.transform(
+      new Date(),
+      'MM/dd/yyyy h:mm:ss a'
+    );
+    const DATE_EXTENSION = this.datepipe.transform(
+      new Date(),
+      'MMddyyyy'
+    );
+    worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
+
+    const ReportFilter = worksheet.addRow(['Selected Details :']);
+    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+
+    const Type = worksheet.getCell('A6');
+    Type.value = 'Account No :';
+    Type.font = { name: 'Arial', family: 4, size: 9, bold: true };
+    const type = worksheet.getCell('B6');
+    type.value = this.Acct_ID;
+    type.font = { name: 'Arial', family: 4, size: 9 };
+    type.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+
+    const DateMonth = worksheet.getCell('A7');
+    DateMonth.value = 'Date :'
+    const date = worksheet.getCell('B7');
+    date.value = this.LatestDate
+    date.font = { name: 'Arial', family: 4, size: 9 };
+    date.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    DateMonth.font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: true,
+    };
+
+    worksheet.addRow('');
+
+    let Headings = [
+      'Control',
+      'Detail Description',
+      'Accounting Date',
+      'Refer',
+      'Posting Amount'
+    ];
+    const headerRow = worksheet.addRow(Headings);
+    headerRow.height = 20;
+    headerRow.font = {
+      name: 'Arial',
+      family: 4,
+      size: 8,
+      bold: true,
+      color: { argb: 'FFFFFF' },
+    };
+    headerRow.alignment = { indent: 1, vertical: 'middle', horizontal: 'center' };
+    headerRow.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '2a91f0' },
+        bgColor: { argb: 'FF0000FF' },
+      };
+      cell.border = { right: { style: 'dotted' } };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
+
+    for (const d of AcctDetails) {
+      const AcctDate = this.datepipe.transform(
+        new Date(d.accountingdate),
+        'MM.dd.yyyy'
+      );
+      const Data1 = worksheet.addRow([
+        d.control == '' ? '-' : d.control == null ? '-' : d.control,
+        d.detaildescription == '' ? '-' : d.detaildescription == null ? '-' : d.detaildescription,
+        AcctDate == '' ? '-' : AcctDate == null ? '-' : AcctDate,
+        d.refer == '' ? '-' : d.refer == null ? '-' : d.refer,
+        d.PostingAmount == '' ? '-' : d.PostingAmount == null ? '-' : d.PostingAmount,
+      ]);
+      Data1.font = { name: 'Arial', family: 4, size: 8 };
+
+      // Set alignment for each cell individually
+      Data1.getCell(1).alignment = { indent: 1, vertical: 'middle', horizontal: 'left' }; // Left align
+      Data1.getCell(2).alignment = { indent: 1, vertical: 'middle', horizontal: 'left' }; // Center align
+      Data1.getCell(3).alignment = { indent: 1, vertical: 'middle', horizontal: 'center' }; // Left align
+      Data1.getCell(4).alignment = { indent: 1, vertical: 'middle', horizontal: 'center' }; // Right align
+      Data1.getCell(5).alignment = { indent: 1, vertical: 'middle', horizontal: 'right' }; // Right align
+      Data1.getCell(5).numFmt = '$#,##0';
+      Data1.eachCell((cell, number) => {
+        cell.border = { right: { style: 'dotted' } };
+      });
+
+      if (Data1.number % 2) {
+        Data1.eachCell((cell, number) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'e5e5e5' },
+            bgColor: { argb: 'FF0000FF' },
+          };
+        });
+      }
+    }
+    worksheet.eachRow((row, rowIndex) => {
+      row.eachCell((cell, colIndex) => {
+        if (rowIndex > 1 && rowIndex < 9) {
+          if (colIndex === 1) {
+            cell.alignment = {
+              horizontal: 'left',
+              vertical: 'middle',
+              indent: 1,
+            };
+          }
+        }
+      });
+    });
+    worksheet.getColumn(1).width = 15;
+    worksheet.getColumn(2).width = 40;
+    worksheet.getColumn(3).width = 20;
+    worksheet.getColumn(4).width = 20;
+    worksheet.getColumn(5).width = 20;
+
+    worksheet.addRow([]);
+    workbook.xlsx.writeBuffer().then((data: any) => {
+      const blob = new Blob([data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      FileSaver.saveAs(blob, 'Income Statement Trend Account Details_' + DATE_EXTENSION + EXCEL_EXTENSION);
+    });
+  }
 }

@@ -13,8 +13,12 @@
                     inset 0.4px 0 0 0 #e0edff;
             }
 
-            td:first-child {
+            .title td:first-child{
                 padding-left: 1rem;
+            }
+
+            .sub-title td:first-child{
+                padding-left: 2rem;
             }
 
             .padding {
@@ -60,6 +64,9 @@
     }
 }
 
+.negative {
+    color: red;
+}
 
 /////////////////////////////////////DATE PICKER SCSS////////////////////////////////////
 ::ng-deep bs-daterangepicker-container {

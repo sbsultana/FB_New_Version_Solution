@@ -33,13 +33,13 @@
                                 <th class="text-center">Account Number</th>
                                 <th class="alignleft"><span>Account Description</span></th>
                                 <th class="alignright" style="border-radius:0 10px  0 0;border: none;">
-                                    <span>Balance <span style="font-size: .875rem;">({{SelectMonthYear}})</span></span>
+                                    <span>Balance <span
+                                            style="font-size: .875rem;text-transform: capitalize;">({{SelectMonthYear}})</span></span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody *ngIf="paginatedItems.length > 0; else ifNotShow">
                             <ng-container *ngFor="let data of paginatedItems; let j = index">
-                                <!-- Parent Row -->
                                 <tr [ngClass]="{ 'even': j % 2 === 0, 'highlight-row': expandedIndex === j }">
                                     <td style="text-align: left !important;">
                                         <span style="white-space: nowrap;">{{ data.StoreName || '-' }}</span>
@@ -61,22 +61,13 @@
                                     </td>
                                 </tr>
 
-                                <!-- Nested Table Scrollable Rows -->
                                 <ng-container *ngIf="expandedIndex === j && FSSubDetailsMap[j]?.length">
                                     <tr>
                                         <td colspan="4" style="padding: 0;">
-                                            <!-- <h6 class="title m-0 ms-2 p-2">
-                        <img src="" alt=""> <span class="slash">//&nbsp;&nbsp;<b>{{FSSubDetailsMap[j][0].StoreName}}</b> - <b>{{FSSubDetailsMap[j][0].AccountNumber}}</b></span>
-                      </h6> -->
                                             <div class="nested-table-container">
                                                 <table class="table table-borderless mb-0 inner-table">
                                                     <thead>
-                                                        <!-- <tr>
-                              <th colspan="4" class="text-start">{{FSSubDetailsMap[j][0].Store}} - {{FSSubDetailsMap[j][0].accountnumber}}</th>
-                            </tr> -->
                                                         <tr>
-                                                            <!-- <th class="alignleft">Store Name</th>
-                              <th class="text-center">Account Number</th> -->
                                                             <th class="alignleft" style="border-radius: 10px 0 0 0;">
                                                                 Control</th>
                                                             <th class="text-center">Date</th>
@@ -87,12 +78,6 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr *ngFor="let sub of FSSubDetailsMap[j]">
-                                                            <!-- <td style="background: #d2deed; text-align: left !important;">
-                                <span>{{ sub.Store || '-' }}</span>
-                              </td>
-                              <td style="background: #d2deed; text-align: center !important;">
-                                <span>{{ sub.accountnumber || '-' }}</span>
-                              </td> -->
                                                             <td style="text-align: left !important;">
                                                                 <span>{{ sub.Control || '-' }}</span>
                                                             </td>

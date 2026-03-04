@@ -53,10 +53,9 @@
       <table class="table mb-0 w-100">
         <thead>
           <tr>
-            <th class="text-start">
-              Silvertip</th>
-            <th>
+            <th>{{ ToDate ? (ToDate | date:'MMM-yyyy') : '' }} to {{ FromDate ? (FromDate | date:'MMM-yyyy') : '' }} 
             </th>
+            <th></th>
             <th
               *ngFor="let item of ExpenseTrendByStoreKeysMonth.slice(0, ExpenseTrendByStoreKeysMonth.length - 1); let i = index">
               <span>{{ item }}</span>

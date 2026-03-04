@@ -149,11 +149,11 @@ export class Dashboard {
     }
     const dateFormatted = this.datepipe.transform(monthDate, 'dd-MMM-yyyy');
     const obj = {
-      stores: this.storeIds,
-      DATE: dateFormatted,
+      stores: this.storeIds.toString(),
+      date: dateFormatted,
     };
-    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetFinStatementReport';
-    this.apiSrvc.postmethod(this.comm.routeEndpoint + 'GetFinStatementReport', obj).subscribe({
+    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetFbFinancialStatementReport';
+    this.apiSrvc.postmethod(this.comm.routeEndpoint + 'GetFbFinancialStatementReport', obj).subscribe({
       next: (res) => {
         const currentTitle = document.title;
         this.apiSrvc.logSaving(curl, {}, '', res.message, currentTitle);

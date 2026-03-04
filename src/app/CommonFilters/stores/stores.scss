@@ -20,12 +20,13 @@
     .groups {
         width: auto;
         flex-shrink: 0;
+        border-right: 1px solid #dbe7ff !important;
     }
 
     .stores {
         flex: 1;
         overflow-x: auto;
-        border-left: 1px solid #dbe7ff;
+        border-left: none;
     }
 
     .groups-wrapper,
@@ -53,9 +54,9 @@
             display: grid;
             grid-auto-flow: column;
             grid-template-rows: repeat(8, auto);
-            grid-auto-columns: 150px;
+            grid-auto-columns: 175px !important;
             gap: 0.5rem 1rem;
-            max-width: calc(6 * 118px);
+            max-width: calc(6 * 125px);
             overflow-x: auto;
 
             .store-button {
@@ -69,7 +70,7 @@
                 border-radius: .75rem;
                 padding: .5rem;
                 line-height: 1rem;
-          text-transform: capitalize;
+                text-transform: capitalize;
 
                 &.active {
                     background-color: #0554ef;
@@ -105,9 +106,9 @@
             display: grid;
             grid-auto-flow: column;
             grid-template-rows: repeat(9, auto);
-            grid-auto-columns: 118px;
+            grid-auto-columns: 140px !important;
             gap: 0.5rem 1rem;
-            max-width: calc(6 * 118px);
+            max-width: calc(6 * 125px);
             overflow-x: auto;
         }
 

@@ -183,6 +183,14 @@ export class Api {
     return browser
   }
 
+  private payrollSubject = new BehaviorSubject<string>('N');
+  payroll$ = this.payrollSubject.asObservable();
+
+  setPayroll(value: string) {
+    this.payrollSubject.next(value);
+    localStorage.setItem('Payroll', value);
+  }
+
   SetHeaderData(data: any) {
     this.HeaderData.next(data);
   }
@@ -308,7 +316,7 @@ export class Api {
 
   private userTokenSource = new BehaviorSubject<any>(null);
   userToken$ = this.userTokenSource.asObservable();
- 
+
   setUserToken(data: any) {
     this.userTokenSource.next(data);
   }

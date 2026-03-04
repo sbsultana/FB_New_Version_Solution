@@ -62,7 +62,7 @@ export class Dashboard {
   selectedFilters: string[] = [];
   selectedLabel: string = '( All )';
   StoreName: any = 'All Stores';
-  Filter: any = ['New', 'Used', 'Service', 'Parts', 'Collision'];
+  Filter: any = ['New', 'Used', 'Service', 'Parts', 'Detail'];
   StoreValues: any = 2;
   groups: any = 1;
   PresentDayDate: string;
@@ -174,7 +174,7 @@ export class Dashboard {
   }
 
   // Filters list
-  filters: string[] = ['New', 'Used', 'Service', 'Parts', 'Collision'];
+  filters: string[] = ['New', 'Used', 'Service', 'Parts', 'Detail'];
   activePopover: number | null = null;
   bsConfig: Partial<BsDatepickerConfig> = {
     dateInputFormat: 'MMMM/YYYY',
@@ -279,7 +279,7 @@ export class Dashboard {
           this.apiSrvc.logSaving(curl, {}, '', x.message, currentTitle);
           if (x.status == 200) {
             this.ExpenseTrendByStoreMonth = x.response;
-            const serviceKeys = Object.keys(x.response[0]).slice(12);
+            const serviceKeys = Object.keys(x.response[0]).slice(11);
             this.ExpenseTrendKeys = serviceKeys;
             console.log(
               'ExpenseTrendByStoreMonth',
@@ -556,7 +556,7 @@ export class Dashboard {
     console.log(Obj);
     this.NoData = false;
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetExpenseTrendDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetExpenseTrendDetailsV1', Obj)
       .subscribe((res) => {
         if (res.status == 200) {
           this.ETdetailsData = res.response;
@@ -590,7 +590,7 @@ export class Dashboard {
     };
 
     this.apiSrvc
-      .postmethod(this.comm.routeEndpoint + 'GetExpenseTrendDetails', Obj)
+      .postmethod(this.comm.routeEndpoint + 'GetExpenseTrendDetailsV1', Obj)
       .subscribe((res) => {
         this.spinner.hide();
         if (res.status === 200) {

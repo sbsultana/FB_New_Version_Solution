@@ -40,7 +40,6 @@
                         </thead>
                         <tbody *ngIf="paginatedItems.length > 0; else ifNotShow">
                             <ng-container *ngFor="let data of paginatedItems; let j = index">
-                                <!-- Parent Row -->
                                 <tr [ngClass]="{ 'even': j % 2 === 0, 'highlight-row': expandedIndex === j }">
                                     <td style="text-align: left !important;">
                                         <span style="white-space: nowrap;">{{ data.StoreName || '-' }}</span>

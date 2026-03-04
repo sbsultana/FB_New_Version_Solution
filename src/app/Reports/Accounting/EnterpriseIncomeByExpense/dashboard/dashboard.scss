@@ -16,7 +16,10 @@
   }
 
   .enterpriseincome-tbl {
+      max-width: fit-content;
+
       .table {
+          max-width: fit-content;
 
           thead,
           tbody {

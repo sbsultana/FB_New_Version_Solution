@@ -183,7 +183,7 @@ export class Dashboard {
       }
       this.EndDate = new Date(this.todate)
     }
-  
+
     let newdate = new Date();
 
     this.title.setTitle(this.comm.titleName + '-Income Statement Trend');
@@ -247,7 +247,6 @@ export class Dashboard {
   }
 
   applyDateChange() {
-
     if (!this.storeIds || this.storeIds.length === 0) {
       this.toast.show(
         'Please Select Atleast One Store',
@@ -306,14 +305,17 @@ export class Dashboard {
   }
 
 
-
+  FromDate: any;
+  ToDate: any;
   GetDataByMonths(StartMonth: any, EndMonth: any) {
     this.spinner.show();
     this.ExpenseTrendByStoreKeysMonth = [];
     this.AllDatakeysMonth = [];
-
+    this.ExpenseTrendByStoreMonth = [];
+    this.FromDate = this.datepipe.transform(StartMonth, 'dd-MMM-yyyy');
+    this.ToDate = this.datepipe.transform(EndMonth, 'dd-MMM-yyyy');
     const obj = {
-      Stores: this.storeIds,
+      Stores: this.storeIds.toString(),
       SalesDATE: this.datepipe.transform(StartMonth, 'dd-MMM-yyyy'),
       EndDate: this.datepipe.transform(EndMonth, 'dd-MMM-yyyy'),
       UserID: 0,
@@ -1528,10 +1530,10 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-           
+
               this.toast.success(res.response);
             } else {
-        
+
               this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },

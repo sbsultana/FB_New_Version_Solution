@@ -62,8 +62,8 @@ export class Dashboard {
 
   StoreName: any = 'All Stores';
   Filter: any = [];
-  ShowHideGP: any = 'Show';
-  ShowHideBudget: any = 'Show';
+  ShowHideGP: any = 'Hide';
+  ShowHideBudget: any = 'Hide';
 
   filters: string[] = [];
   selectedFilters: string[] = [];
@@ -140,7 +140,7 @@ export class Dashboard {
     this.CurrentRoute = this.router.url.substring(1);
     switch (this.CurrentRoute) {
       case 'FixedIncomeByExpense':
-        this.filters = ['Service', 'Parts'];
+        this.filters = ['Service', 'Parts', 'Details'];
         this.SetTitle = 'Fixed Income / Expense';
         break;
       case 'VariableIncomeByExpense':
@@ -148,7 +148,7 @@ export class Dashboard {
         this.SetTitle = 'Variable Income / Expense';
         break;
       case 'EnterpriseIncomeByExpense':
-        this.filters = ['New', 'Used', 'Service', 'Parts', 'Collision'];
+        this.filters = ['New', 'Used', 'Service', 'Parts', 'Details'];
         this.SetTitle = 'Enterprise Income / Expense';
         break;
       default:
@@ -166,7 +166,7 @@ export class Dashboard {
     }
     this.Month = this.date
     // this.date= this.Month
- 
+
 
 
     this.title.setTitle(this.comm.titleName + `-${this.SetTitle}`);
@@ -218,6 +218,14 @@ export class Dashboard {
     );
   }
 
+  showhideGP(value: string) {
+    this.ShowHideGP = value;
+    this.activePopover = null;
+  }
+  showhideBudget(value: string) {
+    this.ShowHideBudget = value;
+    this.activePopover = null;
+  }
   togglePopover(index: number) {
     this.activePopover = this.activePopover === index ? null : index;
   }
@@ -1558,10 +1566,10 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-              
+
               this.toast.success(res.response)
             } else {
-              
+
               this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },
