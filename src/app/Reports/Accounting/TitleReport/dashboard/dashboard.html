@@ -1,1 +1,298 @@
-<p>dashboard works!</p>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Status <span class="light-font">( {{statustype.length ==
+                                8 ? 'All': (statustype.length==1 ? (statustype == 'S' ? 'Stock' :(statustype== 'T' ?
+                                'Transit' :
+                                (statustype == 'H' ? 'Hold' : (statustype == 'P' ? 'Production' : (statustype == 'R'
+                                ?
+                                'Retired' : (statustype == 'O' ?'Ordered' : (statustype == 'I' ? 'Invoiced' :
+                                (statustype == 'G' ? 'Gone' : ''))))))) ) : 'Selected' )}}
+                                <span> {{statustype.length == 8 ? '':
+                                    (statustype.length==1 ? '' : statustype.length )}}</span> )
+                            </span>
+                            <span class="arrow"></span></button>
+
+                        <div class="timeframe my-2" *ngIf="activePopover === 1">
+                            <div class="date-filter-card">
+                                <button class="outline-button" (click)="multipleorsingle('ST','T')"
+                                    [ngClass]="{'active': statustype.indexOf('T') >= 0}">
+                                    Transit
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','H')"
+                                    [ngClass]="{'active': statustype.indexOf('H') >= 0}">
+                                    Hold
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','P')"
+                                    [ngClass]="{'active': statustype.indexOf('P') >= 0}">
+                                    Production
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','R')"
+                                    [ngClass]="{'active': statustype.indexOf('R') >= 0}">
+                                    Retired
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','O')"
+                                    [ngClass]="{'active': statustype.indexOf('O') >= 0}">
+                                    Ordered
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','S')"
+                                    [ngClass]="{'active': statustype.indexOf('S') >= 0}">
+                                    Stock
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','I')"
+                                    [ngClass]="{'active': statustype.indexOf('I') >= 0}">
+                                    Invoiced
+                                </button>
+
+                                <button class="outline-button" (click)="multipleorsingle('ST','G')"
+                                    [ngClass]="{'active': statustype.indexOf('G') >= 0}">
+                                    Gone
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="scorecard-single-header titlereport-tbl" id="scrollcent" #scrollcent
+                (scroll)="updateVerticalScroll($event)">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th>Notes&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
+                                    (click)="notesView()"></i>
+                                <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState"
+                                    (click)="notesView()"></i>
+                            </th>
+                            <th (click)="sort('stockno', TitleData)" style="cursor: pointer;">Stock #</th>
+                            <th (click)="sort('Age', TitleData)" style="cursor: pointer;">Age</th>
+
+                            <th (click)="sort('status',TitleData)" style="cursor: pointer;">Status</th>
+                            <th (click)="sort('price1',TitleData)" style="cursor: pointer;">Price 1</th>
+                            <th (click)="sort('price2',TitleData)" style="cursor: pointer;">Price 2</th>
+                            <th (click)="sort('StoreName',TitleData)" style="cursor: pointer;">
+                                Store Name</th>
+
+                            <th (click)="sort('Year',TitleData)" style="cursor: pointer;">
+                                Year</th>
+                            <th (click)="sort('Make',TitleData)" style="cursor: pointer;">
+                                Make</th>
+                            <th (click)="sort('Model',TitleData)" style="cursor: pointer;">
+                                Model</th>
+                            <th (click)="sort('VIN',TitleData)" style="cursor: pointer;">
+                                VIN</th>
+
+
+                            <th (click)="sort('Deal Dept',TitleData)" style="cursor: pointer;"> Deal Dept
+                            </th>
+                            <th (click)="sort('Title Dept 2',TitleData)" style="cursor: pointer;">Title
+                                Department</th>
+                            <th (click)="sort('Title Dept 1',TitleData)" style="cursor: pointer;">Title #
+                            </th>
+
+                            <th (click)="sort('balance',TitleData)" style="cursor: pointer;">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="paginatedItems.length > 0; else NoQIdata">
+                            <ng-container *ngFor="let title of paginatedItems; let i=index">
+                                <tr>
+                                    <td class="text-center">
+                                        <img *ngIf="title.NotesStatus=='N'" src="images/Actionblack.png "
+                                            (click)="addNotes(title,notes)" style="cursor: pointer;">
+
+                                        <img *ngIf="title.NotesStatus=='Y'" src="images/notes_unread.png "
+                                            (click)="addNotes(title,notes)" style="cursor: pointer;">
+
+                                    </td>
+
+                                    <td class="text-start">{{ title['stockno'] || '-'}}</td>
+                                    <td class="text-center">{{ title['Age'] || '-'}}</td>
+
+
+                                    <td class="text-center">{{title["status"] || '-'}}</td>
+                                    <td [ngClass]="{ negative: !inTheGreen(title['price1'])}">
+                                        <span class="d-flex justify-content-between"> {{
+                                            (title['price1'] == 0 || title['price1'] == null ? '' :
+                                            '$') }} <span> {{
+                                                (title['price1'] == 0 || title['price1'] == null ? '-' :
+                                                title['price1'] |number:'1.0-0') }}</span></span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(title['price2'])}">
+                                        <span class="d-flex justify-content-between"> {{
+                                            (title['price2'] == 0 || title['price2'] == null ? '' :
+                                            '$') }} <span> {{
+                                                (title['price2'] == 0 || title['price2'] == null ? '-' :
+                                                title['price2'] |number:'1.0-0') }}</span></span>
+                                    </td>
+                                    <td class="text-start">{{title["StoreName"] || '-'}}</td>
+
+                                    <td class="text-center">{{title["Year"] || '-'}}</td>
+                                    <td class="text-center">{{title["Make"] || '-'}}</td>
+                                    <td class="text-center">{{title["Model"] || '-'}}</td>
+                                    <td class="text-center">{{title["VIN"] || '-'}}</td>
+
+
+                                    <td class="text-start">{{title["Deal Dept"] || '-'}}</td>
+                                    <td class="text-start">{{title["Title Dept 2"] || '-'}}</td>
+                                    <td class="text-start">{{title["Title Dept 1"] || '-'}}</td>
+                                    <td [ngClass]="{ negative: !inTheGreen(title['balance'])}">
+                                        <span class="d-flex justify-content-between"> {{
+                                            (title['balance'] == 0 || title['balance'] == null ? '' :
+                                            '$') }} <span> {{
+                                                (title['balance'] == 0 || title['balance'] == null ? '-' :
+                                                title['balance'] |number:'1.0-0') }}</span></span>
+                                    </td>
+                                </tr>
+                                <ng-container *ngIf="title?.Notes?.length && notesViewState">
+                                    <tr>
+                                        <td colspan="15" class="px-4">
+                                            <div style="white-space: initial;">
+                                                <div class="title font-blue medium-font">Notes</div>
+                                                <div class="notes large-font" *ngFor="let notes of (title.notesView == '+' 
+                                    ? title.Notes.slice(0,2) 
+                                    : title.Notes)">
+                                                    {{
+                                                    (notes.GN_Text == '' || notes.GN_Text == null || notes.GN_Text ==
+                                                    undefined
+                                                    ? '--'
+                                                    : notes.GN_Text)
+                                                    }}
+                                                </div>
+                                                <div *ngIf="title.Notes.length > 2" class="deal-link medium-font">
+                                                    <span (click)="toggleView(title)">
+                                                        {{ title.notesView == '+' ? 'View More' : 'View Less' }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="paginatedItems != undefined">
+                            <ng-container *ngIf="paginatedItems.length > 0">
+                                <tr class="divBold"
+                                    *ngIf="paginatedItems[0].TotalBalance != undefined && paginatedItems[0].TotalBalance != '' && paginatedItems[0].TotalBalance != null"
+                                    style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
+                                    <td></td>
+                                    <td colspan="13" class="text-end"> Total Balance</td>
+                                    <td colspan="1">
+                                        <!-- {{getTotal('balance') |
+                                        currency:'USD':'symbol':'1.2-2' }} -->
+
+                                        <span class="d-flex justify-content-between"> {{
+                                            (getTotal('balance') == 0 || getTotal('balance') == null ? '' :
+                                            '$') }} <span> {{
+                                                (getTotal('balance') == 0 || getTotal('balance') == null ? '-' :
+                                                getTotal('balance') | number:'1.0-0') }}</span></span>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #NoQIdata>
+                            <tr *ngIf="NoData">
+                                <td colspan="15"
+                                    style="text-align: center !important;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                                    No Data Found
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+            </div>
+            <div class="footer px-2">
+                <div class="container-fluid mt-1 HideItems">
+                    <div class="col-lg-12 rounded">
+                        <div class="row">
+                            <div
+                                class="pagination-container d-flex align-items-center justify-content-end text-black mt-2">
+
+                                <!-- Page Size -->
+                                <div class="page-size me-3">
+                                    <label for="pageSize" class="me-1">Page Size:</label>
+                                    <select id="pageSize" [(ngModel)]="itemsPerPage" (change)="onPageSizeChange()"
+                                        class="form-select d-inline-block" style="width: 80px;">
+                                        <option [ngValue]="100">100</option>
+                                        <option [ngValue]="300">300</option>
+                                        <option [ngValue]="500">500</option>
+                                    </select>
+                                </div>
+
+                                <!-- Page Info -->
+                                <div *ngIf="TitleCompleteData.length > 0" class="page-info me-3">
+                                    {{ getStartRecordIndex() }} -
+                                    {{ getEndRecordIndex() }}
+                                    of {{ TitleCompleteData.length }}
+                                </div>
+
+                                <!-- Pagination Buttons -->
+                                <div class="pagination-buttons d-flex align-items-center gap-1">
+
+                                    <!-- First -->
+                                    <button (click)="goToFirstPage()" [disabled]="currentPage === 1" class="btn p-0">
+                                        <img src="images/Arrow_End_Left_Blk.svg" alt="First" />
+                                    </button>
+
+                                    <!-- Previous -->
+                                    <button (click)="prevPage()" [disabled]="currentPage === 1" class="btn p-0">
+                                        <img src="images/Alt_Arrow_Left_Blk.svg" alt="Previous" />
+                                    </button>
+
+                                    <!-- Page Label -->
+                                    <span class="page-label mx-2">
+                                        Page {{ currentPage }}
+                                        of {{ getMaxPageNumber() }}
+                                    </span>
+
+                                    <!-- Next -->
+                                    <button (click)="nextPage()" [disabled]="currentPage === getMaxPageNumber()"
+                                        class="btn p-0">
+                                        <img src="images/Alt_Arrow_Right_Blk.svg" alt="Next" />
+                                    </button>
+
+                                    <!-- Last -->
+                                    <button (click)="goToLastPage()" [disabled]="currentPage === getMaxPageNumber()"
+                                        class="btn p-0">
+                                        <img src="images/Arrow_End_Right_Blk.svg" alt="Last" />
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<ng-template #notes>
+    <app-notes [notesData]="notesData" (onClose)="closeNotes($event)"></app-notes>
+</ng-template>

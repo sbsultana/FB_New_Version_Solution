@@ -1,1 +1,327 @@
-<p>dashboard works!</p>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+
+<main>
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="dp.show()">
+                            Month
+                            <span class="light-font">
+                                ( {{ selectDate | date:'MMMM/yyyy' }} )
+                            </span>
+                        </button>
+                        <input #dp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="selectDate"
+                            [bsConfig]="bsConfig" readonly (keydown)="$event.preventDefault()"
+                            style="position: absolute; opacity: 0; height: 0; width: 0;" />
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(2)">
+                            Type
+                            <span class="light-font">
+                                ( {{ selectedBlocks.length==1
+                                ? selectedBlocks[0].label
+                                : (selectedBlocks.length == 0
+                                ? 'Select'
+                                : (blocks.length == selectedBlocks.length
+                                ? 'All'
+                                : 'Selected ' + selectedBlocks.length)) }} )
+                            </span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 2">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" [class.active]="blocks.length == selectedBlocks.length"
+                                    (click)="multipleorsingle('B','All')">
+                                    All
+                                </button>
+                                <button class="outline-button" *ngFor="let blk of blocks"
+                                    [class.active]="selectedBlocks.indexOf(blk) >= 0"
+                                    (click)="multipleorsingle('B', blk)">
+                                    {{ blk.label }}
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            Department
+                            <span class="light-font">
+                                ( {{ selectedDept.length==1
+                                ? selectedDept[0].label
+                                : (selectedDept.length == 0
+                                ? 'Select'
+                                : (Dept.length == selectedDept.length
+                                ? 'All'
+                                : 'Selected ' + selectedDept.length)) }} )
+                            </span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 3">
+                            <div class="date-filter-card mt-2">
+
+                                <button class="outline-button" [class.active]="Dept.length == selectedDept.length"
+                                    (click)="multipleorsingle('D','All')">
+                                    All
+                                </button>
+
+                                <button class="outline-button" *ngFor="let dept of Dept"
+                                    [class.active]="selectedDept.indexOf(dept) >= 0"
+                                    (click)="multipleorsingle('D', dept)">
+                                    {{ dept.label }}
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="applyDateChange()">
+                            <span>Apply</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scorecard-multi-header sellinggross-tbl">
+            <table class="table mb-0">
+                <thead>
+                    <tr class="bdr-btm">
+                        <th class="text-center"><span>{{DuplicatDate | date:'MMMM yyyy'}}
+                            </span></th>
+                        <ng-container *ngIf="gridBlocks.indexOf('Net to Sales') >= 0">
+                            <th colspan="2" class="text-center bdr-rt">Net to Sale %</th>
+                        </ng-container>
+                        <ng-container *ngIf="gridBlocks.indexOf('Net to Gross') >= 0">
+                            <th colspan="2" class="text-center bdr-rt">Net to Gross %</th>
+                        </ng-container>
+                        <ng-container *ngIf="gridBlocks.indexOf('Selling Gross') >= 0">
+                            <th colspan="4" class="text-center bdr-rt">Selling Gross</th>
+                            <th colspan="2" class="text-center bdr-rt" style="box-shadow: none;">YTD</th>
+                        </ng-container>
+                    </tr>
+                    <tr class="bdr-btm">
+                        <th class="text-center box-border">
+                            <!-- <span>{{FromDate |date:'dd'}} <span
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{ToDate |date:'dd'}}<span
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
+                                        {{FromDate |
+                                        date:'yyyy'}}</span></span> -->
+                        </th>
+
+                        <ng-container *ngIf="gridBlocks.indexOf('Net to Sales') >= 0">
+
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">{{previousMonth |date:'MMM
+                                yy'}}</th>
+                            <th class="bdr-btm box-border" colspan="1">Jan-{{previousMonth
+                                |date:'MMM
+                                yy'}}</th>
+                        </ng-container>
+
+                        <ng-container *ngIf="gridBlocks.indexOf('Net to Gross') >= 0">
+
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">{{previousMonth |date:'MMM
+                                yy'}}</th>
+                            <th class="bdr-btm box-border" colspan="1">Jan-{{previousMonth
+                                |date:'MMM
+                                yy'}}</th>
+                        </ng-container>
+
+                        <ng-container *ngIf="gridBlocks.indexOf('Selling Gross') >= 0">
+
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">{{previousMonth |date:'MMM
+                                yy'}} Gross</th>
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">{{previousMonth |date:'MMM
+                                yy'}}</th>
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">Jan-{{previousMonth
+                                |date:'MMM
+                                yy'}} Gross</th>
+                            <th class="bdr-btm box-border" colspan="1">Jan-{{previousMonth
+                                |date:'MMM
+                                yy'}}</th>
+
+
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">
+                                <!-- Jan-{{DuplicatDate
+                                    |date:'MMM
+                                    yy'}} Gross -->
+                                YTD Gross
+                            </th>
+                            <th class="bdr-btm" colspan="1" class="text-center bdr-rt">
+                                <!-- Jan-{{DuplicatDate
+                                    |date:'MMM
+                                    yy'}} -->
+                                YTD
+                            </th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody *ngIf="SalesData.length > 0;else NoSellingGross">
+                    <ng-container *ngFor="let SalesInfo of SalesData; let i=index">
+                        <tr [ngClass]="{'divBold': SalesInfo.AS_DEALERNAME == 'REPORTS TOTAL', 'lightblue-bg': SalesInfo.AS_DEALERNAME != 'REPORTS TOTAL'}">
+
+                            <td class="box-border">
+                                <span [id]="'D_'+i" title="{{SalesInfo.AS_DEALERNAME}}" style="cursor: pointer;">
+                                    {{(SalesInfo.AS_DEALERNAME == undefined ? '--' : (
+                                    (SalesInfo.AS_DEALERNAME.toString() |
+                                    slice:0:22) +
+                                    (SalesInfo.AS_DEALERNAME.toString().length > 22 ? '...' : '') ))}} </span>
+                            </td>
+
+                            <ng-container *ngIf="gridBlocks.indexOf('Net to Sales') >= 0">
+
+                                <td>
+                                    {{ (SalesInfo.NS_MTD == 0 ||
+                                    SalesInfo.NS_MTD == null ? '-' : SalesInfo.NS_MTD | number : '1.1-1' )}}{{
+                                    (SalesInfo.NS_MTD ==
+                                    0 ||
+                                    SalesInfo.NS_MTD == null ? '' : '%' )}} </td>
+                                <td class="box-border">
+                                    {{ (SalesInfo.NS_YTD == 0 ||
+                                    SalesInfo.NS_YTD == null ? '-' : SalesInfo.NS_YTD | number : '1.1-1' )}}{{
+                                    (SalesInfo.NS_YTD ==
+                                    0 ||
+                                    SalesInfo.NS_YTD == null ? '' : '%' )}} </td>
+                            </ng-container>
+                            <ng-container *ngIf="gridBlocks.indexOf('Net to Gross') >= 0">
+
+                                <td>
+                                    {{ (SalesInfo.NG_MTD == 0 ||
+                                    SalesInfo.NG_MTD == null ? '-' : SalesInfo.NG_MTD | number : '1.1-1' )}}{{
+                                    (SalesInfo.NG_MTD ==
+                                    0 ||
+                                    SalesInfo.NG_MTD == null ? '' : '%' )}}
+                                </td>
+                                <!-- [ngClass]="{ negative: !inTheGreen(SalesInfo.MTD)}"  [ngClass]="{ negative: !inTheGreen(SalesInfo.YTD)}"-->
+                                <td class="box-border">
+                                    {{ (SalesInfo.NG_YTD == 0 ||
+                                    SalesInfo.NG_YTD == null ? '-' : SalesInfo.NG_YTD | number : '1.1-1' )}}{{
+                                    (SalesInfo.NG_YTD ==
+                                    0 ||
+                                    SalesInfo.NG_YTD == null ? '' : '%' )}} </td>
+                            </ng-container>
+                            <ng-container *ngIf="gridBlocks.indexOf('Selling Gross') >= 0">
+                                <td class="text-center bdr-rt"></td>
+                                <td class="text-center bdr-rt"></td>
+                                <td class="text-center bdr-rt"></td>
+                                <td class="text-center bdr-rt box-border"></td>
+                                <td class="text-center bdr-rt"></td>
+                                <td class="text-center bdr-rt"></td>
+                            </ng-container>
+                        </tr>
+                        <ng-container *ngFor="let data of SalesInfo.DetailData">
+                            <tr *ngIf="departmentblocks.indexOf(data.TitleValue) >=0 ">
+
+                                <td style="padding-left: 10rem;" class="box-border"> {{data.TitleValue}}</td>
+
+                                <ng-container *ngIf="gridBlocks.indexOf('Net to Sales') >= 0">
+
+                                    <td></td>
+                                    <td class="box-border"></td>
+                                </ng-container>
+
+                                <ng-container *ngIf="gridBlocks.indexOf('Net to Gross') >= 0">
+
+                                    <td></td>
+                                    <td class="box-border"></td>
+
+                                </ng-container>
+
+
+
+                                <ng-container>
+                                    <ng-container *ngIf="gridBlocks.indexOf('Selling Gross') >= 0">
+
+
+                                        <td>
+                                            <span class="d-flex justify-content-between"> {{
+                                                (data.MTD_Gross == 0 ||
+                                                data.MTD_Gross == null == null ? '&nbsp;' :
+                                                '$') }} <span> {{
+                                                    (data.MTD_Gross == 0 ||
+                                                    data.MTD_Gross == null ? '-' : data.MTD_Gross | number : '1.0-0'
+                                                    ) }}</span></span>
+                                        </td>
+
+                                        <td [style.background-color]="getBackgroundColor(data.MTD,data.TitleValue)">
+                                            {{ (data.MTD == 0 ||
+                                            data.MTD == null ? '-' : data.MTD | number : '1.1-1' )}}{{ (data.MTD ==
+                                            0 ||
+                                            data.MTD == null ? '' : '%' )}}
+                                        </td>
+                                        <td>
+                                            <span class="d-flex justify-content-between"> {{
+                                                (data.YTD_Gross == 0 ||
+                                                data.YTD_Gross == null == null ? '&nbsp;' :
+                                                '$') }} <span> {{
+                                                    (data.YTD_Gross == 0 ||
+                                                    data.YTD_Gross == null ? '-' : data.YTD_Gross | number : '1.0-0'
+                                                    ) }}</span></span>
+
+                                        </td>
+
+                                        <td class="box-border"
+                                            [style.background-color]="getBackgroundColor(data.YTD,data.TitleValue)">
+                                            {{ (data.YTD == 0 ||
+                                            data.YTD == null ? '-' : data.YTD | number : '1.1-1' )}}{{
+                                            (data.YTD == 0 ||
+                                            data.YTD == null ? '' : '%' )}} </td>
+
+
+                                        <td>
+                                            <span class="d-flex justify-content-between"> {{
+                                                (data.YTD_Gross_YTD == 0 ||
+                                                data.YTD_Gross_YTD == null == null ? '&nbsp;' :
+                                                '$') }} <span> {{
+                                                    (data.YTD_Gross_YTD == 0 ||
+                                                    data.YTD_Gross_YTD == null ? '-' : data.YTD_Gross_YTD | number :
+                                                    '1.0-0'
+                                                    ) }}</span></span>
+
+                                        </td>
+
+                                        <td [style.background-color]="getBackgroundColor(data.YTD_YTD,data.TitleValue)">
+                                            {{ (data.YTD_YTD == 0 ||
+                                            data.YTD_YTD == null ? '-' : data.YTD_YTD | number : '1.1-1' )}}{{
+                                            (data.YTD_YTD == 0 ||
+                                            data.YTD_YTD == null ? '' : '%' )}} </td>
+                                    </ng-container>
+                                </ng-container>
+                            </tr>
+                        </ng-container>
+
+                    </ng-container>
+                </tbody>
+                <ng-template #NoSellingGross>
+                    <tr *ngIf="NoData != ''">
+
+                        <td [attr.colspan]="getColspan()+1" *ngIf="NoData != ''"
+                            style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
+                            <label>{{NoData}}</label>
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </table>
+        </div>
+    </div>
+</main>

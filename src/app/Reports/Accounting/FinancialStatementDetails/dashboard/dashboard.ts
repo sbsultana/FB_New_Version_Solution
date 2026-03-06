@@ -27,6 +27,7 @@ import { Stores } from '../../../../CommonFilters/stores/stores';
 @Component({
   selector: 'app-dashboard',
   imports: [SharedModule, BsDatepickerModule, Stores],
+  standalone: true,
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

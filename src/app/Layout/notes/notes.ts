@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Renderer2, Output, EventEmitter, } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {Router} from '@angular/router'
+import { Router } from '@angular/router'
 import { Sharedservice } from '../../Core/Providers/Shared/sharedservice';
 import { SharedModule } from '../../Core/Providers/Shared/shared.module';
 
@@ -9,7 +9,7 @@ import { SharedModule } from '../../Core/Providers/Shared/shared.module';
 @Component({
   selector: 'app-notes',
   imports: [SharedModule],
-  standalone:true,
+  standalone: true,
   templateUrl: './notes.html',
   styleUrl: './notes.scss'
 })
@@ -18,6 +18,7 @@ export class Notes {
   @Output() onClose = new EventEmitter();
   // @Output() SavedNotesData = new EventEmitter();
 
+  history: any[] = [];
 
   userid: any = ''
   spinnerLoader: boolean = false;
@@ -25,8 +26,9 @@ export class Notes {
   menu: any = []
   curl: any = '';
   renderer: any;
+  FullData: any;
 
-  constructor( public shared:Sharedservice,private router: Router,  ) {
+  constructor(public shared: Sharedservice, private router: Router,) {
     // this.renderer.listen('window', 'click', (e: Event) => {
     //   const TagName = e.target as HTMLButtonElement;
     // });
@@ -34,12 +36,35 @@ export class Notes {
   }
 
   ngOnInit(): void {
-    this.userid = JSON.parse(localStorage.getItem('UserDetails')!);
+    this.userid =  JSON.parse(localStorage.getItem('userInfo')!)?.user_Info;
     let menuData = this.shared.common.menuData.flat();
-    this.menu = menuData.filter((v: any) => v.mod_filename.indexOf(this.curl) > 0)[0].mod_id
+    this.history = this.notesData?.history || [];
+    this.FullData=this.notesData?.fulldata 
+    console.log('FullData', this.FullData,'........................................................');
+
+    if (this.FullData) {
+
+  // ✅ Normalize COMMENT
+  if (typeof this.FullData.COMMENT === 'string') {
+    try {
+      this.FullData.COMMENT = JSON.parse(this.FullData.COMMENT);
+    } catch {
+      this.FullData.COMMENT = [];
+    }
+  }
+
+ 
+}
+    // this.menu = menuData.filter((v: any) => v.mod_filename.indexOf(this.curl) > 0)[0].mod_id
     //console.log(this.userid, localStorage.getItem('UserDetails'), this.notesData);
   }
 
+
+  get hasHistory(): boolean {
+    return this.notesData?.history?.length > 0;
+  }
+
+  
 
   close(val: any) {
     // this.ngbmodel.dismissAll();
@@ -59,25 +84,25 @@ export class Notes {
           "GN_Title2": this.notesData.title2,
           "GN_Text": this.notes,
           "GN_NS_ID": '',
-          "GN_Module_ID": 49,
+          "GN_Module_ID": this.notesData.title2 == 'FRR' ? '999' : 49,
           "GN_Active": "Y",
           "GN_UserId": JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.userid,
         };
-      }else if (this.notesData.apiRoute == 'AddNotesAction'){
+      } else if (this.notesData.apiRoute == 'AddNotesAction') {
         obj = {
           "AS_ID": this.notesData.store,
           "Title": this.notesData.mainkey,
-          "Module":49,
+          "Module": 49,
           "Notes": this.notes,
           'UserID': JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.userid,
         };
       }
-       
+
       this.spinnerLoader = true
-      this.shared.api.postmethod(this.shared.common.routeEndpoint+this.notesData.apiRoute, obj).subscribe(
+      this.shared.api.postmethod(this.shared.common.routeEndpoint + this.notesData.apiRoute, obj).subscribe(
         (res) => {
           if (res.status == 200) {
-           alert('Notes inserted successfully')
+            alert('Notes inserted successfully')
             // let data={notes:this.notes+'- ' +JSON.parse(localStorage.getItem('UserDetails')!).UserName +' - ('+ this.datepipe.transform(new Date(),'MM/dd/yy') + ')' }
             // this.SavedNotesData.emit(data);
             this.onClose.emit('S');

@@ -87,17 +87,10 @@ export class Dashboard {
     ]
   }
 
-  // filters
-  TotalReport: any = 'T';
+
   storeIds!: any;
   dateType: any = 'MTD';
   groups: any = 0;
-  storeorgrp: any = 'G';
-  saleType: any = 'Retail,Lease,Wholesale,Misc,Fleet,Demo,Special Order,Rental,Dealer Trade';
-  retailorlease: any = this.saleType.split(',');
-  columnName: any = 'Rank';
-  columnState: any = 'asc';
-  dealStatus: any = ['Booked', 'Finalized', 'Delivered'];
 
   CompleteComponentState: boolean = true;
   solutionurl: any;
@@ -106,9 +99,6 @@ export class Dashboard {
     {
       type: 'Bar',
       storeIds: this.storeIds,
-      storeorgroup: this.storeorgrp,
-      dealStatus: this.dealStatus,
-      saleType: this.saleType,
       groups: this.groups,
     },
   ];
@@ -162,14 +152,10 @@ export class Dashboard {
       const data = {
         title: 'Lender Summary',
         stores: this.storeIds,
-        toporbottom: this.TotalReport,
         datetype: this.DateType,
         fromdate: this.FromDate,
         todate: this.ToDate,
         groups: this.groups,
-        storeorgroup: this.storeorgrp,
-        saleType: this.saleType.toString(),
-        dealStatus: this.dealStatus,
         count: 0,
       };
       this.shared.api.SetHeaderData({
@@ -179,11 +165,8 @@ export class Dashboard {
         {
           type: 'Bar',
           storeIds: this.storeIds,
-          dealStatus: this.dealStatus,
-          storeorgroup: this.storeorgrp,
           fromdate: this.FromDate,
           todate: this.ToDate,
-          saleType: this.saleType,
           groups: this.groups,
         },
       ];
@@ -393,20 +376,7 @@ export class Dashboard {
     this.shared.api.GetReports().subscribe((data) => {
       if (data.obj.Reference == 'Lender Summary') {
         if (data.obj.header == undefined) {
-          this.TotalReport = data.obj.TotalReport;
           this.storeIds = data.obj.storeValues;
-
-          this.dealStatus = data.obj.dealStatus;
-          if (this.storeorgrp != data.obj.storeorgroup) {
-            this.columnName = 'Rank';
-            // this.columnState = 'asc';
-            this.storeorgrp = data.obj.storeorgroup;
-          } else {
-            this.storeorgrp = data.obj.storeorgroup;
-            // this.columnState = 'desc';
-          }
-          this.storeorgrp = data.obj.storeorgroup;
-          this.saleType = data.obj.saleType;
           this.groups = data.obj.groups;
           if (data.obj.FromDate != undefined && data.obj.ToDate != undefined) {
             this.FromDate = data.obj.FromDate;
@@ -432,14 +402,10 @@ export class Dashboard {
           title: 'Lender Summary',
 
           stores: this.storeIds,
-          toporbottom: this.TotalReport,
           datetype: this.dateType,
           fromdate: this.FromDate,
           todate: this.ToDate,
           groups: this.groups,
-          storeorgroup: this.storeorgrp,
-          saleType: this.saleType,
-          dealStatus: this.dealStatus,
         };
         this.shared.api.SetHeaderData({
           obj: headerdata,
@@ -448,12 +414,9 @@ export class Dashboard {
           {
             type: 'Bar',
             storeIds: this.storeIds,
-            storeorgroup: this.storeorgrp,
             fromdate: this.FromDate,
             todate: this.ToDate,
-            saleType: this.saleType,
             groups: this.groups,
-            dealStatus: this.dealStatus,
           },
         ];
       }
@@ -655,24 +618,8 @@ export class Dashboard {
     this.storeorgroup = g.sg_id === 1 ? 'S' : 'G';
   }
 
-  // Deal type & status
-  multipleorsingle(block: string, val: string) {
-    if (block === 'RL') {
-      this.toggleSelection(this.retailorlease, val);
-    }
-    if (block === 'DS') {
-      this.toggleSelection(this.dealStatus, val);
-    }
-  }
 
-  private toggleSelection(arr: any[], val: string) {
-    const idx = arr.indexOf(val);
-    if (idx >= 0) {
-      arr.splice(idx, 1);
-    } else {
-      arr.push(val);
-    }
-  }
+
 
   storeorgroups(_block: any, val: string) {
     this.storeorgroup = [val];

@@ -962,6 +962,13 @@ select:focus {
 }
 
 
+.medium-font {
+  font-size: .875rem !important;
+}
+
+.large-font {
+  font-size: 1rem !important;
+}
 
 .deal-link {
   font-family: 'Roboto';
@@ -2399,6 +2406,114 @@ select:focus {
   }
 }
 
+//////////////////////////////////////////Pagination //////////////////////////////////////////
+
+
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  color: #000;
+  font-family: 'RobotoMedium';
+  font-size: .825rem;
+  line-height: 1.25rem;
+
+
+
+  .page-size {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    width: 100%;
+
+    .blue_btn {
+      display: flex;
+      height: 32px;
+      padding: 0 12px;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border-radius: 12px;
+      background: #0554EF;
+      color: #FFF;
+      font-family: "Roboto";
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 16px;
+
+      &:hover {
+        border-radius: 50px;
+      }
+    }
+
+    label {
+      color: #000;
+    }
+
+    select {
+      background-color: white;
+      color: black;
+      border: none;
+      border-radius: 12px;
+      width: 75px;
+      padding: 0px 15px;
+      height: 25px;
+      font-size: .825rem;
+      line-height: 1.25rem;
+      font-family: inherit;
+      cursor: pointer;
+      appearance: none;
+      position: relative;
+    }
+
+    .dropdown-icon {
+      position: absolute;
+      top: 50%;
+      right: .675rem;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #000;
+    }
+  }
+
+  .disabled-button {
+    opacity: 0.5;
+  }
+
+  .page-info {
+    color: #000;
+    white-space: nowrap;
+  }
+
+  .pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    button {
+      background-color: transparent;
+      border: none;
+      color: #000;
+      font-size: 18px;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+      }
+    }
+
+    .page-label {
+      font-size: .825rem;
+      white-space: nowrap;
+    }
+  }
+}
 
 //////////////////////////////////////////Details Popup System//////////////////////////////////////
 

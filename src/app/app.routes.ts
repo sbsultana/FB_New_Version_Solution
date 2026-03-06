@@ -11,13 +11,17 @@ export const routes: Routes = [
   { path: 'IncomeStatementStore', loadComponent: () => import('./Reports/Accounting/IncomeStatementStoreComposite/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'IncomeStatementTrend', loadComponent: () => import('./Reports/Accounting/IncomeStatementTrend/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'LendersMapping', loadComponent: () => import('./Reports/Accounting/LenderMapping/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'LenderSummary', loadComponent: () => import('./Reports/Accounting/LenderSummary/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'EnterpriseTracking', loadComponent: () => import('./Reports/Accounting/EnterpriseTracking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FixedIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'VariableIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'EnterpriseTracking', loadComponent: () => import('./Reports/Accounting/EnterpriseTracking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'LenderSummary', loadComponent: () => import('./Reports/Accounting/LenderSummary/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'TitleReport', loadComponent: () => import('./Reports/Accounting/TitleReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'LoanerInventoryV2', loadComponent: () => import('./Reports/Accounting/LoanerInventory/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'EnterpriseExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseDepartment/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'EnterpriseExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseDepartment/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseIncomeByExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseTrend/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SellingGross', loadComponent: () => import('./Reports/Accounting/SellingGross/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'NetAddsDeducts', loadComponent: () => import('./Reports/Accounting/NetAddsByDeducts/dashboard/dashboard').then(m => m.Dashboard) },
 
 
   // SALES BLOCK

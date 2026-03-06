@@ -137,17 +137,17 @@ export class Dashboard {
     }
     this.CurrentRoute = this.router.url.substring(1);
     switch (this.CurrentRoute) {
-      case 'FixedIncomeByExpense':
-        this.filters = ['Service', 'Parts'];
-        this.SetTitle = 'Fixed Income / Expense';
-        break;
-      case 'VariableIncomeByExpense':
-        this.filters = ['New', 'Used'];
-        this.SetTitle = 'Variable Income / Expense';
-        break;
-      case 'EnterpriseExpenseTrend':
+      // case 'FixedIncomeByExpense':
+      //   this.filters = ['Service', 'Parts'];
+      //   this.SetTitle = 'Fixed Income / Expense';
+      //   break;
+      // case 'VariableIncomeByExpense':
+      //   this.filters = ['New', 'Used'];
+      //   this.SetTitle = 'Variable Income / Expense';
+      //   break;
+      case 'EnterpriseExpense':
         this.filters = ['New', 'Used', 'Service', 'Parts', 'Collision'];
-        this.SetTitle = 'Enterprise Expense Trend';
+        this.SetTitle = 'Enterprise Expense';
         break;
       default:
         this.filters = [];
