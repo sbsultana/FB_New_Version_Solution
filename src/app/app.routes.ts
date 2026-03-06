@@ -22,6 +22,11 @@ export const routes: Routes = [
   { path: 'EnterpriseIncomeByExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseTrend/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SellingGross', loadComponent: () => import('./Reports/Accounting/SellingGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'NetAddsDeducts', loadComponent: () => import('./Reports/Accounting/NetAddsByDeducts/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'PALenderSummary', loadComponent: () => import('./Reports/Accounting/PALenderReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'UsedCarWholesale', loadComponent: () => import('./Reports/Accounting/UsedCarWholesale/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'GLLookup', loadComponent: () => import('./Reports/Accounting/GLLookUp/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'WholesaleGrossGroup', loadComponent: () => import('./Reports/Accounting/WholesaleGrossGroup/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'RetailGrossGroup', loadComponent: () => import('./Reports/Accounting/RetailGrossGroup/dashboard/dashboard').then(m => m.Dashboard) },
 
 
   // SALES BLOCK
