@@ -153,7 +153,7 @@
                                             {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
-                                            (SalesInfo.data1.toString().toLowerCase().length > 40 ? '...' : '') ))}}
+                                            (SalesInfo.data1.toString().length > 40 ? '...' : '') ))}}
                                         </span>
                                         <span *ngIf="SalesInfo.data1.toLowerCase() != 'report totals'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
@@ -460,7 +460,7 @@
                                             [ngClass]="{'disable': SalesInfo.data1.toLowerCase() === 'report totals' }">&nbsp;</span>
                                         <span (click)="expandorcollapse(i,$event,data2.data2sign,data2,SalesInfo)"
                                             [id]="'DN_'+i"> {{data2.data2 == undefined || data2.data2.trim() == '' ||
-                                            data2.data2 == null ? '-' : data2.data2.toLowerCase()}} </span>
+                                            data2.data2 == null ? '-' : data2.data2}} </span>
                                     </td>
                                     <!-- <td></td> -->
                                     <!-- <td class="spacer"></td> -->
@@ -699,7 +699,7 @@
                                             dt3.data3.trim() == '' || dt3.data3 == null ?
                                             '-' : (
                                             (dt3.data3.toString() | slice:0:20) +
-                                            (dt3.data3.toString().toLowerCase().length > 20 ? '...' : '') ))}}</span>
+                                            (dt3.data3.toString().length > 20 ? '...' : '') ))}}</span>
 
                                     </td>
                                     <!-- <td></td> -->
@@ -926,7 +926,7 @@
                                             {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
-                                            (SalesInfo.data1.toString().toLowerCase().length > 40 ? '...' : '') ))}}
+                                            (SalesInfo.data1.toString().length > 40 ? '...' : '') ))}}
                                         </span>
                                         <!-- <span *ngIf="SalesInfo.data1 !== 'REPORTS TOTAL'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
@@ -1135,7 +1135,7 @@
                                             [id]="'DN_'+i">
                                             {{data2.data2 == undefined || data2.data2.trim() == '' || data2.data2 ==
                                             null ?
-                                            '-' : data2.data2.toLowerCase()}} </span>
+                                            '-' : data2.data2}} </span>
                                     </td>
                                     <!-- <td></td> -->
                                     <!-- <td class="spacer"></td> -->
@@ -1301,7 +1301,7 @@
                                             undefined || dt3.data3.trim() == '' || dt3.data3 == null ?
                                             '-' : (
                                             (dt3.data3.toString() | slice:0:15) +
-                                            (dt3.data3.toString().toLowerCase().length > 15 ? '...' : '') ))}}</span>
+                                            (dt3.data3.toString().length > 15 ? '...' : '') ))}}</span>
 
                                     </td>
                                     <!-- <td></td> -->
