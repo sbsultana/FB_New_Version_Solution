@@ -4,11 +4,12 @@ import { Header } from './Layout/header/header';
 import { Externalmenu } from './Layout/externalmenu/externalmenu'
 import { CommonModule } from '@angular/common';
 import { SidebarService } from '../app/Core/Providers/Shared/sidebar.service (1)';
+import { ToastContainer } from './Layout/toast-container/toast-container';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, Header, Externalmenu],
+  imports: [RouterOutlet, CommonModule, Header, Externalmenu, ToastContainer],
   templateUrl: './app.html',
   styleUrls: ['./app.scss']
 })
