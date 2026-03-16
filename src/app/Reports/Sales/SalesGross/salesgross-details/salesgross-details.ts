@@ -221,7 +221,7 @@ updateVerticalScroll(event: any): void {
                 { name: 'Time Frame :', values: this.Salesdetails[0].StartDate + ' to ' + this.Salesdetails[0].EndDate },
                 { name: 'Deal Type : ', values: this.Salesdetails[0].dealtype == '' ? '-' : this.Salesdetails[0].dealtype == null ? '-' : this.Salesdetails[0].dealtype.toString().replaceAll(',', ', ') },
                 { name: 'Sale Type :', values: this.Salesdetails[0].saletype == '' ? '-' : this.Salesdetails[0].saletype == null ? '-' : this.Salesdetails[0].saletype.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
-                { name: 'Deal Status :', values: this.Salesdetails[0].dealstatus == '' ? '-' : this.Salesdetails[0].dealstatus == null ? '-' : this.Salesdetails[0].dealstatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
+                { name: 'Deal Status :', values: this.Salesdetails[0].dealstatus == '' ? '-' : this.Salesdetails[0].dealstatus == null ? '-' : this.Salesdetails[0].dealstatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Finalized') },
               ]
               const ReportFilter = worksheet.addRow(['Sales Gross Details']);
               ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };

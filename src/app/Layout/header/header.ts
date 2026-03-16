@@ -58,12 +58,12 @@ export class Header {
   private processingToken = false; // ✅ Prevent premature logout
   private sub!: Subscription;
   userData: any;
-  constructor(){
-     this.apiCall.GetHeaderData().subscribe((res: any) => {
+  constructor() {
+    this.apiCall.GetHeaderData().subscribe((res: any) => {
       this.componentData = res.obj;
       this.shared.common.pageName = this.componentData.title
-      console.log(this.shared.common.pageName,'Page Name');
-      
+      console.log(this.shared.common.pageName, 'Page Name');
+
     });
   }
   ngOnInit(): void {
@@ -80,6 +80,42 @@ export class Header {
           this.userData = data;
         }
       });
+    let data: any = {
+      "group": "SILVERTIP",
+      "fullName": "Prasad Chavali",
+      "GU_URL": "https://silvertip.axelone.app",
+      "xtract_url": "",
+      "site": "prod",
+      "user_Info": {
+        "fullName": "Prasad Chavali",
+        "title": "Super Admin",
+        "username": "Prasad Chavali",
+        "payroll_info": "",
+        "id": 1,
+        "userid": 1,
+        "firstname": "Prasad",
+        "lastname": "Chavali",
+        "email": "prasad.chavali@axelautomotive.com",
+        "phone": "+19000000006",
+        "roleid": 100,
+        "status": "Y",
+        "profileImg": "",
+        "moduleids": null,
+        "ADuserid": "DEALERS\\PChavali-AxelOne",
+        "uid": 1,
+        "ustores": "1,2",
+        "Xtract": 1,
+        "Touch": 0,
+        "Xperience": 0,
+        "Xchange": 3,
+        "Xiom": 1,
+        "Tracs": 0,
+        "Preferences": "1",
+        "Storeids": '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11'
+      }
+    }
+
+    localStorage.setItem('userInfo', JSON.stringify(data))
     const storedUserInfo = localStorage.getItem('userInfo');
 
     if (storedUserInfo) {
@@ -95,7 +131,7 @@ export class Header {
       }
 
       window.history.replaceState({}, document.title, cleanUrl);
-    
+
 
       this.afterUserLoad();
       this.getGruopsandStores()
@@ -123,7 +159,7 @@ export class Header {
         this.checkUserInfo();
       }
     });
-   
+
     console.log('Header Component Data : ', this.componentData.title);
   }
   ngOnDestroy() {

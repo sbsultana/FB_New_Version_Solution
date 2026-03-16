@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { Setdates } from '../../../../Core/Providers/SetDates/setdates';
 import { SalesgrossReports } from '../salesgross-reports/salesgross-reports';
 import { SalesgrossDetails } from '../salesgross-details/salesgross-details';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,6 +42,7 @@ export class Dashboard {
   target: any = [];
   source: any = [];
   includecharge: any = [];
+  
   pack: any = [];
   path1: any = 'store';
   path2: any = 'ad_dealtype';
@@ -57,7 +59,8 @@ export class Dashboard {
   groups: any = 0;
   acquisition: any = ['All'];
   otherstoreid: any = '';
-  selectedotherstoreids: any = ''
+  selectedotherstoreids: any = '';
+  actionType:any=''
   header: any = [
     {
       type: 'Bar',
@@ -75,7 +78,6 @@ export class Dashboard {
     },
   ];
 
-
   reportOpenSub!: Subscription;
   reportGetting!: Subscription;
   Pdf!: Subscription;
@@ -83,7 +85,7 @@ export class Dashboard {
   email!: Subscription;
   excel!: Subscription;
 
-  constructor(public shared: Sharedservice, public setdates: Setdates) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, public cp: CurrencyPipe) {
 
     this.shared.setTitle(this.shared.common.titleName + '-Sales Gross')
 
@@ -95,12 +97,11 @@ export class Dashboard {
         this.groups = JSON.parse(localStorage.getItem('userInfo')!).groupid
         JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
           this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)   
-          localStorage.setItem('flag','M')    
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
       } else {
         if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-          console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);
-          
+          console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);          
           this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
           this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         }
@@ -118,7 +119,7 @@ export class Dashboard {
         this.setDates('MTD')
         this.DateType = 'MTD'
       }
-      localStorage.setItem('stime', 'MTD')
+      // localStorage.setItem('stime', 'MTD')
       this.getPeopleList()
     }
   }
@@ -209,7 +210,7 @@ export class Dashboard {
   }
   getSalesData() {
     // this.responcestatus = '';
-    
+
     if ((this.storeIds != '' && this.storeIds != '0')) {
       this.shared.spinner.show();
       this.NoData = false;
@@ -223,7 +224,7 @@ export class Dashboard {
   }
 
   GetData() {
-  
+
     this.IndividualSalesGross = [];
     // this.shared.spinner.show();
     const obj = {
@@ -236,7 +237,7 @@ export class Dashboard {
       dealtype: this.dealType.toString(),
       saletype: this.saleType.toString(),
       dealstatus: this.dealStatus.toString(),
-      // AcquisitionSource: this.acquisition.toString() == 'All' ? '' : this.acquisition.toString(),
+      AcquisitionSource: this.acquisition.toString() == 'All' ? '' : this.acquisition.toString(),
       var1: this.path1,
       var2: this.path2,
       var3: this.path3,
@@ -328,7 +329,7 @@ export class Dashboard {
                 this.SalesData = []
               }
             } else {
-             
+
               //  //this.shared.toast.error('Empty Response', '');
               this.shared.spinner.hide();
               this.NoData = true;
@@ -337,7 +338,7 @@ export class Dashboard {
             }
 
           } else {
-        
+
 
             //this.shared.toast.error(res.status, '');
             this.shared.spinner.hide();
@@ -540,7 +541,7 @@ export class Dashboard {
               this.NoData = true;
             }
           } else {
-          
+
             this.shared.spinner.hide();
             this.NoData = true;
           }
@@ -935,8 +936,8 @@ export class Dashboard {
                 : data.obj.dataGroupingvalues[2].ARG_LABEL;
             this.groups = data.obj.groups;
             this.DateType = data.obj.dateType
-            // this.acquisition = data.obj.acquisition;
-            // this.selectedotherstoreids = data.obj.otherstoreids;
+            this.acquisition = data.obj.acquisition;
+            this.selectedotherstoreids = data.obj.otherstoreids;
           }
         } else {
           if (data.obj.header == 'Yes') {
@@ -947,7 +948,7 @@ export class Dashboard {
 
         // if (this.GridView == 'Global') {
         // console.log(this.GridView); 
-        
+
         if (this.GridView == 'Global') {
           this.getSalesData();
 
@@ -1010,7 +1011,11 @@ export class Dashboard {
       if (this.excel != undefined) {
         if (res.obj.title == 'Sales Gross') {
           if (res.obj.state == true) {
-            this.exportToExcel();
+            if (this.GridView == 'Global') {
+              this.exportToExcel();
+            } else {
+              this.exportToBackGrossExcel();
+            }
           }
         }
       }
@@ -1071,7 +1076,7 @@ export class Dashboard {
       { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
       { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
       { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
+      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Finalized') },
     ]
     // const ReportFilter = worksheet.addRow(['Report Controls :']);
     // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
@@ -1273,6 +1278,237 @@ export class Dashboard {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
       this.shared.exportToExcel(workbook, 'Sales Gross')
+    });
+  }
+
+  exportToBackGrossExcel(): void {
+    const workbook = this.shared.getWorkbook();
+    const worksheet = workbook.addWorksheet('Sales Gross BackGross');
+       this.ExcelStoreNames = []
+    let storeNames: any[] = [];
+    let store: any = [];
+    this.storeIds && this.storeIds.toString().indexOf(',') > 0 ? store = this.storeIds.toString().split(',') : store.push(this.storeIds)
+    console.log(this.storeIds, this.groups, '...............................');
+
+    storeNames = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => store.includes(item.ID.toString()));
+    if (store.length == this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length) { this.ExcelStoreNames = 'All Stores' }
+    else { this.ExcelStoreNames = storeNames.map(function (a: any) { return a.storename; }); }
+    const PresentYear = this.shared.datePipe.transform(this.FromDate, 'yyyy');
+    const FromDate = this.shared.datePipe.transform(this.FromDate, 'dd');
+    const ToDate = this.shared.datePipe.transform(this.ToDate, 'dd');
+    const PresentMonth = this.shared.datePipe.transform(this.FromDate, 'MMMM');
+
+    let filters: any = [
+      // { name: 'Stores :', values: this.ExcelStoreNames.toString() },
+      { name: 'Groupings :', values: this.path1name + (this.path2name != '' && this.path2name != undefined ? ', ' + this.path2name : '') + (this.path3name != '' && this.path3name != undefined ? ', ' + this.path3name : '') },
+      { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate },
+      { name: 'Sales Persons :', values: this.salesPersonId == 0 || this.salesPersonId == '' ? 'All Sales Persons' : this.salesPersonId == null ? '-' : this.salesPersonId },
+      { name: 'Sales Managers :', values: this.salesManagerId == 0 || this.salesManagerId == '' ? 'All Sales Managers' : this.salesManagerId == null ? '-' : this.salesManagerId },
+      { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
+      { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
+      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
+      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
+    ]
+    // const ReportFilter = worksheet.addRow(['Report Controls :']);
+    // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+    const titleRow = worksheet.addRow(['Sales Gross BackGross']);
+    titleRow.eachCell((cell, number) => {
+      cell.alignment = {
+        indent: 1,
+        vertical: 'middle',
+        horizontal: 'left',
+      };
+    });
+    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
+    titleRow.worksheet.mergeCells('A2', 'D2');
+
+    const Stores1 = worksheet.getCell('A3');
+    Stores1.value = 'Stores :';
+    worksheet.mergeCells('B3', 'Z3');
+    const stores1 = worksheet.getCell('B3');
+    stores1.value = this.ExcelStoreNames.toString().replaceAll(',', ', ');
+    stores1.font = { name: 'Arial', family: 4, size: 9 };
+    stores1.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, };
+
+
+    let startIndex = 3
+    filters.forEach((val: any) => {
+      startIndex++
+      worksheet.addRow('');
+      worksheet.getCell(`A${startIndex}`);
+      worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
+      worksheet.getCell(`A${startIndex}`).value = val.name;
+      worksheet.getCell(`B${startIndex}`).value = val.values
+    })
+
+    worksheet.addRow('');
+    worksheet.getCell('A12');
+    worksheet.getCell('B12');
+    worksheet.mergeCells('C12:G12');
+    worksheet.mergeCells('H12:K12');
+    worksheet.mergeCells('L12:P12');
+
+    worksheet.getCell('A12').value = `${PresentMonth}`;
+    worksheet.getCell('B12').value = 'UNITS';
+    worksheet.getCell('C12').value = 'BACK GROSS';
+    worksheet.getCell('H12').value = 'FINANCE SALES';
+    worksheet.getCell('L12').value = 'PRODUCT SALES';
+
+
+    worksheet.getRow(1).height = 25;
+
+
+    ['A12', 'B12', 'C12', 'H12', 'L12'].forEach(key => {
+      const cell = worksheet.getCell(key);
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F5597' } };
+    });
+
+    // const secondHeader = [
+    //   `${FromDate} - ${ToDate}, ${PresentYear}`,
+    //   this.datetype() == 'C' ? this.datepipe.transform(this.FromDate, 'MM.dd.yyyy') + '-' + this.datepipe.transform(this.ToDate, 'MM.dd.yyyy') : this.datetype(), 'PACE', 'TARGET', '+/-', 'PER DAY',
+    //   this.datetype() == 'C' ? this.datepipe.transform(this.FromDate, 'MM.dd.yyyy') + '-' + this.datepipe.transform(this.ToDate, 'MM.dd.yyyy') : this.datetype(), 'PACE', 'TARGET', '+/-', 'PVR',
+    //   this.datetype() == 'C' ? this.datepipe.transform(this.FromDate, 'MM.dd.yyyy') + '-' + this.datepipe.transform(this.ToDate, 'MM.dd.yyyy') : this.datetype(), 'PACE', 'TARGET', '+/-', 'PVR',
+    //   this.datetype() == 'C' ? this.datepipe.transform(this.FromDate, 'MM.dd.yyyy') + '-' + this.datepipe.transform(this.ToDate, 'MM.dd.yyyy') : this.datetype(), 'PACE', 'TARGET', '+/-', 'PVR'
+    // ];
+
+    // worksheet.addRow(secondHeader);
+    // worksheet.getRow(2).font = { bold: true };
+    // worksheet.getRow(2).alignment = { horizontal: 'center', vertical: 'middle' };
+
+
+    const dateLabel =
+      this.datetype() === 'C'
+        ? `${this.shared.datePipe.transform(this.FromDate, 'MM.dd.yyyy')}-${this.shared.datePipe.transform(this.ToDate, 'MM.dd.yyyy')}`
+        : this.datetype();
+
+    const secondHeader = [
+      `${FromDate} - ${ToDate}, ${PresentYear}`,
+      dateLabel,
+      dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
+      'GROSS', 'PVR', 'COUNT', 'PEN %',
+      'GROSS', 'PVR', 'COUNT','PEN %', 'PER TRANS',
+
+    ];
+
+    const headerRow = worksheet.addRow(secondHeader);
+
+    headerRow.eachCell((cell) => {
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.font = { bold: true };
+    });
+
+    const bindingHeaders = [
+      'data1', 'Units_MTD',
+      'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
+      'figross', 'FigrossPVR', 'FRCOUNT', 'FIPen',
+      'ProductSale', 'ProductPVR', 'productdealcount', 'Productpen', 'peorductPertra',
+    ];
+    const currencyFields = [
+      'BackGross_MTD', 'BackGross_Pace', 'BackGross_dif', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
+      'figross', 'FigrossPVR', 'ProductSale', 'ProductPVR',
+    ];
+
+    const capitalize = (str: string) =>
+      str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
+
+    for (const info of this.BackGross) {
+      const rowData = bindingHeaders.map(key => {
+        const val = info[key];
+        if (key === 'data1') return capitalize(val)
+        if (key === 'BackGross_Diff' && info['BackGross_Pace'] != 0 && info['BackGross_Pace'] != null && info['BackGross_Target'] != 0 && info['BackGross_Target'] != null) return val;
+        if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
+        if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
+        if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
+        return val === 0 || val == null ? '-' : val
+      });
+
+      const dealerRow = worksheet.addRow(rowData);
+      dealerRow.font = { bold: true };
+
+      bindingHeaders.forEach((key, index) => {
+        const cell = dealerRow.getCell(index + 1);
+        if (currencyFields.includes(key) && typeof cell.value === 'number') {
+          cell.numFmt = '"$"#,##0';
+          cell.alignment = { horizontal: 'right' };
+          if (cell.value < 0) {
+            cell.font = { color: { argb: 'FFFF0000' }, }
+          }
+        } else if (!isNaN(Number(cell.value))) {
+          cell.alignment = { horizontal: 'right' };
+        }
+      });
+
+      if (info.data2 != undefined) {
+        for (const data2 of info.data2) {
+          const nestedRowData = bindingHeaders.map(key => {
+            if (key === 'data1') return '   ' + capitalize(data2['data2']);
+            if (key === 'BackGross_Pace' && this.datetype() != 'MTD') return (data2['BackGross_MTD'])
+            if (key === 'BackGross_Pace' && this.datetype() == 'MTD') return (data2['BackGross_Pace'])
+            if (key === 'BackGross_Diff') return (data2['BackGross_dif'])
+            const val = data2[key];
+            if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
+            if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
+            if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
+            return val === 0 || val == null ? '-' : val;
+          });
+          const nestedRow = worksheet.addRow(nestedRowData);
+
+          bindingHeaders.forEach((key, index) => {
+            const cell = nestedRow.getCell(index + 1);
+            if (currencyFields.includes(key) && typeof cell.value === 'number') {
+              cell.numFmt = '"$"#,##0';
+              cell.alignment = { horizontal: 'right' };
+              if (cell.value < 0) {
+                cell.font = { color: { argb: 'FFFF0000' }, }
+              }
+            } else if (!isNaN(Number(cell.value))) {
+              cell.alignment = { horizontal: 'right' };
+            }
+          });
+
+
+          if (data2.SubData != undefined) {
+            for (const data3 of data2.SubData) {
+              const nestedRowData = bindingHeaders.map(key => {
+                if (key === 'data1') return '          ' + capitalize(data3['data3']);
+                if (key === 'BackGross_Pace' && this.datetype() != 'MTD') return (data2['BackGross_MTD'])
+                if (key === 'BackGross_Pace' && this.datetype() == 'MTD') return (data2['BackGross_Pace'])
+                const val = data3[key];
+                if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
+                if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
+                if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
+                return val === 0 || val == null ? '-' : val;
+              });
+              const nestedRow = worksheet.addRow(nestedRowData);
+
+              bindingHeaders.forEach((key, index) => {
+                const cell = nestedRow.getCell(index + 1);
+                if (currencyFields.includes(key) && typeof cell.value === 'number') {
+                  cell.numFmt = '"$"#,##0';
+                  cell.alignment = { horizontal: 'right' };
+                  if (cell.value < 0) {
+                    cell.font = { color: { argb: 'FFFF0000' }, }
+                  }
+                } else if (!isNaN(Number(cell.value))) {
+                  cell.alignment = { horizontal: 'right' };
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+    worksheet.columns.forEach((column: any) => {
+      let maxLength = 20;
+      column.width = maxLength + 2;
+    });
+    workbook.xlsx.writeBuffer().then((buffer: any) => {
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      this.shared.exportToExcel(workbook, 'Sales Gross BackGross ')
     });
   }
 

@@ -1249,167 +1249,260 @@ export class Dashboard implements OnInit {
     return value || '-';
   }
 
-// exportToExcelCIT() {
-//   const workbook = new Workbook();
-//   const worksheet = workbook.addWorksheet('CIT Report');
+  exportToExcel(): void {
+    // Uses shared.getWorkbook() (as in your appointment example)
+    // Creates two sheets:
+    // 1) 'Dashboard Summary' - simple summary metrics
+    // 2) 'Floorplan Details' - row-per-record of FloorPlanData
+    const workbook: any = this.shared.getWorkbook ? this.shared.getWorkbook() : null;
+    if (!workbook) {
+     
+      this.toast.show('Workbook helper not available in shared service', 'danger', 'Error');
+      return;
+    }
 
-//   worksheet.views = [{
-//     state: 'frozen',
-//     ySplit: 15,
-//     topLeftCell: 'A16',
-//     showGridLines: false,
-//   }];
+    // --- Dashboard Summary sheet ---
+    const summarySheet = workbook.addWorksheet('Dashboard Summary');
+    summarySheet.addRow(['CIT']);
+    let storeValue = '';
 
-//   // ---------------- TITLE
-//   worksheet.addRow('');
-//   const titleRow = worksheet.addRow(['CIT Report']);
-//   titleRow.font = { name: 'Arial', size: 12, bold: true };
-//   titleRow.alignment = { horizontal: 'left', vertical: 'middle', indent: 1 };
-//   worksheet.addRow('');
+    if (!this.storeIds || this.storeIds.length === 0) {
+      // No selection → All stores
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else if (this.storeIds.length === this.stores.length) {
+      // All selected → bind all store names
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else {
+      // Partial selection
+      storeValue = this.stores
+        .filter((s: any) => this.storeIds.includes(s.ID))
+        .map((s: any) => s.storename)
+        .join(', ');
+    }
 
-//   // ---------------- DATE
-//   const DateToday = this.datepipe.transform(new Date(), 'MM.dd.yyyy h:mm:ss a');
-//   const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-//   worksheet.addRow([DateToday]).font = { name: 'Arial', size: 9 };
+    const filters = [
+      { name: 'Store:', values: storeValue },
+      { name: 'Deal Status :', values: this.clean(this.dealStatus).replace('Finalized', 'Finalized') },
+      { name: 'Sale Type :', values: this.clean(this.saleType) }
+    ]
+    // const ReportFilter = summarySheet.addRow(['Report Controls :']);
+    // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+    let startIndex = 2
+    filters.forEach((val: any) => {
+      startIndex++
+      summarySheet.addRow('');
+      summarySheet.getCell(`A${startIndex}`);
+      summarySheet.mergeCells(`B${startIndex}:C${startIndex}`);
+      summarySheet.getCell(`A${startIndex}`).value = val.name;
+      summarySheet.getCell(`B${startIndex}`).value = val.values
+    })
+    summarySheet.addRow('');
 
-//   // ---------------- FILTERS
-//   const ReportFilter = worksheet.addRow(['Report Controls :']);
-//   ReportFilter.font = { name: 'Arial', size: 10, bold: true };
+    // summarySheet.addRow([ '', 'Total', '0-5', '6-10', '11-15', '15+']).font = { bold: true };
 
-//   worksheet.getCell('A6').value = 'Group :';
-//   worksheet.getCell('B6').value = this.groupName;
-//   worksheet.getCell('B6').font = { name: 'Arial', size: 9 };
-//   worksheet.getCell('B6').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+    const agingHeader = summarySheet.addRow(['', 'Total', '0-5', '6-10', '11-15', '15+']);
+    agingHeader.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    agingHeader.eachCell((cell: any) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF2A91F0' }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
 
-//   worksheet.mergeCells('B7:K9');
-//   worksheet.getCell('A7').value = 'Stores :';
-//   worksheet.getCell('B7').value = this.ExcelStoreNames
-//     ? this.ExcelStoreNames.toString().replaceAll(',', ', ')
-//     : 'All Stores';
-//   worksheet.getCell('B7').font = { name: 'Arial', size: 9 };
-//   worksheet.getCell('B7').alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+    // ---- Aging Values Row ----
+    if (this.FloorPlanData?.length > 0 && this.FloorPlanData[0]?.AgeData?.length > 0) {
+      const A = this.FloorPlanData[0].AgeData[0];
 
-//   worksheet.addRow('');
+      const agingValueRow = summarySheet.addRow([
 
-//   // ---------------- TOTAL / AGING GRID HEADER
-//   const TotalHeaderRow = worksheet.addRow(['', 'TOTAL', '0-5', '6-10', '11-15', '15+']);
-//   TotalHeaderRow.eachCell(cell => {
-//     cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: 'FFFFFF' } };
-//     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2a91f0' } };
-//     cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-//     cell.alignment = { vertical: 'middle', horizontal: 'center' };
-//   });
+        'CIT Aging',
+        A.TOTAL ?? '-',
+        A.D1 ?? '-',
+        A.D2 ?? '-',
+        A.D3 ?? '-',
+        A.D4 ?? '-'
+      ]);
+      [2, 3, 4, 5, 6].forEach(col => {
+        const cell = agingValueRow.getCell(col);
+        cell.numFmt = '"$"#,##0.00;[Red]-"$"#,##0.00';
+        cell.alignment = { horizontal: 'right' };
+      });
+    }
 
-//   const dataRow = worksheet.addRow([
-//     'CIT Aging',
-//     this.FloorPlanTotalData[0].AgeData[0].TOTAL,
-//     this.FloorPlanTotalData[0].AgeData[0].D1,
-//     this.FloorPlanTotalData[0].AgeData[0].D2,
-//     this.FloorPlanTotalData[0].AgeData[0].D3,
-//     this.FloorPlanTotalData[0].AgeData[0].D4
-//   ]);
-//   dataRow.eachCell((cell, col) => {
-//     if (col > 1) cell.numFmt = '$#,##0';
-//     cell.font = { name: 'Arial', size: 9, bold: true, color: { argb: '000000' } };
-//     cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-//     cell.alignment = { vertical: 'middle', horizontal: 'center' };
-//   });
+    summarySheet.addRow([]);
 
-//   worksheet.addRow('');
+    const headers = [
+      'CIT Age', 'Date', 'Control', 'Control 2', 'CIT Acct',
+      'CIT', '	Vehicle Acct	', 'Vehicle', 'Balance', 'Customer', 'Number	', 'Store', 'Stock #', '	Deal #', 'Stage', 'F&I Mgr', 'Sales Mgr',
+      'Sales Person', 'New/Used', 'Type', 'Status', 'Bank Name', 'Year', 'Make', 'Model', 'Delivery', 'Sale', 'Funding', 'Trade'
+    ];
+    // summarySheet.addRow(headers);
+    const headerRow = summarySheet.addRow(headers);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
-//   // ---------------- COLUMN GROUP HEADERS
-//   worksheet.mergeCells('F14:H14'); // Balances
-//   worksheet.getCell('F14').value = 'Balances';
-//   worksheet.mergeCells('I14:K14'); // Customer
-//   worksheet.getCell('I14').value = 'Customer';
-//   worksheet.mergeCells('L14:U14'); // Deal Info
-//   worksheet.getCell('L14').value = 'Deal Info';
-//   worksheet.mergeCells('V14:X14'); // Vehicle
-//   worksheet.getCell('V14').value = 'Vehicle';
-//   worksheet.mergeCells('Y14:Z14'); // Dates
-//   worksheet.getCell('Y14').value = 'Dates';
+    headerRow.eachCell((cell: any) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF2A91F0' } // Blue header
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+    (this.FloorPlanData || []).forEach((r: any) => {
+      // ensure date fields formatted: null/empty -> '-'
+      const formatDateSafe = (d: any) => {
+        if (!d) return '-';
+        try {
+          const dt = new Date(d);
+          if (isNaN(dt.getTime())) return d?.toString() || '-';
+          // use MM.dd.yyyy as in your template request
+          const mm = String(dt.getMonth() + 1).padStart(2, '0');
+          const dd = String(dt.getDate()).padStart(2, '0');
+          const yyyy = dt.getFullYear();
+          return `${mm}.${dd}.${yyyy}`;
+        } catch {
+          return d?.toString() || '-';
+        }
+      };
+      let tradeYear = r.trade1year ? r.trade1year : '';
+      let tradeModel = r.trade1modelname ? r.trade1modelname : '';
 
-//   ['F14','I14','L14','V14','Y14'].forEach(cell => {
-//     const c = worksheet.getCell(cell);
-//     c.font = { name: 'Arial', size: 9, bold: true, color: { argb: 'FFFFFF' } };
-//     c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2a91f0' } };
-//     c.alignment = { horizontal: 'center', vertical: 'middle' };
-//     c.border = { right: { style: 'thin' } };
-//   });
+      let tradeValue = (tradeYear + ' ' + tradeModel).trim();
 
-//   // ---------------- COLUMN HEADINGS
-//   const Headings = [
-//     'Notes','Priority','CIT Age','Date','Account','Control','Control 2','CIT','Floorplan',
-//     'Customer Name','Customer Number','Store','Stock #','Deal #','Stage','F&I Mgr','Sales Mgr',
-//     'Sales Person','Type','New/Used','Status','Bank Name','Year','Make','Model','Delivery','Sale','Funding','Trade'
-//   ];
-//   const headerRow = worksheet.addRow(Headings);
-//   headerRow.eachCell(cell => {
-//     cell.font = { name: 'Arial', size: 8, bold: true, color: { argb: 'FFFFFF' } };
-//     cell.alignment = { horizontal: 'center', vertical: 'middle' };
-//     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '788494' } };
-//     cell.border = { right: { style: 'thin' } };
-//   });
+      if (!tradeValue) tradeValue = '-';
+      const formatDateMMDDYYYY = (d: any) => {
+        if (!d) return '-';
 
-//   // ---------------- DATA ROWS + NOTES
-//   let rowIndex = 15;
-//   for (const d of this.FloorPlanData) {
-//     rowIndex++;
-//     const dataRow = worksheet.addRow([
-//       '', d.HasPriority ?? '-', d.AGE ?? '-', d.AgeDate ?? '-', d.Account ?? '-', d.Control ?? '-', d.Control2 ?? '-',
-//       d.BalCIT ?? 0, d.BalFloorplan ?? 0, d.CustomerName ?? '-', d.CustomerNumber ?? '-', d.store ?? '-',
-//       d.StockNumner ?? '-', d.Deal ?? '-', d.Stage ?? '-', d.FIManager ?? '-', d.SalesManager ?? '-',
-//       d.SP1 ?? '-', d.SaleType ?? '-', d.DealType ?? '-', d.DealStatus ?? '-', d.BankName ?? '-',
-//       d.VehicleYear ?? '-', d.VehicleMake ?? '-', d.VehicleModel ?? '-', d.DeliveryDate ?? '-', d.DateSale ?? '-', d.FundingDate ?? '-', d.trade1modelname ?? '-'
-//     ]);
+        const dt = new Date(d);
+        if (isNaN(dt.getTime())) return '-';
 
-//     dataRow.eachCell((cell, col) => {
-//       if([8,9].includes(col)) cell.numFmt = '$#,##0';
-//       cell.font = { name: 'Arial', size: 8 };
-//       cell.alignment = { vertical: 'middle', horizontal: col > 9 ? 'left' : 'center' };
-//       cell.border = { right: { style: 'thin' } };
-//     });
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        const yyyy = dt.getFullYear();
 
-//     // ---------- NOTES
-//     if(d.Notes && d.Notes.length && this.commentsVisibility) {
-//       for(const note of d.Notes) {
-//         rowIndex++;
-//         worksheet.mergeCells(rowIndex, 1, rowIndex, 28);
-//         const noteCell = worksheet.getCell(rowIndex, 1);
-//         noteCell.value = 'Notes: ' + (note?.NOTES ?? 'No additional notes.');
-//         noteCell.font = { name: 'Arial', size: 9, italic: true };
-//         noteCell.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-//         noteCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' } };
+        return `${mm}/${dd}/${yyyy}`;
+      };
 
-//         if(note?.TS) {
-//           rowIndex++;
-//           worksheet.mergeCells(rowIndex, 1, rowIndex, 28);
-//           const dateCell = worksheet.getCell(rowIndex, 1);
-//           dateCell.value = '   ' + this.datepipe.transform(note.TS, 'MM.dd.yyyy');
-//           dateCell.font = { name: 'Arial', size: 8 };
-//           dateCell.alignment = { vertical: 'middle', horizontal: 'left' };
-//           dateCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F2F2F2' } };
-//         }
-//       }
-//     }
-//   }
+      const row = [
+        r.AGE || '-',
+        formatDateMMDDYYYY(r.AgeDate || '-'),
+        // r.CIT_Account || '-',
+        r.Control || '-',
+        r.Control2 || '-',
+        r.CIT_Account || '-',
+        r.CIT_Balance || '-',
+        r.Vehicle_Account || '-',
+        r.Vehicle_Balance || '-',
+        r.CIT_Vehicle_Balance || '_',
+        // r.BalFloorplan || '-',
+        r.CustomerName || '-',
+        r.CustomerNumber || '-',
+        r.store || '-',
+        r.StockNumner || '-',
+        r.Deal || '-',
+        r.Stage || '-',
+        r.FIManager || '-',
+        r.SalesManager || '-',
+        r.SP1 || '-',
+        r.SaleType || '-',
+        r.DealType || '-',
+        r.DealStatus || '-',
+        r.BankName || '-',
+        r.VehicleYear || '-',
+        r.VehicleMake || '-',
+        r.VehicleModel || '-',
+        r.DeliveryDate || '-',
+        r.DateSale || '-',
+        r.FundingDate || '-',
+        tradeValue,
 
-//   // ---------------- AUTO WIDTH
-//   worksheet.columns.forEach((col:any) => {
-//     let maxLength = 10;
-//     col.eachCell({ includeEmpty: true }, (cell:any) => {
-//       const len = cell.value ? cell.value.toString().length : 10;
-//       if(len > maxLength) maxLength = len;
-//     });
-//     col.width = maxLength + 5;
-//   });
 
-//   // ---------------- SAVE FILE
-//   workbook.xlsx.writeBuffer().then((data: any) => {
-//     const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-//     FileSaver.saveAs(blob, `CIT_Report_${DATE_EXTENSION}.xlsx`);
-//   });
-// }
+      ];
+      summarySheet.addRow(row);
+
+      if (r.duplicateNotes && r.duplicateNotes.length > 0) {
+
+        summarySheet.addRow([]); // spacing before notes
+
+        const notesHeader = summarySheet.addRow(["Notes"]);
+        notesHeader.font = { bold: true };
+
+        r.duplicateNotes.forEach((n: any) => {
+          summarySheet.addRow(["" + (n.NOTES || "-")]);
+        });
+      }
+    });
+    const currencyColumns = [6, 8, 9];
+
+    currencyColumns.forEach(colIndex => {
+      const column = summarySheet.getColumn(colIndex);
+
+      column.numFmt = '"$"#,##0.00;[Red]-"$"#,##0.00';
+      column.alignment = { horizontal: 'right' };
+    });
+    // set some column widths
+    summarySheet.columns.forEach((col: any) => {
+      col.width = 20;
+    });
+    // ================= TOTALS ROW =================
+    if (this.FloorPlanTotalData?.length > 0) {
+      const T = this.FloorPlanTotalData[0];
+
+      const totalsRow = summarySheet.addRow([
+        '',                 // CIT Age
+        '',                 // Date
+        '',                 // Control
+        '',                 // Control 2
+        'Totals',           // Label
+        // '',                 // CIT Acct
+        T.CIT_Balance || 0, // CIT Balance
+        '',                 // Vehicle Acct
+        T.Vehicle_Balance || 0,
+        T.CIT_Vehicle_Balance || 0,
+        '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+      ]);
+
+      // ===== Styling =====
+      totalsRow.font = { bold: true };
+
+      totalsRow.eachCell((cell: any) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFEFEFEF' } // light gray
+        };
+      });
+
+      // ===== Currency formatting =====
+      [7, 9, 10].forEach(col => {
+        totalsRow.getCell(col).numFmt = '"$"#,##0.00;[Red]-"$"#,##0.00';
+        totalsRow.getCell(col).alignment = { horizontal: 'right' };
+      });
+    }
+
+    // write workbook to buffer and trigger shared export helper
+    workbook.xlsx.writeBuffer().then((buffer: any) => {
+      try {
+        // if shared has exportToExcel helper (appointment example), use it
+        if (this.shared.exportToExcel) {
+          this.shared.exportToExcel(workbook, 'CIT');
+        } else {
+          // fallback: use FileSaver if available globally (not implemented here)
+        
+          this.toast.show('Export helper not found. Implement shared.exportToExcel or add FileSaver logic.', 'danger', 'Error');
+
+        }
+      } catch (err) {
+        console.error('Export error', err);
+      
+        this.toast.show('Export failed. See console for details.', 'danger', 'Error');
+      }
+    });
+  }
 
   isNaN(value: any): boolean {
     return value !== null && value !== undefined && !isNaN(Number(value));
