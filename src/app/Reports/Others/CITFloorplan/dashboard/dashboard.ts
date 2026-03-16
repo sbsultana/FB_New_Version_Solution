@@ -1097,7 +1097,7 @@ selectedAgingTo: number | null = 0;
 
     const filters = [
       { name: 'Store:', values: storeValue },
-      { name: 'Deal Status :', values: this.clean(this.dealStatus).replace('Finalized', 'Closed or Sold') },
+      { name: 'Deal Status :', values: this.clean(this.dealStatus).replace('Finalized', 'Finalized') },
       { name: 'Sale Type :', values: this.clean(this.saleType) }
     ]
     // const ReportFilter = summarySheet.addRow(['Report Controls :']);

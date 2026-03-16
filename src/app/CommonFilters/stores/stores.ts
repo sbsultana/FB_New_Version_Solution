@@ -65,8 +65,10 @@ export class Stores {
   }
   getGroupBaseStores(id: any) {
     this.stores = this.comm.groupsandstores.filter((v: any) => v.sg_id == id)[0]?.Stores;
+    console.log(this.storeIds, 'Store IDs');
+    let singleid=this.storeIds
     this.storeIds = []
-    this.type == 'S' ? this.storeIds.push(this.stores[0].ID) : this.storeIds = this.stores.map(function (a: any) {
+    this.type == 'S' ? this.storeIds.push(singleid) : this.storeIds = this.stores.map(function (a: any) {
       return a.ID;
     });
     if (this.storeIds && this.storeIds.length == 1) {

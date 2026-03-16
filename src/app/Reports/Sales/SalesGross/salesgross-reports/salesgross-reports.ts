@@ -10,7 +10,7 @@ import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
 @Component({
   selector: 'app-salesgross-reports',
-  imports: [SharedModule, DateRangePicker, Stores,ToastContainer],
+  imports: [SharedModule, DateRangePicker, Stores, ToastContainer],
   templateUrl: './salesgross-reports.html',
   styleUrl: './salesgross-reports.scss'
 })
@@ -89,8 +89,9 @@ export class SalesgrossReports {
     { name: 'Sales Persons', code: 'SP' },
     { name: 'Sales Managers', code: 'SM' },
     { name: 'F&I Managers', code: 'FM' },
-
   ]
+
+
   Teams = 'SP'
   salesPersons: any = [];
   salesManagers: any = [];
@@ -98,7 +99,8 @@ export class SalesgrossReports {
   selectedSalespersonvalues: any = [];
   selectedSalesManagersvalues: any = [];
   selectedFiManagersvalues: any = [];
-
+  acquisitionsource: any = []
+  Acquisition: any = []
   overallSelectedpeople: any = 0
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -159,11 +161,13 @@ export class SalesgrossReports {
       this.selectedDataGrouping = this.datagrp;
     }
   }
-  constructor(private shared: Sharedservice, private datesSrvc: Setdates,private toast:ToastService) { }
+  constructor(private shared: Sharedservice, private datesSrvc: Setdates, private toast: ToastService) { }
 
   ngOnInit() {
     this.getDataGroupings();
     this.getGroups();
+    this.acquisitionsrc();
+
     this.getEmployees('SP', '2', '1', 'Bar');
     this.getEmployees('F', '2', '1', 'Bar');
     this.getEmployees('M', '2', '1', 'Bar');
@@ -192,19 +196,19 @@ export class SalesgrossReports {
               if (
                 ele.ARG_ID != '1' &&
                 ele.ARG_ID != '2' &&
-             
-           
+
+
                 ele.ARG_ID != '20' &&
                 ele.ARG_ID != '21' &&
-              
+
                 ele.ARG_ID != '3' &&
                 ele.ARG_ID != '4' &&
                 ele.ARG_ID != '5' &&
                 ele.ARG_ID != '6' &&
-             
+
                 ele.ARG_ID != '17' &&
 
-             
+
                 ele.ARG_ID != '25'
               ) {
                 ele.Active = 'N';
@@ -249,7 +253,7 @@ export class SalesgrossReports {
           this.selectedDataGrouping = this.datagrp;
           // // console.log(this.selectedDataGrouping);
         } else {
-     
+
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -261,7 +265,7 @@ export class SalesgrossReports {
   SelectedData(val: any) {
     if (val.state == false) {
       if (this.selectedDataGrouping.length >= 3) {
-  
+
         this.toast.show('Select up to 3 Filters only to Group your data', 'warning', 'Warning');
       } else {
         val.state = true;
@@ -276,7 +280,23 @@ export class SalesgrossReports {
     }
 
   }
+  acquisitionsrc() {
+    const obj = {}
+    this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetAcquisitionSourceList', obj).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.acquisitionsource = res.response
 
+        if (this.ngChanges.as[0] == "All") {
+          this.Acquisition = this.acquisitionsource.map(function (a: any) {
+            return a.ad_acquisition_source;
+          });
+        } else {
+          this.Acquisition = []
+          this.Acquisition = this.ngChanges.as
+        }
+      }
+    })
+  }
   teamsselection(e: any) {
     this.Teams = e;
     // // console.log(this.Teams,this.activePopover);
@@ -453,7 +473,7 @@ export class SalesgrossReports {
           this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
         } else {
-       
+
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -465,7 +485,7 @@ export class SalesgrossReports {
   // Report popup Code
   activePopover: number = -1;
   togglePopover(popoverIndex: number) {
-  
+
     if (this.activePopover === popoverIndex) {
       this.activePopover = -1;
     } else {
@@ -497,9 +517,9 @@ export class SalesgrossReports {
   scrollPosition = 0;
 
   getScrollPosition(event: any): void {
-    this.scrollPosition = event.target.scrollLeft ;
-    console.log(this.scrollPosition,event.target.scrollTop);
-    
+    this.scrollPosition = event.target.scrollLeft;
+    console.log(this.scrollPosition, event.target.scrollTop);
+
   }
   getGroups() {
     // console.log(this.shared.common.pageName, this.shared.common.groupsandstores);
@@ -668,12 +688,31 @@ export class SalesgrossReports {
       this.Transactorgl = [];
       this.Transactorgl.push(e);
     }
+    if (block == 'AS') {
+      if (e == 'All') {
+        if (this.Acquisition.length == this.acquisitionsource.length) {
+          this.Acquisition = []
+        } else {
+          this.Acquisition = this.acquisitionsource.map(function (a: any) {
+            return a.ad_acquisition_source;
+          });
+        }
+      }
+      else {
+        const index = this.Acquisition.findIndex((i: any) => i == e);
+        if (index >= 0) {
+          this.Acquisition.splice(index, 1);
+        } else {
+          this.Acquisition.push(e);
+        }
+      }
+    }
   }
   viewreport() {
     this.activePopover = -1
     let peoples = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
     let aqusrc: any = ['All']
-    if(!this.storeIds || this.storeIds.length === 0){
+    if (!this.storeIds || this.storeIds.length === 0) {
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -692,7 +731,7 @@ export class SalesgrossReports {
         'warning',
         'Warning'
       );
-     
+
     }
     else if (this.retailorlease.length == 0) {
       this.toast.show(
@@ -700,7 +739,7 @@ export class SalesgrossReports {
         'warning',
         'Warning'
       );
-     
+
     }
     else if (peoples == 0) {
       this.toast.show(
@@ -708,9 +747,11 @@ export class SalesgrossReports {
         'warning',
         'Warning'
       );
-      
+
     }
-  
+    else if (this.Acquisition.length == 0) {
+      this.toast.show('Please select atleast one Acquisition Source', 'warning', 'Warning');
+    }
     else {
       const data = {
         Reference: 'Sales Gross',
@@ -736,9 +777,9 @@ export class SalesgrossReports {
         dataGroupingvalues: this.selectedDataGrouping,
         dateType: this.DateType,
         reportTotal: this.reporttotal,
-        
+
         // gv: this.gridview,
-        // acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
+        acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
         groups: this.groupId,
         // otherstoreids: this.selectedotherstoreids
       };

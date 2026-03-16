@@ -41,6 +41,7 @@ export class Dashboard {
   target: any = [];
   source: any = [];
   includecharge: any = [];
+  
   pack: any = [];
   path1: any = 'store';
   path2: any = 'ad_dealtype';
@@ -57,7 +58,8 @@ export class Dashboard {
   groups: any = 0;
   acquisition: any = ['All'];
   otherstoreid: any = '';
-  selectedotherstoreids: any = ''
+  selectedotherstoreids: any = '';
+  actionType:any=''
   header: any = [
     {
       type: 'Bar',
@@ -99,8 +101,7 @@ export class Dashboard {
           localStorage.setItem('flag','M')    
       } else {
         if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-          console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);
-          
+          console.log(JSON.parse(localStorage.getItem('userInfo')!).user_Info);          
           this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
           this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         }
@@ -118,7 +119,7 @@ export class Dashboard {
         this.setDates('MTD')
         this.DateType = 'MTD'
       }
-      localStorage.setItem('stime', 'MTD')
+      // localStorage.setItem('stime', 'MTD')
       this.getPeopleList()
     }
   }
@@ -236,7 +237,7 @@ export class Dashboard {
       dealtype: this.dealType.toString(),
       saletype: this.saleType.toString(),
       dealstatus: this.dealStatus.toString(),
-      // AcquisitionSource: this.acquisition.toString() == 'All' ? '' : this.acquisition.toString(),
+      AcquisitionSource: this.acquisition.toString() == 'All' ? '' : this.acquisition.toString(),
       var1: this.path1,
       var2: this.path2,
       var3: this.path3,
@@ -935,8 +936,8 @@ export class Dashboard {
                 : data.obj.dataGroupingvalues[2].ARG_LABEL;
             this.groups = data.obj.groups;
             this.DateType = data.obj.dateType
-            // this.acquisition = data.obj.acquisition;
-            // this.selectedotherstoreids = data.obj.otherstoreids;
+            this.acquisition = data.obj.acquisition;
+            this.selectedotherstoreids = data.obj.otherstoreids;
           }
         } else {
           if (data.obj.header == 'Yes') {
@@ -1071,7 +1072,7 @@ export class Dashboard {
       { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
       { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
       { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ').replace('Rental', 'Rental/Loaner') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Closed or Sold') },
+      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked').replace('Finalized', 'Finalized') },
     ]
     // const ReportFilter = worksheet.addRow(['Report Controls :']);
     // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };

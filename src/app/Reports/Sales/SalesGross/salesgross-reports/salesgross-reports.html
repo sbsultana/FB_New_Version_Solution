@@ -151,7 +151,7 @@
 
         <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(1)">
-               Time Frame <span class="light-font"> {{displaytime}}</span>
+                Time Frame <span class="light-font"> {{displaytime}}</span>
                 <span class="arrow"></span></button>
             <div class="timeframe" *ngIf="activePopover === 1" [style.margin-left.px]="scrollPosition*-1">
                 <app-date-range-picker [Dates]="Dates" (updatedDates)="updatedDates($event)"></app-date-range-picker>
@@ -185,6 +185,40 @@
                                     <button class="btn btn-outline-primary store-button"
                                         [ngClass]="{'active':neworused.indexOf('C')>=0,'inactive':neworused.indexOf('C')<0}"
                                         (click)="multipleorsingle('NU','C')">Commercial Only
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(8)">Deal Status <span class="light-font">
+                    ( {{dealstatus.length ==
+                    1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ? 'None' :
+                    'Selected')}}
+                    {{ dealstatus.length
+                    > 1 ? dealstatus.length :'' }} )
+                </span>
+                <span class="arrow"></span></button>
+            <div class="reportstores-card my-2" *ngIf="activePopover === 8" [style.margin-left.px]="scrollPosition*-1">
+                <div class="row h-100">
+                    <div class="stores d-flex flex-column border-0">
+                        <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                            <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(3, auto);">
+                                <ng-container>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Delivered')>=0,'inactive':dealstatus.indexOf('Delivered')<0}"
+                                        (click)="multipleorsingle('DS','Delivered')"> Delivered
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Capped')>=0,'inactive':dealstatus.indexOf('Capped')<0}"
+                                        (click)="multipleorsingle('DS','Capped')">Booked
+                                    </button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0,'inactive':dealstatus.indexOf('Finalized')<0}"
+                                        (click)="multipleorsingle('DS','Finalized')"> Finalized
                                     </button>
                                 </ng-container>
                             </div>
@@ -290,7 +324,7 @@
                                     </button>
                                     <button class="btn btn-outline-primary store-button"
                                         [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0,'inactive':dealstatus.indexOf('Finalized')<0}"
-                                        (click)="multipleorsingle('DS','Finalized')"> Closed or Sold
+                                        (click)="multipleorsingle('DS','Finalized')"> Finalized
                                     </button>
                                 </ng-container>
                             </div>

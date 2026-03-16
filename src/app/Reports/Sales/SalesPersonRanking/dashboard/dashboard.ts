@@ -945,7 +945,7 @@ export class Dashboard {
       { name: 'Rank By:', values: this.storeorgroup == 'S' ? 'Store' : 'Group' },
       // { name: 'New/Used:', values: this.neworused || 'All' },
       { name: 'Deal Type:', values: this.retailorlease || 'All' },
-      { name: 'Deal Status:', values: this.dealStatus.toString().replace('Finalized' ,'Closed or Sold') || 'All' },
+      { name: 'Deal Status:', values: this.dealStatus.toString().replace('Finalized' ,'Finalized') || 'All' },
     ];
 
 

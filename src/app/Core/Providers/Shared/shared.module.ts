@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { NgbModal, NgbActiveModal,NgbTooltipModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerModule } from 'ngx-spinner';
 // import { ToastrModule } from 'ngx-toastr';
@@ -29,7 +29,8 @@ import { TimeConversionPipe } from '../pipes/timeconversion.pipe';
     DatePipe,
     NgbModal,
     NgbActiveModal,
-    FilterPipe
+    FilterPipe,
+    DecimalPipe
   ]
 })
 export class SharedModule {}

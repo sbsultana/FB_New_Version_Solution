@@ -1,1 +1,232 @@
-<p>dashboard works!</p>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown nocursor-pointer" >
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame<span class="light-font"> {{ displaytime }}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(8)">Deal Status <span class="light-font">
+                                ( {{dealstatus.length ==
+                                1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ? 'None' :
+                                'Selected')}}
+                                {{ dealstatus.length
+                                > 1 ? dealstatus.length :'' }} )
+                            </span>
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover === 8"
+                            >
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="store-columns flex-grow-1"
+                                            style="grid-template-rows: repeat(3, auto);">
+                                            <ng-container>
+                                                <button class="btn btn-outline-primary store-button"
+                                                    [ngClass]="{'active':dealstatus.indexOf('Delivered')>=0,'inactive':dealstatus.indexOf('Delivered')<0}"
+                                                    (click)="multipleorsingle('DS','Delivered')"> Delivered
+                                                </button>
+                                                <button class="btn btn-outline-primary store-button"
+                                                    [ngClass]="{'active':dealstatus.indexOf('Capped')>=0,'inactive':dealstatus.indexOf('Capped')<0}"
+                                                    (click)="multipleorsingle('DS','Capped')">Booked
+                                                </button>
+                                                <button class="btn btn-outline-primary store-button"
+                                                    [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0,'inactive':dealstatus.indexOf('Finalized')<0}"
+                                                    (click)="multipleorsingle('DS','Finalized')"> Finalized
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header UsedCarWholesale-tbl">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th colspan="6">
+                                <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
+                                        |date:'MMMM'}} </span> </span>&nbsp;&nbsp;
+                                <span>{{DupFromDate |date:'dd'}} <span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{DupToDate |date:'dd'}}<span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                        {{DupFromDate |
+                                        date:'yyyy'}}</span></span>
+                            </th>
+                        </tr>
+                        <tr>
+                            <!-- <th>Type</th>
+                            <th>Department</th> -->
+                            <th>Sub type Detail</th>
+                            <!-- <th>Account Description</th>
+                            <th>Account Type Raw</th> -->
+                            <th>Posting Amount</th>
+                            <th>Average</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="LendersData.length > 0; else ifNotShow">
+                        <ng-container *ngFor="let data of LendersData; let i = index">
+
+                            <tr (click)="expandorcollapse(i,data)"
+                                [ngStyle]="{'cursor' : i== LendersData.length -1 ? 'none' : 'pointer', 'pointer-events' :  i== LendersData.length -1 ? 'none' : 'visible'  }"
+                                [ngClass]="{'divBold' :i== LendersData.length -1}">
+
+                                <td class="text-start" style="cursor: pointer;">
+                                    <span class="d-flex justify-content-between">
+                                        {{i== LendersData.length -1 ? 'Totals' :
+                                        data['Subtype Detail'] || '-' }}&nbsp;&nbsp; <span
+                                            *ngIf="i != LendersData.length -1">({{ data.stat || '-' }})</span>
+                                        <span style="padding-left: 2rem;">
+                                            <i class="fa-solid fa-md text-end " aria-hidden="true"
+                                                *ngIf="i != LendersData.length -1"
+                                                [ngClass]="expanddataarray.indexOf(i) >= 0 ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                                        </span>
+                                    </span>
+
+
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(data['PostingAmount']) }">
+                                    <span class="d-flex justify-content-between">
+                                        $<span>{{ data['PostingAmount'] !== null && data['PostingAmount'] !== undefined
+                                            ?
+                                            (data['PostingAmount'] | number:'1.0-0') : '-' }}</span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(data['Avg']) }">
+                                    <span class="d-flex justify-content-between">
+                                        $<span>{{ data['Avg'] !== null && data['Avg'] !== undefined
+                                            ?
+                                            (data['Avg'] | number:'1.0-0') : '-' }}</span>
+                                    </span>
+                                </td>
+
+
+                            </tr>
+                            <ng-container *ngIf="expanddataarray.indexOf(i)>=0">
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="scorecard-single-header" style="max-height: 28vh;overflow: auto;">
+                                            <table class="table table-borderless mb-0">
+                                                <thead>
+                                                    <tr class="divBold tp-bx-shdw lightblue-bg">
+
+                                                        <td class="lft-bx-shdw"
+                                                            style="cursor: pointer;text-align: center;">
+                                                            Refer</td>
+                                                        <td> Control</td>
+                                                        <td class="text-center"> Description</td>
+                                                        <td style="cursor: pointer;text-align: center;">Posting Amount
+                                                        </td>
+                                                        <td class="rt-bx-shdw"
+                                                            style="cursor: pointer;text-align: center;">
+                                                            Accounting Date
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngIf="data.subData != undefined">
+                                                        <td colspan="5" *ngIf="data.subData.length == 0">
+                                                            <div class="loading">
+                                                                <div class="loader"></div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr *ngFor="let data2 of data.subData; let j = index"
+                                                        [ngClass]="{'btm-bx-shdw' : j == data.subData.length-1 }">
+
+                                                        <td class="lft-bx-shdw">
+                                                            <span style="white-space: nowrap;">{{ data2['refer'] || '-'
+                                                                }}</span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span style="white-space: nowrap;">{{ data2['ctrl'] || '-'
+                                                                }}</span>
+                                                        </td>
+                                                        <td class='text-start'>
+                                                            <span  style="white-space: nowrap;">{{
+                                                                data2['detaildescription']
+                                                                || '-'
+                                                                }}</span>
+                                                        </td>
+
+                                                        <td
+                                                            [ngClass]="{ negative: !inTheGreen(data2['PostingAmount']) }">
+                                                            <span class="d-flex justify-content-between">
+                                                                $<span>{{ data2['PostingAmount'] !== null &&
+                                                                    data2['PostingAmount'] !==
+                                                                    undefined
+                                                                    ?
+                                                                    (data2['PostingAmount'] | number:'1.0-0') : '-'
+                                                                    }}</span>
+                                                            </span>
+                                                        </td>
+
+                                                        <td class="rt-bx-shdw" style="text-align: center;">
+                                                            <span style="white-space: nowrap;">{{ data2.accountingdate ?
+                                                                (data2.accountingdate | date:'MM.dd.yyyy' ): '-'
+                                                                }}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </ng-container>
+
+                        </ng-container>
+                    </tbody>
+                    <ng-template #ifNotShow>
+                        <tr *ngIf="NoData != ''">
+
+                            <td colspan="3" *ngIf="NoData != ''"
+                                style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
+                                <label>{{NoData}}</label>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </table>
+            </div>
+        </div>
+    
+    </div>
+</main>
