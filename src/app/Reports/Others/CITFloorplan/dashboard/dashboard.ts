@@ -19,6 +19,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { TimeConversionPipe } from '../../../../Core/Providers/pipes/timeconversion.pipe';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import FileSaver from 'file-saver';
 // import { ToastrService } from 'ngx-toastr';
 
 // declare let require: any;
@@ -35,7 +36,7 @@ const EXCEL_EXTENSION = '.xlsx';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule, FilterPipe, TimeConversionPipe, Stores],
+  imports: [SharedModule, BsDatepickerModule, TimeConversionPipe, Stores],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss'],
 })
@@ -73,11 +74,15 @@ export class Dashboard implements OnInit {
   notesstage: any = [];
 
   // filter defaults
-  dealStatus: any = ['Booked', 'Finalized'];
+  dealStatus: any = ['Booked', 'Finalized', 'Delivered'];
   saleType: any = ['Retail', 'Fleet'];
+  tempPriorityFilter: any = ['All'];
   allordebit: any = 'dr';
   financeManagerId: any = '0';
-
+  priorityRecords: any = [];
+  priorityVisibility: boolean = false;
+  prioritycheck: boolean = false;
+  originalFloorPlanData: any[] = [];
   // header & widgets
   header: any = [
     {
@@ -132,7 +137,7 @@ export class Dashboard implements OnInit {
   Scrollpercent: any = 0;
   scrollCurrentposition: any = 0;
 
-  // --- merged report-component members ---
+  StoreVal: any = '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11';
   StoresIds: any = [];
 
   Performance: any = 'Load';
@@ -188,7 +193,7 @@ export class Dashboard implements OnInit {
     private elementRef: ElementRef,
     private renderer: Renderer2,
     private cdRef: ChangeDetectorRef,
-
+    private datepipe: DatePipe,
     public formatter: NgbDateParserFormatter,
     public toast: ToastService,
 
@@ -300,11 +305,10 @@ export class Dashboard implements OnInit {
         },
       ];
 
-      // if (this.storeIds != '') {
-      this.Getfloorplansdata();
-      this.getEmployees()
-
-      // }
+      if (this.storeIds != '') {
+        this.Getfloorplansdata();
+        this.getEmployees();
+      }
     }
 
     // listen window clicks for certain modal close behavior (from report component)
@@ -333,13 +337,13 @@ export class Dashboard implements OnInit {
   /* ------------------------------
      Core: Get floor plan / CIT data
      ------------------------------ */
-selectedAgingFrom: number | null = 0;
-selectedAgingTo: number | null = 0;
+  selectedAgingFrom: number | null = 0;
+  selectedAgingTo: number | null = 0;
   agingFilter: { min: number; max: number | null } | null = null;
   applyAgingFilter(min: number, max: number | null) {
     this.agingFilter = { min, max };
-      this.selectedAgingFrom = min;
-  this.selectedAgingTo = max;
+    this.selectedAgingFrom = min;
+    this.selectedAgingTo = max;
 
     console.log(this.agingFilter)
     this.Getfloorplansdata()
@@ -349,6 +353,7 @@ selectedAgingTo: number | null = 0;
     this.NoData = false;
     this.FloorPlanData = [];
     this.FloorPlanTotalData = [];
+    this.filteredFloorplanData = [];
     try { this.shared.spinner.show(); } catch { /* ignore */ }
 
     const obj = {
@@ -357,8 +362,9 @@ selectedAgingTo: number | null = 0;
       ValueType: this.allordebit && this.allordebit.toString ? (this.allordebit.toString() == 'all' ? '' : this.allordebit.toString()) : '',
       FIManagerID: this.financeManagerId,
       UserID: 0,
-      Aging_From: this.agingFilter?.min ?? null,
-      Aging_To: this.agingFilter?.max ?? null,
+      GetPriority: this.tempPriorityFilter && this.tempPriorityFilter.toString ? (this.tempPriorityFilter.toString() == 'All' ? '' : this.tempPriorityFilter.toString()) : '',
+      // Aging_From: this.agingFilter?.min ?? null,
+      // Aging_To: this.agingFilter?.max ?? null,
       // Retail_Fleet: this.saleType.toString(),
     };
 
@@ -391,7 +397,10 @@ selectedAgingTo: number | null = 0;
                 } catch { }
               }
             });
-
+            this.originalFloorPlanData = JSON.parse(
+              JSON.stringify(this.FloorPlanData)
+            );
+            this.filteredFloorplanData = this.FloorPlanData || [];
             this.NoData = this.FloorPlanData.length === 0;
           } else {
             this.NoData = true;
@@ -405,6 +414,316 @@ selectedAgingTo: number | null = 0;
         this.NoData = true;
       }
     );
+  }
+  ////////////////////////////////////////////Pagination Code////////////////////////////////////
+
+  searchText: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 100;
+  maxPageButtonsToShow: number = 5;
+  clickedPage: number | null = null;
+
+  filteredFloorplanData: any[] = [];
+  setFloorplanData() {
+    this.filteredFloorplanData = this.FloorPlanData || [];
+    this.currentPage = 1; // reset page
+  }
+  get filteredData() {
+
+    if (!this.searchText) {
+      return this.filteredFloorplanData;
+    }
+
+    const searchTerms = this.searchText
+      .split(',')
+      .map(term => term.trim().toLowerCase())
+      .filter(term => term.length > 0);
+
+    const filtered = this.filteredFloorplanData.filter((x: any) =>
+      searchTerms.some(term =>
+
+        x.AGE?.toString().toLowerCase().includes(term) ||
+        x.AgeDate?.toString().toLowerCase().includes(term) ||
+        x.Account?.toString().toLowerCase().includes(term) ||
+        x.Control?.toString().toLowerCase().includes(term) ||
+        x.Control2?.toString().toLowerCase().includes(term) ||
+
+        x.BalCIT?.toString().toLowerCase().includes(term) ||
+        x.BalFloorplan?.toString().toLowerCase().includes(term) ||
+
+        x.CustomerName?.toLowerCase().includes(term) ||
+        x.CustomerNumber?.toString().toLowerCase().includes(term) ||
+
+        x.store?.toLowerCase().includes(term) ||
+
+        x.StockNumner?.toString().toLowerCase().includes(term) ||
+        x.Deal?.toString().toLowerCase().includes(term) ||
+
+        x.Stage?.toLowerCase().includes(term) ||
+        x.FIManager?.toLowerCase().includes(term) ||
+        x.SalesManager?.toLowerCase().includes(term) ||
+        x.SP1?.toLowerCase().includes(term) ||
+
+        x.SaleType?.toLowerCase().includes(term) ||
+        x.DealType?.toLowerCase().includes(term) ||
+        x.DealStatus?.toLowerCase().includes(term) ||
+
+        x.BankName?.toLowerCase().includes(term) ||
+
+        x.VehicleYear?.toString().toLowerCase().includes(term) ||
+        x.VehicleMake?.toLowerCase().includes(term) ||
+        x.VehicleModel?.toLowerCase().includes(term) ||
+
+        x.DeliveryDate?.toString().toLowerCase().includes(term) ||
+        x.DateSale?.toString().toLowerCase().includes(term) ||
+        x.FundingDate?.toString().toLowerCase().includes(term) ||
+
+        x.trade1year?.toString().toLowerCase().includes(term) ||
+        x.trade1modelname?.toLowerCase().includes(term)
+
+      )
+    );
+
+    return filtered.sort((a: any, b: any) => {
+
+      const aIndex = searchTerms.findIndex(term =>
+        Object.values(a).join(' ').toLowerCase().includes(term)
+      );
+
+      const bIndex = searchTerms.findIndex(term =>
+        Object.values(b).join(' ').toLowerCase().includes(term)
+      );
+
+      return aIndex - bIndex;
+
+    });
+
+  }
+  sortColumn: string = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+  sortTable(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+    this.filteredFloorplanData.sort((a: any, b: any) => {
+      let valA = a[column];
+      let valB = b[column];
+      valA = valA ?? '';
+      valB = valB ?? '';
+      if (!isNaN(valA) && !isNaN(valB)) {
+        return this.sortDirection === 'asc'
+          ? valA - valB
+          : valB - valA;
+      }
+      return this.sortDirection === 'asc'
+        ? valA.toString().localeCompare(valB.toString())
+        : valB.toString().localeCompare(valA.toString());
+
+    });
+
+  }
+  getSortIcon(column: string) {
+    if (this.sortColumn !== column) return 'fa-sort';
+    return this.sortDirection === 'asc'
+      ? 'fa-sort-up'
+      : 'fa-sort-down';
+  }
+  get paginatedItems() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredData.slice(startIndex, endIndex);
+  }
+  onPageSizeChange() {
+    this.currentPage = 1;
+  }
+  getMaxPageNumber(): number {
+    return Math.ceil(this.filteredData.length / this.itemsPerPage);
+  }
+  nextPage() {
+    if (this.currentPage < this.getMaxPageNumber()) this.currentPage++;
+  }
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
+  }
+  goToFirstPage() {
+    this.currentPage = 1;
+  }
+
+  goToLastPage() {
+    this.currentPage = this.getMaxPageNumber();
+  }
+  getStartRecordIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage;
+  }
+  getEndRecordIndex(): number {
+    const endIndex = this.getStartRecordIndex() + this.itemsPerPage;
+    return endIndex > this.filteredData.length
+      ? this.filteredData.length
+      : endIndex;
+  }
+
+  get BalCITTotal(): number {
+    return this.filteredData.reduce((total, item) => {
+      return total + (parseFloat(item.BalCIT) || 0);
+    }, 0);
+  }
+
+  get BalFloorplanTotal(): number {
+    return this.filteredData.reduce((total, item) => {
+      return total + (parseFloat(item.BalFloorplan) || 0);
+    }, 0);
+  }
+  ////////////////////////////////////Pagination Code End////////////////////////////////////////////
+
+
+  priorityAction: 'Y' | 'N' | null = null;
+  selectedPriorityRecord: any = null;
+  previousHasPriority: 'Y' | 'N' | null = null;
+  priority(e: any, val: any, confirmtemplate: any, ref: any, refval: any) {
+    this.previousHasPriority = val.HasPriority;
+    console.log('previousHasPriority set to:', this.previousHasPriority);
+    this.selectedPriorityRecord = val;
+    if (ref == 'multi') {
+      if (this.priorityRecords.length == 0) {
+        alert('Please select atleast one record to prioritize');
+        const element = <HTMLInputElement>document.getElementById('Priority');
+        if (element) element.checked = false;
+      } else {
+        if (e.target.checked) {
+          this.priorityAction = 'Y';
+          this.priorityVisibility = true;
+          this.ngbmodalActive = this.ngbmodal.open(confirmtemplate, { size: 'sm', backdrop: 'static' });
+        }
+      }
+    } else {
+
+      if (e.target.checked) {
+        this.priorityAction = 'Y';
+        this.priorityVisibility = true;
+        this.priorityRecords.push(val);
+      } else {
+        this.priorityAction = 'N';
+
+        // Remove from array if exists
+        const index = this.priorityRecords.findIndex(
+          (list: any) => list.StockNumner === refval
+        );
+        if (index > -1) {
+          this.priorityRecords.splice(index, 1);
+        }
+
+        if (!e.target.checked && this.previousHasPriority == 'Y') {
+          // Open confirmation modal
+          this.ngbmodalActive = this.ngbmodal.open(confirmtemplate, {
+            size: 'sm',
+            backdrop: 'static'
+          });
+        }
+      }
+    }
+  }
+  confirmPriorityAction() {
+
+    if (this.priorityAction === 'Y') {
+      // ✅ Bulk / single PRIORITIZE
+      this.priorityAdd();
+      return;
+    }
+
+    // ❌ UNPRIORITIZE (single record)
+    const payload = {
+      schedulecontrolpriority: [
+        {
+          AS_ID: this.selectedPriorityRecord.storeid,
+          Account: this.selectedPriorityRecord.Account,
+          Scheduletype: 'CIT',
+          Control: this.selectedPriorityRecord.Control,
+          Stockno: this.selectedPriorityRecord.StockNumner,
+          Dealno: this.selectedPriorityRecord.Deal,
+          Custno: this.selectedPriorityRecord.CustomerNumber,
+          UserID: this.userid,
+          SetPriority: 'N'
+        }
+      ]
+    };
+
+    this.shared.api.postmethod('ReceivableExcludeControls/AddScheduleControlPriority', payload).subscribe(
+      (res: any) => {
+        if (res && res.status === 200) {
+          alert('Priority removed successfully');
+          (document.getElementById('closeadd') as HTMLInputElement)?.click();
+          this.onclose()
+          this.Getfloorplansdata();
+          this.prioritycheck = false;
+        } else {
+          alert('Failed to unprioritize');
+        }
+      },
+      () => {
+        alert('502 Bad Gateway Error');
+      }
+    );
+  }
+  priorityAdd() {
+    const payload = { schedulecontrolpriority: [] as any[] };
+
+    for (let i = 0; i < this.priorityRecords.length; i++) {
+      payload.schedulecontrolpriority.push({
+        AS_ID: this.priorityRecords[i].storeid,
+        Account: this.priorityRecords[i].Account,
+        Scheduletype: "CIT",
+        Control: this.priorityRecords[i].Control,
+        Stockno: this.priorityRecords[i].StockNumner,
+        Dealno: this.priorityRecords[i].Deal,
+        Custno: this.priorityRecords[i].CustomerNumber,
+        UserID: this.userid,
+        SetPriority: "Y"
+      });
+    }
+    if (payload.schedulecontrolpriority.length == 0) {
+      alert('Please select atleast one record to prioritize');
+      return;
+    }
+    this.shared.api.postmethod('ReceivableExcludeControls/AddScheduleControlPriority', payload).subscribe((res: any) => {
+      if (res && res.status == 200) {
+        alert('This control prioritized successfully');
+        (document.getElementById('closeadd') as HTMLInputElement)?.click();
+        this.onclose()
+        this.Getfloorplansdata();
+        this.prioritycheck = false;
+        this.priorityRecords = [];
+        this.priorityVisibility = false;
+      } else {
+        alert(res.status);
+        try { this.shared.spinner.hide(); } catch { }
+        this.NoData = true;
+      }
+    }, (error: any) => {
+      alert('502 Bad Gate Way Error');
+      try { this.shared.spinner.hide(); } catch { }
+      this.NoData = true;
+    });
+  }
+
+  currentCheckboxEvent: any = null;
+  previousPriorityState: boolean = false;
+  previousHeaderCheck: boolean = false;
+
+  onPriorityCancel(modal: any) {
+    this.FloorPlanData = JSON.parse(
+      JSON.stringify(this.originalFloorPlanData)
+    );
+
+    this.prioritycheck = false
+    this.priorityAction = null;
+    this.selectedPriorityRecord = null;
+    this.previousHasPriority = null;
+
+
+    modal.dismiss();
   }
 
   // -------------------------------------
@@ -474,7 +793,7 @@ selectedAgingTo: number | null = 0;
 
     this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: any) => {
       if (res && res.obj && res.obj.title == 'CIT' && res.obj.state == true) {
-        this.exportToExcel(); // merged export will create both sheets
+        //this.exportToExcel(); // merged export will create both sheets
       }
     });
 
@@ -561,135 +880,8 @@ selectedAgingTo: number | null = 0;
     if (this.excel) this.excel.unsubscribe();
   }
 
-  // Groups & Stores logic (merged from report)
-  // getGroups() {
-  //   if (this.comm && this.comm.groupsandstores) {
-  //     if (this.comm.groupsandstores.length > 0) {
-  //       this.groups = this.comm.groupsandstores.filter((val: any) => val.sg_id != '4');
-  //       this.groupsBindingData();
-  //     }
-  //   }
-  // }
-
-  // groupsBindingData() {
-  //   this.service.GetHeaderData().subscribe((res: any) => {
-  //     if (res && res.obj && res.obj.title == 'CIT' && this.Performance == 'Load') {
-  //       if (res.obj.groups != '' && res.obj.groups != '0') {
-  //         this.selectedGroups = [];
-  //         if (res.obj.groups.toString().indexOf(',') > 0) {
-  //           var result = res.obj.groups.split(',');
-  //           this.selectedGroups = result.map(function (x: any) { return parseInt(x, 10); });
-  //           this.AllGroups = this.selectedGroups.length == this.groups.length ? true : false;
-  //         } else {
-  //           this.selectedGroups.push(parseInt(res.obj.groups));
-  //           this.AllGroups = this.selectedGroups.length == this.groups.length ? true : false;
-  //         }
-  //         this.getGroupBaseStores(this.selectedGroups.toString());
-  //       }
-  //       if (res.obj.groups == '' || res.obj.groups == '0') {
-  //         this.selectedGroups = this.groups.map(function (a: any) { return a.sg_id; });
-  //         this.AllGroups = this.selectedGroups.length == this.groups.length ? true : false;
-  //         this.getGroupBaseStores(this.selectedGroups.toString());
-  //       }
-  //     }
-  //   });
-  // }
-
-  // getGroupBaseStores(id: any) {
-  //   this.spinnerLoader = true;
-  //   if (!this.comm || !this.comm.groupsandstores) {
-  //     this.stores = [];
-  //     this.spinnerLoader = false;
-  //     return;
-  //   }
-  //   this.stores = this.comm.groupsandstores.filter((v: any) => v.sg_id == id)[0]?.Stores || [];
-  //   this.spinnerLoader = false;
-  //   this.selectedstorevalues = this.stores.map((a: any) => a.ID);
-  //   if (this.groupstate == true) {
-  //     this.getEmployees('F', this.selectedstorevalues.toString(), '2', 'Bar');
-  //   }
-  //   this.AllStores = true;
-  //   this.service.GetHeaderData().subscribe((res: any) => {
-  //     if (res && res.obj && res.obj.title == 'CIT' && this.Performance == 'Load' && this.groupstate == false) {
-  //       if (res.obj.stores != '' && res.obj.stores != '0') {
-  //         this.selectedstorevalues = [];
-  //         var result = res.obj.stores.split(',');
-  //         this.selectedstorevalues = result.map(function (x: any) { return parseInt(x, 10); });
-  //         this.AllStores = this.selectedstorevalues.length == this.stores.length ? true : false;
-  //       }
-  //       if (res.obj.stores == '0') {
-  //         this.selectedstorevalues = this.stores.map(function (a: any) { return a.ID; });
-  //         this.AllStores = this.selectedstorevalues.length == this.stores.length ? true : false;
-  //       }
-  //       if (res.obj.stores == '') {
-  //         this.selectedstorevalues = [];
-  //         this.AllStores = false;
-  //       }
-  //       if (this.selectedstorevalues.length == 1 && this.stores.length > 0) {
-  //         this.storeName = this.stores.filter((val: any) => val.ID == this.selectedstorevalues.toString())[0]?.storename;
-  //       }
-  //       this.groupName = this.groups.filter((val: any) => val.sg_id == this.selectedGroups[0])[0]?.sg_name;
-  //     }
-  //   });
-  // }
-
-  // selectedstoreToggle(e: any) {
-  //   const index = this.selectedstorevalues.findIndex((i: any) => i == e.ID);
-  //   if (index >= 0) {
-  //     this.selectedstorevalues.splice(index, 1);
-  //     this.AllStores = false;
-  //   } else {
-  //     this.selectedstorevalues.push(e.ID);
-  //     this.AllStores = (this.selectedstorevalues.length === this.stores.length);
-  //   }
-  //   if (this.selectedstorevalues.length == 1) {
-  //     this.storeName = this.stores.filter((val: any) => val.ID == this.selectedstorevalues.toString())[0]?.storename;
-  //   }
-  //   this.getEmployees('F', this.selectedstorevalues.toString(), '2', '');
-  // }
-
-  // allstores() {
-  //   this.AllStores = !this.AllStores;
-  //   if (this.AllStores == true) {
-  //     this.selectedstorevalues = this.stores.map(function (a: any) { return a.ID; });
-  //   } else {
-  //     this.selectedstorevalues = [];
-  //   }
-  //   this.getEmployees('F', this.selectedstorevalues.toString(), '2', '');
-  // }
-
-  // allgroups() {
-  //   this.groupstate = true;
-  //   this.AllGroups = !this.AllGroups;
-  //   if (this.AllGroups == true) {
-  //     this.selectedGroups = this.groups.map(function (a: any) { return a.sg_id; });
-  //     this.getGroupBaseStores(this.selectedGroups);
-  //   } else {
-  //     this.selectedGroups = [];
-  //     this.stores = [];
-  //     this.selectedstorevalues = [];
-  //     this.AllStores = false;
-  //   }
-  // }
-
-  // individualgroups(e: any) {
-  //   this.groupstate = true;
-  //   const index = this.selectedGroups.findIndex((i: any) => i == e.sg_id);
-  //   if (index >= 0) {
-  //     // ignore remove per original logic
-  //   } else {
-  //     this.selectedGroups = [];
-  //     this.selectedGroups.push(e.sg_id);
-  //     this.groupName = this.groups.filter((val: any) => val.sg_id == this.selectedGroups[0])[0]?.sg_name;
-  //     this.getGroupBaseStores(this.selectedGroups.toString());
-  //     this.AllGroups = (this.selectedGroups.length === this.groups.length);
-  //   }
-  // }
 
   multipleorsingle(ref: any, e: any) {
-
-
-
     if (ref == 'DS') {
       const index = this.dealStatus.findIndex((i: any) => i == e);
       if (index >= 0) {
@@ -698,7 +890,6 @@ selectedAgingTo: number | null = 0;
         this.dealStatus.push(e);
       }
     }
-
     if (ref == 'ST') {
       const index = this.saleType.findIndex((i: any) => i == e);
       if (index >= 0) {
@@ -707,12 +898,14 @@ selectedAgingTo: number | null = 0;
         this.saleType.push(e);
       }
     }
+    if (ref == 'PT') {
+      this.tempPriorityFilter = e;
+    }
   }
 
 
   viewmoreAction(fp: any) {
     if (!fp.Notes) return;
-
     if (fp.Notesstate === '+') {
       fp.Notesstate = '-';
       fp.duplicateNotes = [...fp.Notes]; // full list (spread = new reference)
@@ -720,8 +913,7 @@ selectedAgingTo: number | null = 0;
       fp.Notesstate = '+';
       fp.duplicateNotes = fp.Notes.slice(0, 3); // first 3
     }
-
-    this.cdRef.detectChanges(); // ensure immediate UI update
+    this.cdRef.detectChanges();
   }
   viewDeal(dealData: any) {
     // const modalRef = this.ngbmodal.open(DealRecapComponent, { size: 'md', windowClass: 'compModal' });
@@ -735,7 +927,7 @@ selectedAgingTo: number | null = 0;
 
   getEmployees(val?: any, ids?: any, count?: any, bar?: any) {
     const obj = {
-      AS_ID: 2,
+      AS_ID: this.StoreVal,
       type: 'F',
     };
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
@@ -743,33 +935,22 @@ selectedAgingTo: number | null = 0;
         if (res && res.status == 200) {
           // if (val == 'F') {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
-          this.selectedFiManagersvalues = this.financeManager.map(function (a: any) { return a.FiId; });
+          this.selectedFiManagersvalues = this.financeManager.map(function (a: any) {
+            return a.FiId;
+          });
 
-          // if (bar == 'Bar') {
-          //   if (this.employeeschanges != '') {
-          //     let fiids = (this.employeeschanges || '').toString().split(',');
-          //     this.selectedFiManagersvalues = fiids;
-          //   }
-          //   if (this.employeeschanges == '0' || this.employeeschanges == 0) {
-          //     this.selectedFiManagersvalues = this.financeManager.map(function (a: any) { return a.FiId; });
-          //   }
-          //   if (this.employeeschanges == '') {
-          //     this.selectedFiManagersvalues = [];
-          //   }
-          // }
-          // }
         } else {
-   
-          this.toast.show('Invalid Details', 'danger', 'Error');
+          alert('Invalid Details');
         }
       },
-      (error: any) => { /* ignore console errors */ }
+      (error: any) => {
+      },
     );
   }
-
   employees(block: any, e: any, ename?: any) {
-    if (block == 'FM') {
+    if (block === 'FM') {
       const index = this.selectedFiManagersvalues.findIndex((i: any) => i == e);
+
       if (index >= 0) {
         this.selectedFiManagersvalues.splice(index, 1);
       } else {
@@ -779,13 +960,17 @@ selectedAgingTo: number | null = 0;
       if (index1 >= 0) {
         this.selectedFiManagersname = ename;
       }
+
+      return;
     }
-    if (block == 'AllFM') {
-      if (this.selectedFiManagersvalues.length == this.financeManager.length) {
+    if (block === 'AllFM') {
+      if (e === 0) {
+        this.selectedFiManagersvalues = this.financeManager.map((fm: any) => fm.FiId);
+      } else if (e === 1) {
         this.selectedFiManagersvalues = [];
-      } else {
-        this.selectedFiManagersvalues = this.financeManager.map(function (a: any) { return a.FiId; });
       }
+
+      return;
     }
   }
 
@@ -807,9 +992,11 @@ selectedAgingTo: number | null = 0;
 
     this.dealStatus = this.dealStatus;
     this.saleType = this.saleType;
-    this.financeManagerId = this.selectedFiManagersvalues.length == this.financeManager.length
-      ? '0'
-      : this.selectedFiManagersvalues.toString()
+    ((this.groups = this.groups),
+      (this.financeManagerId =
+        this.selectedFiManagersvalues.length == this.financeManager.length
+          ? '0'
+          : this.selectedFiManagersvalues.toString()));
     this.Getfloorplansdata();
   }
 
@@ -843,7 +1030,7 @@ selectedAgingTo: number | null = 0;
 
   save() {
     if (this.notesStageText == '') {
-    
+
       this.toast.show('Please enter notes', 'warning', 'Warning');
       return;
     }
@@ -859,14 +1046,14 @@ selectedAgingTo: number | null = 0;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'AddScheduleNotesAction', obj).subscribe((res: any) => {
       if (res && res.status == 200) {
         try { this.shared.spinner.hide(); } catch { }
-        
+
         this.toast.show('Notes Added Successfully', 'success', 'Success');
         this.callLoadingState = 'ANS';
         document.getElementById('close')?.click();
         this.onclose();
         this.commentsVisibility = true;
 
-        const userName =JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.fullName;
+        const userName = JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.fullName;
         const curDate = new Date();
         let stageText = '';
         let nts = '';
@@ -910,7 +1097,7 @@ selectedAgingTo: number | null = 0;
 
         this.cdRef.detectChanges(); // ✅ Force view refresh
       } else {
-    
+
         this.toast.show('Something went wrong, please try again.', 'danger', 'Error');
       }
     });
@@ -923,7 +1110,7 @@ selectedAgingTo: number | null = 0;
 
     if (ref == 'multi') {
       if (this.hideRecords.length == 0) {
-        
+
         this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
         const element = <HTMLInputElement>document.getElementById('symbol');
         if (element) element.checked = false;
@@ -964,14 +1151,14 @@ selectedAgingTo: number | null = 0;
       });
     }
     if (this.FinalArray.length == 0) {
-      
+
       this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
       return;
     }
     const obj = { receivableexcludecontrol: this.FinalArray };
     this.shared.api.postmethod('ReceivableExcludeControls', obj).subscribe((res: any) => {
       if (res && res.status == 200) {
-        
+
         this.toast.show('This control hidden successfully', 'success', 'Success');
         (document.getElementById('closeadd') as HTMLInputElement)?.click();
         this.onclose()
@@ -979,13 +1166,13 @@ selectedAgingTo: number | null = 0;
         this.hideRecords = [];
         this.hideVisibility = false;
       } else {
-       
+
         this.toast.show(res.status, 'danger', 'Error');
         try { this.shared.spinner.hide(); } catch { }
         this.NoData = true;
       }
     }, (error: any) => {
-      
+
       this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
       try { this.shared.spinner.hide(); } catch { }
       this.NoData = true;
@@ -1047,7 +1234,7 @@ selectedAgingTo: number | null = 0;
   openComments() {
     this.commentsVisibility = !this.commentsVisibility;
   }
-
+  index = '';
   clean(value: any) {
     if (Array.isArray(value)) {
       return value.join(', ');

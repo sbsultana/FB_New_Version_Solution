@@ -29,6 +29,7 @@ export const routes: Routes = [
   { path: 'RetailGrossGroup', loadComponent: () => import('./Reports/Accounting/RetailGrossGroup/dashboard/dashboard').then(m => m.Dashboard) },
 
 
+
   // SALES BLOCK
   { path: 'SalesGross', loadComponent: () => import('./Reports/Sales/SalesGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SalesGrossManager', loadComponent: () => import('./Reports/Sales/SalesGrossManager/dashboard/dashboard').then(m => m.Dashboard) },
@@ -57,12 +58,30 @@ export const routes: Routes = [
   { path: 'ServiceGross', loadComponent: () => import('./Reports/Services/ServiceGross/dashboard/dashboard').then(m => m.Dashboard) },
 
   // OTHERS
-  { path: 'IncomeBudgetForecast', loadComponent: () => import('./Reports/Others/IncomeBudgetForecast/dashboard/dashboard').then(m => m.Dashboard) },
+
+  { path: 'Receivables', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'BookedDeals', loadComponent: () => import('./Reports/Others/BookedDeals/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'CIT', loadComponent: () => import('./Reports/Others/CITFloorplan/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'WarrantyReceivables', loadComponent: () => import('./Reports/Others/WarrantyReceivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'VehicleReceivables', loadComponent: () => import('./Reports/Others/VehicleReceivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FactoryIncentiveReceivables', loadComponent: () => import('./Reports/Others/FactoryIncentiveReceivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'Wholesale', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FinanceReserve', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'Employee', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'OpenAccountReceivables', loadComponent: () => import('./Reports/Others/OpenAccountsReceivables/dashboard/dashboard').then(m => m.Dashboard) },
+
+  { path: 'Liabilities', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'NewFlooring', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'RentalInventory', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'TT&L', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'LienPayoffs', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'WeOwe', loadComponent: () => import('./Reports/Others/Liabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FinanceProductLiabilities', loadComponent: () => import('./Reports/Others/FinanceProductLiabilities/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'TitleTracking', loadComponent: () => import('./Reports/Others/TitleTracking/dashboard/dashboard').then(m => m.Dashboard) },
+
   { path: 'FinanceReserveRecon', loadComponent: () => import('./Reports/Others/FinaceReserveReconReport/dashboard/dashboard').then(m => m.Dashboard) },
-
   { path: 'CollisionCenter', loadComponent: () => import('./Reports/Others/CollisionCenter/dashboard/dashboard').then(m => m.Dashboard) },
-
+  { path: 'IncomeBudgetForecast', loadComponent: () => import('./Reports/Others/IncomeBudgetForecast/dashboard/dashboard').then(m => m.Dashboard) },
   // parts
 
   { path: 'PartsAging', loadComponent: () => import('./Reports/Parts/PartsAging/dashboard/dashboard').then(m => m.Dashboard) },

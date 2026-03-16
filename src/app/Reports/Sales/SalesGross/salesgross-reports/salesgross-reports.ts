@@ -104,7 +104,7 @@ export class SalesgrossReports {
   overallSelectedpeople: any = 0
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe , .reportpeople-card');
     if (!clickedInside) {
       this.activePopover = -1;
     }

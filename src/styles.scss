@@ -2518,10 +2518,122 @@ select:focus {
 //////////////////////////////////////////Details Popup System//////////////////////////////////////
 
 .recap {
-  border-radius: 15px;
+  border-radius: 15px !important;
   background: #F3F6FF;
-  // background: #FFF;
+  font-family: "Roboto";
   border-right: none;
+
+  /* Typography */
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #000;
+
+    span {
+      font-weight: 600;
+    }
+  }
+
+  h5 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: capitalize;
+    color: #000;
+  }
+
+  h4 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+    color: #000;
+  }
+
+  h3 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #000;
+
+    span {
+      font-weight: 600;
+    }
+  }
+
+  h6 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: #0554ef;
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+
+    span {
+      font-size: 0.6rem;
+      color: #000;
+      margin-left: 0.3rem;
+    }
+  }
+
+  /* Note block */
+
+  .noteblock p {
+    font-size: 1rem;
+    color: #000;
+    margin: 0;
+  }
+
+  /* Inputs */
+
+  .input-field {
+    min-height: 2rem;
+    padding: 0.475rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 0.5px solid #D9E7FF;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    color: #18181b;
+  }
+
+  textarea::placeholder {
+    color: #a5a5a5;
+  }
+
+  /* Buttons */
+
+  .editbtn {
+    background-color: #0444bd;
+    border: 2px solid #0444bd;
+    color: #c6dbff;
+    padding: 6px 24px;
+    font-family: "RobotoMedium";
+    font-size: 0.875rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-radius: 50px;
+      cursor: pointer;
+    }
+  }
+
+  .cancelbtn {
+    background: none !important;
+    color: #0444bd;
+    border: 2px solid #0444bd;
+    padding: 6px 24px;
+    font-family: "RobotoMedium";
+    font-size: 0.875rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-radius: 50px;
+      cursor: pointer;
+    }
+  }
+
+  /* Store Logo */
 
   .store_logo {
     img {
@@ -2533,110 +2645,33 @@ select:focus {
 
     h1 {
       font-size: 0.9rem;
-      font-family: "Roboto";
       font-weight: 600;
       color: #000;
-      // margin: 0 1rem;
     }
   }
+
+  /* Divider */
 
   .bdr-btm {
     position: relative;
     height: 20px;
-    /* Adjust height as needed */
-  }
 
-  .bdr-btm::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 10px;
-    transform: translateX(-50%);
-    width: 100%;
-    border-bottom: 2px solid #cdcdcd;
-    border-radius: 10px;
-  }
-
-  h6 {
-    font-size: 0.75rem;
-    font-family: "Roboto";
-    font-weight: 400;
-    text-transform: capitalize;
-    color: #0554ef;
-    align-items: center;
-    display: flex;
-    // justify-content: end;
-    text-align: right;
-
-    span {
-      font-size: 0.6rem;
-      font-family: "Roboto";
-      font-weight: 400;
-      text-transform: capitalize;
-      color: #000;
-      margin-left: 0.3rem !important;
-    }
-
-    h5 {
-      margin-left: 0.3rem !important;
-      text-align: left;
-    }
-
-    .mail {
-      text-transform: none !important;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      width: 100%;
+      border-bottom: 2px solid #cdcdcd;
+      border-radius: 10px;
     }
   }
 
-  h5 {
-    font-size: 0.75rem;
-    font-family: "Roboto";
-    font-weight: 400;
-
-    text-transform: capitalize;
-    color: #000;
-  }
-
-  h4 {
-    font-size: 0.8rem;
-    font-family: "Roboto";
-    font-weight: 700;
-
-    text-transform: capitalize;
-    color: #000;
-  }
-
-  h3 {
-    font-size: 0.75rem;
-    font-family: "Roboto";
-    font-weight: 400;
-
-    text-transform: capitalize;
-    color: #000;
-
-    span {
-      font-family: "Roboto";
-      font-weight: 600;
-
-    }
-  }
-
-  h2 {
-    font-size: 1rem;
-    font-family: "Roboto";
-    font-weight: 400;
-
-    text-transform: capitalize;
-    color: #000;
-
-    span {
-      font-family: "Roboto";
-      font-weight: 600;
-
-    }
-  }
+  /* Details card */
 
   .details {
-    background-color: #fff;
+    background: #fff;
     border-radius: 15px;
     margin-bottom: 1rem;
 
@@ -2648,40 +2683,25 @@ select:focus {
       background: #0554ef;
       border-radius: 15px 15px 0 0;
       color: #fff;
-      font-family: "Roboto";
       font-weight: 600;
       font-size: 0.875rem;
       padding: .2rem 1rem;
     }
 
     span {
-      font-family: "Roboto";
-      font-weight: 400;
       font-size: 1rem;
       color: #000;
     }
 
     p {
-      font-family: "Roboto";
-      font-weight: 400;
       font-size: .875rem;
       color: #000;
     }
-
-    h6 {
-      font-size: .875rem;
-      font-family: "Roboto";
-      font-weight: 400;
-      text-transform: capitalize;
-      color: #0554ef;
-      align-items: center;
-      display: flex;
-      // justify-content: end;
-      text-align: right;
-    }
   }
-
 }
+
+
+
 
 //////////////////////////////////////////Report System//////////////////////////////////////
 
