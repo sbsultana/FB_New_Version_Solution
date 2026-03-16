@@ -108,7 +108,7 @@ export class Dashboard {
     public spinner: NgxSpinnerService, private Api: Api, private ngbmodal: NgbModal,
   ) {
     this.solutionurl = this.shared.api;
-    this.shared.setTitle('Lender Summary');
+    this.shared.setTitle('PA Lender Report');
     if (typeof window !== 'undefined') {
       if (localStorage.getItem('flag') == 'V') {
         this.storeIds = [];
@@ -147,10 +147,10 @@ export class Dashboard {
       localStorage.setItem('stime', 'MTD')
 
 
-      this.shared.setTitle(this.shared.common.titleName + '-Lender Summary');
+      this.shared.setTitle(this.shared.common.titleName + '-PA Lender Report');
       // if (localStorage.getItem('Fav') != 'Y') {
       const data = {
-        title: 'Lender Summary',
+        title: 'PA Lender Report',
         stores: this.storeIds,
         datetype: this.DateType,
         fromdate: this.FromDate,
@@ -354,7 +354,7 @@ export class Dashboard {
   SPRstate: any;
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
-      if (this.comm.pageName == 'Lender Summary') {
+      if (this.comm.pageName == 'PA Lender Report') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           // this.groupId = this.ngChanges.groups;
@@ -369,12 +369,12 @@ export class Dashboard {
     })
     this.shared.api.GetReportOpening().subscribe((res) => {
       // // console.log(res);
-      if (res.obj.Module == 'Lender Summary') {
+      if (res.obj.Module == 'PA Lender Report') {
         document.getElementById('report')?.click();
       }
     });
     this.shared.api.GetReports().subscribe((data) => {
-      if (data.obj.Reference == 'Lender Summary') {
+      if (data.obj.Reference == 'PA Lender Report') {
         if (data.obj.header == undefined) {
           this.storeIds = data.obj.storeValues;
           this.groups = data.obj.groups;
@@ -399,7 +399,7 @@ export class Dashboard {
           }
         }
         const headerdata = {
-          title: 'Lender Summary',
+          title: 'PA Lender Report',
 
           stores: this.storeIds,
           datetype: this.dateType,
@@ -423,7 +423,7 @@ export class Dashboard {
     });
     this.shared.api.getExportToExcelAllReports().subscribe((res) => {
       this.SPRstate = res.obj.state;
-      if (res.obj.title == 'Lender Summary') {
+      if (res.obj.title == 'PA Lender Report') {
         if (res.obj.state == true) {
           // this.exportToExcel();
         }
@@ -431,7 +431,7 @@ export class Dashboard {
     });
 
     this.shared.api.getExportToPrintAllReports().subscribe((res) => {
-      if (res.obj.title == 'Lender Summary') {
+      if (res.obj.title == 'PA Lender Report') {
         if (res.obj.statePrint == true) {
           // this.GetPrintData();
         }
@@ -439,14 +439,14 @@ export class Dashboard {
     });
 
     this.shared.api.getExportToPDFAllReports().subscribe((res) => {
-      if (res.obj.title == 'Lender Summary') {
+      if (res.obj.title == 'PA Lender Report') {
         if (res.obj.statePDF == true) {
           // this.generatePDF();
         }
       }
     });
     this.shared.api.getExportToEmailPDFAllReports().subscribe((res) => {
-      if (res.obj.title == 'Lender Summary') {
+      if (res.obj.title == 'PA Lender Report') {
         if (res.obj.stateEmailPdf == true) {
           // this.sendEmailData(res.obj.Email, res.obj.notes, res.obj.from);
         }
@@ -664,7 +664,7 @@ export class Dashboard {
     }
     else {
       const data = {
-        Reference: 'Lender Summary',
+        Reference: 'PA Lender Report',
         FromDate: this.FromDate,
         ToDate: this.ToDate,
         storeValues: this.storeIds.toString(),

@@ -1,20 +1,11 @@
-.GLLookup-tbl {
 
-    // width: fit-content !important;
-    th:nth-child(1),
-
-    td:nth-child(1) {
-        box-shadow:
-            inset 0 0.4px 0 0 #e0edff,
-            inset -3px 0 0 0 #e0edff,
-            inset 0 -0.4px 0 0 #e0edff,
-            inset 0.4px 0 0 0 #e0edff;
-    }
-}
   .negative {
     color: red;
   }
 
+  .acct-no::after{
+    display: none;
+  }
   /////////////////////////////////////DATE PICKER SCSS////////////////////////////////////
   ::ng-deep bs-daterangepicker-container {
     z-index: 1080;

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="reports-bar">
                 <div class="filter-dropdowns">
-                    <div class="dropdown nocursor-pointer" >
+                    <div class="dropdown nocursor-pointer">
                         <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
                                 {{storecount}}
                                 {{storedisplayname}} )</span>
@@ -18,7 +18,7 @@
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
-                            Time Frame<span class="light-font"> {{ displaytime }}</span>
+                            Time Frame <span class="light-font"> {{ displaytime }}</span>
                             <span class="arrow"></span></button>
                         <div class="timeframe" *ngIf="activePopover === 1">
                             <app-date-range-picker [Dates]="Dates"
@@ -35,8 +35,7 @@
                                 > 1 ? dealstatus.length :'' }} )
                             </span>
                             <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" *ngIf="activePopover === 8"
-                            >
+                        <div class="reportstores-card my-2" *ngIf="activePopover === 8">
                             <div class="row h-100">
                                 <div class="stores d-flex flex-column border-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
@@ -69,11 +68,11 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header UsedCarWholesale-tbl">
+            <div class="scorecard-double-header UsedCarWholesale-tbl w-75">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th colspan="6">
+                            <th colspan="6" class="boxshadow-none">
                                 <span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
@@ -90,11 +89,7 @@
                             </th>
                         </tr>
                         <tr>
-                            <!-- <th>Type</th>
-                            <th>Department</th> -->
                             <th>Sub type Detail</th>
-                            <!-- <th>Account Description</th>
-                            <th>Account Type Raw</th> -->
                             <th>Posting Amount</th>
                             <th>Average</th>
                         </tr>
@@ -108,11 +103,12 @@
 
                                 <td class="text-start" style="cursor: pointer;">
                                     <span class="d-flex justify-content-between">
-                                        {{i== LendersData.length -1 ? 'Totals' :
-                                        data['Subtype Detail'] || '-' }}&nbsp;&nbsp; <span
-                                            *ngIf="i != LendersData.length -1">({{ data.stat || '-' }})</span>
-                                        <span style="padding-left: 2rem;">
-                                            <i class="fa-solid fa-md text-end " aria-hidden="true"
+                                        <span> {{i== LendersData.length -1 ? 'Totals' :
+                                            data['Subtype Detail'] || '-' }}&nbsp;&nbsp; <span
+                                                *ngIf="i != LendersData.length -1">({{ data.stat || '-'
+                                                }})</span></span>
+                                        <span>
+                                            <i class="fa-solid fa-md text-end pe-3" aria-hidden="true"
                                                 *ngIf="i != LendersData.length -1"
                                                 [ngClass]="expanddataarray.indexOf(i) >= 0 ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                                         </span>
@@ -140,13 +136,20 @@
                             </tr>
                             <ng-container *ngIf="expanddataarray.indexOf(i)>=0">
                                 <tr>
-                                    <td colspan="3">
-                                        <div class="scorecard-single-header" style="max-height: 28vh;overflow: auto;">
-                                            <table class="table table-borderless mb-0">
+                                    <td colspan="3" class="p-2 boxshadow-none">
+                                        <div *ngIf="data.subData != undefined">
+                                            <div *ngIf="data.subData.length == 0"
+                                                class="graph-loader d-flex align-items-center justify-content-center">
+                                                <div class="spinner-border text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="scorecard-single-header" style="max-height: 30vh;overflow: auto;">
+                                            <table class="table table-borderless mb-0 w-100">
                                                 <thead>
                                                     <tr class="divBold tp-bx-shdw lightblue-bg">
-
-                                                        <td class="lft-bx-shdw"
+                                                        <td class="lft-bx-shdw boxshadow-none"
                                                             style="cursor: pointer;text-align: center;">
                                                             Refer</td>
                                                         <td> Control</td>
@@ -160,17 +163,10 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngIf="data.subData != undefined">
-                                                        <td colspan="5" *ngIf="data.subData.length == 0">
-                                                            <div class="loading">
-                                                                <div class="loader"></div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
                                                     <tr *ngFor="let data2 of data.subData; let j = index"
                                                         [ngClass]="{'btm-bx-shdw' : j == data.subData.length-1 }">
 
-                                                        <td class="lft-bx-shdw">
+                                                        <td class="lft-bx-shdw boxshadow-none">
                                                             <span style="white-space: nowrap;">{{ data2['refer'] || '-'
                                                                 }}</span>
                                                         </td>
@@ -180,7 +176,7 @@
                                                                 }}</span>
                                                         </td>
                                                         <td class='text-start'>
-                                                            <span  style="white-space: nowrap;">{{
+                                                            <span style="white-space: nowrap;">{{
                                                                 data2['detaildescription']
                                                                 || '-'
                                                                 }}</span>
@@ -227,6 +223,6 @@
                 </table>
             </div>
         </div>
-    
+
     </div>
 </main>
