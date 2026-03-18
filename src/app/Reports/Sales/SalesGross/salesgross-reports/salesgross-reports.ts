@@ -53,37 +53,34 @@ export class SalesgrossReports {
 
 
   selectedDataGrouping: any = [];
-  GroupingDetails: any = [];
-  dataGrouping: any = [];
-  datagrp: any = [];
-  Groupingcols = [
-    { id: 1, columnname: 'store' },
-    { id: 2, columnname: 'ad_dealtype' },
-    { id: 3, columnname: 'ad_dealtype2' },
-    { id: 4, columnname: 'salesperson' },
-    { id: 5, columnname: 'fimanager' },
-    { id: 6, columnname: 'salesmanager' },
-    { id: 16, columnname: 'ad_Lender' },
-    { id: 17, columnname: 'ad_dealstatus' },
-    { id: 19, columnname: 'ad_Year' },
-    { id: 24, columnname: 'ad_styleid' },
-    { id: 25, columnname: 'ad_Month' },
-
-    { id: 7, columnname: '' },
-    { id: 8, columnname: '' },
-    { id: 9, columnname: '' },
-    { id: 10, columnname: 'ad_custzip' },
-    { id: 11, columnname: 'ad_custstate' },
-    { id: 12, columnname: 'ad_custAge' },
-    { id: 13, columnname: '' },
-    { id: 14, columnname: '' },
-    { id: 15, columnname: '' },
-    { id: 18, columnname: '' },
-    { id: 20, columnname: 'ad_make' },
-    { id: 21, columnname: 'ad_model' },
-    { id: 22, columnname: '' },
-    { id: 23, columnname: 'ad_trim' },
-  ];
+  dataGrouping: any = [
+    { "ARG_ID": 1, "ARG_LABEL": "Store", "ARG_SEQ": 1, "columnname": "store", "Active": 'Y' },
+    { "ARG_ID": 2, "ARG_LABEL": "New/Used", "ARG_SEQ": 2, "columnname": "ad_dealtype", "Active": 'Y' },
+    { "ARG_ID": 3, "ARG_LABEL": "Sale Type", "ARG_SEQ": 3, "columnname": "ad_dealtype2", "Active": 'Y' },
+    { "ARG_ID": 15, "ARG_LABEL": "Funding Type", "ARG_SEQ": 4, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 16, "ARG_LABEL": "Lender", "ARG_SEQ": 5, "columnname": "ad_Lender", "Active": 'Y' },
+    { "ARG_ID": 17, "ARG_LABEL": "Deal Status", "ARG_SEQ": 6, "columnname": "ad_dealstatus", "Active": 'Y' },
+    { "ARG_ID": 18, "ARG_LABEL": "Purchase/Trade", "ARG_SEQ": 7, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 19, "ARG_LABEL": "Year", "ARG_SEQ": 8, "columnname": "ad_Year", "Active": 'Y' },
+    { "ARG_ID": 20, "ARG_LABEL": "Make", "ARG_SEQ": 9, "columnname": "ad_make", "Active": 'Y' },
+    { "ARG_ID": 21, "ARG_LABEL": "Model", "ARG_SEQ": 10, "columnname": "ad_model", "Active": 'Y' },
+    { "ARG_ID": 22, "ARG_LABEL": "Car/Truck", "ARG_SEQ": 11, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 23, "ARG_LABEL": "Trim", "ARG_SEQ": 12, "columnname": "ad_trim", "Active": 'Y' },
+    { "ARG_ID": 24, "ARG_LABEL": "Style", "ARG_SEQ": 13, "columnname": "ad_styleid", "Active": 'N' },
+    { "ARG_ID": 25, "ARG_LABEL": "Month", "ARG_SEQ": 14, "columnname": "ad_Month", "Active": 'Y' },
+    { "ARG_ID": 4, "ARG_LABEL": "Salesperson", "ARG_SEQ": 15, "columnname": "salesperson", "Active": 'Y' },
+    { "ARG_ID": 5, "ARG_LABEL": "F&I Manager", "ARG_SEQ": 16, "columnname": "fimanager", "Active": 'Y' },
+    { "ARG_ID": 6, "ARG_LABEL": "Sales Manager", "ARG_SEQ": 17, "columnname": "salesmanager", "Active": 'Y' },
+    { "ARG_ID": 7, "ARG_LABEL": "Desk Manager", "ARG_SEQ": 18, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 8, "ARG_LABEL": "Closer", "ARG_SEQ": 19, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 9, "ARG_LABEL": "BDC Representative", "ARG_SEQ": 20, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 10, "ARG_LABEL": "Customer ZIP", "ARG_SEQ": 21, "columnname": "ad_custzip", "Active": 'Y' },
+    { "ARG_ID": 11, "ARG_LABEL": "Customer State", "ARG_SEQ": 22, "columnname": "ad_custstate", "Active": 'Y' },
+    { "ARG_ID": 12, "ARG_LABEL": "Customer Age", "ARG_SEQ": 23, "columnname": "ad_custAge", "Active": 'Y' },
+    { "ARG_ID": 13, "ARG_LABEL": "Sales Team", "ARG_SEQ": 24, "columnname": "", "Active": 'N' },
+    { "ARG_ID": 14, "ARG_LABEL": "Sales Group", "ARG_SEQ": 25, "columnname": "", "Active": 'N' },
+  ]
+  ProductDeals: any = 'No'
 
   TeamsArray: any = [
     { name: 'Sales Persons', code: 'SP' },
@@ -113,8 +110,8 @@ export class SalesgrossReports {
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes, 'Report');
     this.ngChanges = changes['header'].currentValue[0];
-    this.FromDate = this.ngChanges.fromDate;
-    this.ToDate = this.ngChanges.toDate;
+    this.FromDate = this.ngChanges.fromdate;
+    this.ToDate = this.ngChanges.todate;
     this.DateType = this.ngChanges.datevaluetype;
     this.groupId = this.ngChanges.groups
     this.setDates(this.ngChanges.datevaluetype)
@@ -125,167 +122,43 @@ export class SalesgrossReports {
     this.retailorlease = this.ngChanges.saleType
     this.dealstatus = [];
     this.dealstatus = this.ngChanges.dealStatus
-    this.reporttotal = this.ngChanges.ReportTotal
-    if (changes['header'].previousValue != undefined) {
-      this.datagrp = []
-      this.dataGrouping.forEach((ele: any) => {
-        ele.state = false
-        this.shared.api.GetHeaderData().subscribe((res) => {
-          if (
-            res.obj.title == 'Sales Gross'
-          ) {
-            this.GroupingDetails = [];
-            this.GroupingDetails = res.obj;
-            this.selectedDataGrouping = [];
-            if (this.GroupingDetails.path1id != '') {
-              if (ele.ARG_ID == this.GroupingDetails.path1id) {
-                this.datagrp[0] = ele;
-                ele.state = true;
-              }
-            }
-            if (this.GroupingDetails.path12d != '') {
-              if (ele.ARG_ID == this.GroupingDetails.path2id) {
-                this.datagrp[1] = ele;
-                ele.state = true;
-              }
-            }
-            if (this.GroupingDetails.path3id != '') {
-              if (ele.ARG_ID == this.GroupingDetails.path3id) {
-                this.datagrp[2] = ele;
-                ele.state = true;
-              }
-            }
-          }
-        });
-      });
-      this.selectedDataGrouping = this.datagrp;
-    }
+    this.reporttotal = this.ngChanges.toporbottom
+    this.selectedDataGrouping = [...this.ngChanges.dataGroupings]
+    this.ProductDeals = this.ngChanges.ProductDeals
+
   }
   constructor(private shared: Sharedservice, private datesSrvc: Setdates, private toast: ToastService) { }
 
   ngOnInit() {
-    this.getDataGroupings();
+    this.selectedDataGrouping = []
+    this.selectedDataGrouping.push(this.dataGrouping[0])
+    this.selectedDataGrouping.push(this.dataGrouping[1])
+
     this.getGroups();
     this.acquisitionsrc();
-
-    this.getEmployees('SP', '2', '1', 'Bar');
-    this.getEmployees('F', '2', '1', 'Bar');
-    this.getEmployees('M', '2', '1', 'Bar');
+    // this.getEmployees('SP', 'Bar');
+    // this.getEmployees('F', 'Bar');
+    // this.getEmployees('M', 'Bar');
   }
 
-  getDataGroupings() {
-    this.selectedDataGrouping = [];
-    this.GroupingDetails = [];
-    const obj = {
-      pageid: 1,
-    };
 
-    this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetDataGroupingsbyPage', obj).subscribe(
-      (res) => {
-        if (res.status == 200) {
-          this.dataGrouping = res.response;
-          // .sort((a, b) =>
-          //   a.ARG_LABEL > b.ARG_LABEL ? 1 : -1
-          // );
-          this.dataGrouping.forEach((ele: any) => {
-            ele.state = false;
-            this.Groupingcols.forEach((val: any) => {
-              if (ele.ARG_ID == val.id) {
-                ele.columnName = val.columnname;
-              }
-              if (
-                ele.ARG_ID != '1' &&
-                ele.ARG_ID != '2' &&
-
-
-                ele.ARG_ID != '20' &&
-                ele.ARG_ID != '21' &&
-
-                ele.ARG_ID != '3' &&
-                ele.ARG_ID != '4' &&
-                ele.ARG_ID != '5' &&
-                ele.ARG_ID != '6' &&
-
-                ele.ARG_ID != '17' &&
-
-
-                ele.ARG_ID != '25'
-              ) {
-                ele.Active = 'N';
-              } else {
-                ele.Active = 'Y';
-              }
-            });
-            this.shared.api.GetHeaderData().subscribe((res) => {
-              if (
-                res.obj.title == 'Sales Gross' &&
-                this.Performance == 'Load'
-              ) {
-                // // console.log(res.obj);
-
-                this.GroupingDetails = [];
-                this.GroupingDetails = res.obj;
-
-                this.selectedDataGrouping = [];
-
-                if (this.GroupingDetails.path1id != '') {
-                  if (ele.ARG_ID == this.GroupingDetails.path1id) {
-                    this.datagrp[0] = ele;
-
-                    ele.state = true;
-                  }
-                }
-                if (this.GroupingDetails.path12d != '') {
-                  if (ele.ARG_ID == this.GroupingDetails.path2id) {
-                    this.datagrp[1] = ele;
-                    ele.state = true;
-                  }
-                }
-                if (this.GroupingDetails.path3id != '') {
-                  if (ele.ARG_ID == this.GroupingDetails.path3id) {
-                    this.datagrp[2] = ele;
-                    ele.state = true;
-                  }
-                }
-              }
-            });
-          });
-          this.selectedDataGrouping = this.datagrp;
-          // // console.log(this.selectedDataGrouping);
-        } else {
-
-          this.toast.show('Invalid Details.', 'danger', 'Error');
-        }
-      },
-      (error) => {
-        // console.log(error);
-      }
-    );
-  }
   SelectedData(val: any) {
-    if (val.state == false) {
+    const index = this.selectedDataGrouping.findIndex((i: any) => i == val);
+    if (index >= 0) {
+      this.selectedDataGrouping.splice(index, 1);
+    } else {
       if (this.selectedDataGrouping.length >= 3) {
-
         this.toast.show('Select up to 3 Filters only to Group your data', 'warning', 'Warning');
       } else {
-        val.state = true;
         this.selectedDataGrouping.push(val);
       }
-    } else {
-      val.state = false;
-      this.selectedDataGrouping.splice(
-        this.selectedDataGrouping.indexOf(val),
-        1
-      );
     }
-
   }
   acquisitionsrc() {
     const obj = {}
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetAcquisitionSourceList', obj).subscribe((res: any) => {
       if (res.status == 200) {
         this.acquisitionsource = res.response
-
         if (this.ngChanges.as[0] == "All") {
           this.Acquisition = this.acquisitionsource.map(function (a: any) {
             return a.ad_acquisition_source;
@@ -299,12 +172,10 @@ export class SalesgrossReports {
   }
   teamsselection(e: any) {
     this.Teams = e;
-    // // console.log(this.Teams,this.activePopover);
-    // // console.log(this.salesPersons, this.salesManagers, this.financeManager);
-
-
   }
-
+  Deals(e: any) {
+    this.ProductDeals = e
+  }
   employees(block: any, e: any) {
 
     if (block == 'SP') {
@@ -346,7 +217,6 @@ export class SalesgrossReports {
           return a.SPID;
         });
       }
-      // // console.log(this.selectedSalespersonvalues);
     }
     if (block == 'AllSM') {
       if (e == 1) {
@@ -358,7 +228,6 @@ export class SalesgrossReports {
           return a.SmId;
         });
       }
-      // // console.log(this.selectedSalesManagersvalues);
     }
     if (block == 'AllFM') {
       if (e == 1) {
@@ -370,13 +239,15 @@ export class SalesgrossReports {
           return a.FiId;
         });
       }
-      // // console.log(this.selectedFiManagersvalues);
     }
     this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
   }
   spinnerLoaderteams: boolean = false
-  getEmployees(val: any, ids: any, count: any, barorpopup?: any) {
+  getEmployees(val: any, barorpopup?: any) {
+    this.salesManagers = []
+    this.salesPersons = []
+    this.financeManager = []
     const obj = {
       AS_ID: this.storeIds,
       type: val,
@@ -385,89 +256,56 @@ export class SalesgrossReports {
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res) => {
         if (res.status == 200) {
-          // //// // console.log('fjdgdgdfgdfhkl');
-
           if (val == 'SP') {
-            this.salesPersons = res.response.filter(
-              (e: any) => e.SPName != 'Unknown' && e.SPName != ''
-            );
-            this.selectedSalespersonvalues = this.salesPersons.map(function (
-              a: any
-            ) {
-              return a.SPID;
-            });
+            this.salesPersons = res.response.filter((e: any) => e.SPName != 'Unknown' && e.SPName != '');
+            this.selectedSalespersonvalues = this.salesPersons.map(function (a: any) { return a.SPID; });
             if (barorpopup == 'Bar') {
-              if (this.ngChanges.sp != '') {
-                let spids = this.ngChanges.sp.split(',');
-                this.selectedSalespersonvalues = spids;
-              }
               if (this.ngChanges.sp == '0') {
-                this.selectedSalespersonvalues = this.salesPersons.map(function (
-                  a: any
-                ) {
-                  return a.SPID;
-                });
+                this.selectedSalespersonvalues = this.salesPersons.map(function (a: any) { return a.SPID; });
               }
               if (this.ngChanges.sp == '') {
                 this.selectedSalespersonvalues = []
               }
+              if (this.ngChanges.sp != '' && this.salesManagers && this.salesManagers.length > 0) {
+                let spids = this.ngChanges.sp.split(',');
+                this.selectedSalespersonvalues = spids;
+              }
             }
 
           }
-          if (val == 'F') {
-            this.financeManager = res.response.filter(
-              (e: any) => e.FiName != 'Unknown'
-            );
-            this.selectedFiManagersvalues = this.financeManager.map(function (
-              a: any
-            ) {
-              return a.FiId;
-            });
 
+          if (val == 'F') {
+            this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
+            this.selectedFiManagersvalues = this.financeManager.map(function (a: any) { return a.FiId; });
             if (barorpopup == 'Bar') {
-              if (this.ngChanges.fm != '') {
-                let fiids = this.ngChanges.fm.split(',');
-                this.selectedFiManagersvalues = fiids;
-              }
               if (this.ngChanges.fm == '0') {
-                this.selectedFiManagersvalues = this.financeManager.map(function (
-                  a: any
-                ) {
-                  return a.FiId;
-                });
+                this.selectedFiManagersvalues = this.financeManager.map(function (a: any) { return a.FiId; });
               }
               if (this.ngChanges.fm == '') {
                 this.selectedFiManagersvalues = []
               }
+              if (this.ngChanges.fm != '' && this.financeManager && this.financeManager.length > 0) {
+                let fiids = this.ngChanges.fm.split(',');
+                this.selectedFiManagersvalues = fiids;
+              }
             }
           }
           if (val == 'M') {
-            this.salesManagers = res.response.filter(
-              (e: any) => e.SmName != 'Unknown'
-            );
-            this.selectedSalesManagersvalues = this.salesManagers.map(function (
-              a: any
-            ) {
-              return a.SmId;
-            });
-
+            this.salesManagers = res.response.filter((e: any) => e.SmName != 'Unknown');
+            this.selectedSalesManagersvalues = this.salesManagers.map(function (a: any) { return a.SmId; });
             if (barorpopup == 'Bar') {
-              if (this.ngChanges.sm != '') {
-                let smids = this.ngChanges.sm.split(',');
-                this.selectedSalesManagersvalues = smids;
-
-              }
               if (this.ngChanges.sm == '0') {
-                this.selectedSalesManagersvalues = this.salesManagers.map(function (
-                  a: any
-                ) {
-                  return a.SmId;
-                });
+                this.selectedSalesManagersvalues = this.salesManagers.map(function (a: any) { return a.SmId; });
               }
               if (this.ngChanges.sm == '') {
                 this.selectedSalesManagersvalues = []
               }
+              if (this.ngChanges.sm != '' && this.salesManagers && this.salesManagers.length > 0) {
+                let smids = this.ngChanges.sm.split(',');
+                this.selectedSalesManagersvalues = smids;
+              }
             }
+
             this.spinnerLoaderteams = false;
           }
           this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
@@ -478,7 +316,6 @@ export class SalesgrossReports {
         }
       },
       (error) => {
-        // //// // console.log(error);
       }
     );
   }
@@ -494,20 +331,16 @@ export class SalesgrossReports {
   }
   ngAfterViewInit() {
     this.shared.api.getStores().subscribe((res: any) => {
-      // console.log(this.shared.common.pageName);
 
       if (this.shared.common.pageName == 'Sales Gross') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.groupId = this.ngChanges.groups;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-          this.storeIds = this.ngChanges.storeIds;
-          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+          this.storeIds = this.ngChanges.stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-          // console.log(this.stores, this.groupsArray, 'Stores and Groups');
           this.getStoresandGroupsValues()
-          // // console.log(this.groupId,'....');
-          // this.StoresData(this.ngChanges)
 
         }
       }
@@ -518,12 +351,8 @@ export class SalesgrossReports {
 
   getScrollPosition(event: any): void {
     this.scrollPosition = event.target.scrollLeft;
-    console.log(this.scrollPosition, event.target.scrollTop);
-
   }
   getGroups() {
-    // console.log(this.shared.common.pageName, this.shared.common.groupsandstores);
-
     if (this.shared.common.groupsandstores != undefined) {
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -531,7 +360,6 @@ export class SalesgrossReports {
         this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
         this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
         this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-        // console.log(this.stores, this.groupsArray, 'Stores and Groups');
         this.getStoresandGroupsValues()
         // this.StoresData(this.ngChanges)
       }
@@ -558,17 +386,12 @@ export class SalesgrossReports {
       storedisplayname: this.storedisplayname,
       'type': 'M', 'others': 'N'
     };
-
-
-
-    // this.storesFilterData = { ...this.storesFilterData, newProp: 'updated' }
     console.log(this.storesFilterData, 'Store FIlter Data');
-
     let allstrids = [];
     allstrids = [...this.storeIds]
-    this.getEmployees('SP', allstrids.toString(), '1', 'Bar');
-    this.getEmployees('F', allstrids.toString(), '1', 'Bar');
-    this.getEmployees('M', allstrids.toString(), '1', 'Bar');
+    // this.getEmployees('SP', 'Bar');
+    // this.getEmployees('F', 'Bar');
+    // this.getEmployees('M', 'Bar');
   }
   StoresData(data: any) {
 
@@ -578,19 +401,17 @@ export class SalesgrossReports {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-    // console.log(data, this.storeIds, this.groupId, this.storename, this.groupName, this.stores, this.groupsArray, 'Stores related data');
 
     let allstrids = [];
     allstrids = [...this.storeIds]
-    this.getEmployees('SP', allstrids.toString(), '2', '');
-    this.getEmployees('F', allstrids.toString(), '2', '');
-    this.getEmployees('M', allstrids.toString(), '2', '');
+    this.getEmployees('SP', '');
+    this.getEmployees('F', '');
+    this.getEmployees('M', '');
 
   }
   setDates(type: any) {
     // localStorage.setItem('time', type);
     // this.datevaluetype=
-    // console.log(type);
     if (type != 'C') {
       this.displaytime = '( ' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ' )';
     }
@@ -606,7 +427,6 @@ export class SalesgrossReports {
     this.Dates.DisplayTime = this.displaytime;
   }
   updatedDates(data: any) {
-    // console.log(data);
     this.FromDate = data.FromDate;
     this.ToDate = data.ToDate;
     this.DateType = data.DateType;
@@ -757,7 +577,6 @@ export class SalesgrossReports {
         Reference: 'Sales Gross',
         FromDate: this.shared.datePipe.transform(this.FromDate, 'MM-dd-yyyy'),
         ToDate: this.shared.datePipe.transform(this.ToDate, 'MM-dd-yyyy'),
-        // TotalReport: this.toporbottom[0],
         storeValues: this.storeIds.toString(),
         Spvalues:
           this.selectedSalespersonvalues.length == this.salesPersons.length
@@ -777,13 +596,11 @@ export class SalesgrossReports {
         dataGroupingvalues: this.selectedDataGrouping,
         dateType: this.DateType,
         reportTotal: this.reporttotal,
-
-        // gv: this.gridview,
         acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
         groups: this.groupId,
+        ProductDeals: this.ProductDeals
         // otherstoreids: this.selectedotherstoreids
       };
-      // // console.log(data);
       this.shared.api.SetReports({
         obj: data,
       });
