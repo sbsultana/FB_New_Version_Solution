@@ -7,6 +7,8 @@ import { environment } from '../environments/environment';
 })
 export class common {
     public groupsandstores: any = [];
+    public groupsandstoresAll: any = [];
+
     public userId: any = 0;
     public pageName: any = '';
     public titleName: any = 'FredBeans';

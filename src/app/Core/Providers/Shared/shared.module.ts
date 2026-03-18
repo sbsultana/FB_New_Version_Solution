@@ -12,7 +12,7 @@ import { TimeConversionPipe } from '../pipes/timeconversion.pipe';
   imports: [
     CommonModule,
     NgxSpinnerModule,
-    FilterPipeModule,TimeConversionPipe
+    FilterPipeModule,TimeConversionPipe,
     // ToastrModule.forRoot(),
   ],
   exports: [

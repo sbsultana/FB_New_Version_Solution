@@ -68,9 +68,11 @@ export class Stores {
     console.log(this.storeIds, 'Store IDs');
     let singleid=this.storeIds
     this.storeIds = []
-    this.type == 'S' ? this.storeIds.push(singleid) : this.storeIds = this.stores.map(function (a: any) {
+    this.type == 'S' ? this.storeIds.push(parseInt(singleid)) : this.storeIds = this.stores.map(function (a: any) {
       return a.ID;
     });
+    console.log(this.storeIds,'After condition');
+    
     if (this.storeIds && this.storeIds.length == 1) {
       this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename;
     } else {

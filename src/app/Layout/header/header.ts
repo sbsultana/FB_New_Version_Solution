@@ -134,7 +134,8 @@ export class Header {
 
 
       this.afterUserLoad();
-      this.getGruopsandStores()
+      this.getGruopsandStores();
+      this.getGruopsandStoresAll();
       this.ready.emit();
 
       return;
@@ -394,6 +395,44 @@ export class Header {
             otherStoresData: this.shared.common.OtherStoresData
           };
           this.shared.api.setStores({ obj: obj });
+        }
+      })
+  }
+groupsandstoresdataAll:any=[]
+   getGruopsandStoresAll() {
+    const obj = {
+      // "userid": JSON.parse(localStorage.getItem('UserDetails')!).userid,
+      "userid": 0,
+    }
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresList', obj)
+      .subscribe((res) => {
+        if (res.status == 200) {
+          this.shared.common.allstores = res.response
+          let data = res.response
+          // .filter((val: any) => val.sg_id != 7)
+          this.groupsandstoresdataAll = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          console.log(this.groupsandstoresdata);
+          // .filter((val:any)=>{ val.sg_name != 'Other Stores' })
+          this.shared.common.groupsandstoresAll = this.groupsandstoresdataAll.filter((val: any) => val.sg_name != 'OtherStores')
+          // this.shared.common.OtherStoresData = this.groupsandstoresdataAll.filter((val: any) => val.sg_name == 'OtherStores')
+          // .filter((val:any)=>{ val.sg_name == 'Other Stores' })
+          const obj = {
+            storesData: this.shared.common.groupsandstoresAll,
+            otherStoresData: this.shared.common.OtherStoresData
+          };
+          this.shared.api.setStoresAll({ obj: obj });
+          console.log(this.shared.common.groupsandstoresAll, 'All Stores List');
+
         }
       })
   }

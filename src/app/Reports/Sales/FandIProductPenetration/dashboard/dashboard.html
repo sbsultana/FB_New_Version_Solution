@@ -75,7 +75,7 @@
 
                         <span class="arrow"></span>
                     </button>
-                    <div class="reportstores-card my-3 " *ngIf="activePopover ===4">
+                    <div class="reportpeople-card my-3 " *ngIf="activePopover ===4">
                         <div class="row h-100">
                             <div class="groups pe-2 d-flex flex-column">
                                 <div class="groups-wrapper flex-grow-1">
@@ -99,7 +99,7 @@
                                             (click)="employees('AllFM',1)">Clear
                                             All</a>
                                     </div>
-                                    <div class="store-columns flex-grow-1">
+                                    <div class="store-columns flex-grow-1" style="width: 650px;">
 
                                         <!-- <ng-container *ngIf="storeIds.length > 0">                               
                                     <div class="allstores text-start" *ngIf="salesPersons.length == 0">
@@ -110,7 +110,7 @@
                                 </ng-container> -->
 
 
-                                        <ng-container *ngIf="activePopover==4">
+                                        <ng-container *ngIf="activePopover==4" >
                                             <ng-container *ngFor="let fm of financeManager;let i=index">
                                                 <button class="btn btn-outline-primary store-button"
                                                     (click)="employees('FM',fm.FiId)"
@@ -479,7 +479,7 @@
                         <tr *ngIf="NoData">
                             <td [attr.colspan]="5 * Headings.length + 8"
                                 style="text-align: center;font-size: 1rem;background: #fff !important;color: black; display: revert;box-shadow: none;">
-                                <label>No Data Found</label>
+                                <label>{{nodata}}</label>
                             </td>
                         </tr>
                     </ng-template>
@@ -592,10 +592,7 @@
                                                             || Ad.FIManager == undefined ? '-' :
                                                             Ad.FIManager ) }}
                                                         </td>
-                                                        <td> {{ (Ad.Date == 0 || Ad.Date == null || Ad.Date == undefined
-                                                            ?
-                                                            '-' :
-                                                            Ad.Date ) }}
+                                                        <td> {{ (Ad.Date == 0 || Ad.Date == null || Ad.Date == undefined ? '-' : Ad.Date | date:'MM.dd.yyyy') }}
                                                         </td>
 
                                                         <td class="text-end"
