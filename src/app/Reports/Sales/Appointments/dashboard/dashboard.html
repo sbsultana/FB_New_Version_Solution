@@ -17,7 +17,7 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(1)">
-                        Time Frame <span class="light-font"> ( {{displaytime}} )</span>
+                        Time Frame <span class="light-font">  {{displaytime}} </span>
                         <span class="arrow"></span></button>
                     <div class="timeframe" *ngIf="activePopover === 1">
                         <app-date-range-picker [Dates]="Dates"
@@ -38,7 +38,7 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <span>
                         <span class="divNormal">
-                            Appointment Count:&nbsp;&nbsp;
+                            Appointments Count:&nbsp;&nbsp;
                         </span>
                         <span class="divBold">
                             {{ Appointmentdata.length }}
@@ -96,7 +96,7 @@
 
                             <td class="text-center">{{ Appointment['Appt Start Time'] || '-'}}
                             </td>
-                            <td class="text-center">{{ Appointment['Appt Start Date'] || '-'}} </td>
+                            <td class="text-center">{{ Appointment['Appt Start Date'] | date:'MM.dd.yyyy'}} </td>
 
                             <td class="text-start">{{Appointment["Stock Number"] || '-'}}</td>
 
@@ -117,7 +117,7 @@
                             <td class="text-start">{{Appointment["Sales Representative"] || '-'}}</td>
                             <td class="text-start">{{Appointment["BD Agent"] || '-'}}</td>
                             <td class="text-start">{{Appointment["Manager"] || '-'}}</td>
-                            <td class="text-start">{{Appointment["Created"] | date:'MM/dd/yyyy'}}</td>
+                            <td class="text-start">{{Appointment["Created"] | date:'MM.dd.yyyy'}}</td>
                             <td class="text-start">{{Appointment["Source"] || '-'}}</td>
                             <td class="text-center">{{Appointment["Contacted"] ||
                                 '-'}}</td>

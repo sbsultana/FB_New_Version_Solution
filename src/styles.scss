@@ -2825,10 +2825,14 @@ select:focus {
           text-align: center;
           font-family: "Roboto";
           font-size: .8rem;
-          border-radius: .75rem;
+          border-radius: 12px;
           padding: .5rem;
           line-height: 1rem;
           text-transform: capitalize;
+
+          &:hover {
+            border-radius: 50px;
+          }
 
           &.active {
             background-color: #0554ef;
@@ -2877,7 +2881,7 @@ select:focus {
         text-overflow: ellipsis;
         font-family: "Roboto";
         font-size: .8rem;
-        border-radius: .5rem;
+        border-radius: 12px;
         padding: .5rem .75rem;
         line-height: 1rem;
         text-align: left;
@@ -2943,6 +2947,10 @@ select:focus {
         font-size: 18px;
       }
 
+      &:hover {
+        border-radius: 50px;
+      }
+
       &.active {
         background-color: #0554ef;
         color: white;
@@ -3003,3 +3011,5 @@ select:focus {
     }
   }
 }
+
+

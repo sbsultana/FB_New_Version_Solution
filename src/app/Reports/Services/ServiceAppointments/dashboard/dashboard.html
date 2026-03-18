@@ -18,7 +18,7 @@
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
-                            Time Frame <span class="light-font"> ( {{displaytime}} )</span>
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
                             <span class="arrow"></span></button>
                         <div class="timeframe" *ngIf="activePopover === 1">
                             <app-date-range-picker [Dates]="Dates"
@@ -36,7 +36,7 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <span>
                             <span class="divNormal">
-                                Appointment Count:&nbsp;&nbsp;
+                                Appointments Count:&nbsp;&nbsp;
                             </span>
                             <span class="divBold">
                                 {{ Appointmentdata.length }}
@@ -102,7 +102,7 @@
                                 <td style="text-align: center;">{{ Appointment['APPOINTMENT TIME'] || '-'}}</td>
                                 <!-- <td style="text-align: center;">{{ Appointment['CHECKED IN TIME'] || '-'}}</td> -->
                                 <!-- <td class="text-start">{{Appointment["NO SHOW"] || '-'}}</td> -->
-                                <td class="text-align: center !important;">{{Appointment["NO SHOW"] == 'Y' ? 'Y' : '-'}}
+                                <td class="text-center">{{Appointment["NO SHOW"] == 'Y' ? 'Y' : '-'}}
                                 </td>
                                 <td style="text-align: left;">{{Appointment["ASSIGNED USER"] || '-'}}</td>
                                 <td style="text-align: right;">{{Appointment["STOCK NUMBER"] || '-'}}</td>

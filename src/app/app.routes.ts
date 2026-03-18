@@ -65,7 +65,7 @@ export const routes: Routes = [
   { path: 'VariableGrossGL', loadComponent: () => import('./Reports/Sales/VariableGrossGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'QuickInventory', loadComponent: () => import('./Reports/Sales/QuickInventoryReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SalesReconciliation', loadComponent: () => import('./Reports/Sales/SalesReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'BookedToClosedReconciliation', loadComponent: () => import('./Reports/Sales/BookedToClosedReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'BookedToFinalReconciliation', loadComponent: () => import('./Reports/Sales/BookedToClosedReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
 
   { path: 'FandIProductPenetration', loadComponent: () => import('./Reports/Sales/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FandIProductPenetrationV2', loadComponent: () => import('./Reports/Others/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },

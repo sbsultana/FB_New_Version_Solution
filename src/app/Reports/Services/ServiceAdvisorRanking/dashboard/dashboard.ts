@@ -7,12 +7,12 @@ import { common } from '../../../../common';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
 import { Subscription } from 'rxjs';
 import { Stores } from '../../../../CommonFilters/stores/stores';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker,Stores,NgbModule],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores, NgbModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -23,12 +23,12 @@ export class Dashboard {
   FromDate: any = '';
   ToDate: any = '';
   NoData: boolean = false;
- 
- 
+
+
   storeIds: any = '0';
   CompleteComponentState: boolean = true;
   dateType: any = 'MTD';
-  Paytype: any = ['C', 'W', 'I', 'S', 'M']; 
+  Paytype: any = ['C', 'W', 'I', 'S', 'M', 'E'];
 
   // solutionurl: any = environment.apiUrl;
   LogCount = 1;
@@ -80,23 +80,23 @@ export class Dashboard {
     ]
   }
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,  ) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private toast: ToastService,private ngbmodal: NgbModal) {
     this.initializeDates(this.DateType)
     let today = new Date();
-         if (localStorage.getItem('flag') == 'V') {
-        this.storeIds = [];
-        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)   
-          localStorage.setItem('flag','M')    
-      } else {
-        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
-        }
+    if (localStorage.getItem('flag') == 'V') {
+      this.storeIds = [];
+      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+      localStorage.setItem('flag', 'M')
+    } else {
+      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
+    }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
@@ -127,11 +127,11 @@ export class Dashboard {
     this.ToDate = this.ToDate.replace(/-/g, '/');
     this.shared.setTitle(this.shared.common.titleName + '-Service Advisor Rankings');
     const data = {
-      title: 'Service Advisor Rankings',  
-      stores:   this.storeIds.toString(),
+      title: 'Service Advisor Rankings',
+      stores: this.storeIds.toString(),
       labortype: this.LaborTypeVal.toString(),
       laborstate: this.LaborState,
-    
+
       datetype: 'MTD',
       fromdate: this.FromDate,
       todate: this.ToDate,
@@ -144,7 +144,7 @@ export class Dashboard {
     this.shared.api.SetHeaderData({
       obj: data,
     });
-   
+
 
     this.getlaborData();
     // this.GetData('Rank', 'asc');
@@ -187,17 +187,17 @@ export class Dashboard {
     // First click on a column
     if (this.columnName !== col_Name) {
       this.columnName = col_Name;
-      this.columnState = 'asc';   
+      this.columnState = 'asc';
     }
-     
+
     else {
       this.columnState = this.columnState === 'asc' ? 'desc' : 'asc';
     }
-  
+
     this.GetData(this.columnName, this.columnState);
   }
   StoresData(data: any) {
-  
+
     console.log(data, 'Data');
 
     this.storeIds = data.storeids;
@@ -213,7 +213,7 @@ export class Dashboard {
       if (this.LaborTypeVal == '') {
         const obj = {
           StoreID:
-  this.storeIds.toString(),
+            this.storeIds.toString(),
           type: this.LaborState
         };
         this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res: { response: any[]; }) => {
@@ -245,8 +245,8 @@ export class Dashboard {
       StartDate: this.FromDate,
       EndDate: this.ToDate,
       StoreID:
-       
- this.storeIds.toString(),
+
+        this.storeIds.toString(),
 
       Exp: sortdata,
       OrderType: sortstate,
@@ -277,36 +277,36 @@ export class Dashboard {
                 this.ServiceAdvisorData = res.response;
                 // If Rank By Store → move TOTAL row to top
 
-                if (this.storeorgrp.toString() === 'S') {
-  const totalRowIndex = this.ServiceAdvisorData.findIndex(
-    (x: any) => x.ServiceAdvisor === 'Total'
-  );
+                // if (this.storeorgrp.toString() === 'S') {
+                //   const totalRowIndex = this.ServiceAdvisorData.findIndex(
+                //     (x: any) => x.ServiceAdvisor === 'Total'
+                //   );
 
-  if (totalRowIndex > -1) {
-    const totalRow = this.ServiceAdvisorData.splice(totalRowIndex, 1)[0];
-    this.ServiceAdvisorData.unshift(totalRow);
-  }
-}
+                //   if (totalRowIndex > -1) {
+                //     const totalRow = this.ServiceAdvisorData.splice(totalRowIndex, 1)[0];
+                //     this.ServiceAdvisorData.unshift(totalRow);
+                //   }
+                // }
 
 
-// // ---- KEEP TOTAL ROW IN CORRECT PLACE BASED ON RANK BY ----
-// const totalIndex = this.ServiceAdvisorData.findIndex(
-//   (x: any) => (x.ServiceAdvisor + '').toLowerCase() === 'total'
-// );
+                // // ---- KEEP TOTAL ROW IN CORRECT PLACE BASED ON RANK BY ----
+                // const totalIndex = this.ServiceAdvisorData.findIndex(
+                //   (x: any) => (x.ServiceAdvisor + '').toLowerCase() === 'total'
+                // );
 
-// if (totalIndex > -1) {
-//   const totalRow = this.ServiceAdvisorData.splice(totalIndex, 1)[0];
+                // if (totalIndex > -1) {
+                //   const totalRow = this.ServiceAdvisorData.splice(totalIndex, 1)[0];
 
-//   // Rank By Store (S) → TOP
-//   if (this.storeorgrp.toString() === 'S') {
-//     this.ServiceAdvisorData.unshift(totalRow);
-//   }
+                //   // Rank By Store (S) → TOP
+                //   if (this.storeorgrp.toString() === 'S') {
+                //     this.ServiceAdvisorData.unshift(totalRow);
+                //   }
 
-//   // // Rank By Group (G) → BOTTOM
-//   // if (this.storeorgrp.toString() === 'G') {
-//   //   this.ServiceAdvisorData.push(totalRow);
-//   // }
-// }
+                //   // // Rank By Group (G) → BOTTOM
+                //   // if (this.storeorgrp.toString() === 'G') {
+                //   //   this.ServiceAdvisorData.push(totalRow);
+                //   // }
+                // }
                 this.shared.spinner.hide();
                 this.NoData = false;
                 let position = this.scrollCurrentposition + 10
@@ -420,36 +420,36 @@ export class Dashboard {
     this.column = property;
     let direction = this.isDesc ? 1 : -1;
 
-      var arr = this.ServiceAdvisorData.slice(
-        1,
-        this.ServiceAdvisorData.length
-      );
-      arr.sort(function (a: any, b: any) {
-        if (a[property] < b[property]) {
-          return -1 * direction;
-        } else if (a[property] > b[property]) {
-          return 1 * direction;
-        } else {
-          return 0;
-        }
-      });
-      arr.unshift(this.ServiceAdvisorData[0]);
-      this.ServiceAdvisorData = arr;   
+    var arr = this.ServiceAdvisorData.slice(
+      1,
+      this.ServiceAdvisorData.length
+    );
+    arr.sort(function (a: any, b: any) {
+      if (a[property] < b[property]) {
+        return -1 * direction;
+      } else if (a[property] > b[property]) {
+        return 1 * direction;
+      } else {
+        return 0;
+      }
+    });
+    arr.unshift(this.ServiceAdvisorData[0]);
+    this.ServiceAdvisorData = arr;
 
-//       // KEEP TOTAL IN CORRECT PLACE AFTER SORT
-// const totalIndex = arr.findIndex(
-//   (x: any) => (x.ServiceAdvisor + '').toLowerCase() === 'total'
-// );
+    //       // KEEP TOTAL IN CORRECT PLACE AFTER SORT
+    // const totalIndex = arr.findIndex(
+    //   (x: any) => (x.ServiceAdvisor + '').toLowerCase() === 'total'
+    // );
 
-// if (totalIndex > -1) {
-//   const totalRow = arr.splice(totalIndex, 1)[0];
+    // if (totalIndex > -1) {
+    //   const totalRow = arr.splice(totalIndex, 1)[0];
 
-//   if (this.storeorgrp.toString() === 'S') {
-//     arr.unshift(totalRow); // store → top
-//   } else {
-//     arr.push(totalRow); // group → bottom
-//   }
-// }
+    //   if (this.storeorgrp.toString() === 'S') {
+    //     arr.unshift(totalRow); // store → top
+    //   } else {
+    //     arr.push(totalRow); // group → bottom
+    //   }
+    // }
   }
   SARstate: any;
   ngAfterViewInit(): void {
@@ -482,7 +482,7 @@ export class Dashboard {
           if (data.obj.header == undefined) {
             this.Paytype = data.obj.PayType
             // this.StoreVal = data.obj.storeValues;
-            this.LaborTypeVal = data.obj.labortypeValues;         
+            this.LaborTypeVal = data.obj.labortypeValues;
             this.storeorgrp = data.obj.storeorgroup;
             this.zeroro = data.obj.zeroro;
             this.LaborState = data.obj.laborstate;
@@ -523,9 +523,9 @@ export class Dashboard {
             path1: '',
             path2: '',
             path3: '',
-            stores:  this.storeIds.toString(),
+            stores: this.storeIds.toString(),
             labortype: this.LaborTypeVal.toString(),
-          
+
             datetype: this.dateType,
             fromdate: this.FromDate,
             todate: this.ToDate,
@@ -539,12 +539,12 @@ export class Dashboard {
           this.shared.api.SetHeaderData({
             obj: headerdata,
           });
-        
+
         }
       }
     });
 
- 
+
 
     this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: { obj: { state: boolean; title: string; }; }) => {
       if (this.excel != undefined) {
@@ -771,7 +771,7 @@ export class Dashboard {
   }
   teamsselection(e: any) {
     this.Teams = e;
-    this.getlabortype(2, e)
+    this.getlabortype(this.storeIds.toString(), e)
   }
   spinnerLoaderlabor: boolean = false;
   getlabortype(count?: any, block?: any, popuporbar?: any) {
@@ -780,7 +780,7 @@ export class Dashboard {
     // }
     console.log(count, block, popuporbar);
     let allstrids: any = [];
-    allstrids = [...this.selectedotherstoreids, ...this.selectedstorevalues]
+    allstrids = [...this.selectedotherstoreids, ...this.storeIds]
     this.spinnerLoaderlabor = true;
     this.labortypes = [];
     const obj = {
@@ -904,7 +904,7 @@ export class Dashboard {
     this.zeroro = [];
     this.zeroro.push(e);
     // }
-  
+
   }
   storeorgroups(block: any, e: any) {
     // if (block == 'TB') {
@@ -933,67 +933,174 @@ export class Dashboard {
     // if (this.selectedlabortypevalues.length == this.labortypes.length) {
     //   this.selectedlabortypevalues = 0;
     // }
-//    const hasStoreSelection =
-//   (Array.isArray(this.selectedstorevalues) && this.selectedstorevalues.length > 0) ||
-//   (typeof this.selectedstorevalues === 'string' && this.selectedstorevalues.trim() !== '') ||
-//   (Array.isArray(this.selectedotherstoreids) && this.selectedotherstoreids.length > 0);
+    //    const hasStoreSelection =
+    //   (Array.isArray(this.selectedstorevalues) && this.selectedstorevalues.length > 0) ||
+    //   (typeof this.selectedstorevalues === 'string' && this.selectedstorevalues.trim() !== '') ||
+    //   (Array.isArray(this.selectedotherstoreids) && this.selectedotherstoreids.length > 0);
 
-// if (!hasStoreSelection) {
+    // if (!hasStoreSelection) {
 
-//   return;
-// }
+    //   return;
+    // }
 
-  if(!this.storeIds || this.storeIds.length === 0){
+    if (!this.storeIds || this.storeIds.length === 0) {
 
       this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     }
- else 
-  
-  if (!this.selectedlabortypevalues || this.selectedlabortypevalues.length === 0) {
-  
-    this.toast.show('Please select any labor type', 'warning', 'Warning');
-    return;
+    else
+
+      if (!this.selectedlabortypevalues || this.selectedlabortypevalues.length === 0) {
+
+        this.toast.show('Please select any labor type', 'warning', 'Warning');
+        return;
+      }
+
+      else if (
+        !this.Paytype ||
+        (Array.isArray(this.Paytype) && this.Paytype.length === 0)
+      ) {
+
+        this.toast.show('Please select any Pay Type', 'warning', 'Warning');
+        return;
+      }
+      else {
+        const data = {
+          Reference: 'Service Advisor Rankings',
+          FromDate: this.FromDate,
+          ToDate: this.ToDate,
+          TotalReport: this.toporbottom[0],
+          storeValues: this.storeIds.toString(),
+          labortypeValues:
+            this.selectedlabortypevalues.toString(),
+          //  == '0'
+          //   ? ''
+          //   : this.selectedlabortypevalues.toString(),
+          laborstate: this.Teams,
+          dateType: this.DateType,
+          // groups: this.selectedGroups.toString(),
+          storeorgroup: this.storeorgrp.toString(),
+          zeroro: this.zeroro.toString(),
+          otherstoreids: this.selectedotherstoreids,
+          PayType: this.Paytype,
+
+        };
+        // this.close();
+
+        this.shared.api.SetReports({
+          obj: data,
+        });
+        this.GetData(this.columnName, this.columnState);
+
+      }
+
   }
 
- else if (
-    !this.Paytype ||
-    (Array.isArray(this.Paytype) && this.Paytype.length === 0)
-  ) {
-  
-    this.toast.show('Please select any Pay Type', 'warning', 'Warning');
-    return;
+
+  selBlock: any;
+  screenheight: any = 0; divheight: any = 0; trposition: any = 0;
+  commentopen(item: any, i: any, slblock: any = '') {
+    this.index = '';
+    this.screenheight = window.screen.height;
+    this.divheight = (<HTMLInputElement>document.getElementById('scrollcent')).offsetHeight;
+    this.trposition = (<HTMLInputElement>document.getElementById('DV_' + i)).offsetTop;
+    //console.log('Selected Obj :', item);
+    //return
+    this.selBlock = slblock + i.toString();
+    this.index = i.toString();
+    this.commentobj = {
+      TYPE: item.ServiceAdvisor,
+      NAME: item.ServiceAdvisor,
+      STORES: item.StoreName,
+      STORENAME: item.StoreName,
+      Month: '',
+      ModuleId: '38',
+      ModuleRef: 'SAR',
+      state: 1,
+      indexval: i,
+    };
+
+
+    // const DetailsSF = this.ngbmodal.open(CommentsComponent, {
+    //   size: 'xl',
+    //   backdrop: 'static',
+    // });
+    // DetailsSF.componentInstance.SFComments = {
+    //   TYPE: item.LABLEVAL,
+    //   NAME: item.LABLE,
+    //   STORES: this.selectedstorevalues,
+    //   LatestDate: this.Month,
+    //   STORENAME: this.selectedstorename,
+    //   Month: this.Month,
+    //   ModuleId: '66',
+    //   ModuleRef: 'SF',
+    // };
+    // DetailsSF.result.then(
+    //   (data) => {},
+    //   (reason) => {
+    //     // alert('close');
+    //     // // on dismiss
+    //     // const Data = {
+    //     //   state: true,
+    //     // };
+    //     // this.apiSrvc.setBackgroundstate({ obj: Data });
+    //     this.GetData();
+    //   }
+    // );
+    //alert(this.index);
   }
-    else {
-      const data = {
-        Reference: 'Service Advisor Rankings',
-        FromDate: this.FromDate,
-        ToDate: this.ToDate,
-        TotalReport: this.toporbottom[0],
-        storeValues: this.storeIds.toString(),
-        labortypeValues:
-          this.selectedlabortypevalues.toString(),
-        //  == '0'
-        //   ? ''
-        //   : this.selectedlabortypevalues.toString(),
-        laborstate: this.Teams,
-        dateType: this.DateType,
-        // groups: this.selectedGroups.toString(),
-        storeorgroup: this.storeorgrp.toString(),
-        zeroro: this.zeroro.toString(),
-        otherstoreids: this.selectedotherstoreids,
-        PayType: this.Paytype,
 
-      };
-      // this.close();
 
-      this.shared.api.SetReports({
-        obj: data,
+  index = '';
+  commentobj: any = {};
+
+  addcmt(data: any) {
+    if (data == 'A') {
+      this.index = '';
+      const DetailsSF = this.ngbmodal.open({
+        size: 'xl',
+        backdrop: 'static',
       });
-          this.GetData(this.columnName, this.columnState);
+      // myObject['skillItem2'] = 15;
+      this.commentobj['state'] = 0;
+      (DetailsSF.componentInstance.SFComments = this.commentobj),
+        DetailsSF.result.then(
+          (data) => {
+            //console.log(data);
+          },
+          (reason) => {
+            //console.log(reason);
+
+            if (reason == 'O') {
+              this.commentobj['state'] = 1;
+              this.index = this.commentobj['indexval'];
+            } else {
+              this.commentobj['state'] = 1;
+              this.index = this.commentobj['indexval'];
+
+              this.GetData(this.columnName, this.columnState);
+
+            }
+            // // on dismiss
+
+            // const Data = {
+            //   state: true,
+            // };
+            // this.apiSrvc.setBackgroundstate({ obj: Data });
+            // this.GetData();
+          }
+        );
+    }
+    if (data == 'AD') {
+
+      this.GetData(this.columnName, this.columnState);
 
     }
-
   }
+  close(data: any) {
+    //console.log(data);
+    this.index = '';
+  }
+
   ExcelStoreNames: any = []
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
@@ -1005,109 +1112,109 @@ export class Dashboard {
     worksheet.addRow([]);
     const formattedFromDate = this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy');
     const formattedToDate = this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy');
-  
-     const value = ((this.storeorgrp !== undefined && this.storeorgrp !== null && this.storeorgrp.toString().length > 0)
-    ? this.storeorgrp.toString()
-    : (this.storeorgrp ? this.storeorgrp.toString() : '')).toUpperCase();
 
-  let rankByValue = 'Store';
-  if (value === 'G' || value === 'GROUP') {
-    rankByValue = 'Group';
-  } else if (value === 'S' || value === 'STORE') {
-    rankByValue = 'Store';
-  }
+    const value = ((this.storeorgrp !== undefined && this.storeorgrp !== null && this.storeorgrp.toString().length > 0)
+      ? this.storeorgrp.toString()
+      : (this.storeorgrp ? this.storeorgrp.toString() : '')).toUpperCase();
 
-      const payTypeMap: any = {
-        'C': 'Customer Pay',
-        'W': 'Warranty',
-        'I': 'Internal',
-        'S': 'Sublet Gross',
-        'M': 'Misc',
-      };
-      
-      // Convert Paytype array or single value to readable names
-      let formattedPayType = 'All';
-      if (Array.isArray(this.Paytype) && this.Paytype.length > 0) {
-        formattedPayType = this.Paytype.map(pt => payTypeMap[pt] || pt).join(', ');
-      } else if (typeof this.Paytype === 'string' && this.Paytype !== '') {
-        formattedPayType = payTypeMap[this.Paytype] || this.Paytype;
-      }
-      
-      // Handle Zero Hours value
-      let formattedZeroHours = 'All';
-      if (this.zeroro) {
-        formattedZeroHours = this.zeroro === 'E' ? 'Exclude' :
-                             this.zeroro === 'I' ? 'Include' :
-                             this.zeroro;
-      }
-      
-      let storeValue = '';
+    let rankByValue = 'Store';
+    if (value === 'G' || value === 'GROUP') {
+      rankByValue = 'Group';
+    } else if (value === 'S' || value === 'STORE') {
+      rankByValue = 'Store';
+    }
 
-      if (!this.storeIds || this.storeIds.length === 0) {
-        // No selection → All stores
-        storeValue = this.stores.map((s: any) => s.storename).join(', ');
-      }
-      else if (this.storeIds.length === this.stores.length) {
-        // All selected → bind all store names
-        storeValue = this.stores.map((s: any) => s.storename).join(', ');
-      }
-      else {
-        // Partial selection
-        storeValue = this.stores
-          .filter((s: any) => this.storeIds.includes(s.ID))
-          .map((s: any) => s.storename)
-          .join(', ');
-      }
-      
-          const filters = [
-            { name: 'Store:', values: storeValue },
-        { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
-        { name: 'Labor Types:', values: this.selectedlabortypevalues },
-        { name: 'Zero Hours:', values: formattedZeroHours },
-        { name: 'Rank By:', values: this.storeorgrp == 'S' ? 'Store' :'Group' },
-        { name: 'Pay Type:', values: formattedPayType },
-      ];
-    
- 
-  
+    const payTypeMap: any = {
+      'C': 'Customer Pay',
+      'W': 'Warranty',
+      'I': 'Internal',
+      'S': 'Sublet Gross',
+      'M': 'Misc',
+    };
+
+    // Convert Paytype array or single value to readable names
+    let formattedPayType = 'All';
+    if (Array.isArray(this.Paytype) && this.Paytype.length > 0) {
+      formattedPayType = this.Paytype.map(pt => payTypeMap[pt] || pt).join(', ');
+    } else if (typeof this.Paytype === 'string' && this.Paytype !== '') {
+      formattedPayType = payTypeMap[this.Paytype] || this.Paytype;
+    }
+
+    // Handle Zero Hours value
+    let formattedZeroHours = 'All';
+    if (this.zeroro) {
+      formattedZeroHours = this.zeroro === 'E' ? 'Exclude' :
+        this.zeroro === 'I' ? 'Include' :
+          this.zeroro;
+    }
+
+    let storeValue = '';
+
+    if (!this.storeIds || this.storeIds.length === 0) {
+      // No selection → All stores
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else if (this.storeIds.length === this.stores.length) {
+      // All selected → bind all store names
+      storeValue = this.stores.map((s: any) => s.storename).join(', ');
+    }
+    else {
+      // Partial selection
+      storeValue = this.stores
+        .filter((s: any) => this.storeIds.includes(s.ID))
+        .map((s: any) => s.storename)
+        .join(', ');
+    }
+
+    const filters = [
+      { name: 'Store:', values: storeValue },
+      { name: 'Time Frame:', values: `${formattedFromDate} to ${formattedToDate}` },
+      { name: 'Labor Types:', values: this.selectedlabortypevalues },
+      { name: 'Zero Hours:', values: formattedZeroHours },
+      { name: 'Rank By:', values: this.storeorgrp == 'S' ? 'Store' : 'Group' },
+      { name: 'Pay Type:', values: formattedPayType },
+    ];
+
+
+
     let currentRow = worksheet.lastRow?.number ?? worksheet.rowCount;
     filters.forEach((filter) => {
       currentRow++;
-  
-    
+
+
       let value = Array.isArray(filter.values)
         ? filter.values.join(', ')
         : filter.values;
-  
+
       const row = worksheet.addRow([filter.name, value]);
       row.getCell(1).font = { bold: true, name: 'Arial', size: 10 };
       row.getCell(2).font = { name: 'Arial', size: 10, color: { argb: 'FF1F497D' } }; // blue color for values
       worksheet.mergeCells(`B${currentRow}:F${currentRow}`);
     });
-  
+
     worksheet.addRow([]);
 
-  
-  
-    const firstHeader = ['', '', '', '', '', '','','', '', '', '','','','','','',''];
+
+
+    const firstHeader = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
     const headerRow1 = worksheet.addRow(firstHeader);
-  
+
 
     const secondHeader = [
-      'Rank', '	Service Advisor', 'Store Name','#ROs	', 'ROs/Day	', 'Hours	', 'Hours/Ro','	Labor Sales','Labor Gross', 'Parts Sales	', 'Parts Gross', 'Total Gross','Sublet Gross','Misc','GP%','Discounts','ELR'
+      'Rank', '	Service Advisor', 'Store Name', '#ROs	', 'ROs/Day	', 'Hours	', 'Hours/Ro', '	Labor Sales', 'Labor Gross', 'Parts Sales	', 'Parts Gross', 'Total Gross', 'Sublet Gross', 'Misc', 'GP%', 'Discounts', 'ELR'
     ];
     const headerRow2 = worksheet.addRow(secondHeader.map(h => h.trim()));
-  
+
     const headerRow1Index = headerRow1.number;
     const headerRow2Index = headerRow2.number;
-  
-   
+
+
     worksheet.mergeCells(`A${headerRow1Index}`);
     worksheet.mergeCells(`B${headerRow1Index}`);
     worksheet.mergeCells(`C${headerRow1Index}`);
     worksheet.mergeCells(`D${headerRow1Index}:H${headerRow1Index}`); // Back Gross
     worksheet.mergeCells(`I${headerRow1Index}:L${headerRow1Index}`); // Unit Credit
-  
+
     [headerRow1, headerRow2].forEach(r => {
       r.height = 22;
       r.eachCell({ includeEmpty: false }, (cell) => {
@@ -1120,34 +1227,34 @@ export class Dashboard {
         };
       });
     });
-    
-  
+
+
 
     const bindingHeaders = [
       'Rank', 'ServiceAdvisor', 'StoreName',
-      'RO', 'ROPerDay', 
-     'ActualHours','HoursPerRO','LaborSale' ,'LaborGross','PartsSale' ,'PartsGross','TotalGross','SubletGross','MiscGross','GP','Discount','ELR'
+      'RO', 'ROPerDay',
+      'ActualHours', 'HoursPerRO', 'LaborSale', 'LaborGross', 'PartsSale', 'PartsGross', 'TotalGross', 'SubletGross', 'MiscGross', 'GP', 'Discount', 'ELR'
     ];
-  
-    const currencyFields = ['LaborSale' ,'LaborGross','PartsSale' ,'PartsGross','TotalGross','ELR'];
-  
+
+    const currencyFields = ['LaborSale', 'LaborGross', 'PartsSale', 'PartsGross', 'TotalGross', 'ELR'];
+
     this.ServiceAdvisorData.forEach((info: any) => {
-    const rowData = bindingHeaders.map((key) => {
-  let val = info[key];
+      const rowData = bindingHeaders.map((key) => {
+        let val = info[key];
 
-  // Suppress rank 1000 only for Total row
-  if (key === 'Rank' && (info.ServiceAdvisor + '').toLowerCase() === 'total') {
-    return '';   // leave blank
-  }
+        // Suppress rank 1000 only for Total row
+        if (key === 'Rank' && (info.ServiceAdvisor + '').toLowerCase() === 'total') {
+          return '';   // leave blank
+        }
 
-  return (val === 0 || val == null || val === '') ? '-' : val;
-});
-  
+        return (val === 0 || val == null || val === '') ? '-' : val;
+      });
+
       const dataRow = worksheet.addRow(rowData);
-  
+
       bindingHeaders.forEach((key, index) => {
         const cell = dataRow.getCell(index + 1);
-  
+
         if (currencyFields.includes(key) && typeof cell.value === 'number') {
           cell.numFmt = '"$"#,##0.00';
           cell.alignment = { horizontal: 'right', vertical: 'middle' };
@@ -1156,10 +1263,10 @@ export class Dashboard {
         }
       });
     });
-  
+
 
     worksheet.columns.forEach(col => col.width = 25);
-  
+
 
     workbook.xlsx.writeBuffer().then(buffer => {
       this.shared.exportToExcel(workbook, 'Service Advisor Rankings');

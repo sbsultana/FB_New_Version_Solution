@@ -28,7 +28,7 @@
           <!-- Rank By Dropdown -->
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(3)">Rank By
-              <span class="light-font"> ({{storeorgroup== 'S' ? 'Store' : 'Group'}})</span>
+              <span class="light-font"> ( {{storeorgroup== 'S' ? 'Store' : 'Group'}} )</span>
               <span class="arrow"></span>
             </button>
             <div class="timeframe my-2" *ngIf="activePopover === 3">
@@ -65,7 +65,7 @@
           </div>
 
           <!-- Deal Status Dropdown -->
-          <div class="dropdown">
+          <div class="dropdown d-none">
             <button class="dropdown-toggle" (click)="togglePopover(6)">Deal Status
               <span class="light-font">( {{dealStatus.length == 1 ? dealStatus : 'Selected'}}
                 <span *ngIf="dealStatus.length > 1"> {{dealStatus.length}} </span>)</span>
@@ -93,29 +93,23 @@
 
 
 
-      <div class="scorecard-double-header">
+      <div class="scorecard-triple-header sp-rankings">
         <table class="table mb-0 w-100">
           <thead>
             <tr>
-              <th class="text-center bg-white" colspan="3" *ngIf="dateType==''">
-                <!-- {{FromDate | date:'MMMM'}} ({{FromDate | date:'dd'}}-{{ToDate | date:'dd'}}, {{FromDate | date:'yyyy'}}) -->
-              </th>
-              <th colspan="3" *ngIf="dateType!=''">
-                <!-- {{
-              dateType=="MTD" ? "MTD" :
-              dateType=="YTD" ? "YTD" :
-              dateType=="QTD" ? "QTD" :
-              dateType=="LM" ? "LAST MONTH" :
-              dateType=="LY" ? "LAST YEAR" :
-              FromDate +" - "+ ToDate
-              }} -->
-              </th>
+              <th class="text-center bg-white" colspan="4" *ngIf="dateType==''">{{FromDate |date:'MMMM'}} ({{FromDate
+                |date:'dd'}}-{{ToDate |date:'dd'}},
+                {{FromDate | date:'yyyy'}})</th>
+              <!-- <th class="spacer"></th> -->
+              <th colspan="4" *ngIf="dateType!=''">{{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD"
+                ? "QTD" : dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" - "+ ToDate}}</th>
               <th colspan="5">Unit Count</th>
-              <th colspan="4">Total Gross</th>
+              <th colspan="4" class="boxshadow-none">Total Gross</th>
               <!-- <th colspan="2"></th> -->
             </tr>
             <tr>
-              <th class="bdr-rt" (click)="tabClick('Rank')">Rank</th>
+              <th></th>
+              <th class="bdr-rt cursor-pointer" (click)="tabClick('Rank')">Rank</th>
               <th class="bdr-rt cursor-pointer" (click)="tabClick('SalesPerson')">Salesperson</th>
               <th class="bdr-rt cursor-pointer" (click)="tabClick('StoreName')">Store Name</th>
 
@@ -144,6 +138,28 @@
                   'divBold': spdata.data1 === 'Reports Total',
                   'avgBold': spdata.SalesPerson === 'Average'
                 }" [id]="'DV_'+i">
+                <td class="text-center">
+                  <div class="Tooltip">
+
+                    <div style="cursor:pointer">
+
+                      <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'Y'" width="17px"
+                        src="images/unread-comments.png " (click)="commentopen(spdata,i)">
+
+                      <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'N'" width="17px"
+                        src="images/no-comments.png " (click)="commentopen(spdata,i)">
+
+
+                    </div>
+
+                    <!-- <span class="Tooltip_chat_bottom"
+                      [ngClass]="{'Tooltip_chat_top' : (screenheight-divheight)-trposition <25 ,'Tooltip_chat_bottom': (screenheight-divheight)-trposition >= 25 }"
+                      *ngIf="i.toString()==index">
+                      <app-comments [SFComments]="commentobj" (onClose)="close($event)" (onLoad)="addcmt($event)">
+                      </app-comments>
+                    </span> -->
+                  </div>
+                </td>
 
                 <td *ngIf="spdata.data1 !== 'Reports Total'" class="text-center">{{spdata.Rank}}</td>
                 <td *ngIf="spdata.data1 !== 'Reports Total'" class="text-start">{{spdata.SalesPerson}}</td>

@@ -77,9 +77,9 @@ export class Dashboard {
         this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
         this.getStoresandGroupsValues()
       }
-      this.title.setTitle(this.comm.titleName + '-Booked to Closed Reconciliation');
+      this.title.setTitle(this.comm.titleName + '-Booked to Final Reconciliation');
       const data = {
-        title: 'Booked to Closed Reconciliation',
+        title: 'Booked to Final Reconciliation',
         stores: this.storeIds,
 
         count: 0,
@@ -269,7 +269,7 @@ export class Dashboard {
   Bookedstate: any;
   ngAfterViewInit(): void {
     this.shared.api.getStores().subscribe((res: any) => {
-      if (this.shared.common.pageName == 'Booked to Closed Reconciliation') {
+      if (this.shared.common.pageName == 'Booked to Final Reconciliation') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
@@ -281,7 +281,7 @@ export class Dashboard {
     })
     this.shared.api.getExportToExcelAllReports().subscribe((res) => {
       this.Bookedstate = res.obj.state;
-      if (res.obj.title == 'Booked to Closed Reconciliation') {
+      if (res.obj.title == 'Booked to Final Reconciliation') {
         if (res.obj.state == true) {
           this.exportAsXLSX();
         }
@@ -443,7 +443,7 @@ export class Dashboard {
   exportAsXLSX(): void {
 
     const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Booked to Closed Reconciliation');
+    const worksheet = workbook.addWorksheet('Booked to Final Reconciliation');
 
     // =============================
     // FREEZE HEADER
@@ -475,7 +475,7 @@ export class Dashboard {
     // =============================
 
     worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Booked to Closed Reconciliation']);
+    const titleRow = worksheet.addRow(['Booked to Final Reconciliation']);
     titleRow.font = { name: 'Arial', size: 12, bold: true };
     worksheet.mergeCells('A2:Q2');
 
@@ -719,7 +719,7 @@ export class Dashboard {
       const blob = new Blob([data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
-      FileSaver.saveAs(blob, 'Booked to Closed Reconciliation.xlsx');
+      FileSaver.saveAs(blob, 'Booked to Final Reconciliation.xlsx');
     });
 
   }
