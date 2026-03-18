@@ -57,7 +57,7 @@ export const routes: Routes = [
   { path: 'SalesGrossExecutive', loadComponent: () => import('./Reports/Sales/SalesGrossExecutive/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'CarDeals', loadComponent: () => import('./Reports/Sales/CarDeals/dashboard/dashboard').then(m => m.Dashboard) },
   // { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SPranking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FandIManagerRanking', loadComponent: () => import('./Reports/Sales/FandIManagerRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventoryBookV1', loadComponent: () => import('./Reports/Sales/InventoryBook/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventorySummaryV1', loadComponent: () => import('./Reports/Sales/InventorySummary/dashboard/dashboard').then(m => m.Dashboard) },
@@ -69,6 +69,10 @@ export const routes: Routes = [
 
   { path: 'FandIProductPenetration', loadComponent: () => import('./Reports/Sales/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FandIProductPenetrationV2', loadComponent: () => import('./Reports/Others/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FandISummary', loadComponent: () => import('./Reports/Sales/FandISummary/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesContest', loadComponent: () => import('./Reports/Sales/SalesContest/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'UsedVehicleStocking', loadComponent: () => import('./Reports/Sales/UsedVehicleStocking/dashboard/dashboard').then(m => m.Dashboard) },
+
 
   { path: 'SalesTax', loadComponent: () => import('./Reports/Sales/SalesTax/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },

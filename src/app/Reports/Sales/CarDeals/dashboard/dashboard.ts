@@ -40,28 +40,50 @@ export class Dashboard {
   dealType: any = ['New', 'Used'];
   saleType: any = ['Retail', 'Lease', 'Misc', 'Special Order']
   dealStatus: any = ['Delivered', 'Capped', 'Finalized'];
+  acquisition: any = ['All'];
   count = 0;
   storeName: any = ''
   DateType: any = 'MTD'
+  RoleId: any = '';
+  routepath: any = ''
 
   header: any = [{
     type: 'Bar', storeIds: this.store, fromDate: this.FromDate, toDate: this.ToDate, groups: this.groups, datevaluetype: this.DateType
   }]
   pageNumber: any = 0;
-
+  userData: any = {}
   constructor(public shared: Sharedservice, public setdates: Setdates) {
 
     this.shared.setTitle(this.shared.common.titleName + '-Car Deals')
 
     // if (typeof window !== 'undefined') {
-    // if (localStorage.getItem('UserDetails') != null) {
+    // if (localStorage.getItem('userInfo') != null) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.store = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      this.RoleId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.roleid
+      // this.userData = JSON.parse(localStorage.getItem('userInfo')!).flag
+      // this.column = JSON.parse(localStorage.getItem('userInfo')!).flag.CN
+      // this.userData.DS ? this.dealStatus = ['Finalized'] : ''
+    }
+    if (localStorage.getItem('CarDeals') != undefined && localStorage.getItem('CarDeals') != null) {
+      let fromIBData = JSON.parse(localStorage.getItem('CarDealsData')!)[0]
+      console.log(fromIBData);
+      this.store = fromIBData.storeid;
+      this.groups = fromIBData.groups;
+      this.dealType = fromIBData.stocktype;
+      this.FromDate = fromIBData.fromDate;
+      this.ToDate = fromIBData.toDate;
+      this.QISearchName = fromIBData.model ? fromIBData.model : '';
+      this.acquisition = fromIBData.acquisition ? fromIBData.acquisition : ['All'];
+      this.routepath = fromIBData.routepath
+      this.DateType = fromIBData.datetype
+      localStorage.setItem('time', this.DateType);
+    } else {
+      this.setDates('MTD')
+      this.DateType = 'MTD'
     }
 
-    this.setDates('MTD')
-    this.DateType = 'MTD'
     // }
     // if (localStorage.getItem('Fav') != 'Y') {
     this.setHeaderReportData()
@@ -103,13 +125,15 @@ export class Dashboard {
       startdealdate: this.FromDate,
       enddealdate: this.ToDate,
       Stores: this.store,
-      dealtype: this.dealType.toString(),
+      dealtype: this.dealType.toString() == 'C' ? 'New,Used' : this.dealType.toString(),
       saletype: this.saleType.toString(),
       dealstatus: this.dealStatus.toString(),
       PageNumber: this.pageNumber,
       PageSize: '1000',
       ExtraType: this.otherblocks.toString(),
-      SearchExp: this.QISearchName
+      SearchExp: this.QISearchName,
+      AcquisitionSource: this.acquisition.toString() == 'All' ? '' : this.acquisition.toString(),
+      SalesPersonID: this.RoleId == 121 ? JSON.parse(localStorage.getItem('userInfo')!).EmpID : ''
     };
     this.count++
     const curl = this.shared.getEnviUrl() + this.shared.common.routeEndpoint + + 'GetSalesCarDeals';
@@ -248,7 +272,8 @@ export class Dashboard {
     const obj = {
       "startdealdate": this.FromDate,
       "enddealdate": this.ToDate,
-      "dealid": item.dealid
+      "dealid": item.dealid,
+      "StoreID":item.dealerid
     }
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetSalesCarDealsTradeDetails', obj).subscribe((res: any) => {
       if (res.status == 200) {
@@ -266,6 +291,14 @@ export class Dashboard {
         this.spinnerLoaderTrade = false
       }
     })
+  }
+
+    toggleView(data: any) {
+    if (data.notesView == '+') {
+      data.notesView = '-'
+    } else {
+      data.notesView = '+'
+    }
   }
   sort(property: any) {
     this.isDesc = !this.isDesc; //change the direction
@@ -392,7 +425,7 @@ export class Dashboard {
     this.header = [{
       type: 'Bar', storeIds: this.store, fromDate: this.FromDate, toDate: this.ToDate, ReportTotal: this.TotalReport, search: this.QISearchName, groups: this.groups, datevaluetype: this.DateType, dealType: this.dealType,
       saleType: this.saleType,
-      dealStatus: this.dealStatus,
+      dealStatus: this.dealStatus,as:this.acquisition, otherblock: this.otherblocks,
     }]
     if (this.store != '') {
       this.GetData()

@@ -9,7 +9,7 @@ import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
 @Component({
   selector: 'app-cardeals-reports',
-  imports: [SharedModule, DateRangePicker, Stores,ToastContainer],
+  imports: [SharedModule, DateRangePicker, Stores, ToastContainer],
   templateUrl: './cardeals-reports.html',
   styleUrl: './cardeals-reports.scss'
 })
@@ -72,10 +72,12 @@ export class CardealsReports {
     this.setDates(this.ngChanges.datevaluetype)
 
   }
-  constructor(private shared: Sharedservice, private datesSrvc: Setdates,private toast:ToastService) { }
+  constructor(private shared: Sharedservice, private datesSrvc: Setdates, private toast: ToastService) { }
 
   ngOnInit() {
     this.getGroups();
+    this.acquisitionsrc();
+
   }
 
   // Report popup Code
@@ -113,8 +115,24 @@ export class CardealsReports {
     })
 
   }
+  acquisitionsource: any = []
+  acquisitionsrc() {
+    const obj = {}
+    this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetAcquisitionSourceList', obj).subscribe((res: any) => {
+      if (res.status == 200) {
+        this.acquisitionsource = res.response
+        if (this.ngChanges.as[0] == "All") {
+          this.Acquisition = this.acquisitionsource.map(function (a: any) {
+            return a.ad_acquisition_source;
+          });
+        } else {
+          this.Acquisition = []
+          this.Acquisition = this.ngChanges.as
+        }
+      }
+    })
+  }
 
-  
   getGroups() {
     // console.log(this.shared.common.pageName, this.shared.common.groupsandstores);
 
@@ -162,8 +180,8 @@ export class CardealsReports {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-    console.log(data,'Data.');
-    
+    console.log(data, 'Data.');
+
 
 
   }
@@ -229,6 +247,8 @@ export class CardealsReports {
         if (e == 'All') {
           // this.retailorlease.splice(index, 1);
           this.retailorlease = []
+          // alert('Please select atleast one Deal Type');
+
         } else {
           this.retailorlease.splice(index, 1);
           let allindex = this.retailorlease.findIndex((i: any) => i == 'All');
@@ -237,15 +257,16 @@ export class CardealsReports {
           }
         }
       } else {
+        this.otherblocks = ['Retail and Lease']
         if (e == 'All') {
           const dealdata = JSON.stringify(this.dealTypeData)
           this.retailorlease = JSON.parse(dealdata)
         } else {
           this.retailorlease.push(e);
-          if (this.retailorlease.length == this.dealTypeData.length - 1) {
-            const dealdata = JSON.stringify(this.dealTypeData)
-            this.retailorlease = JSON.parse(dealdata)
-          }
+          // if (this.retailorlease.length == 0) {
+          //   alert('Please select atleast one Deal Type');
+
+          // }
         }
       }
     }
@@ -256,10 +277,13 @@ export class CardealsReports {
     if (block == 'OB') {
       this.otherblocks = []
       this.otherblocks.push(e)
-      if (e == 'Retail and Lease') {
-        this.retailorlease = ['Retail', 'Lease', 'Misc', 'Special Order'];
-      } else {
+      if (e == 'Unwound') {
         this.retailorlease = []
+
+      } else {
+        this.retailorlease = ['Retail', 'Lease', 'Misc', 'Special Order'];
+
+      
       }
       // this.QISearchName = ''
       // this.setHeaderReportData()
@@ -292,18 +316,30 @@ export class CardealsReports {
       this.Transactorgl = [];
       this.Transactorgl.push(e);
     }
-
+    if (block == 'AS') {
+      if (e == 'All') {
+        if (this.Acquisition.length == this.acquisitionsource.length) {
+          this.Acquisition = []
+        } else {
+          this.Acquisition = this.acquisitionsource.map(function (a: any) {
+            return a.ad_acquisition_source;
+          });
+        }
+      }
+      else {
+        const index = this.Acquisition.findIndex((i: any) => i == e);
+        if (index >= 0) {
+          this.Acquisition.splice(index, 1);
+        } else {
+          this.Acquisition.push(e);
+        }
+      }
+    }
   }
   viewreport() {
     this.activePopover = -1
-
-    // if (this.retailorlease.length == 0) {
-  
-    // }
-    // else if (this.dealstatus.length == 0) {
-    
-    // }
-    if(!this.storeIds || this.storeIds.length === 0){
+    let aqusrc: any = ['All']
+    if (!this.storeIds || this.storeIds.length === 0) {
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -316,7 +352,7 @@ export class CardealsReports {
         'warning',
         'Warning'
       );
-     
+
     }
     else if (this.retailorlease.length == 0) {
       this.toast.show(
@@ -324,7 +360,9 @@ export class CardealsReports {
         'warning',
         'Warning'
       );
-     
+
+    } else if (this.Acquisition.length == 0) {
+      this.toast.show('Please select atleast one Acquisition Source', 'warning', 'Warning');
     }
     else {
       const data = {
@@ -340,7 +378,8 @@ export class CardealsReports {
 
         groups: this.groupId,
         otherblock: this.otherblocks,
-        search: this.QISearchName
+        search: this.QISearchName,
+        acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
         // gv: this.gridview,
         // acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
         // groups: this.selectedGroups.toString(),

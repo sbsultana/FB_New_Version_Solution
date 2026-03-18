@@ -50,7 +50,9 @@ export class Api {
   private storesVariables = new BehaviorSubject<any>({
     obj: '',
   })
-
+  private storesAll = new BehaviorSubject<any>({
+    obj: '',
+  });
 
   constructor(public http: HttpClient) { }
 
@@ -263,6 +265,13 @@ export class Api {
   }
   getAllStores() {
     return this.reconstores.asObservable();
+  }
+
+  setStoresAll(data: any) {
+    this.storesAll.next(data);
+  }
+  getStoresAll() {
+    return this.storesAll.asObservable();
   }
   setAccuntingAllStores(data: any) {
     this.accouningreconstores.next(data);

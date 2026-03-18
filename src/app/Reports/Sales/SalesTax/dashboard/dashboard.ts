@@ -71,7 +71,8 @@ export class Dashboard {
   CompleteComponentState: boolean = true;
 
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService) {
+  constructor(
+    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService) {
     this.shared.setTitle('Sales Tax');
     this.initializeDates(this.DateType)
 
