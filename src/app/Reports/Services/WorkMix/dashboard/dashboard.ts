@@ -369,6 +369,7 @@ export class Dashboard {
       );
     });
   }
+
   //getstores
   StoresData(data: any) {
     this.storeIds = data.storeids;
