@@ -89,6 +89,7 @@ export const routes: Routes = [
   { path: 'ServiceOpenRO', loadComponent: () => import('./Reports/Services/ServiceOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventoryOpenRO', loadComponent: () => import('./Reports/Services/InventoryOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAbsorption', loadComponent: () => import('./Reports/Services/ServiceAbsorption/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ServiceLaborTrendDetail', loadComponent: () => import('./Reports/Services/ServiceLaborTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
 
   // OTHERS
 
