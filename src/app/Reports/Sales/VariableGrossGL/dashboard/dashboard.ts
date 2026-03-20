@@ -41,7 +41,13 @@ export class Dashboard implements OnInit {
   };
 
 
-
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
   month!: Date;
   DuplicatDate!: Date;
   minDate!: Date;
@@ -226,7 +232,7 @@ export class Dashboard implements OnInit {
         DepartmentU: this.Department.indexOf('Used') >= 0 ? 'U' : '',
       },
     ];
-this.GetDetails('','')
+    this.GetDetails('', '')
   }
   details: any = [];
   spinnerLoader: boolean = true;
@@ -247,12 +253,12 @@ this.GetDetails('','')
   GetDetails(acctno: any, index: any) {
     this.spinnerLoader = true
     this.acctNo = acctno;
-    this.details = []
+    this.details = [];
     const obj = {
       "AS_IDS": this.Salesdetails[0].storeids,
       "DATE": this.Salesdetails[0].StartDate,
       "VAR1": this.Salesdetails[0].var1,
-      "VAR2": this.Salesdetails[0].var2,
+      "VAR2": this.Salesdetails[0].var2.toString(),
       "Accountnumber": acctno
     }
 
@@ -267,9 +273,8 @@ this.GetDetails('','')
           if (acctno != '') {
             this.expandedIndex = index;
             this.FSSubDetailsMap[index] = res.response;
-
           }
-          this.spinnerLoader = false;
+          this.filteredSalesdetailsData = this.SalesdetailsData || [];
           this.spinnerLoader = false;
           if (this.SalesdetailsData.length > 0) {
             this.NoData = false;
@@ -301,100 +306,70 @@ this.GetDetails('','')
   }
 
   filterData() {
-    if (this.searchText.trim() !== '') {
-      this.filteredSalesdetailsData = this.SalesdetailsData.filter(
-        (item: any) =>
-          (item.Store &&
-            item.Store.toLowerCase().includes(this.searchText.toLowerCase())) ||
-          (item.accountnumber &&
-            item.accountnumber
-              .toLowerCase()
-              .includes(this.searchText.toLowerCase())) ||
-          (item.Control &&
-            item.Control
-              .toLowerCase()
-              .includes(this.searchText.toLowerCase())) ||
-          (item.accountingdate &&
-            item.accountingdate
-              .toLowerCase()
-              .includes(this.searchText.toLowerCase())) ||
-          (item.Make &&
-            item.Make.toLowerCase().includes(this.searchText.toLowerCase())) ||
-          (item.detaildescription &&
-            item.detaildescription
-              .toLowerCase()
-              .includes(this.searchText.toLowerCase()))
-      );
-    } else {
+    const text = this.searchText.trim().toLowerCase();
+
+    if (!text) {
       this.filteredSalesdetailsData = [...this.SalesdetailsData];
+    } else {
+      this.filteredSalesdetailsData = this.SalesdetailsData.filter((item: any) =>
+        [
+          item.StoreName,
+          item.AccountNumber,
+          item.AccountDescription,
+          item.PostingAmount
+        ].some(val =>
+          val?.toString().toLowerCase().includes(text)
+        )
+      );
     }
+
     this.currentPage = 1;
   }
+
   get paginatedItems() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.filteredSalesdetailsData.slice(startIndex, endIndex);
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredSalesdetailsData.slice(start, start + this.itemsPerPage);
   }
 
   getMaxPageNumber(): number {
-    return Math.ceil(this.filteredSalesdetailsData.length / this.itemsPerPage);
+    return Math.max(1,
+      Math.ceil(this.filteredSalesdetailsData.length / this.itemsPerPage)
+    );
   }
 
   nextPage() {
-    if (this.currentPage < this.getMaxPageNumber()) {
-      this.currentPage++;
-      this.clickedPage = null;
-      this.expandedIndex = null;
-    }
+    if (this.currentPage < this.getMaxPageNumber()) this.currentPage++;
   }
 
   prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.clickedPage = null;
-      this.expandedIndex = null;
-    }
+    if (this.currentPage > 1) this.currentPage--;
   }
 
   goToFirstPage() {
     this.currentPage = 1;
-    this.clickedPage = null;
-    this.expandedIndex = null;
   }
 
-  getPageNumbers(): number[] {
-    const maxPage = this.getMaxPageNumber();
-    const currentPage = this.currentPage;
-    const maxButtonsToShow = this.maxPageButtonsToShow;
-    if (maxPage <= 0) return [];
-
-    let start = Math.max(currentPage - Math.floor(maxButtonsToShow / 2), 1);
-    let end = start + maxButtonsToShow - 1;
-    if (end > maxPage) {
-      end = maxPage;
-      start = Math.max(end - maxButtonsToShow + 1, 1);
-    }
-    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
-  }
-
-  goToPage(page: number) {
-    this.currentPage = page;
-    this.clickedPage = null;
-    this.expandedIndex = null;
-  }
   goToLastPage() {
     this.currentPage = this.getMaxPageNumber();
+  }
+
+  getStartRecordIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  getEndRecordIndex(): number {
+    return Math.min(
+      this.getStartRecordIndex() + this.itemsPerPage - 1,
+      this.filteredSalesdetailsData.length
+    );
+  }
+  onPageSizeChange() {
+    this.currentPage = 1;
+  }
+
+  resetExpand() {
     this.clickedPage = null;
     this.expandedIndex = null;
-  }
-  getStartRecordIndex(): number {
-    return (this.currentPage - 1) * this.itemsPerPage;
-  }
-  getEndRecordIndex(): number {
-    const endIndex = this.getStartRecordIndex() + this.itemsPerPage;
-    return endIndex > this.SalesdetailsData.length
-      ? this.SalesdetailsData.length
-      : endIndex;
   }
 
 
@@ -570,8 +545,8 @@ this.GetDetails('','')
     }
 
     if (block == 'TB') {
-      this.TotalReport =e;
-     
+      this.TotalReport = e;
+
     }
 
     if (block == 'Dept') {

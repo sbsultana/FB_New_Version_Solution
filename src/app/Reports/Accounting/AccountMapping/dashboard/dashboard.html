@@ -8,82 +8,84 @@
 
 
       <div class="col-12">
-        <div class="filter-dropdowns">
+        <div class="reports-bar">
+          <div class="filter-dropdowns">
+            <!-- <div class="dropdown d-none">
+              <button class="dropdown-toggle" (click)="togglePopover(0)">
+                <span *ngIf="storeIds.length !== 1">Stores ({{storeButtonLabel}})</span>
+                <span *ngIf="storeIds.length === 1">{{storeButtonLabel}}</span>
+                <span class="arrow"></span>
+              </button>
 
-          <div class="dropdown d-none">
-            <button class="dropdown-toggle" (click)="togglePopover(0)">
-              <span *ngIf="storeIds.length !== 1">Stores ({{storeButtonLabel}})</span>
-              <span *ngIf="storeIds.length === 1">{{storeButtonLabel}}</span>
-              <span class="arrow"></span>
-            </button>
+              <div class="dropdown-menu" *ngIf="isPopoverOpen">
+                <label *ngFor="let store of stores">
+                  <input type="checkbox" [checked]="storeIds.includes(store.ID)" (change)="onStoreToggle(store.ID)" />
+                  {{ store.storename }}
+                </label>
+              </div>
 
-            <div class="dropdown-menu" *ngIf="isPopoverOpen">
-              <label *ngFor="let store of stores">
-                <input type="checkbox" [checked]="storeIds.includes(store.ID)" (change)="onStoreToggle(store.ID)" />
-                {{ store.storename }}
-              </label>
-            </div>
-
-            <div class="reportstores-card my-3" *ngIf="activePopover === 0">
-              <div class="row h-100">
-                <div class="stores d-flex flex-column ps-0">
-                  <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                    <div class="allstores text-start">
-                      <a class="text-primary cursor-pointer me-2" (click)="allstores('Y')">Select All</a> |
-                      <a class="text-primary cursor-pointer ms-2" (click)="allstores('N')">Clear All</a>
-                    </div>
-                    <div class="store-columns flex-grow-1">
-                      <ng-container *ngFor="let s of stores">
-                        <button class="btn btn-outline-primary store-button" (click)="individualStores(s)"
-                          [ngClass]="{'active':storeIds.indexOf(s.ID)>=0,'inactive':storeIds.indexOf(s.ID)<0}">
-                          {{ s.storename }}
-                        </button>
-                      </ng-container>
+              <div class="reportstores-card my-3" *ngIf="activePopover === 0">
+                <div class="row h-100">
+                  <div class="stores d-flex flex-column ps-0">
+                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                      <div class="allstores text-start">
+                        <a class="text-primary cursor-pointer me-2" (click)="allstores('Y')">Select All</a> |
+                        <a class="text-primary cursor-pointer ms-2" (click)="allstores('N')">Clear All</a>
+                      </div>
+                      <div class="store-columns flex-grow-1">
+                        <ng-container *ngFor="let s of stores">
+                          <button class="btn btn-outline-primary store-button" (click)="individualStores(s)"
+                            [ngClass]="{'active':storeIds.indexOf(s.ID)>=0,'inactive':storeIds.indexOf(s.ID)<0}">
+                            {{ s.storename }}
+                          </button>
+                        </ng-container>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-          </div>
-
-          <!-- TIME FRAME -->
-          <div class="date-filter-card d-flex align-items-center justify-content-start">
-            <div class="open-calendar position-relative">
-              <input type="text" class="form-control year-input"
-                [value]="frommonth ? (frommonth | date: 'MMMM/yyyy') : 'Select Month'" bsDatepicker
-                [(ngModel)]="frommonth" [bsConfig]="monthPickerConfig" (bsValueChange)="changeDatefrom($event)" readonly
+            </div> -->
+            <div class="dropdown">
+              <button class="dropdown-toggle" (click)="fromDp.show()">
+                Month
+                <span class="light-font">
+                  ( {{ frommonth ? (frommonth | date:'MMMM/yyyy') : 'Select Month' }} )
+                </span>
+              </button>
+              <input #fromDp="bsDatepicker" type="text" bsDatepicker [(ngModel)]="frommonth"
+                [bsConfig]="monthPickerConfig" (bsValueChange)="changeDatefrom($event)" readonly
                 (keydown)="$event.preventDefault()" (keypress)="$event.preventDefault()"
-                (paste)="$event.preventDefault()">
+                (paste)="$event.preventDefault()" style="position:absolute; opacity:0; height:0; width:0;" />
+            </div>
+            <div class="dropdown">
+              <button class="apply-button" (click)="onApply()"><span>Apply</span></button>
             </div>
           </div>
-
-          <!-- APPLY -->
-          <div class="dropdown">
-            <button class="apply-button" (click)="onApply()"><span>Apply</span></button>
-          </div>
-
         </div>
       </div>
-
-
-      <div class="cat-row">
-        <button class="cat-btn" (click)="headerselection('S')" [class.active]="selectedheadertab[0]=='S'">Sale</button>
-        <button class="cat-btn" (click)="headerselection('C')" [class.active]="selectedheadertab[0]=='C'">Cost</button>
-        <button class="cat-btn long" (click)="headerselection('X')"
-          [class.active]="selectedheadertab[0]=='X'">Non-Operating Expense</button>
-        <button class="cat-btn long" (click)="headerselection('I')"
-          [class.active]="selectedheadertab[0]=='I'">Non-Operating Income</button>
-        <button class="cat-btn" (click)="headerselection('E')"
-          [class.active]="selectedheadertab[0]=='E'">Expense</button>
-        <button class="cat-btn" (click)="headerselection('A')" [class.active]="selectedheadertab[0]=='A'">Asset</button>
-        <button class="cat-btn" (click)="headerselection('L')"
-          [class.active]="selectedheadertab[0]=='L'">Liability</button>
-        <button class="cat-btn" (click)="headerselection('Q')"
-          [class.active]="selectedheadertab[0]=='Q'">Equity</button>
+      <div class="container-fluid px-0" id="StoreSummary">
+        <div class="tabs-wrapper px-0">
+          <div class="c-tabs px-0">
+            <button class="filter-button border-0" (click)="headerselection('S')"
+              [class.active]="selectedheadertab[0]=='S'">Sale</button>
+            <button class="filter-button border-0" (click)="headerselection('C')"
+              [class.active]="selectedheadertab[0]=='C'">Cost</button>
+            <button class="filter-button border-0" (click)="headerselection('X')"
+              [class.active]="selectedheadertab[0]=='X'">Non-Operating Expense</button>
+            <button class="filter-button border-0" (click)="headerselection('I')"
+              [class.active]="selectedheadertab[0]=='I'">Non-Operating Income</button>
+            <button class="filter-button border-0" (click)="headerselection('E')"
+              [class.active]="selectedheadertab[0]=='E'">Expense</button>
+            <button class="filter-button border-0" (click)="headerselection('A')"
+              [class.active]="selectedheadertab[0]=='A'">Asset</button>
+            <button class="filter-button border-0" (click)="headerselection('L')"
+              [class.active]="selectedheadertab[0]=='L'">Liability</button>
+            <button class="filter-button border-0" (click)="headerselection('Q')"
+              [class.active]="selectedheadertab[0]=='Q'">Equity</button>
+          </div>
+        </div>
       </div>
-
-
       <div class="filter-row">
 
         <!-- Search -->
@@ -94,20 +96,24 @@
         </div>
 
         <!-- Mapped / Unmapped -->
-        <div class="map-toggle">
-          <button class="toggle-btn" [class.active]="statusFilter.indexOf('M')>=0" (click)="StatusFiltering('M')">
-            Mapped
-          </button>
-          <button class="toggle-btn" [class.active]="statusFilter.indexOf('U')>=0" (click)="StatusFiltering('U')">
-            Unmapped
-          </button>
+        <div class="tabs-wrapper px-0">
+          <div class="c-tabs px-0">
+            <button class="filter-button border-0" [class.active]="statusFilter.indexOf('M')>=0"
+              (click)="StatusFiltering('M')">
+              Mapped
+            </button>
+            <button class="filter-button border-0" [class.active]="statusFilter.indexOf('U')>=0"
+              (click)="StatusFiltering('U')">
+              Unmapped
+            </button>
+          </div>
         </div>
 
       </div>
 
       <!-- TABLE -->
-      <div class="performance-scorecard mt-3">
-        <table class="table mb-0">
+      <div class="scorecard-single-header accountmapping-tbl mt-3">
+        <table class="table mb-0 w-100">
 
           <thead>
             <tr>
@@ -131,26 +137,26 @@
             <tr *ngFor="let am of AccountingMapping; let i = index">
 
               <!-- Action Button -->
-              <td>
-                <div class="btn _btn" data-bs-toggle="modal" data-bs-target="#mapModal"
+              <td class="text-center">
+                <span class="cursor-pointer" data-bs-toggle="modal" data-bs-target="#mapModal"
                   (click)="bulkEdit('', 'M', '', 'S', am, 'MappedEditMapping')">
                   <img src="images/Edit_Icon.svg">
-                </div>
+                </span>
               </td>
-              <td style="text-align: center;">{{ am.as_companyName || '-' }}</td>
-              <td style="text-align: center;">{{ am.accountDescription || '-' }}</td>
-              <td style="text-align: center;">{{ am.accountNumber || '-' }}</td>
-              <td style="text-align: center;">{{ am.accountType || '-' }}</td>
-              <td style="text-align: center;" *ngIf="['A','L','Q'].includes(selectedheadertab[0])">{{ am.acctSubtype ||
+              <td class="text-start">{{ am.as_companyName || '-' }}</td>
+              <td class="text-start">{{ am.accountDescription || '-' }}</td>
+              <td class="text-center">{{ am.accountNumber || '-' }}</td>
+              <td class="text-center">{{ am.accountType || '-' }}</td>
+              <td class="text-center" *ngIf="['A','L','Q'].includes(selectedheadertab[0])">{{ am.acctSubtype ||
                 '-' }}</td>
-              <td style="text-align: center;">{{ am.operationalArea || '-' }}</td>
-              <td style="text-align: center;">{{ am.department || '-' }}</td>
-              <td style="text-align: center;">{{ am.subType || '-' }}</td>
-              <td style="text-align: center;">{{ am.subTypeDetail || '-' }}</td>
-              <td style="text-align: center;" *ngIf="['S','C','I','X','E'].includes(selectedheadertab[0])">{{
+              <td class="text-center">{{ am.operationalArea || '-' }}</td>
+              <td class="text-center">{{ am.department || '-' }}</td>
+              <td class="text-start">{{ am.subType || '-' }}</td>
+              <td class="text-start">{{ am.subTypeDetail || '-' }}</td>
+              <td class="text-start" *ngIf="['S','C','I','X','E'].includes(selectedheadertab[0])">{{
                 am.Fin_Summary || '-' }}</td>
-              <td style="text-align:center">{{ am.MTD | currency:'USD' }}</td>
-              <td style="text-align:center">{{ am.YTD | currency:'USD' }}</td>
+              <td class="text-end">{{ am.MTD | currency:'USD' }}</td>
+              <td class="text-end">{{ am.YTD | currency:'USD' }}</td>
 
             </tr>
           </tbody>
@@ -184,7 +190,11 @@
 <div class="modal fade" id="mapModal" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
-
+      <div *ngIf="getMissingFields().length > 0" class="graph-loader d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
       <div class="modal-header">
         <h5 class="modal-title">MAP ACCOUNT</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="onclose()"></button>
@@ -250,7 +260,8 @@
 
             <div *ngIf="actbal=='Balance'" class="mt-3">
               <label class="form-label">Account Type Detail</label>
-              <select class="form-select" [(ngModel)]="selectedaccounttypedetail" (change)="OnChange('OA','','',accounttype,'','','')">
+              <select class="form-select" [(ngModel)]="selectedaccounttypedetail"
+                (change)="OnChange('OA','','',accounttype,'','','')">
                 <option value="0">Select</option>
                 <option *ngFor="let atd of Accounttypedetail" [value]="atd.AccountTypeDetail">
                   {{ atd.AccountTypeDetail }}
@@ -325,14 +336,14 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-primary" (click)="save()" 
-        [ngStyle]="{'pointer-events': getMissingFields().length>0 ? 'none' : 'visible','opacity' :getMissingFields().length>0 ? '0.4' : '1' }"
-        >Save</button>
-        <button class="btn btn-secondary" data-bs-dismiss="modal" (click)="onclose()"
-          id="forceCloseModal">Cancel</button>
+        <div class="text-center">
+          <button class="editbtn me-1" (click)="save()"
+            [ngStyle]="{'pointer-events': getMissingFields().length>0 ? 'none' : 'visible','opacity' :getMissingFields().length>0 ? '0.4' : '1' }">Save</button>
+          <button class="cancelbtn ms-1" data-bs-dismiss="modal" (click)="onclose()"
+            id="forceCloseModal">Cancel</button>
+        </div>
         <!-- <button id="forceCloseModal" type="button" class="d-none" data-bs-dismiss="modal"></button> -->
       </div>
-
     </div>
   </div>
 </div>
