@@ -1,0 +1,87 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="dp.show()">
+                            Month
+                            <span class="light-font">
+                                ( {{ month | date:'MMMM/yyyy' }} )
+                            </span>
+                        </button>
+
+                        <input bsDatepicker [(ngModel)]="month" [bsConfig]="bsConfig" readonly
+                            (keydown)="$event.preventDefault()" [bsConfig]="bsConfig" #dp="bsDatepicker"
+                            (onShown)="onOpenCalendar($event)" (ngModelChange)="changeDate($event)" [maxDate]="maxDate"
+                            [minDate]="minDate" style="position: absolute; opacity: 0; height: 0; width: 0;" />
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scorecard-triple-header unappliedtimereport-tbl">
+            <table class="table mb-0 w-100">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <ng-container *ngFor="let months of pastThreeMonths">
+                            <th colspan="4">{{months | date:'MMM yyyy'}}</th>
+                        </ng-container>
+                    </tr>
+                    <tr>
+                        <th (click)="sort('Store_Name')" style="cursor: pointer;">Store</th>
+                        <ng-container *ngFor="let months of keys;let i=index">
+                            <th (click)="nestedsort(months,'Mtd')" style="cursor: pointer;">Unapplied Time</th>
+                            <th (click)="nestedsort(months,'Labor_Sale_Per')" style="cursor: pointer;">% of Labor Sales
+                            </th>
+                            <th (click)="nestedsort(months,'Budget')" style="cursor: pointer;">Budget</th>
+                            <th (click)="nestedsort(months,'Diff')" style="cursor: pointer;">Diff</th>
+                        </ng-container>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let ud of UnappliedData"
+                        [ngClass]="{  'divBold': ud.Store_Name === 'REPORTS TOTAL'  }">
+                        <td>{{ ud.Store_Name }}</td>
+                        <ng-container *ngFor="let month of keys">
+                            <td [ngClass]="{ negative: !inTheGreen(ud[month].Mtd)}"><span
+                                    class="d-flex justify-content-between"> {{ud[month].Mtd ? '$' : '&nbsp;' }} <span>
+                                        {{ud[month].Mtd
+                                        ? (ud[month].Mtd | number) : '-' }} </span></span> </td>
+                            <td [ngClass]="{ negative: !inTheGreen(ud[month].Labor_Sale_Per)}">
+                                {{ ud[month].Labor_Sale_Per != null
+                                ? (ud[month].Labor_Sale_Per | number:'1.2-2') + '%'
+                                : '-' }}</td>
+                            <td [ngClass]="{ negative: !inTheGreen(ud[month].Budget)}"><span
+                                    class="d-flex justify-content-between"> {{ud[month].Budget ? '$' : '&nbsp;' }}
+                                    <span>{{ud[month].Budget ?(ud[month].Budget | number) : '-' }} </span></span></td>
+                            <td [ngClass]="{ negative: !inTheGreen(ud[month].Diff)}"><span
+                                    class="d-flex justify-content-between"> {{ud[month].Diff ? '$' : '&nbsp;' }} <span>
+                                        {{ud[month].Diff
+                                        ? (ud[month].Diff | number) : '-' }} </span></span></td>
+
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<!-- <button (click)="printDiv()">Print Report</button> -->
