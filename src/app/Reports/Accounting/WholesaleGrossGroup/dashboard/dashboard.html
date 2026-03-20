@@ -55,16 +55,16 @@
         </div>
       </div>
     </div>
-    <div class="scorecard-double-header WholesaleGrossGroup-tbl">
+    <div class="scorecard-double-header WholesaleGrossGroup-tbl w-75">
       <table class="table mb-0 w-100">
         <thead>
           <tr>
-            <th colspan="7">
+            <th colspan="7" class="boxshadow-none">
               <span>{{DupMonth | date:'MMMM yyyy'}}</span>
             </th>
           </tr>
           <tr>
-            <th (click)="sort('Store',ReconAnalysisData,'M')" style="cursor: pointer;">Store</th>
+            <th (click)="sort('Store',ReconAnalysisData,'M')" style="cursor: pointer;width: 25%;">Store</th>
             <th (click)="sort('Units',ReconAnalysisData,'M')" style="cursor: pointer;">Units</th>
             <th (click)="sort('Gross',ReconAnalysisData,'M')" style="cursor: pointer;">Gross</th>
             <th (click)="sort('PVR',ReconAnalysisData,'M')" style="cursor: pointer;">PVR</th>
@@ -134,100 +134,103 @@
               </tr>
               <ng-container *ngIf="expanddataarray.indexOf(j)>=0">
                 <tr>
-                  <td colspan="7">
-                    <div class="scorecard-single-header" style="max-height: 28vh;overflow: auto;">
-                      <table class="table table-borderless mb-0">
-                        <thead>
-                          <tr class="tp-bx-shdw lightblue-bg">
-
-                            <td class="lft-bx-shdw" style="cursor: pointer;text-align: center;"
-                              (click)="sort('Accounting Date',ReconAnalysisData[j].subdata,'S')">
-                              Accounting Date</td>
-                            <td (click)="sort('Account',ReconAnalysisData[j].subdata,'S')"
-                              style="cursor: pointer;text-align: center;">Account # </td>
-                            <td (click)="sort('Account Description',ReconAnalysisData[j].subdata,'S')"
-                              style="cursor: pointer;text-align: center;"> Description</td>
-                            <td style="cursor: pointer;text-align: center;"
-                              (click)="sort('Control',ReconAnalysisData[j].subdata,'S')">
-                              Control
-                            </td>
-                            <td style="cursor: pointer;text-align: center;"
-                              (click)="sort('Refer',ReconAnalysisData[j].subdata,'S')">
-                              Refer
-                            </td>
-                            <td class="rt-bx-shdw" style="cursor: pointer;text-align: center;"
-                              (click)="sort('Balance',ReconAnalysisData[j].subdata,'S')">
-                              Balance
-                            </td>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngIf="sub.subdata != undefined">
-                            <td colspan="6" *ngIf="sub.subdata == 0">
-                              <div class="graph-loader d-flex align-items-center justify-content-center">
-                                <div class="spinner-border text-primary" role="status">
-                                  <span class="visually-hidden">Loading...</span>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                          <tr *ngFor="let data2 of sub.subdata; let k = index"
-                            [ngClass]="{'btm-bx-shdw' : k == sub.subdata.length-1 }">
-
-                            <td class="lft-bx-shdw">
-                              <span style="white-space: nowrap;">{{
-                                data2['Accounting Date'] ?
-                                (data2['Accounting Date'] | date:'MM.dd.yyyy' ):
-                                '-'
-                                }}</span>
-                            </td>
-                            <td>
-
-                              <span style="white-space: nowrap;">{{ data2['Account']
-                                ||
-                                '-'
-                                }}</span>
-                            </td>
-                            <td>
-                              <span style="white-space: nowrap;">{{
-                                data2['Account Description']
-                                || '-'
-                                }}</span>
-                            </td>
-                            <td>
-                              <span style="white-space: nowrap;">{{
-                                data2['Control']
-                                ||
-                                '-'
-                                }}</span>
-                            </td>
-
-
-                            <td>
-                              <span style="white-space: nowrap;">{{
-                                data2['Refer']
-                                ||
-                                '-'
-                                }}</span>
-                            </td>
-
-                            <td class="rt-bx-shdw" style="text-align: center;"
-                              [ngClass]="{ negative: !inTheGreen(data2['Balance']) }">
-                              <span class="d-flex justify-content-between">
-                                $<span>{{ data2['Balance'] !== null &&
-                                  data2['Balance'] !==
-                                  undefined
-                                  ?
-                                  (data2['Balance'] | number:'1.0-0') : '-'
-                                  }}</span>
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-
-                      </table>
+                  <td colspan="7" class="p-2 boxshadow-none">
+                <!-- <tr >
+                  <td colspan="6" > -->
+                    <div class="p-1" *ngIf="sub.subdata != undefined">
+                      <div *ngIf="sub.subdata == 0" class="graph-loader d-flex align-items-center justify-content-center">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
                     </div>
-                  </td>
+                  <!-- </td>
+                </tr> -->
+                <div class="scorecard-single-header" style="max-height: 30vh;overflow: auto;">
+                  <table class="table table-borderless mb-0 w-100">
+                    <thead>
+                      <tr class="tp-bx-shdw lightblue-bg">
+
+                        <td class="lft-bx-shdw boxshadow-none" style="cursor: pointer;text-align: center;"
+                          (click)="sort('Accounting Date',ReconAnalysisData[j].subdata,'S')">
+                          Accounting Date</td>
+                        <td (click)="sort('Account',ReconAnalysisData[j].subdata,'S')"
+                          style="cursor: pointer;text-align: center;">Account # </td>
+                        <td (click)="sort('Account Description',ReconAnalysisData[j].subdata,'S')"
+                          style="cursor: pointer;text-align: center;"> Description</td>
+                        <td style="cursor: pointer;text-align: center;"
+                          (click)="sort('Control',ReconAnalysisData[j].subdata,'S')">
+                          Control
+                        </td>
+                        <td style="cursor: pointer;text-align: center;"
+                          (click)="sort('Refer',ReconAnalysisData[j].subdata,'S')">
+                          Refer
+                        </td>
+                        <td class="rt-bx-shdw" style="cursor: pointer;text-align: center;"
+                          (click)="sort('Balance',ReconAnalysisData[j].subdata,'S')">
+                          Balance
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+
+                      <tr *ngFor="let data2 of sub.subdata; let k = index"
+                        [ngClass]="{'btm-bx-shdw' : k == sub.subdata.length-1 }">
+
+                        <td class="lft-bx-shdw text-center boxshadow-none">
+                          <span style="white-space: nowrap;">{{
+                            data2['Accounting Date'] ?
+                            (data2['Accounting Date'] | date:'MM.dd.yyyy' ):
+                            '-'
+                            }}</span>
+                        </td>
+                        <td class="text-center">
+
+                          <span style="white-space: nowrap;">{{ data2['Account']
+                            ||
+                            '-'
+                            }}</span>
+                        </td>
+                        <td class="text-start">
+                          <span style="white-space: nowrap;">{{
+                            data2['Account Description']
+                            || '-'
+                            }}</span>
+                        </td>
+                        <td class="text-start">
+                          <span style="white-space: nowrap;">{{
+                            data2['Control']
+                            ||
+                            '-'
+                            }}</span>
+                        </td>
+
+
+                        <td class="text-start">
+                          <span style="white-space: nowrap;">{{
+                            data2['Refer']
+                            ||
+                            '-'
+                            }}</span>
+                        </td>
+
+                        <td class="rt-bx-shdw" style="text-align: center;"
+                          [ngClass]="{ negative: !inTheGreen(data2['Balance']) }">
+                          <span class="d-flex justify-content-between">
+                            $<span>{{ data2['Balance'] !== null &&
+                              data2['Balance'] !==
+                              undefined
+                              ?
+                              (data2['Balance'] | number:'1.0-0') : '-'
+                              }}</span>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+
+                  </table>
+                </div>
+                </td>
                 </tr>
 
               </ng-container>

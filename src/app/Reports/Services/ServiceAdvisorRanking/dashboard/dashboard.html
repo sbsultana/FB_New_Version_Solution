@@ -26,7 +26,8 @@
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types <span class="light-font"> ( {{ Teams
                 == 'S' ? 'All Labor Types W/O Details' : Teams == 'A' ? 'All Labor Types' :
-                (selectedlabortypevalues.length > 0 ? selectedlabortypevalues.join(', ') : 'SELECT') }} )</span>
+                (selectedlabortypevalues.length > 0 ? selectedlabortypevalues.join(', ') : 'SELECT') }}
+                <span>{{labortypes.length}}</span> ) </span>
               <span class="arrow"></span></button>
             <div class="reportstores-card my-2" *ngIf="activePopover ===8">
               <div class="row h-100">
@@ -46,6 +47,14 @@
                   </div>
                 </div>
                 <div class="stores d-flex flex-column ps-0">
+                  <div *ngIf="labortypes != undefined">
+                    <div *ngIf="labortypes.length == 0"
+                      class="graph-loader d-flex align-items-center justify-content-center">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
                   <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                     <div class="allstores text-start">
                       <a class="text-primary text-decoration-none cursor-pointer me-2"
@@ -115,7 +124,8 @@
               Pay Type <span class="light-font">( {{
                 Paytype.length < 1 ? 'Select Pay Type' : Paytype.length==1 ? (Paytype[0]=='C' ? 'Customer Pay' :
                   Paytype[0]=='W' ? 'Warranty' : Paytype[0]=='I' ? 'Internal' : Paytype[0]=='S' ? 'Sublet Gross' :
-                  Paytype[0]=='M' ? 'Misc' : Paytype[0]) : 'Selected ' + Paytype.length }} )</span>
+                  Paytype[0]=='M' ? 'Misc' : Paytype[0]=='E' ? 'Extended' : Paytype[0]) : 'Selected ' + Paytype.length
+                  }} )</span>
 
                   <span class="arrow">
                   </span>
@@ -159,6 +169,13 @@
                   }">
                   Misc
                 </button>
+
+                <button class="outline-button" (click)="multipleorsingle('PT','E')" [ngClass]="{
+                    active: Paytype.indexOf('E') >= 0,
+                    inactive: Paytype.indexOf('E') < 0
+                  }">
+                  Extended
+                </button>
               </div>
             </div>
           </div>
@@ -168,30 +185,30 @@
 
         </div>
       </div>
-      <div class="scorecard-double-header" id="scrollcent" #scrollcent (scroll)="updateVerticalScroll($event)">
+      <div class="scorecard-triple-header sarankings-tbl" id="scrollcent" #scrollcent
+        (scroll)="updateVerticalScroll($event)">
         <table class="table mb-0 w-100">
           <thead>
             <tr>
               <!-- <th></th> -->
 
 
-              <th class="text-center bg-white" colspan="4" *ngIf="dateType==''"
-                style="border-right: 0px solid #e0e1e2;">
-                <!-- {{FromDate
-                  |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
-                  {{FromDate | date:'yyyy'}}) -->
+              <th class="text-center box-shadow" colspan="4" *ngIf="dateType==''">
+                {{FromDate
+                |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
+                {{FromDate | date:'yyyy'}})
               </th>
-              <th colspan="4" *ngIf="dateType!=''" style="border-right: 0px solid #e0e1e2;">
+              <th colspan="4" class="box-shadow" *ngIf="dateType!=''">
                 &nbsp;
-                <!-- {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
-                  dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
-                  ToDate}} -->
+                {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
+                dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
+                ToDate}}
               </th>
               <!-- <th class="spacer"></th> -->
 
-              <th colspan="12"></th>
-              <th colspan="1" *ngIf="Paytype.includes('S')"></th>
-              <th colspan="1" *ngIf="Paytype.includes('M')"></th>
+              <th colspan="12" class="boxshadow-none"></th>
+              <th colspan="1" class="boxshadow-none" *ngIf="Paytype.includes('S')"></th>
+              <th colspan="1" class="boxshadow-none" *ngIf="Paytype.includes('M')"></th>
             </tr>
             <tr>
               <!-- <th class="bdr-rt"></th> -->
@@ -248,30 +265,29 @@
               <tr
                 [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' ,  'divBold': spdata.ServiceAdvisor === 'Total'}"
                 [id]="'DV_'+j">
-                <td>
-                  <!--  *ngIf="spdata.CommentsStatus == 'N'" -->
-                  <!-- <div class="Tooltip">
+                <td class="text-center">
+                  <div class="Tooltip">
 
                       <div style="cursor:pointer">
                           <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'Y'" width="17px"
-                              src="../../../../../assets/images/unread-comments.png "
+                              src="images/unread-comments.png "
                               (click)="commentopen(spdata,j)">
 
                           <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'N'" width="17px"
-                              src="../../../../../assets/images/no-comments.png "
+                              src="images/no-comments.png "
                               (click)="commentopen(spdata,j)">
 
                       </div>
 
-                      <span class="Tooltip_chat_bottom"
+                      <!-- <span class="Tooltip_chat_bottom"
                       [ngClass]="{'Tooltip_chat_top' : (screenheight-divheight)-trposition <25 ,'Tooltip_chat_bottom': (screenheight-divheight)-trposition >= 25 }"
                           
                           *ngIf="j.toString()==index">
                           <app-comments [SFComments]="commentobj" (onClose)="close($event)"
                               (onLoad)="addcmt($event)">
                           </app-comments>
-                      </span>
-                  </div> -->
+                      </span> -->
+                  </div>
                 </td>
                 <td *ngIf="spdata.data1 === 'Reports Total'"></td>
                 <td *ngIf="spdata.data1 === 'Reports Total'" class="text-start"></td>

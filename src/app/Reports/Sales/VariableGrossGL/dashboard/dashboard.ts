@@ -1,762 +1,1208 @@
-
 import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
 import { Api } from '../../../../Core/Providers/Api/api';
-import * as XLSX from 'xlsx';
-import { Title } from '@angular/platform-browser';
-import { common } from '../../../../common';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
-
+import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { Stores } from '../../../../CommonFilters/stores/stores';
+import { Subscription } from 'rxjs';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.scss']
 })
 export class Dashboard implements OnInit {
-  activePopover: number | null = null;
-  displayYear: number = new Date().getFullYear();
-  reportData: any[] = [];
-  detailsData: any[] = [];
-  storeButtonLabel = 'All';
-  isPopoverOpen: boolean = false;
-  stores: any[] = [];
-  isMonthDropdownOpen: boolean = false;
-  selectedMonthLabel: string = '';
-  months: string[] = [];
-  selectedMonthIndex: number = new Date().getMonth();
-  selectedMonth: Date | null = null;
-  deptOrder: { [key: string]: number } = { New: 1, Used: 2 };
-  expandedDept: string | null = null;
-  noData: boolean = false;
-  noDetails: boolean = false;
-  storeIds: number[] = [];
-  selectedDept: any = '';
-  reportTotal: any = null;
-  searchText: string = '';
-  showModal = false;
-  searchQuery: string = '';
-  accountDetails: any[] = [];
-  selectedRow: any = null;
-  selectedStoreName: string = '';
-  selectedAccountNumber: string = '';
-  showDetailPage: boolean = false;
-  currentPage: number = 1;
-  pageSize: number = 20;
-  Math = Math;
-  totalRecords: number = 0;
-  totalPagesCount: number = 0;
-  pagedData: any[] = [];
-  noAccountDetails: boolean = false;
-  details = signal<any[]>([]);
-  originalReportData: any[] = [];
-  filteredDetails: any[] = [];
-  selectedDepartments: string[] = ['NEW', 'USED'];
-  selectedReportTotal: string = 'BOTTOM';
+  SalesData: any = [];
+  IndividualSalesGross: any = [];
+  TotalSalesGross: any = [];
+  TotalReport: any = 'B';
+  TotalSortPosition: any = 'B';
+  saleType: any = ['Retail'];
+  Department: any = ['New', 'Used'];
+  date: any = '';
+  CurrentDate = new Date();
+  NoData: boolean = false;
 
+
+  stores: any = []
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storeIds: any = 0;
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
+
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
+  month!: Date;
+  DuplicatDate!: Date;
+  minDate!: Date;
+  maxDate!: Date;
+  bsConfig: Partial<BsDatepickerConfig> = {
+    dateInputFormat: 'MMMM/yyyy',
+    minMode: 'month'
+  };
+
+  reportOpenSub!: Subscription;
+  reportGetting!: Subscription;
+  Pdf!: Subscription;
+  print!: Subscription;
+  email!: Subscription;
+  excel!: Subscription;
   constructor(
-    public shared: Sharedservice,
-    private api: Api, private title: Title,
-     private comm: common,   public apiSrvc: Api,private toast: ToastService,
-  ) { 
-    this.title.setTitle(this.comm.titleName + '-Enterprise Tracking');
+    public apiSrvc: Api, private ngbmodalActive: NgbActiveModal, private toast: ToastService, public shared: Sharedservice) {
+    this.shared.setTitle(this.shared.common.titleName + '-Variable Gross GL');
+    let today = new Date();
+    let lastMonth = new Date()
+    let enddate = new Date(today.setDate(today.getDate() - 1));
+    this.month = new Date(enddate.setMonth(enddate.getMonth() - 1))
+    this.maxDate = new Date();
+    this.minDate = new Date();
+    this.minDate.setFullYear(this.maxDate.getFullYear() - 3);
+    this.maxDate.setMonth(this.maxDate.getMonth());
+    if (today.getDate() < 5) {
+      this.date = new Date(lastMonth.setMonth(lastMonth.getMonth() - 1));
+    } else {
+      this.date = new Date(lastMonth.setMonth(lastMonth.getMonth()));
+    }
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+    }
+    if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
+    this.setHeaderData()
+    this.getSalesData();
+  }
+  ngOnInit(): void {
+  }
+  setHeaderData() {
     const data = {
       title: 'Variable Gross GL',
-      
+      stores: this.storeIds,
+      saleType: this.saleType.toString(),
+      toporbottom: this.TotalReport,
+      groups: this.groupId,
+      Department: this.Department,
+      Month: this.date,
     };
     this.apiSrvc.SetHeaderData({ obj: data });
   }
-
-  ngOnInit(): void {
-    this.months = Array.from({ length: 12 }, (_, i) =>
-      new Date(0, i).toLocaleString('en', { month: 'long' })
-    );
-    this.selectedMonthLabel = `${this.months[this.selectedMonthIndex]}`;
-    this.getStoresList();
-    this.getVariableGrossGLReport();
-    this.filteredDetails = [...this.detailsData];
-    // this.getVariableGrossGLAccountDetails();
-  }
-
-  // ---------- PAGINATION ----------
-  updatePagedData() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    this.pagedData = this.reportData.slice(start, end);
-  }
-
-  previousPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.updatePagedData();
+  getSalesData() {
+    if (this.storeIds != '') {
+      this.shared.spinner.show();
+      this.GetData();
+      // this.GetTotalData();
+    } else {
+      this.NoData = true;
     }
   }
-  getTotalBalance(): number {
-    if (!this.details || typeof this.details !== 'function') return 0;
-
-    const list = this.details();
-    if (!Array.isArray(list) || list.length === 0) return 0;
-
-    // Sum all valid numeric balances
-    const total = list.reduce((sum: number, item: any) => {
-      const balance = parseFloat(item?.balance);
-      return sum + (isNaN(balance) ? 0 : balance);
-    }, 0);
-
-    return total;
-  }
-
-  getStoresList(): Promise<void> {
-    return new Promise((resolve) => {
-      this.shared.spinner.show();
-      this.api.postmethod('SilverTip/GetStoresList', { userid: 1 }).subscribe({
-        next: (res: any) => {
-          this.shared.spinner.hide();
-          const storeData = res?.response || res || [];
-          this.stores = storeData.map((s: any) => ({
-            ID: s.ID,
-            storename: s.storename || s.StoreName
-          }));
-          this.storeIds = this.stores.map((s) => s.ID);
-          this.updateStoreSelection();
-          resolve();
+  Datebinding: any = ''
+  GetData() {
+    this.IndividualSalesGross = [];
+    let date = new Date()
+    let enddate = new Date(date.setDate(date.getDate() - 1));
+    this.shared.datePipe.transform(this.date, 'yyyy-MM') == this.shared.datePipe.transform(enddate, 'yyyy-MM') ? this.Datebinding = 'MTD' : this.Datebinding = this.shared.datePipe.transform(this.date, 'MMM yy')
+    const obj = {
+      DATE: this.shared.datePipe.transform(this.date, 'yyyy-MM') + '-' + ('0' + enddate.getDate()).slice(-2),
+      AS_IDS: this.storeIds,
+      DEALTYPE: this.Department.indexOf('New') >= 0 && this.Department.indexOf('Used') >= 0 ? '' : this.Department.toString(),
+      SALETYPE: this.saleType.toString() == 'All' ? '' : this.saleType.toString()
+    };
+    this.apiSrvc
+      .postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossGLSummaryReport', obj)
+      .subscribe(
+        (res) => {
+          const currentTitle = document.title;
+          if (res.status == 200) {
+            this.IndividualSalesGross = [];
+            this.TotalSalesGross = [];
+            if (res.response != undefined) {
+              if (res.response.length > 0) {
+                let array = res.response.map((v: any) => ({
+                  ...v,
+                  Dealer: '-',
+                }));
+                let data = array.reduce(
+                  (r: any, { STORE, ...rest }: any) => {
+                    if (!r.some((o: any) => o.STORE == STORE)) {
+                      r.push({
+                        STORE,
+                        ...rest,
+                        subdata: array.filter(
+                          (v: any) => v.STORE == STORE
+                        ),
+                      });
+                    }
+                    return r;
+                  },
+                  []
+                );
+                this.TotalSalesGross = data.filter(
+                  (e: any) => e.STORE == 'Report Total'
+                );
+                this.IndividualSalesGross = data.filter(
+                  (i: any) => i.STORE != 'Report Total'
+                );
+                this.SalesData = this.IndividualSalesGross
+                if (this.TotalReport == 'B') {
+                  this.TotalSalesGross.forEach((val: any) => {
+                    this.IndividualSalesGross.push(val);
+                  });
+                } else {
+                  this.TotalSalesGross.forEach((val: any) => {
+                    this.IndividualSalesGross.unshift(val);
+                  });
+                }
+                this.shared.spinner.hide();
+              } else {
+                this.shared.spinner.hide();
+                this.NoData = true;
+              }
+            } else {
+              this.shared.spinner.hide();
+              this.NoData = true;
+            }
+          } else {
+            this.toast.show(res.status, 'danger', 'Error');
+            this.shared.spinner.hide();
+            this.NoData = true;
+          }
         },
-        error: () => {
+        (error) => {
+          this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
           this.shared.spinner.hide();
-          this.stores = [];
-          this.storeIds = [];
-          resolve();
+          this.NoData = true;
+        }
+      );
+  }
+  public inTheGreen(value: number): boolean {
+    if (value >= 0) {
+      return true;
+    } else if (value < 0) {
+      return false;
+    }
+    return true;
+  }
+  DateType: any = 'MTD';
+  datetype() {
+    if (this.DateType == 'PM') {
+      return 'SP';
+    }
+    else if (this.DateType == 'C') {
+      return 'C'
+    }
+    return this.DateType;
+  }
+  Salesdetails: any = []
+  openDetails(Item: any, ParentItem: any, cat: any) {
+
+    this.Salesdetails = [
+      {
+        StartDate: this.shared.datePipe.transform(this.date, 'yyyy-MM') + '-01',
+        saletype: this.saleType,
+        var1: Item.DEPT,
+        var2: this.saleType,
+        var3: '',
+        var1Value: Item.data1,
+        var2Value: '',
+        var3Value: '',
+        userName: Item.STORE,
+        storeids: Item.STOREID == 0 ? this.storeIds : Item.STOREID,
+        DepartmentN: this.Department.indexOf('New') >= 0 ? 'N' : '',
+        DepartmentU: this.Department.indexOf('Used') >= 0 ? 'U' : '',
+      },
+    ];
+    this.GetDetails('', '')
+  }
+  details: any = [];
+  spinnerLoader: boolean = true;
+  DetailsSearchName: any;
+  SubDetailsSearchName: any;
+  acctNo: any = '';
+  SalesdetailsData: any = [];
+  filteredSalesdetailsData: any[] = [];
+  searchText: string = '';
+  ETdetailsData: any = [];
+  currentPage: number = 1;
+  itemsPerPage: number = 100;
+  maxPageButtonsToShow: number = 3;
+  clickedPage: number | null = null;
+  Opacity: any = 'N';
+
+
+  GetDetails(acctno: any, index: any) {
+    this.spinnerLoader = true
+    this.acctNo = acctno;
+    this.details = [];
+    const obj = {
+      "AS_IDS": this.Salesdetails[0].storeids,
+      "DATE": this.Salesdetails[0].StartDate,
+      "VAR1": this.Salesdetails[0].var1,
+      "VAR2": this.Salesdetails[0].var2.toString(),
+      "Accountnumber": acctno
+    }
+
+    this.apiSrvc
+      .postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossGLDetailsV1', obj)
+      .subscribe((res) => {
+        if (res.status == 200) {
+          if (acctno == '') {
+            this.SalesdetailsData = res.response;
+            this.filterData()
+          }
+          if (acctno != '') {
+            this.expandedIndex = index;
+            this.FSSubDetailsMap[index] = res.response;
+          }
+          this.filteredSalesdetailsData = this.SalesdetailsData || [];
+          this.spinnerLoader = false;
+          if (this.SalesdetailsData.length > 0) {
+            this.NoData = false;
+          } else {
+            this.NoData = true;
+          }
         }
       });
-    });
+
+  }
+  expandedIndex: number | null = null;
+  FSSubDetailsMap: { [index: number]: any[] } = {};
+
+
+  get postingAmountTotal(): number {
+    return this.filteredSalesdetailsData.reduce((total, item) => {
+      return total + (item.Balance || 0);
+    }, 0);
+  }
+  getPostingSubAmountTotal(index: number): number {
+    const subRows = this.FSSubDetailsMap[index];
+    if (!subRows || !Array.isArray(subRows)) {
+      return 0;
+    }
+
+    return subRows.reduce((total, item) => {
+      return total + (item.Balance || 0);
+    }, 0);
   }
 
-  allstores(state: 'Y' | 'N') {
-    this.storeIds = state === 'Y' ? this.stores.map(s => s.ID) : [];
-    this.updateStoreSelection();
-    this.getVariableGrossGLReport();
-  }
+  filterData() {
+    const text = this.searchText.trim().toLowerCase();
 
-  individualStores(store: any) {
-    const idx = this.storeIds.indexOf(store.ID);
-    idx >= 0 ? this.storeIds.splice(idx, 1) : this.storeIds.push(store.ID);
-    this.updateStoreSelection();
-    this.getVariableGrossGLReport();
-  }
-
-  onStoreToggle(storeId: number) {
-    const idx = this.storeIds.indexOf(storeId);
-    if (idx >= 0) this.storeIds.splice(idx, 1);
-    else this.storeIds.push(storeId);
-    this.updateStoreSelection();
-    this.getVariableGrossGLReport();
-  }
-
-  updateStoreSelection() {
-    if (this.storeIds.length === this.stores.length) {
-      this.storeButtonLabel = 'All';
-    } else if (this.storeIds.length === 1) {
-      const selected = this.stores.find(s => s.ID === this.storeIds[0]);
-      this.storeButtonLabel = selected?.storename || '';
+    if (!text) {
+      this.filteredSalesdetailsData = [...this.SalesdetailsData];
     } else {
-      this.storeButtonLabel = this.storeIds.length.toString();
-    }
-  }
-
-  formatAPIDate(date: any): string {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  changeYear(amount: number) {
-    // this.displayYear += amount;
-    this.selectedMonthLabel = `${this.months[this.selectedMonthIndex]}`;
-  }
-
-  isFutureMonth(index: number): boolean {
-    const current = new Date();
-    const selected = new Date(this.displayYear, index, 1);
-    return selected > current;
-  }
-
-  selectMonth(index: number) {
-    this.selectedMonthIndex = index;
-    this.tempMonthLabel = `${this.months[index]}`;
-    this.isMonthDropdownOpen = false;
-
-    // Store date temporarily for Apply
-    this.selectedDate = new Date(this.displayYear, index, 1);
-    this.getVariableGrossGLReport();
-  }
-
-  tempMonthLabel: string = '';
-  selectedDate: Date | null = null;
-  loading=false;
-
-  async getVariableGrossGLReport() {
-    this.shared.spinner.show();
-    this.loading=true;
-    if (!this.stores || this.stores.length === 0) {
-      await this.getStoresList();
+      this.filteredSalesdetailsData = this.SalesdetailsData.filter((item: any) =>
+        [
+          item.StoreName,
+          item.AccountNumber,
+          item.AccountDescription,
+          item.PostingAmount
+        ].some(val =>
+          val?.toString().toLowerCase().includes(text)
+        )
+      );
     }
 
-    const date = this.formatDate(new Date(this.selectedDate || new Date()));
+    this.currentPage = 1;
+  }
 
-    let storeIds = '';
-    if (this.storeIds && this.storeIds.length > 0) {
-      storeIds = this.storeIds.join(',');
-    } else if (this.stores && this.stores.length > 0) {
-      storeIds = this.stores.map((s: any) => s.ID).join(',');
+  get paginatedItems() {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredSalesdetailsData.slice(start, start + this.itemsPerPage);
+  }
+
+  getMaxPageNumber(): number {
+    return Math.max(1,
+      Math.ceil(this.filteredSalesdetailsData.length / this.itemsPerPage)
+    );
+  }
+
+  nextPage() {
+    if (this.currentPage < this.getMaxPageNumber()) this.currentPage++;
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) this.currentPage--;
+  }
+
+  goToFirstPage() {
+    this.currentPage = 1;
+  }
+
+  goToLastPage() {
+    this.currentPage = this.getMaxPageNumber();
+  }
+
+  getStartRecordIndex(): number {
+    return (this.currentPage - 1) * this.itemsPerPage + 1;
+  }
+
+  getEndRecordIndex(): number {
+    return Math.min(
+      this.getStartRecordIndex() + this.itemsPerPage - 1,
+      this.filteredSalesdetailsData.length
+    );
+  }
+  onPageSizeChange() {
+    this.currentPage = 1;
+  }
+
+  resetExpand() {
+    this.clickedPage = null;
+    this.expandedIndex = null;
+  }
+
+
+  close() {
+    this.ngbmodalActive.close();
+    console.log(this.Opacity);
+    this.filteredSalesdetailsData = [];
+    if (this.Salesdetails.STORES != '') {
+      this.goToFirstPage();
     }
+  }
+  onclose() {
+    this.shared.ngbmodal.dismissAll();
+    console.log(this.Opacity);
+  }
 
-    const payload = {
-      DATE: date,
-      AS_IDS: storeIds,
-      DEALTYPE: ''
-    };
+  Account_Details: any = [];
+  AcctDetails: any = [];
+  Acct_ID: any;
+  Obj: any;
 
-    this.api.postmethod('SilverTip/GetSalesGrossGLSummaryReport', payload).subscribe({
-      next: (res: any) => {
-        this.shared.spinner.hide();
 
-        const raw = Array.isArray(res?.response) ? res.response : [];
-        if (!raw.length) {
-          this.noData = true;
-          this.reportData = [];
-          this.reportTotal = null;
-          return;
-        }
 
-        // ✅ Separate out "Report Total" and "Other Stores"
-        const reportTotals = raw.filter((x: any) => x.STORE === 'Report Total');
-        const storeRows = raw.filter((x: any) => x.STORE !== 'Report Total');
-
-        // ✅ Group each store and its departments
-        const groupedData = storeRows.reduce((acc: any[], item: any) => {
-          let group = acc.find(g => g.STORE === item.STORE);
-          if (!group) {
-            group = { STORE: item.STORE, children: [] };
-            acc.push(group);
-          }
-
-          if (item.DEPT === null) {
-            Object.assign(group, item);
-          } else {
-            group.children.push(item);
-          }
-
-          return acc;
-        }, []);
-
-        // ✅ Add "Report Total" as a visible group with its children
-        if (reportTotals.length) {
-          const reportParent = reportTotals.find((x: any) => x.DEPT === null);
-          const reportChildren = reportTotals.filter((x: any) => x.DEPT !== null);
-
-          if (reportParent) {
-            groupedData.push({
-              ...reportParent,
-              STORE: 'Report Total',
-              children: reportChildren,
-              alwaysVisible: true // mark as auto-visible
-            });
-          }
-        }
-
-        // ✅ Assign to table data
-        this.reportData = groupedData;
-        this.originalReportData = JSON.parse(JSON.stringify(groupedData));
-        this.reportTotal = null;
-        this.noData = false;
-        
-      },
-      error: () => {
-        this.shared.spinner.hide();
-        this.noData = true;
+  isDesc: boolean = false;
+  column: string = 'CategoryName';
+  sort(property: any, data: any) {
+    this.isDesc = !this.isDesc; //change the direction
+    this.column = property;
+    let direction = this.isDesc ? 1 : -1;
+    // //console.log(direction);
+    if (direction == -1) {
+      this.TotalSortPosition = 'T';
+    } else {
+      this.TotalSortPosition = 'B';
+    }
+    data.sort(function (a: any, b: any) {
+      if (a[property] < b[property]) {
+        return -1 * direction;
+      } else if (a[property] > b[property]) {
+        return 1 * direction;
+      } else {
+        return 0;
       }
     });
   }
-
-onPageSizeChange() {
-  this.currentPage = 1;
-  this. getVariableGrossGLDetails(this.selectedDept); // your API or data fetching method
-}
-  formatDate(date: Date): string {
-    const d = new Date(date);
-    const month = `${d.getMonth() + 1}`.padStart(2, '0');
-    const year = d.getFullYear();
-    return `${year}-${month}-01`;
+  subdataindex: any = 0;
+  ngAfterViewInit() {
+    this.shared.api.getStores().subscribe((res: any) => {
+      if (this.shared.common.pageName == 'Variable Gross GL') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
+    this.reportOpenSub = this.apiSrvc.GetReportOpening().subscribe((res) => {
+      if (this.reportOpenSub != undefined) {
+        if (res.obj.Module == 'Variable Gross GL') {
+          document.getElementById('report')?.click();
+        }
+      }
+    });
+    this.excel = this.apiSrvc.getExportToExcelAllReports().subscribe((res) => {
+      if (this.excel != undefined) {
+        if (res.obj.title == 'Variable Gross GL') {
+          if (res.obj.state == true) {
+            this.exportToExcel();
+          }
+        }
+      }
+    });
+    this.email = this.apiSrvc.getExportToEmailPDFAllReports().subscribe((res) => {
+      if (this.email != undefined) {
+        if (res.obj.title == 'Variable Gross GL') {
+          if (res.obj.stateEmailPdf == true) {
+            // this.sendEmailData(res.obj.Email, res.obj.notes, res.obj.from);
+          }
+        }
+      }
+    });
+    this.print = this.apiSrvc.getExportToPrintAllReports().subscribe((res) => {
+      if (this.print != undefined) {
+        if (res.obj.title == 'Variable Gross GL') {
+          if (res.obj.statePrint == true) {
+            // this.GetPrintData();
+          }
+        }
+      }
+    });
+    this.Pdf = this.apiSrvc.getExportToPDFAllReports().subscribe((res) => {
+      if (this.Pdf != undefined) {
+        if (res.obj.title == 'Variable Gross GL') {
+          if (res.obj.statePDF == true) {
+            // this.generatePDF();
+          }
+        }
+      }
+    });
   }
-
-  // ---------------- DROPDOWNS ----------------
-  toggleDepartmentDropdown() {
-    this.isDepartmentDropdownOpen = !this.isDepartmentDropdownOpen;
-    this.isReportDropdownOpen = false;
-    this.isMonthDropdownOpen = false;
+  StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
   }
-
-  toggleReportDropdown() {
-    this.isReportDropdownOpen = !this.isReportDropdownOpen;
-    this.isDepartmentDropdownOpen = false;
-    this.isMonthDropdownOpen = false;
-  }
-
-  toggleMonthDropdown() {
-    this.isMonthDropdownOpen = !this.isMonthDropdownOpen;
-    this.isDepartmentDropdownOpen = false;
-    this.isReportDropdownOpen = false;
-  }
-
-  togglePopover(index: number) {
-    this.activePopover = this.activePopover === index ? null : index;
-    this.isDepartmentDropdownOpen = false;
-    this.isReportDropdownOpen = false;
-    this.isMonthDropdownOpen = false;
-  }
-
-  // ---------------- SELECTORS ----------------
-  toggleDepartment(dept: string) {
-    const index = this.selectedDepartments.indexOf(dept);
-    if (index > -1) this.selectedDepartments.splice(index, 1);
-    else this.selectedDepartments.push(dept);
-  }
-
-  selectReportTotal(position: 'TOP' | 'BOTTOM') {
-    this.selectedReportTotal = position;
-    this.isReportDropdownOpen = false;
-  }
-
-  // ✅ Close all dropdowns when clicking outside
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.dropdown')) {
-      this.isMonthDropdownOpen = false;
-      this.isDepartmentDropdownOpen = false;
-      this.isReportDropdownOpen = false;
-      this.activePopover = null;
-    }
-  }
-
-  openModal(child: any) {
-    if (!child?.DEPT) return;
-
-    this.selectedDept = child.DEPT;
-    this.getVariableGrossGLDetails(this.selectedDept);
-    this.showModal = true; // show modal
-  }
-  isDropdownOpen = false;
-  totalBalance: number = 0;
-  getVariableGrossGLDetails(dept: string) {
-  this.noDetails = false;
-  this.totalRecords = 0;
-  this.totalBalance = 0; // reset total
-
-  const payload = {
-    AS_IDS: this.storeIds?.length ? this.storeIds.join(',') : '',
-    DATE: this.selectedDate || new Date().toISOString().split('T')[0],
-    VAR1: dept,
-    Accountnumber: ''
-  };
-
-  console.log('Payload:', payload);
-
-  this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
-    next: (res) => {
-      const response = res?.response || [];
-
-      // ✅ Map API response
-      const mapped = response.map((item: any) => ({
-        store: item.Store,
-        accountNumber: item.AccountNumber,
-        accountDescription: item['Account Description'],
-        balance: Number(item.Balance) || 0 // ensure numeric
-      }));
-
-      // ✅ Assign data
-      this.tableData = mapped;
-      this.details.set(mapped);
-
-      // ✅ Calculate total
-      this.calculateTotal();
-
-      // ✅ Reset pagination to first page and update
-      this.currentPage = 1;
-      this.updatePagination();
-
-      console.log('Total Balance:', this.totalBalance);
-    },
-    error: () => {
-      this.details.set([]);
-      this.totalBalance = 0;
-      this.totalRecords = 0;
-      this.pagedDetails = [];
-      this.currentPage = 1;
-    }
-  });
-}
-
-  tableData: any[] = [];
-
-  calculateTotal() {
-    if (this.tableData && this.tableData.length > 0) {
-      this.totalBalance = this.tableData.reduce(
-        (sum: any, item: { balance: any; }) => sum + (item.balance || 0),
-        0
-      );
-    } else {
-      this.totalBalance = 0;
-    }
-  }
-
-  selectRow(row: any) {
-    this.showDetailPage = !this.showDetailPage;
-    if (this.selectedRow === row) {
-      // Toggle off if the same row is clicked
-      this.selectedRow = null;
-      this.accountDetails = [];
-    } else {
-      this.selectedRow = row;
-      this.selectedStoreName = row.Store || '';
-      this.selectedAccountNumber = row.AccountNumber || '';
-      this.accountDetails = []; // Set empty or fetch API data here
-    }
-
-    this.getVariableGrossGLAccountDetails(row)
-  }
-
-  positions = ['Top', 'Bottom'];
-  selectedPosition: string = '';
-  isDepartmentDropdownOpen = false;
-  isReportDropdownOpen = false;
-  departments: string[] = ['NEW', 'USED'];
-
-  toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
   }
 
 
-//  getVariableGrossGLAccountDetails(row: any): void {
-//   // keep selectedRow as set by onAccountClick
-//   this.noAccountDetails = false;
-//   this.accountDetails = [];
-//   this.showDetailPage = false;
-
-//   const payload = {
-//     AS_IDS: this.storeIds?.length ? this.storeIds.join(',') : '',
-//     DATE: this.selectedDate || new Date().toISOString().split('T')[0],
-//     Accountnumber: row?.accountNumber || row?.AccountNumber || '',
-//     VAR1: this.selectedDept || '',
-//     VAR2: ''
-//   };
-
-//   console.log('Payload for account details:', payload);
-
-//   this.shared.spinner.show();
-//   this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
-//     next: (res: any) => {
-//       this.shared.spinner.hide();
-
-//       const resp = Array.isArray(res?.response) ? res.response : [];
-
-//       this.accountDetails = resp.map((item: any) => ({
-//         Control: item.control ?? item.Control ?? '-',
-//         AccountingDate: item.Date ? new Date(item.Date).toISOString().split('T')[0] : '-',
-//         DetailDescription: item['Account Description'] || item['AccountDescription'] || '-',
-//         PostingAmount: Number(item.Balance) || 0,
-//         AsDealerName: item.As_dealername || item.AsDealerName || '-'
-//       }));
-
-//       this.calculateSubTotal();
-//       this.noAccountDetails = this.accountDetails.length === 0;
-//       this.showDetailPage = true;
-//     },
-//     error: (err) => {
-//       this.shared.spinner.hide();
-//       console.error('Error loading account details:', err);
-//       this.accountDetails = [];
-//       this.noAccountDetails = true;
-//       this.showDetailPage = false;
-//     }
-//   });
-// }
-
-  // ---------- UI LOGIC ----------
-  toggleAccountDetails(row: any) {
-    if (this.expandedRow === row) {
-      this.expandedRow = null;
-      this.showDetailPage = false;
-    } else {
-      this.expandedRow = row;
-      this.selectedStoreName = row.StoreName;
-      this.selectedAccountNumber = row.AccountNumber;
-      this.showDetailPage = true;
-
-    }
-  }
-
-
-// ✅ Slice the data for current page
-setPagedDetails() {
-  const data = this.details(); // or your main table array
-  const startIndex = (this.currentPage - 1) * this.pageSize;
-  const endIndex = startIndex + this.pageSize;
-  this.pagedDetails = data.slice(startIndex, endIndex);
-}
-
-// ✅ Navigation functions
-nextPage() {
-  if (this.currentPage < this.totalPages()) {
-    this.currentPage++;
-    this.setPagedDetails();
-  }
-}
-
-prevPage() {
-  if (this.currentPage > 1) {
-    this.currentPage--;
-    this.setPagedDetails();
-  }
-}
-
-goToPage(page: number) {
-  if (page >= 1 && page <= this.totalPages()) {
-    this.currentPage = page;
-    this.setPagedDetails();
-  }
-}
-
-totalPages() {
-  return Math.ceil(this.totalRecords / this.pageSize) || 1;
-}
-
-pagedDetails: any[] = [];
-  scrollToRow(index: number) {
-    const el = document.getElementById('row-' + index);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  // ---------- PAGINATION ----------
-  paginatedDetails() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.detailsData.slice(start, start + this.pageSize);
-  }
-
-  // ---------- TOTALS ----------
-  getSubTotal(list: any[]): number {
-    return list.reduce((sum, item) => sum + (item.PostingAmount || 0), 0);
-  }
-
-  // ---------- MODAL ----------
-  closeModal() {
-    this.showModal = false;
-    this.detailsData = [];
-    this.accountDetails = [];
-  }
-
-  applyFilters() {
-    // ✅ Apply selected month officially
-    if (this.tempMonthLabel) {
-      this.selectedMonthLabel = this.tempMonthLabel;
-    }
-
-    // 🔹 (Rest of your filter logic remains unchanged)
-    if (!this.originalReportData || this.originalReportData.length === 0) {
-      this.noData = true;
+  onOpenCalendar(container: any) {
+    container.setViewMode('month');
+    container.monthSelectHandler = (event: any): void => {
+      container.value = event.date;
+      this.date = event.date;
       return;
-    }
-
-    let filteredData = JSON.parse(JSON.stringify(this.originalReportData));
-
-    if (this.selectedDepartments.length > 0) {
-      filteredData = filteredData
-        .map((store: any) => ({
-          ...store,
-          children: store.children.filter((child: any) =>
-            this.selectedDepartments.includes(child.DEPT?.toUpperCase())
-          )
-        }))
-        .filter((store: any) => store.children.length > 0 || store.alwaysVisible);
-    }
-
-    const reportTotalIndex = filteredData.findIndex(
-      (g: any) => g.STORE === 'Report Total'
-    );
-    if (reportTotalIndex !== -1) {
-      const [reportTotal] = filteredData.splice(reportTotalIndex, 1);
-      if (this.selectedReportTotal === 'TOP') filteredData.unshift(reportTotal);
-      else filteredData.push(reportTotal);
-    }
-
-    this.reportData = filteredData;
-    this.noData = this.reportData.length === 0;
+    };
   }
-  subTotal: number = 0;
-
-  calculateSubTotal() {
-    this.subTotal = this.accountDetails.reduce(
-      (sum, detail) => sum + (detail.PostingAmount || 0),
-      0
-    );
+  changeDate(e: any) {
+    console.log(e);
+    this.date = e;
   }
 
-onSearchChange(query: string) {
-  const q = (query || '').toString().trim().toLowerCase();
+  ngOnDestroy() {
+    if (this.reportOpenSub != undefined) {
+      this.reportOpenSub.unsubscribe()
+    }
+    if (this.reportGetting != undefined) {
+      this.reportGetting.unsubscribe()
+    }
+    if (this.excel != undefined) {
+      this.excel.unsubscribe()
+    }
+    if (this.Pdf != undefined) {
+      this.Pdf.unsubscribe()
+    }
+    if (this.print != undefined) {
+      this.print.unsubscribe()
+    }
+    if (this.email != undefined) {
+      this.email.unsubscribe()
+    }
+  }
 
-  // prefer using the signal () if it exists, otherwise fallback to tableData
-  const source: any[] = Array.isArray(this.details?.()) ? this.details() : (this.tableData || []);
+  multipleorsingle(block: any, e: any) {
 
-  if (!q) {
-    // reset to full source
-    this.filteredDetails = [...source];
-  } else {
-    this.filteredDetails = source.filter((item: any) => {
-      const store = (item.store || item.Store || '').toString().toLowerCase();
-      const acct = (item.accountNumber || item.AccountNumber || '').toString().toLowerCase();
-      const desc = (item.accountDescription || item['Account Description'] || '').toString().toLowerCase();
-      return store.includes(q) || acct.includes(q) || desc.includes(q);
+    if (block == 'RL') {
+      this.saleType = []
+      this.saleType.push(e);
+    }
+
+    if (block == 'TB') {
+      this.TotalReport = e;
+
+    }
+
+    if (block == 'Dept') {
+      const index = this.Department.findIndex((i: any) => i == e);
+      if (index >= 0) {
+        this.Department.splice(index, 1);
+        if (this.Department.length == 0) {
+          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+        }
+      } else {
+        this.Department.push(e);
+      }
+    }
+  }
+  activePopover: number = -1;
+  togglePopover(popoverIndex: number) {
+
+    if (this.activePopover === popoverIndex) {
+      // If the same popover is clicked, close it
+      this.activePopover = -1;
+    } else {
+      // Open the selected popover and close others
+      this.activePopover = popoverIndex;
+    }
+  }
+  viewreport() {
+
+    this.activePopover = -1
+    if (this.storeIds.length == 0 || this.Department.length == 0) {
+      if (this.Department.length == 0) {
+        this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
+      }
+      if (this.storeIds.length == 0) {
+        this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      }
+    } else {
+      this.setHeaderData()
+      this.getSalesData()
+    }
+    // }
+    // }
+  }
+  Scrollpercent: any = 0;
+  updateVerticalScroll(event: any): void {
+    const scrollDemo = document.querySelector('#scrollcent');
+    this.Scrollpercent = Math.round(
+      (event.target.scrollTop /
+        (event.target.scrollHeight - scrollDemo!.clientHeight)) *
+      100
+    );
+  }
+  index = '';
+  ExcelStoreNames: any = [];
+  exportToExcel() {
+    let storeNames: any = [];
+    let store = this.storeIds.split(',');
+    storeNames = this.shared.common.groupsandstores
+      .filter((v: any) => v.sg_id == this.groupId)[0]
+      .Stores.filter((item: any) =>
+        store.some((cat: any) => cat === item.ID.toString())
+      );
+    if (
+      store.length ==
+      this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0]
+        .Stores.length
+    ) {
+      this.ExcelStoreNames = 'All Stores';
+    } else {
+      this.ExcelStoreNames = storeNames.map(function (a: any) {
+        return a.storename;
+      });
+    }
+    const SalesData = this.SalesData.map((_arrayElement: any) =>
+      Object.assign({}, _arrayElement)
+    );
+    const workbook = this.shared.getWorkbook();
+    const worksheet = workbook.addWorksheet('Variable Gross GL');
+    worksheet.views = [
+      {
+        // state: 'frozen',
+        // ySplit: 24, // Number of rows to freeze (2 means the first two rows are frozen)
+        // topLeftCell: 'A25', // Specify the cell to start freezing from (in this case, the third row)
+        showGridLines: false,
+      },
+    ];
+    worksheet.addRow('');
+    const titleRow = worksheet.addRow(['Variable Gross GL']);
+    titleRow.eachCell((cell: any, number: any) => {
+      cell.alignment = { indent: 1, vertical: 'middle', horizontal: 'left' };
+    });
+    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
+    titleRow.worksheet.mergeCells('A2', 'D2');
+    worksheet.addRow('');
+    const PresentMonth = this.shared.datePipe.transform(this.date, 'MMMM yyyy');
+    const DateToday = this.shared.datePipe.transform(
+      new Date(),
+      'MM/dd/yyyy h:mm:ss a'
+    );
+    const DATE_EXTENSION = this.shared.datePipe.transform(new Date(), 'MMddyyyy');
+    worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
+    const ReportFilter = worksheet.addRow(['Report Controls :']);
+    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+    // const Groupings = worksheet.addRow(['Groupings :']);
+    // Groupings.getCell(1).font = {
+    //   name: 'Arial',
+    //   family: 4,
+    //   size: 9,
+    //   bold: true,
+    // };
+    // const groupings = worksheet.getCell('B6');
+    // groupings.value = this.path1name + ((this.path2name != '' && this.path2name != undefined) ? (', ' + this.path2name) : '') + ((this.path3name != '' && this.path3name != undefined) ? (', ' + this.path3name) : '');
+    // groupings.font = { name: 'Arial', family: 4, size: 9 };
+    const Timeframe = worksheet.addRow(['Timeframe :']);
+    Timeframe.getCell(1).font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: true,
+    };
+    const timeframe = worksheet.getCell('B6');
+    timeframe.value = PresentMonth
+    timeframe.font = { name: 'Arial', family: 4, size: 9 };
+    const Stores = worksheet.addRow(['Stores :']);
+    Stores.getCell(1).font = { name: 'Arial', family: 4, size: 9, bold: true };
+    const Groups = worksheet.getCell('B8');
+    Groups.value = 'Group :';
+    const groups = worksheet.getCell('D8');
+    groups.value = this.shared.common.groupsandstores.filter(
+      (val: any) => val.sg_id == this.groupId.toString()
+    )[0].sg_name;
+    groups.font = { name: 'Arial', family: 4, size: 9 };
+    const Brands = worksheet.getCell('B9');
+    Brands.value = 'Brands :';
+    const brands = worksheet.getCell('D9');
+    brands.value = '-';
+    brands.font = { name: 'Arial', family: 4, size: 9 };
+    const Stores1 = worksheet.getCell('B10');
+    Stores1.value = 'Stores :';
+    worksheet.mergeCells('D10', 'O12');
+    const stores1 = worksheet.getCell('D10');
+    stores1.value =
+      this.ExcelStoreNames == 0
+        ? 'All Stores'
+        : this.ExcelStoreNames == null
+          ? '-'
+          : this.ExcelStoreNames.toString().replaceAll(',', ', ');
+    stores1.font = { name: 'Arial', family: 4, size: 9 };
+    stores1.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+    const Filters = worksheet.addRow(['Filters :']);
+    Filters.getCell(1).font = { name: 'Arial', family: 4, size: 9, bold: true };
+    const NewUsed = worksheet.getCell('B16');
+    NewUsed.value = 'Department :';
+    const newused = worksheet.getCell('D16');
+    newused.value = this.Department.toString().replaceAll(',', ', ');
+    newused.font = { name: 'Arial', family: 4, size: 9 };
+    worksheet.addRow('');
+    let dateYear = worksheet.getCell('A18');
+    dateYear.value = PresentMonth;
+    dateYear.alignment = { vertical: 'middle', horizontal: 'center' };
+    dateYear.font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: true,
+      color: { argb: 'FFFFFF' },
+    };
+    dateYear.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2a91f0' },
+      bgColor: { argb: 'FF0000FF' },
+    };
+    dateYear.border = { right: { style: 'dotted' } };
+    worksheet.mergeCells('B18', 'I18');
+    let units = worksheet.getCell('B18');
+    units.value = 'Units';
+    units.alignment = { vertical: 'middle', horizontal: 'center' };
+    units.font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: true,
+      color: { argb: 'FFFFFF' },
+    };
+    units.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2a91f0' },
+      bgColor: { argb: 'FF0000FF' },
+    };
+    units.border = { right: { style: 'dotted' } };
+    worksheet.mergeCells('J18', 'T18');
+    let frontgross = worksheet.getCell('J18');
+    frontgross.value = 'Gross';
+    frontgross.alignment = { vertical: 'middle', horizontal: 'center' };
+    frontgross.font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: true,
+      color: { argb: 'FFFFFF' },
+    };
+    frontgross.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '2a91f0' },
+      bgColor: { argb: 'FF0000FF' },
+    };
+    frontgross.border = { right: { style: 'dotted' } };
+    let Headings = [
+      '',
+      'MTD',
+      'Pace',
+      'Target',
+      'Diff',
+      'LY',
+      'YOY%',
+      'LM',
+      'MOM%',
+      'MTD',
+      'Front Gross',
+      'Back Gross',
+      'PVR',
+      'Pace',
+      'Target',
+      'Diff',
+      'LY',
+      'YOY%',
+      'LM',
+      'MOM%',
+    ];
+    const headerRow = worksheet.addRow(Headings);
+    headerRow.font = {
+      name: 'Arial',
+      family: 4,
+      size: 9,
+      bold: false,
+      color: { argb: 'FFFFFF' },
+    };
+    headerRow.alignment = {
+      indent: 1,
+      vertical: 'middle',
+      horizontal: 'center',
+    };
+    headerRow.eachCell((cell: any, number: any) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '788494' },
+        bgColor: { argb: 'FF0000FF' },
+      };
+      cell.border = { right: { style: 'dotted' } };
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    });
+    for (const d of SalesData) {
+      const obj = [
+        d.STORE == '' ? '-' : d.STORE == null ? '-' : d.STORE,
+        d.UNITS_MTD == '' ? '-' : d.UNITS_MTD == null ? '-' : d.UNITS_MTD,
+        d.UNITS_PACE == '' ? '-' : d.UNITS_PACE == null ? '-' : d.UNITS_PACE,
+        d.UNITS_TARGET == ''
+          ? '-'
+          : d.UNITS_TARGET == null
+            ? '-'
+            : d.UNITS_TARGET,
+        d.UNITS_DIFF == '' ? '-' : d.UNITS_DIFF == null ? '-' : d.UNITS_DIFF,
+        d.UNITS_LY == '' ? '-' : d.UNITS_LY == null ? '-' : d.UNITS_LY,
+        d.UNITS_YOY == ''
+          ? '-'
+          : d.UNITS_YOY == null
+            ? '-'
+            : parseFloat(d.UNITS_YOY) + '%',
+        d.UNITS_LM == '' ? '-' : d.UNITS_LM == null ? '-' : d.UNITS_LM,
+        d.UNITS_MOM == '' ? '-' : d.UNITS_MOM == null ? '-' : d.UNITS_MOM + '%',
+        d.GROSS_MTD == '' ? '-' : d.GROSS_MTD == null ? '-' : d.GROSS_MTD,
+        d.GROSS_FG == '' ? '-' : d.GROSS_FG == null ? '-' : d.GROSS_FG,
+        d.GROSS_BG == '' ? '-' : d.GROSS_BG == null ? '-' : d.GROSS_BG,
+        d.GROSS_PVR == ''
+          ? '-'
+          : d.GROSS_PVR == null
+            ? '-'
+            : parseFloat(d.GROSS_PVR),
+        d.GROSS_PACE == ''
+          ? '-'
+          : d.GROSS_PACE == null
+            ? '-'
+            : parseFloat(d.GROSS_PACE),
+        d.GROSS_TARGET == ''
+          ? '-'
+          : d.GROSS_TARGET == null
+            ? '-'
+            : d.GROSS_TARGET,
+        d.GROSS_DIFF == '' ? '-' : d.GROSS_DIFF == null ? '-' : d.GROSS_DIFF,
+        d.GROSS_LY == '' ? '-' : d.GROSS_LY == null ? '-' : d.GROSS_LY,
+        d.GROSS_YOY == ''
+          ? '-'
+          : d.GROSS_YOY == null
+            ? '-'
+            : parseFloat(d.GROSS_YOY) + '%',
+        d.GROSS_LM == ''
+          ? '-'
+          : d.GROSS_LM == null
+            ? '-'
+            : parseFloat(d.GROSS_LM),
+        d.GROSS_MOM == '' ? '-' : d.GROSS_MOM == null ? '-' : d.GROSS_MOM + '%',
+      ];
+      const Data1 = worksheet.addRow(obj);
+      Data1.font = { name: 'Arial', family: 4, size: 9 };
+      Data1.alignment = { vertical: 'middle', horizontal: 'center' };
+      Data1.getCell(1).alignment = {
+        indent: 1,
+        vertical: 'middle',
+        horizontal: 'left',
+      };
+      Data1.eachCell((cell: any, number: any) => {
+        cell.border = { right: { style: 'dotted' } };
+        cell.numFmt = '$#,##0.00';
+        if (number > 1 && number < 10) {
+          cell.numFmt = '#,##0';
+        }
+        if (number >= 10) {
+          cell.numFmt = '$#,##0';
+        }
+        if (number > 1 && obj[number] != undefined) {
+          if (obj[number] < 0) {
+            Data1.getCell(number + 1).font = {
+              name: 'Arial',
+              family: 4,
+              size: 9,
+              color: { argb: 'FFFF0000' },
+            };
+          }
+        }
+      });
+      if (Data1.number % 2) {
+        Data1.eachCell((cell, number) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'e5e5e5' },
+            bgColor: { argb: 'FF0000FF' },
+          };
+        });
+      }
+      if (d.subdata != undefined) {
+        // for (const d1 of d.subdata)
+        d.subdata.forEach((d1: any, i: any) => {
+          if (i != 0) {
+            const obj = [
+              d1.DEPT == '' ? '-' : d1.DEPT == null ? '-' : d1.DEPT,
+              d1.UNITS_MTD == ''
+                ? '-'
+                : d1.UNITS_MTD == null
+                  ? '-'
+                  : d1.UNITS_MTD,
+              d1.UNITS_PACE == ''
+                ? '-'
+                : d1.UNITS_PACE == null
+                  ? '-'
+                  : d1.UNITS_PACE,
+              d1.UNITS_TARGET == ''
+                ? '-'
+                : d1.UNITS_TARGET == null
+                  ? '-'
+                  : d1.UNITS_TARGET,
+              d1.UNITS_DIFF == ''
+                ? '-'
+                : d1.UNITS_DIFF == null
+                  ? '-'
+                  : d1.UNITS_DIFF,
+              d1.UNITS_LY == '' ? '-' : d1.UNITS_LY == null ? '-' : d1.UNITS_LY,
+              d1.UNITS_YOY == ''
+                ? '-'
+                : d1.UNITS_YOY == null
+                  ? '-'
+                  : parseFloat(d1.UNITS_YOY),
+              d1.UNITS_LM == '' ? '-' : d1.UNITS_LM == null ? '-' : d1.UNITS_LM,
+              d1.UNITS_MOM == ''
+                ? '-'
+                : d1.UNITS_MOM == null
+                  ? '-'
+                  : d1.UNITS_MOM,
+              d1.GROSS_MTD == ''
+                ? '-'
+                : d1.GROSS_MTD == null
+                  ? '-'
+                  : d1.GROSS_MTD,
+              d1.GROSS_FG == '' ? '-' : d1.GROSS_FG == null ? '-' : d1.GROSS_FG,
+              d1.GROSS_BG == '' ? '-' : d1.GROSS_BG == null ? '-' : d1.GROSS_BG,
+              d1.GROSS_PVR == ''
+                ? '-'
+                : d1.GROSS_PVR == null
+                  ? '-'
+                  : parseFloat(d1.GROSS_PVR),
+              d1.GROSS_PACE == ''
+                ? '-'
+                : d1.GROSS_PACE == null
+                  ? '-'
+                  : parseFloat(d1.GROSS_PACE),
+              d1.GROSS_TARGET == ''
+                ? '-'
+                : d1.GROSS_TARGET == null
+                  ? '-'
+                  : d1.GROSS_TARGET,
+              d1.GROSS_DIFF == ''
+                ? '-'
+                : d1.GROSS_DIFF == null
+                  ? '-'
+                  : d1.GROSS_DIFF,
+              d1.GROSS_LY == '' ? '-' : d1.GROSS_LY == null ? '-' : d1.GROSS_LY,
+              d1.GROSS_YOY == ''
+                ? '-'
+                : d1.GROSS_YOY == null
+                  ? '-'
+                  : parseFloat(d1.GROSS_YOY),
+              d1.GROSS_LM == ''
+                ? '-'
+                : d1.GROSS_LM == null
+                  ? '-'
+                  : parseFloat(d1.GROSS_LM),
+              d1.GROSS_MOM == ''
+                ? '-'
+                : d1.GROSS_MOM == null
+                  ? '-'
+                  : d1.GROSS_MOM,
+            ];
+            const Data2 = worksheet.addRow(obj);
+            Data2.outlineLevel = 1; // Grouping level 2
+            Data2.font = { name: 'Arial', family: 4, size: 9 };
+            Data2.alignment = { vertical: 'middle', horizontal: 'center' };
+            Data2.getCell(1).alignment = {
+              indent: 2,
+              vertical: 'middle',
+              horizontal: 'left',
+            };
+            Data2.eachCell((cell: any, number: any) => {
+              cell.border = { right: { style: 'dotted' } };
+              cell.numFmt = '$#,##0';
+              if (number > 1 && number < 10) {
+                cell.numFmt = '#,##0';
+              }
+              if (number >= 10) {
+                cell.numFmt = '$#,##0';
+              }
+              if (number > 1 && obj[number] != undefined) {
+                if (obj[number] < 0) {
+                  Data1.getCell(number + 1).font = {
+                    name: 'Arial',
+                    family: 4,
+                    size: 9,
+                    color: { argb: 'FFFF0000' },
+                  };
+                }
+              }
+            });
+            if (Data2.number % 2) {
+              Data2.eachCell((cell, number) => {
+                cell.fill = {
+                  type: 'pattern',
+                  pattern: 'solid',
+                  fgColor: { argb: 'e5e5e5' },
+                  bgColor: { argb: 'FF0000FF' },
+                };
+              });
+            }
+          }
+        });
+        //  {
+        // }
+      }
+      if (d.data1 === 'Report Total') {
+        Data1.eachCell((cell) => {
+          cell.font = { name: 'Arial', family: 4, size: 9, bold: true };
+          cell.border = {
+            top: { style: 'thin' },
+            bottom: { style: 'thin' },
+          };
+        });
+      }
+    }
+    worksheet.eachRow((row, rowIndex) => {
+      row.eachCell((cell, colIndex) => {
+        if (rowIndex > 1 && rowIndex < 21) {
+          // Skip the header row
+          // Apply conditional alignment based on your conditions
+          if (colIndex === 1) {
+            // Apply right alignment to the second column
+            cell.alignment = {
+              horizontal: 'left',
+              vertical: 'middle',
+              indent: 1,
+            };
+          }
+        }
+      });
+    });
+    worksheet.getColumn(1).width = 30;
+    worksheet.getColumn(2).width = 12;
+    worksheet.getColumn(3).width = 12;
+    worksheet.getColumn(4).width = 12;
+    worksheet.getColumn(5).width = 12;
+    worksheet.getColumn(6).width = 12;
+    worksheet.getColumn(7).width = 12;
+    worksheet.getColumn(8).width = 12;
+    worksheet.getColumn(9).width = 12;
+    worksheet.getColumn(10).width = 12;
+    worksheet.getColumn(11).width = 12;
+    worksheet.getColumn(12).width = 12;
+    worksheet.getColumn(13).width = 12;
+    worksheet.getColumn(14).width = 12;
+    worksheet.getColumn(15).width = 12;
+    worksheet.getColumn(16).width = 12;
+    worksheet.getColumn(17).width = 12;
+    worksheet.getColumn(18).width = 12;
+    worksheet.getColumn(19).width = 12;
+    worksheet.getColumn(20).width = 12;
+    worksheet.getColumn(21).width = 12;
+    worksheet.addRow([]);
+    workbook.xlsx.writeBuffer().then(buffer => {
+      this.shared.exportToExcel(workbook, 'Variable Gross GL');
     });
   }
 
-  // reset pagination for filtered data
-  this.currentPage = 1;
-  this.updatePagination();
-}
-updatePagination() {
-  // source preference: filteredDetails (if set) -> details() signal -> tableData
-  let source: any[] =
-    (this.filteredDetails && this.filteredDetails.length > 0) ? this.filteredDetails
-    : (Array.isArray(this.details?.()) ? this.details() : (this.tableData || []));
 
-  // When filteredDetails exists but is empty (search returned no results), source should be filteredDetails
-  if (this.filteredDetails && this.filteredDetails.length === 0 && this.searchText) {
-    source = this.filteredDetails;
-  }
+  AcctDetasil_ExportAsXLSX() {
+    let localarray = this.details.map((_arrayElement: any) =>
+      Object.assign({}, _arrayElement)
+    );
+    const workbook = this.shared.getWorkbook();
+    const worksheet = workbook.addWorksheet('Variable Gross GL');
+    worksheet.views = [
+      {
+        state: 'frozen',
+        ySplit: 5, // Number of rows to freeze (2 means the first two rows are frozen)
+        topLeftCell: 'A13', // Specify the cell to start freezing from (in this case, the third row)
+        showGridLines: false,
+      },
+    ];
+    worksheet.addRow('')
 
-  this.totalRecords = source.length;
-  // compute pagedDetails slice
-  const startIndex = (this.currentPage - 1) * this.pageSize;
-  const endIndex = startIndex + this.pageSize;
-  this.pagedDetails = source.slice(startIndex, endIndex);
-}
-expandedRow: any = null;
+    const DateToday = this.shared.datePipe.transform(new Date(), 'MM/dd/yyyy h:mm:ss a');
 
-onAccountClick(row: any): void {
-  // If the same row is clicked again, collapse it
-  if (this.expandedRow === row) {
-    this.expandedRow = null;
-    this.showDetailPage = false;
-    this.accountDetails = [];
-    return;
-  }
-
-  // Otherwise, expand a new row
-  this.expandedRow = row;
-  this.showDetailPage = false; // Hide detail until data loads
-  this.getVariableGrossGLAccountDetails(row);
-}
+    const titleRow = worksheet.getCell("A2"); titleRow.value = 'Variable Gross GL';
+    titleRow.font = { name: 'Arial', family: 4, size: 15, bold: true };
+    titleRow.alignment = { indent: 1, vertical: 'middle', horizontal: 'left' }
 
 
-getVariableGrossGLAccountDetails(row: any): void {
-  this.noAccountDetails = false;
-  this.accountDetails = [];
 
-  const payload = {
-    AS_IDS: this.storeIds?.length ? this.storeIds.join(',') : '',
-    DATE: this.selectedDate || new Date().toISOString().split('T')[0],
-    Accountnumber: row?.accountNumber || row?.AccountNumber || '',
-    VAR1: this.selectedDept || '',
-    VAR2: ''
-  };
+    const DateBlock = worksheet.getCell("L2"); DateBlock.value = DateToday;
+    DateBlock.font = { name: 'Arial', family: 4, size: 10 };
+    DateBlock.alignment = { vertical: 'middle', horizontal: 'center' }
+    worksheet.addRow([''])
 
-  console.log('Payload for account details:', payload);
 
-  this.shared.spinner.show();
 
-  this.api.postmethod('SilverTip/GetSalesGrossGLDetails', payload).subscribe({
-    next: (res: any) => {
-      this.shared.spinner.hide();
 
-      const resp = Array.isArray(res?.response) ? res.response : [];
+    const DATE_EXTENSION = this.shared.datePipe.transform(
+      new Date(),
+      'MMddyyyy'
+    );
 
-      this.accountDetails = resp.map((item: any) => ({
-        Control: item.control ?? item.Control ?? '-',
-        AccountingDate: item.Date
-          ? new Date(item.Date).toISOString().split('T')[0]
-          : '-',
-        DetailDescription: item['Account Description'] || item['AccountDescription'] || '-',
-        PostingAmount: Number(item.Balance) || 0,
-        AsDealerName: item.As_dealername || item.AsDealerName || '-'
-      }));
 
-      this.calculateSubTotal();
-      this.noAccountDetails = this.accountDetails.length === 0;
-      this.showDetailPage = true;
-    },
-    error: (err) => {
-      this.shared.spinner.hide();
-      console.error('Error loading account details:', err);
-      this.accountDetails = [];
-      this.noAccountDetails = true;
-      this.showDetailPage = false;
+
+    worksheet.addRow('')
+    let Headings = [
+      'Sl.no',
+      'Store',
+      'Account #',
+      'Description',
+      'Balance',
+      'Control',
+      'Date',
+    ];
+
+
+    const headerRow = worksheet.addRow(Headings);
+    headerRow.font = { name: 'Arial', family: 4, size: 9, color: { argb: 'FFFFFF' }, }
+    headerRow.alignment = { indent: 1, vertical: 'middle', horizontal: 'center' };
+    headerRow.height = 22;
+    headerRow.eachCell((cell, number) => {
+      cell.fill = {
+        type: 'pattern', pattern: 'solid', fgColor: { argb: '2a91f0' }, bgColor: { argb: 'FF0000FF' }
+      }
+      cell.border = { right: { style: 'thin' } }
+      cell.alignment = { vertical: 'middle', horizontal: 'center' }
+    });
+
+    // //console.log(localarray);
+    var count = 0
+    for (const d of localarray) {
+      count++
+      d.contractdate = this.shared.datePipe.transform(d.Date, 'MM.dd.yyyy');
+
+      var obj = [count,
+        (d['As_dealername'] == '' ? '-' : (d['As_dealername'] == null ? '-' : (d['As_dealername']))),
+        (d['ACCOUNT#'] == '' ? '-' : (d['ACCOUNT#'] == null ? '-' : (d['ACCOUNT#']))),
+        (d['Account Description'] == '' ? '-' : (d['Account Description'] == null ? '-' : (d['Account Description']))),
+        (d.Balance == '' ? '-' : (d.Balance == null ? '-' : (parseFloat(d.Balance)))),
+        (d.Control == '' ? '-' : (d.Control == null ? '-' : d.Control)),
+        (d.contractdate == '' ? '-' : (d.contractdate == null ? '-' : (d.contractdate))),
+
+
+      ];
+
+
+      const Data1 = worksheet.addRow(obj);
+
+      // //console.log(Data1);
+
+      Data1.font = { name: 'Arial', family: 4, size: 8 }
+      Data1.alignment = { vertical: 'middle', horizontal: 'center', indent: 1 }
+      // Data1.getCell(1).alignment = {indent: 1,vertical: 'top', horizontal: 'left'}
+      Data1.eachCell((cell, number) => {
+        cell.border = { right: { style: 'thin' } }
+        if (number == 5) {
+          cell.numFmt = '$#,##0'
+
+        }
+
+      });
+      if (Data1.number % 2) {
+        Data1.eachCell((cell, number) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'e5e5e5' },
+            bgColor: { argb: 'FF0000FF' },
+          };
+        });
+      }
+      Data1.worksheet.columns.forEach((column: any, columnIndex: any) => {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell: any) => {
+          const length = cell.value ? cell.value.toString().length : 10;
+          if (length > maxLength) {
+            maxLength = length;
+          }
+        });
+        column.width = maxLength < 10 ? 10 : maxLength + 2; // Set a minimum width of 10
+      });
+
+      // });
+      // count++
     }
-  });
-}
+    worksheet.getColumn(1).width = 16;
+    worksheet.getColumn(2).width = 16;
+    worksheet.getColumn(3).width = 20;
+    worksheet.getColumn(4).width = 20;
+    worksheet.getColumn(5).width = 20;
 
 
 
-downloadDetails() {
-  if (!this.tableData || this.tableData.length === 0) {
-    
-    this.toast.show('No data to download', 'warning', 'Warning');
-    return;
-  }
-
-  const wsData = [
-    ['STORE NAME', 'ACCOUNT NUMBER', 'ACCOUNT DESCRIPTION', 'BALANCE ($)'],
-    ...this.tableData.map(row => [
-      row.store,
-      row.accountNumber,
-      row.accountDescription,
-      row.balance
-    ])
-  ];
-
-  const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(wsData);
-
-  // Auto width
-  ws['!cols'] = [
-    { wch: 25 },
-    { wch: 20 },
-    { wch: 40 },
-    { wch: 15 }
-  ];
-
-  const wb: XLSX.WorkBook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Details');
-  XLSX.writeFile(wb, 'Details_Report.xlsx');
-}
+    worksheet.addRow([]);
 
 
-
-
-  // ---------- HELPER ----------
-  getMonthYearLabel(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const month = date.toLocaleString('default', { month: 'long' }); // e.g. 'November'
-    const year = date.getFullYear();
-    return `${month}/${year}`; // Matches 'NOVEMBER/2025' format
-  }
-
-
-  toggleDetails(dept: string) {
-    this.expandedDept = this.expandedDept === dept ? null : dept;
-    this.getVariableGrossGLDetails(dept);
+    workbook.xlsx.writeBuffer().then(buffer => {
+      this.shared.exportToExcel(workbook, 'Variable Gross GL Account Level Details');
+    });
   }
 }

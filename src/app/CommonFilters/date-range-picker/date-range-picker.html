@@ -2,7 +2,7 @@
     <button class="outline-button" (click)="SetDates(dates.code)" *ngFor="let dates of Data"
         [ngClass]="{'active':DateType == dates.code}">{{dates.name}}</button>
     <hr>
-    <button class="outline-button custom-btn" (click)="SetDates('C','B')" >
+    <button class="outline-button custom-btn" (click)="SetDates('C','B')"  [ngStyle]="{'display' : customeVisibility == 'Y' ? 'block' : 'none'}">
         Custom
         <i class="fa-solid fa-calendar-days calendar-icon"></i>
     </button>

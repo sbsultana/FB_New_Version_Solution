@@ -60,7 +60,7 @@
                 </span>
 
                 <span class="arrow"></span></button>
-            <div class="reportpeople-card my-2" *ngIf="activePopover ===3" [style.margin-left.px]="scrollPosition*-1">
+            <div class="reportstores-card my-2" *ngIf="activePopover ===3" [style.margin-left.px]="scrollPosition*-1">
                 <div class="row h-100">
                     <div class="groups pe-2 d-flex flex-column">
                         <div class="groups-wrapper flex-grow-1">
@@ -364,7 +364,22 @@
             </div>
         </div>
 
-
+        <div class="pe-2 mt-2 pt-1 " style="white-space: nowrap;" >
+            <label style="font-size: .8rem;">Include Product-Only Deals:</label>
+        </div>
+        <div class="mt-2 pt-2 d-flex pop " >
+            <div style="font-size: .8rem;">
+                <input type="radio" name="balanceFilter" value="Yes" (change)="Deals('Yes')"
+                    [checked]="ProductDeals == 'Yes'" />
+                Yes
+            </div>
+            &nbsp; &nbsp;
+            <div style="font-size: .8rem;">
+                <input type="radio" name="balanceFilter" value="dr" (change)="Deals('No')"
+                    [checked]="ProductDeals == 'No'" />
+                No
+            </div>
+        </div>
 
     </div>
     &nbsp;&nbsp;

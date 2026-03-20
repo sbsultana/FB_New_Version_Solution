@@ -86,7 +86,7 @@ export class Dashboard {
   //     this.activePopover = -1;
   //   }
   // }
-  constructor(public shared: Sharedservice, public setdates: Setdates,private toast: ToastService,
+  constructor(public shared: Sharedservice, public setdates: Setdates, private toast: ToastService,
 
   ) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
@@ -104,7 +104,7 @@ export class Dashboard {
 
     this.titleSetting()
     this.shared.setTitle(this.shared.common.titleName + '- Sales Appointments');
-  
+
     this.todaytitle = this.shared.datePipe.transform(new Date(), 'MM/dd/yyyy');
     let today = new Date();
     const tomorrow = new Date();
@@ -446,7 +446,7 @@ export class Dashboard {
     this.setDates(this.DateType)
   }
   setDates(type: any) {
-    this.DateType == 'C' ? this.displaytime = this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy') :
+    this.DateType == 'C' ? this.displaytime = ' (  ' + this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy') + ' ) ' :
       this.displaytime = 'Time Frame (' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     // this.maxDate = new Date();
     // this.minDate = new Date();
@@ -474,30 +474,30 @@ export class Dashboard {
 
   viewreport() {
     if (!this.StoreValues || this.StoreValues.length === 0) {
-      
+
       this.toast.show('Please select at least one store', 'warning', 'Warning');
-      return; 
+      return;
     }
-   
+
     this.activePopover = -1
     this.titleSetting()
     this.setHeaderData()
     this.GetAppointment()
-    
+
   }
   getExcelStoreLabel(): string {
     // 0 selected
     if (!this.StoreValues || this.StoreValues.length === 0) {
       return 'Selected (0)';
     }
-  
+
     // All selected → show all store names
     if (this.StoreValues.length === this.stores.length) {
       return this.stores
         .map((s: any) => s.storename)
         .join(', ');
     }
-  
+
     // Single selected → store name
     if (this.StoreValues.length === 1) {
       const store = this.stores.find(
@@ -505,12 +505,12 @@ export class Dashboard {
       );
       return store ? store.storename : '-';
     }
-  
+
     // Multiple (not all)
     return `Selected (${this.StoreValues.length})`;
   }
-  
-  
+
+
   ExcelStoreNames: any = []
   exportToExcel(): void {
     const workbook = this.shared.getWorkbook();
@@ -518,8 +518,8 @@ export class Dashboard {
 
     // const groupObj = this.shared.common.groupsandstores.find((v: any) => v.sg_id == this.groups);
     // if (!groupObj) return;
-    
-   
+
+
     let storeValue = '';
 
     if (!this.StoreValues || this.StoreValues.length === 0) {

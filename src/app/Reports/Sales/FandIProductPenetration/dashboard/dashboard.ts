@@ -65,9 +65,10 @@ export class Dashboard {
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
   constructor(
-    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService,
+    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService,
 
   ) {
+    this.getDataGroupings()
     localStorage.setItem('time', 'MTD');
     this.initializeDates('MTD')
 
@@ -82,7 +83,7 @@ export class Dashboard {
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
 
-  
+
     if (localStorage.getItem('Fav') != 'Y') {
 
 
@@ -103,7 +104,6 @@ export class Dashboard {
       'Chemical',
       'Prepaid Maintenance',
     ];
-    this.getDataGroupings()
     // this.getCategoryDealLevel();
     this.getEmployees()
 
@@ -199,7 +199,7 @@ export class Dashboard {
   TotalData: any;
   NoData: boolean = false;
   NodataFound: boolean = false;
-
+  nodata: any = ''
   getFandIPPData() {
     this.responcestatus = '';
     this.shared.spinner.show();
@@ -208,7 +208,7 @@ export class Dashboard {
   }
   GetData() {
     this.TotalData = [];
-
+    this.nodata = ''
     this.shared.spinner.show();
     const obj = {
       StartDate: this.FromDate.replace(/-/g, '/'),
@@ -276,7 +276,7 @@ export class Dashboard {
                 // this.NoData = true;
               }
             } else {
-     
+
               //  this.toast.error('Empty Response', '');
               // this.shared.spinner.hide();
               // this.NoData = true;
@@ -374,23 +374,24 @@ export class Dashboard {
       console.log(this.FandIPPData);
 
       this.shared.spinner.hide();
-    } 
+    }
     // else if (this.responcestatus == 'T') {
     //   this.FandIPPData = this.TotalFandIPPData;
     // }
-     else if (this.responcestatus == 'I') {
+    else if (this.responcestatus == 'I') {
       this.FandIPPData = this.FandIPPData;
     } else {
-      // this.NoData = true;
+      this.NoData = true;
+      // this.nodata = 'No Data Found!!'
     }
 
-    if (this.FandIPPData.length < 1) {
-      this.NoData = true;
-      this.FandIPPData = [];
-    } else {
-      this.NoData = false;
-    }
-    this.shared.spinner.hide()
+    // if (this.FandIPPData.length < 1) {
+    //   this.NoData = true;
+    //   this.FandIPPData = [];
+    // } else {
+    //   this.NoData = false;
+    // }
+    // this.shared.spinner.hide()
     // //console.log(this.FandIPPData);
 
   }
@@ -755,7 +756,7 @@ export class Dashboard {
   }
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe');
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card , .timeframe, .reportpeople-card');
     if (!clickedInside) {
       this.activePopover = -1;
     }
@@ -782,7 +783,7 @@ export class Dashboard {
       this.selectedDataGrouping.splice(index, 1);
     } else {
       if (this.selectedDataGrouping.length >= 2) {
-      
+
         this.toast.show('Select up to 2 Filters only to Group your data', 'warning', 'Warning');
       } else {
         this.selectedDataGrouping.push(val)
@@ -792,6 +793,8 @@ export class Dashboard {
   }
   getDataGroupings() {
     this.selectedDataGrouping.push(this.dataGrouping[0]);
+    this.selectedDataGrouping.push(this.dataGrouping[1]);
+
   }
 
   getEmployees(val?: any, ids?: any, count?: any, bar?: any) {
@@ -806,7 +809,7 @@ export class Dashboard {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
           this.financeManagerId = this.financeManager.map(function (a: any) { return a.FiId; });
         } else {
-     
+
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -824,7 +827,7 @@ export class Dashboard {
         this.financeManagerId.push(e);
       }
       if (this.financeManagerId.length == 1) {
-        this.fiManagersname = this.financeManager.filter((val: any) => val.FiId == e)[0].FiName
+        this.fiManagersname = this.financeManager.filter((val: any) => val.FiId == this.financeManagerId[0])[0].FiName
       }
     }
 
@@ -842,12 +845,11 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1;
     if (this.storeIds.length == 0) {
-      
       this.toast.show('Please select atleast any one Store', 'warning', 'Warning');
     }
-    else if (this.dataGrouping && this.dataGrouping.length == 0) {
+    else if (this.selectedDataGrouping && this.selectedDataGrouping.length == 0) {
       this.toast.show('Please select atleast any one grouping', 'warning', 'Warning');
-     
+
     }
     else {
 
@@ -864,7 +866,7 @@ export class Dashboard {
   NoDatacategories: boolean = false
   category: boolean = false
   spinnerLoader: boolean = false
-  fandippcategories: any ;
+  fandippcategories: any;
   getCategoryDealLevel() {
     this.fandippcategories = [];
     this.category = false;
@@ -892,7 +894,7 @@ export class Dashboard {
           }
         }
         else {
-   
+
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -1193,7 +1195,7 @@ export class Dashboard {
     const worksheet = workbook.addWorksheet('F & I Product Penetration');
 
     let storeValue = 'All Stores';
-    if (this.storeIds && this.storeIds.length > 0 ) {
+    if (this.storeIds && this.storeIds.length > 0) {
       storeValue = this.stores.filter((s: any) => this.storeIds.includes(s.ID)).map((s: any) => s.storename).join(', ');
     }
 

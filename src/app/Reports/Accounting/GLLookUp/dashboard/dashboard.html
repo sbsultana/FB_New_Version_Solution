@@ -17,11 +17,11 @@
                     </div>
 
 
-                    <div class="dropdown">
-                        <button class="dropdown-toggle">
+                    <div class="dropdown d-flex justify-content-center align-items-center">
+                        <button class="dropdown-toggle acct-no">
                             Account #
                         </button>
-                        <input type="text" class="form-control" placeholder="Enter account number" style="width: 220px;"
+                        <input type="text" class="input-field" placeholder="Enter account number" style="width: 180px;"
                             [(ngModel)]="accountNumber" (keyup.enter)="viewreport()" />
                     </div>
 
@@ -68,7 +68,7 @@
                             [ngClass]="{ 'divBold': data.Store?.toLowerCase() === 'report total' }">
                             <td style="text-align: left !important;">
                                 <span
-                                    style="white-space: normal; display: block;cursor: pointer;color:#4183bb;text-decoration: underline;">
+                                    style="white-space: normal; display: block;cursor: pointer;color:#0554ef;text-decoration: underline;">
                                     {{ data['Accountnumber'] || '-' }}
                                 </span>
                             </td>
@@ -96,11 +96,11 @@
                         <ng-container *ngIf="expandedGLRows.indexOf(i) >= 0">
 
                             <tr>
-                                <td colspan="4" style="padding: 2px 5px;">
+                                <td colspan="4" class="p-3">
                                     <div class="scorecard-single-header"
-                                        style="max-height: 28vh; overflow-x: hidden;overflow-y: auto;">
+                                        style="max-height: 30vh; overflow-x: hidden;overflow-y: auto;">
 
-                                        <table class="table table-borderless mb-0">
+                                        <table class="table table-borderless mb-0 w-100">
 
                                             <thead>
                                                 <tr class="tp-bx-shdw lightblue-bg">
@@ -148,24 +148,24 @@
                                                 <tr *ngFor="let row of data.childRows; let k = index"
                                                     [ngClass]="{ 'btm-bx-shdw': k === data.childRows.length-1 }">
 
-                                                    <td class="lft-bx-shdw">
+                                                    <td class="text-center">
                                                         <span style="white-space: nowrap;">
                                                             {{ row.accountingdate ? (row.accountingdate |
                                                             date:'MM.dd.yyyy') : '-' }}
                                                         </span>
                                                     </td>
 
-                                                    <td>
+                                                    <td class="text-start">
                                                         <span style="white-space: nowrap;">{{ row.CountrolNumber || '-'
                                                             }}</span>
                                                     </td>
 
-                                                    <td>
+                                                    <td class="text-start">
                                                         <span style="white-space: nowrap;">{{ row.CountrolNumber2 || '-'
                                                             }}</span>
                                                     </td>
 
-                                                    <td title="{{row.detaildescription}}">
+                                                    <td class="text-start" title="{{row.detaildescription}}">
                                                         <span style="white-space: nowrap;">
 
                                                             {{(row.detaildescription == undefined ? '-' : (

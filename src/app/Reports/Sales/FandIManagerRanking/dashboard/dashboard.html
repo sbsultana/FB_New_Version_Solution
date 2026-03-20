@@ -29,12 +29,13 @@
                 <span class="light-font"> {{ displaytime() }}</span>
               </span>
               <span *ngIf="DateType == 'C'">
-                {{ FromDate | date:'MM/dd/yyyy' }} - {{ ToDate | date:'MM/dd/yyyy' }}
+                <span class="light-font"> ( {{ FromDate | date:'MM/dd/yyyy' }} - {{ ToDate | date:'MM/dd/yyyy' }} )
+                </span>
               </span>
               <span class="arrow"></span>
             </button>
 
-            <div class="timeframe my-2" *ngIf="activePopover === 2">
+            <div class="timeframe mt-2" *ngIf="activePopover === 2">
               <div class="date-filter-card">
                 <button class="outline-button" (click)="SetDates('MTD')"
                   [ngClass]="{'active':DateType == 'MTD'}">MTD</button>
@@ -156,56 +157,39 @@
 
 
 
-      <div class="scorecard-double-header">
+      <div class="scorecard-triple-header fandirankings-tbl">
         <!-- <div class="table"> -->
         <table class="table mb-0 w-100">
           <thead>
             <tr>
               <!-- <th></th> -->
-              <th class="text-center bg-white" colspan="3" *ngIf="dateType==''"
-                style="border-right: 2px solid #e0e1e2;">
-                <!-- {{FromDate
-                                |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
-                                {{FromDate | date:'yyyy'}}) -->
-              </th>
-              <th colspan="3" *ngIf="dateType!=''" style="border-right: 2px solid #e0e1e2;">
-                <!-- {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
-                                dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
-                                ToDate}}
-                               -->
-              </th>
-
-              <!-- <th class="spacer"></th> -->
-              <th colspan="3" style="border-right: 2px solid #e0e1e2;">Back Gross</th>
-              <th class="spacer"></th>
-              <th colspan="4">Unit Count</th>
-              <!-- <th class="spacer"></th> -->
+              <th class="text-center bg-white" colspan="4" *ngIf="dateType==''">{{FromDate |date:'MMMM'}} ({{FromDate
+                |date:'dd'}}-{{ToDate |date:'dd'}},
+                {{FromDate | date:'yyyy'}})</th>
+              <th colspan="4" *ngIf="dateType!=''">{{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD"
+                ? "QTD" : dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" - "+ ToDate}}</th>
+              <th colspan="4">Unit Credit</th>
+              <th colspan="3" class="boxshadow-none">Back Gross</th>
             </tr>
-
             <tr>
-              <!-- <th class="bdr-rt"></th> -->
-              <!-- <th></th> -->
+              <th></th>
               <th class="bdr-rt" (click)="tabClick('Rank',columnState)" style="
                             white-space: nowrap;cursor: pointer;">Rank</th>
               <th class="bdr-rt" (click)="tabClick('fimanager',columnState)" style="cursor: pointer;">Finance Manager
               </th>
               <th class="bdr-rt" (click)="tabClick('StoreName',columnState)" style="cursor: pointer">Store Name</th>
 
-              <!-- <th class="spacer"></th> -->
-              <th (click)="tabClick('BackgrossPVR',columnState)" style="cursor: pointer;">PVR</th>
-
-              <th (click)="tabClick('BackGross',columnState)" style="cursor: pointer">Gross</th>
-              <th (click)="tabClick('BackGrossPace',columnState)" style="cursor: pointer">Pace</th>
-
-
-              <!-- <th class="spacer"></th> -->
-              <!-- <th class="spacer"></th> -->
               <th (click)="tabClick('New',columnState)" style="cursor: pointer;">New</th>
               <th (click)="tabClick('Used',columnState)" style="cursor: pointer;">Used</th>
               <th (click)="tabClick('Total',columnState)" style="cursor: pointer;">Total</th>
-              <th (click)="tabClick('Pace',columnState)" style="cursor: pointer;">Pace
+              <th (click)="tabClick('Pace',columnState)" style="cursor: pointer;">Pace</th>
 
-              </th>
+
+
+              <th (click)="tabClick('BackGross',columnState)" style="cursor: pointer">Gross</th>
+              <th (click)="tabClick('BackGrossPace',columnState)" style="cursor: pointer">Pace</th>
+              <th (click)="tabClick('BackgrossPVR',columnState)" style="cursor: pointer;">PVR</th>
+
             </tr>
           </thead>
           <tbody>
@@ -213,7 +197,23 @@
               <tr
                 [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' || i.toString() == index, 'divBold': spdata.data1 === 'Reports Total'}"
                 [id]="'DV_'+i">
+                <td class="text-center">
+                  <div class="Tooltip">
+                    <div style="cursor:pointer">
+                      <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'Y'" width="17px"
+                        src="images/unread-comments.png " (click)="commentopen(spdata,i)">
 
+                      <img title="Add Comment" *ngIf="spdata.CommentsStatus == 'N'" width="17px"
+                        src="images/no-comments.png " (click)="commentopen(spdata,i)">
+                    </div>
+                    <!-- <span class="Tooltip_chat_bottom"
+                      [ngClass]="{'Tooltip_chat_top' : (screenheight-divheight)-trposition <25 ,'Tooltip_chat_bottom': (screenheight-divheight)-trposition >= 25 }"
+                      *ngIf="i.toString()==index">
+                      <app-comments [SFComments]="commentobj" (onClose)="close($event)" (onLoad)="addcmt($event)">
+                      </app-comments>
+                    </span> -->
+                  </div>
+                </td>
                 <td class="text-center" id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'">
                   <span>{{spdata.Rank}}</span>
                 </td>
@@ -229,22 +229,21 @@
                                 (spdata.StoreName.toString().length > 22 ? '...' : '') ))}} -->
                   <!-- </span> -->
                 </td>
-
                 <!-- <td id="DataBody7">-</td> -->
                 <!-- <td class="spacer"></td> -->
-
-                <td id="DataBody10" style="text-align: right;"
-                  [ngClass]="{ negative: !inTheGreen(spdata.BackgrossPVR)}">
-                  <!-- {{(spdata.BackgrossPVR ===null
-                            || spdata.BackgrossPVR ===0)? '-' :spdata.BackgrossPVR |
-                            currency:'USD':'symbol':'1.0-0' }} -->
-                  <span class="d-flex justify-content-between"> {{
-                    (spdata.BackgrossPVR == 0 || spdata.BackgrossPVR == null ? '' :
-                    '$') }} <span> {{
-                      (spdata.BackgrossPVR == 0 ||spdata.BackgrossPVR== null ? '-' :
-                      spdata.BackgrossPVR |number:'1.0-0') }}</span></span>
+                <td id="DataBody4">{{(spdata.New ===null || spdata.New ===0)? '-' :spdata.New |
+                  number:'1.0'}}
                 </td>
-
+                <td id="DataBody5">{{(spdata.Used ===null || spdata.Used ===0)? '-' :spdata.Used |
+                  number:'1.0'
+                  }}</td>
+                <td id="DataBody6" (click)="openDetails(spdata)"
+                  [ngClass]="[spdata.Total != 0 && spdata.Total != null && spdata.Total != undefined && spdata.Total != '' && spdata.Total != '-' ? 'popuppointer' : 'popupdisable']">
+                  {{(spdata.Total ===null || spdata.Total ===0)? '-'
+                  :spdata.Total | number:'1.0' }}</td>
+                <td id="DataBody7">{{(spdata.Pace ===null || spdata.Pace ===0)? '-' :spdata.Pace |
+                  number:'1.0'
+                  }}</td>
                 <td id="DataBody8" style="text-align: right;" [ngClass]="{ negative: !inTheGreen(spdata['BackGross'])}">
                   <!-- {{(spdata['BackGross']===null
                                 || spdata['BackGross'] ===0)? '-' :spdata['BackGross']
@@ -268,22 +267,20 @@
                       spdata.BackGrossPace |number:'1.0-0') }}</span></span>
                 </td>
 
-
+                <td id="DataBody10" style="text-align: right;"
+                  [ngClass]="{ negative: !inTheGreen(spdata.BackgrossPVR)}">
+                  <!-- {{(spdata.BackgrossPVR ===null
+                            || spdata.BackgrossPVR ===0)? '-' :spdata.BackgrossPVR |
+                            currency:'USD':'symbol':'1.0-0' }} -->
+                  <span class="d-flex justify-content-between"> {{
+                    (spdata.BackgrossPVR == 0 || spdata.BackgrossPVR == null ? '' :
+                    '$') }} <span> {{
+                      (spdata.BackgrossPVR == 0 ||spdata.BackgrossPVR== null ? '-' :
+                      spdata.BackgrossPVR |number:'1.0-0') }}</span></span>
+                </td>
 
                 <!-- <td class="spacer"></td> -->
-                <td id="DataBody4">{{(spdata.New ===null || spdata.New ===0)? '-' :spdata.New |
-                  number:'1.0'}}
-                </td>
-                <td id="DataBody5">{{(spdata.Used ===null || spdata.Used ===0)? '-' :spdata.Used |
-                  number:'1.0'
-                  }}</td>
-                <td id="DataBody6" (click)="openDetails(spdata)"
-                  [ngClass]="[spdata.Total != 0 && spdata.Total != null && spdata.Total != undefined && spdata.Total != '' && spdata.Total != '-' ? 'popuppointer' : 'popupdisable']">
-                  {{(spdata.Total ===null || spdata.Total ===0)? '-'
-                  :spdata.Total | number:'1.0' }}</td>
-                <td id="DataBody7">{{(spdata.Pace ===null || spdata.Pace ===0)? '-' :spdata.Pace |
-                  number:'1.0'
-                  }}</td>
+
                 <!-- <td class="spacer"></td> -->
                 <!-- <td id="DataBody14">-</td> -->
 
@@ -295,7 +292,6 @@
                 <!-- <td id="DataBody15">-</td> -->
               </tr>
             </ng-container>
-
             <!-- <tr *ngIf="spdata.Data2.length>0" [id]="'DNS_'+i"
                             [ngClass]="{'hidden': spdata.Dealerx === '+'  }">
                             <td colspan="8" style="background: #363b4f;">
@@ -334,7 +330,6 @@
     </div>
   </div>
 </main>
-
 <!-- <ng-template #popupReport>
     <app-fandimangerranking-report [popup]="popup"></app-fandimangerranking-report>
 </ng-template> -->

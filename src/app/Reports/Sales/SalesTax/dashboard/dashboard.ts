@@ -71,7 +71,8 @@ export class Dashboard {
   CompleteComponentState: boolean = true;
 
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService) {
+  constructor(
+    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService) {
     this.shared.setTitle('Sales Tax');
     this.initializeDates(this.DateType)
 
@@ -323,7 +324,6 @@ export class Dashboard {
 
 
   //////////////////////  REPORT CODE /////////////////////////////////////////////
-  activePopover: number = -1;
   custom: boolean = false;
   bsRangeValue!: Date[];
   @HostListener('document:click', ['$event'])
@@ -333,7 +333,8 @@ export class Dashboard {
       this.activePopover = -1;
     }
   }
-
+ activePopover: number = -1;
+  
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }

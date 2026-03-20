@@ -37,7 +37,7 @@ export class DateRangePicker {
   others: any = '';
   storedisplayname: any = ''
   storecount: any = null
-
+  customeVisibility: any = 'Y'
 
   constructor(private datepipe: DatePipe, private datesSrvc: Setdates) { }
 
@@ -51,19 +51,20 @@ export class DateRangePicker {
       this.maxDate = changes['Dates'].currentValue.MaxDate;
       this.DateType = changes['Dates'].currentValue.DateType;
       this.bsRangeValue = [new Date(this.FromDate), new Date(this.ToDate)];
-      console.log(this.Data,'........');
-      
-      if (this.Data == undefined || this.Data.length == 0) {    
-        setTimeout(() => {
-    this.datepicker.hide();
+      this.customeVisibility =  changes['Dates'].currentValue?.custom ? changes['Dates'].currentValue?.custom : 'Y';
+      console.log(this.Data, '........');
 
-        this.openbardate()          
+      if (this.Data == undefined || this.Data.length == 0) {
+        setTimeout(() => {
+          this.datepicker.hide();
+
+          this.openbardate()
         }, 500);
       }
     }
   }
   SetDates(type: any, block?: any) {
-  //  alert('Hi')
+    //  alert('Hi')
     this.DateType = type;
     // localStorage.setItem('time', this.DateType);
     if (block == 'B') {
@@ -88,11 +89,11 @@ export class DateRangePicker {
     console.log(this.DateType);
 
     if (this.DateType == 'C') {
-      this.Dates.DisplayTime = this.datepipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.datepipe.transform(this.ToDate, 'MM/dd/yyyy')
+      this.Dates.DisplayTime = ' (  ' + this.datepipe.transform(this.FromDate, 'MM.dd.yyyy') + ' - ' + this.datepipe.transform(this.ToDate, 'MM.dd.yyyy') + ' ) '
       console.log(this.FromDate, this.ToDate, ' Display Time Function ')
 
     } else {
-      this.Dates.DisplayTime = '( ' + this.Dates.Types.filter((val: any) => val.code == this.DateType)[0].name + ' )';
+      this.Dates.DisplayTime = ' (  ' + this.Dates.Types.filter((val: any) => val.code == this.DateType)[0].name + '  )';
     }
     this.Dates.FromDate = this.FromDate;
     this.Dates.ToDate = this.ToDate;

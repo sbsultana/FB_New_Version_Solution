@@ -16,9 +16,9 @@
                             {{cardealsdata.length}}
                         </span>&nbsp;&nbsp;
                     </div>
-                    <div class="col-10 ">
-                        <div class="d-flex align-items-center justify-content-end"
-                            *ngIf="obTemporary == 'Retail and Lease'">
+                    <div class="col-10 " >
+                        <div class="d-flex align-items-center justify-content-end" 
+                            *ngIf="obTemporary == 'Retail and Lease' || obTemporary == 'Unwound' || obTemporary =='Tradein'">
                             <span class="ps-2 divNormal">
                                 Total Front Gross:&nbsp;&nbsp;
                             </span>
@@ -91,7 +91,7 @@
                 </div>
             </div>
 
-            <div class="scorecard-single-header cardeals-tbl">
+            <div class="scorecard-single-header cardeals-tbl" *ngIf="obTemporary == 'Retail and Lease' || obTemporary == 'Unwound' || obTemporary =='Tradein'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
@@ -303,6 +303,280 @@
                     </tbody>
                 </table>
             </div>
+
+                 <div class="scorecard-double-header cardeals-tbl" *ngIf="obTemporary == 'Customer' " id="scrollcent"
+                            >
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th (click)="sort('store')" style="cursor: pointer;">Store</th>
+                                        <th>Notes&nbsp; <i class="fa fa-eye" style="cursor: pointer;"
+                                                (click)="notesView()"></i></th>
+
+                                        <th (click)="sort('contractdate')" style="cursor: pointer;">Date</th>
+                                        <!-- <th>&nbsp;</th> -->
+                                        <th (click)="sort('dealid')"
+                                            style="color: #000;font-size: .8rem;cursor: pointer;">Deal #</th>
+
+                                        <th (click)="sort('Status')" style="cursor: pointer;">Status</th>
+                                        <th (click)="sort('RL')" style="cursor: pointer;">
+                                            R/L</th>
+                                        <th (click)="sort('Stock')" style="cursor: pointer;">Stock #</th>
+                                        <th (click)="sort('Type')" style="cursor: pointer;">Type</th>
+                                        <th (click)="sort('ad_year')" style="cursor: pointer;">Year</th>
+                                        <th (click)="sort('ad_make')" style="cursor: pointer;">Make</th>
+                                        <th (click)="sort('ad_model')" style="cursor: pointer;">Model</th>
+                                        <!-- <th (click)="sort('VIN')" style="color: #000;font-size: .8rem;cursor: pointer;">
+                                            VIN</th> -->
+                                        <th (click)="sort('ad_custAge')" style="cursor: pointer;">Age</th>
+                                        <!-- <th (click)="sort('frontgross')" style="cursor: pointer;">Front Gross</th>
+                                        <th (click)="sort('backgross')" style="cursor: pointer;"> Back Gross</th> -->
+                                        <th (click)="sort('Total')" style="cursor: pointer;">Total</th>
+                                        <th (click)="sort('CostPrice')" style="cursor: pointer;">Sale Price</th>
+
+                                        <th (click)="sort('salesperson1')" style="cursor: pointer;">Sp 1</th>
+                                        <th (click)="sort('salesperson2')" style="cursor: pointer;">Sp 2</th>
+                                        <th (click)="sort('ad_custid')" style="cursor: pointer;">Cust #</th>
+                                        <th (click)="sort('Buyer')" style="cursor: pointer;">Buyer</th>
+                                        <th (click)="sort('')" style="cursor: pointer;">B Age</th>
+
+                                        <th (click)="sort('')" style="cursor: pointer;">Co-Buyer</th>
+                                        <th (click)="sort('')" style="cursor: pointer;">CB Age</th>
+
+                                        <th (click)="sort('')" style="cursor: pointer;">City</th>
+                                        <th (click)="sort('')" style="cursor: pointer;">Zip</th>
+                                        <th (click)="sort('')" style="cursor: pointer;">Mileage</th>
+                                        <!-- <th (click)="sort('AcctgCost_Avg')" style="cursor: pointer;">Trd</th> -->
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <ng-container
+                                        *ngIf="(cardealsdata ).length >0 && !NoData && !spinnerLoader; else result">
+                                        <ng-container *ngFor="let cardeals of cardealsdata ; let i=index">
+                                            <tr class="sub-title">
+
+                                                <td>{{cardeals.store == 0 || cardeals.store ==
+                                                    null ? '-' :
+                                                    cardeals.store}}</td>
+
+                                                <td>
+                                                    <img *ngIf="cardeals.NotesStatus=='N'"
+                                                        src="/images/Actionblack.png "
+                                                        (click)="addNotes(cardeals,notes)" style="cursor: pointer;">
+
+                                                    <img *ngIf="cardeals.NotesStatus=='Y'"
+                                                        src="/images/notes_unread.png "
+                                                        (click)="addNotes(cardeals,notes)" style="cursor: pointer;">
+                                                </td>
+
+                                                <td>{{cardeals.displaydate == 0 || cardeals.displaydate ==
+                                                    null ? '-' :
+                                                    cardeals.displaydate }}</td>
+                                                <td class="alignleft"
+                                                    [ngClass]="[cardeals.dealid != 0 && cardeals.dealid != null && cardeals.dealid != undefined && cardeals.dealid != '' && cardeals.dealid != '-' ? 'popuppointer' : 'popupdisable']"
+                                                     (click)="openSalesModal(cardeals.dealid,cardeals.VIN,cardeals.dealerid,cardeals.Stock,cardeals?.source,cardeals?.ad_custid)">{{cardeals.dealid == 0 ||
+                                                    cardeals.dealid == null
+                                                    ? '-' :
+                                                    cardeals.dealid}}</td>
+                                                <td>{{cardeals.Status == 0 || cardeals.Status == null ? '-' :
+                                                    cardeals.Status }}</td>
+                                                <td>
+                                                    {{ cardeals['RL'] == 0 || cardeals['RL'] == null ? '-' :
+                                                    cardeals['RL'] }}</td>
+                                                <td class="alignleft">{{cardeals.Stock == 0 || cardeals.Stock == null ?
+                                                    '-' :
+                                                    cardeals.Stock}}</td>
+                                                <td class="alignleft">{{cardeals.ad_dealtype == 0 ||
+                                                    cardeals.ad_dealtype == null ?
+                                                    '-' :
+                                                    cardeals.ad_dealtype}}</td>
+                                                <td>{{cardeals.ad_year == 0 || cardeals.ad_year == null ? '-'
+                                                    :
+                                                    cardeals.ad_year}}</td>
+                                                <td class="alignleft">{{cardeals.ad_make == 0 || cardeals.ad_make ==
+                                                    null ? '-' :
+                                                    cardeals.ad_make}}</td>
+                                                <td class="alignleft">{{cardeals.ad_model == 0 || cardeals.ad_model ==
+                                                    null ?
+                                                    '-' :
+                                                    cardeals.ad_model }}</td>
+
+                                                <!-- <td>{{cardeals.VIN == 0 || cardeals.VIN == null ? '-' :
+                                                    cardeals.VIN}}</td> -->
+                                                <td class="alignright">{{cardeals.ad_custAge == 0 || cardeals.ad_custAge
+                                                    == null
+                                                    ? '-' :
+                                                    cardeals.ad_custAge}}</td>
+
+                                                <!-- <td class="alignright"
+                                                    [ngClass]="{ negative: !inTheGreen(cardeals.frontgross)}">
+                                                    {{cardeals.frontgross == 0 || cardeals.frontgross
+                                                    == null
+                                                    ? '-' :
+                                                    cardeals.frontgross | currency: 'USD':'symbol':'1.0-0' }}</td>
+                                                <td class="alignright"
+                                                    [ngClass]="{ negative: !inTheGreen(cardeals.backgross)}">
+                                                    {{cardeals.backgross == 0 || cardeals.backgross
+                                                    == null ? '-' :
+                                                    cardeals.backgross | currency: 'USD':'symbol':'1.0-0' }}</td> -->
+
+                                                <td class="alignright"
+                                                    [ngClass]="{ negative: !inTheGreen(cardeals.Total)}">
+                                                    <span class="d-flex justify-content-between"> {{
+                                                        (cardeals.Total == 0 || cardeals.Total == null ? '' :
+                                                        '$') }} <span> {{
+                                                            (cardeals.Total == 0 || cardeals.Total == null ?
+                                                            '-' :
+                                                            cardeals.Total |number:'1.0-0') }}</span></span>
+
+                                                </td>
+                                                <td class="alignright">
+                                                    <span class="d-flex justify-content-between">
+                                                        {{ cardeals.CostPrice != '' && cardeals.CostPrice!= null &&
+                                                        cardeals.CostPrice != undefined ?
+                                                        '$' : ''}}
+                                                        <span>
+                                                            {{ cardeals.CostPrice != '' && cardeals.CostPrice!= null &&
+                                                            cardeals.CostPrice != undefined ?
+                                                            (cardeals.CostPrice | number:'1.2-2') : '-'}}
+                                                        </span>
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                <td class="alignleft"> {{(cardeals.salesperson1 == undefined ? '--' : (
+                                                    (cardeals.salesperson1.toString() |
+                                                    slice:0:12) +
+                                                    (cardeals.salesperson1.toString().length > 12 ? '..' : '') ))}}</td>
+                                                <td class="alignleft"> {{(cardeals.salesperson2 == undefined ? '--' : (
+                                                    (cardeals.salesperson2.toString() |
+                                                    slice:0:12) +
+                                                    (cardeals.salesperson2.toString().length > 12 ? '..' : '') ))}}</td>
+
+                                                <td class="alignleft">{{cardeals.ad_custid == 0 || cardeals.ad_custid ==
+                                                    null
+                                                    ? '-' :
+                                                    cardeals.ad_custid }}</td>
+                                                <td class="alignleft"> {{(cardeals.Buyer == undefined ? '--' : (
+                                                    (cardeals.Buyer.toString() |
+                                                    slice:0:12) +
+                                                    (cardeals.Buyer.toString().length > 12 ? '..' : '') ))}}</td>
+
+                                                <td class="alignright">{{cardeals.Buyerage == '' || cardeals.Buyerage ==
+                                                    null ?
+                                                    '-' :
+                                                    cardeals.Buyerage}}</td>
+
+                                                <td class="alignleft"> {{(cardeals.ad_coname1 == undefined ? '--' : (
+                                                    (cardeals.ad_coname1.toString() |
+                                                    slice:0:12) +
+                                                    (cardeals.ad_coname1.toString().length > 12 ? '..' : '') ))}}</td>
+
+                                                <td class="alignright">{{cardeals.CoBuyerage == '' ||
+                                                    cardeals.CoBuyerage
+                                                    ==
+                                                    null ?
+                                                    '-' :
+                                                    cardeals.CoBuyerage}}</td>
+
+                                                <td class="alignleft">{{cardeals.ad_city == '' ||
+                                                    cardeals.ad_city ==
+                                                    null ? '-' :
+                                                    cardeals.ad_city}}</td>
+                                                <td class="alignleft">{{cardeals.ad_custZip == '' || cardeals.ad_custZip
+                                                    == null ?
+                                                    '-'
+                                                    :
+                                                    cardeals.ad_custZip}}</td>
+                                                <td class="alignleft">{{cardeals.ad_trade1mileage == 0 ||
+                                                    cardeals.ad_trade1mileage
+                                                    == null
+                                                    ? '-' :
+                                                    cardeals.ad_trade1mileage | number}}</td>
+
+
+
+
+
+                                                <!--  -->
+                                            </tr>
+                                            <ng-container *ngIf="cardeals.Notes != null && notesViewState">
+                                                <tr>
+                                                    <td colspan="24" style="border-bottom: 1px solid #fff;">
+                                                        <div>
+
+                                                            <div class="titleNotes">Notes:</div>
+                                                            <ng-container *ngIf="cardeals.notesView == '+'">
+                                                                <div class="d-flex mt-1"
+                                                                    *ngFor="let notes of cardeals.Notes.slice(0,2)">
+                                                                    <div class="notes">
+                                                                        {{(notes.N_Notes == '' || notes.N_Notes
+                                                                        ==
+                                                                        null
+                                                                        || notes.N_Notes == undefined ? '--'
+                                                                        :notes.N_Notes)}}
+
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+
+                                                            <ng-container *ngIf="cardeals.notesView == '-'">
+                                                                <div class="d-flex mt-1"
+                                                                    *ngFor="let notes of cardeals.Notes">
+                                                                    <div class="notes">
+                                                                        {{(notes.N_Notes == '' || notes.N_Notes
+                                                                        ==
+                                                                        null
+                                                                        || notes.N_Notes == undefined ? '--'
+                                                                        :notes.N_Notes)}}
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                                <ng-container *ngIf="cardeals.Notes">
+                                                    <tr *ngIf="cardeals.Notes.length > 2">
+                                                        <td colspan="24"
+                                                            style="text-align: left;z-index:999;cursor: pointer;color: #2b91f0;text-decoration: underline ;padding-left: 20rem;">
+                                                            <span *ngIf="cardeals.notesView == '+'"
+                                                                (click)="toggleView(cardeals)">View More</span>
+                                                            <span *ngIf="cardeals.notesView == '-'"
+                                                                (click)="toggleView(cardeals)"> View Less</span>
+                                                        </td>
+
+                                                    </tr>
+                                                </ng-container>
+
+                                            </ng-container>
+
+                                        </ng-container>
+
+                                    </ng-container>
+                                    <tr *ngIf="NoData && !spinnerLoader">
+
+                                        <td colspan="24"
+                                            style="text-align: center;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                                            <label>No Data Found</label>
+                                        </td>
+                                    </tr>
+                                    <ng-template #result>
+                                        <tr *ngIf="NoData == false && !spinnerLoader">
+
+                                            <td colspan="24"
+                                                style="text-align: center;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                                                <label>No Data Found </label>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+
+                                </tbody>
+                            </table>
+                        </div>
         </div>
     </div>
 </main>

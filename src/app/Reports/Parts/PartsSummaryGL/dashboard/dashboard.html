@@ -1,0 +1,779 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+
+                    <!-- Store Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+             
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(5)">
+                            Sub Type <span class="light-font">( {{ selectedSubType ?
+                                selectedSubType.length ==
+                                1 ? selectedSubType :
+                                'Selected' : 'Select Subtype' }}
+                                {{ selectedSubType && selectedSubType.length == 1 ? '':
+                                selectedSubType.length }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 5">
+
+                            <div *ngIf="spinnerLoader"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div *ngFor="let s of subTypeDetails;let i=index">
+                                <div class="date-filter-card mt-2">
+                                    <button class="outline-button" style="pointer-events: none;cursor: default;"
+                                        title="{{s.Dept}}">{{s.Dept}}</button>
+                                </div>
+                                <div class="date-filter-card mt-2">
+                                    <button class="outline-button" (click)="AllSubType(s)"
+                                        [ngClass]="{'active':mainSubType.indexOf(s.Dept)>=0,'inactive':mainSubType.indexOf(s.Dept)<0}">All
+                                        Sub Type</button>
+                                    <button class="outline-button" *ngFor="let sub of s.SubData"
+                                        [ngClass]="{'active':selectedSubType.indexOf(sub.SubtypeParam)>=0,'inactive':selectedSubType.indexOf(sub.SubtypeParam)<0}"
+                                        (click)="multipleorsingle('ST',sub.SubtypeParam,s)"
+                                        title="{{sub.Details}}">{{sub.Details}}</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Apply Button -->
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header">
+                <table class="table mb-0 w-100">
+            <thead>
+                    <tr>
+                        <th> <span style="color: white;">{{FromDate |date:'MMMM'}} <span style="color: #fff !important"
+                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                    |date:'MMMM'}} </span>
+                            </span></th>
+                        <th class="spacer"></th>
+                        <th style="border-right: 2px solid #e0e1e2;"> </th>
+                        <th class="spacer"></th>
+                        <th colspan="7" style="border-right: 2px solid #e0e1e2;"> Sales </th>
+                        <th class="spacer"></th>
+                        <th colspan="8" style="border-right: 2px solid #e0e1e2;">Gross</th>
+                    </tr>
+                    <tr>
+                        <th><span style="color: white;">{{FromDate |date:'dd'}}
+                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                    |date:'yyyy'}}</span>
+                                - {{ToDate |date:'dd'}},
+                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    |date:'yyyy'}}</span>
+                                <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    date:'yyyy'}}</span>
+                            </span>
+                        </th>
+                        <th class="spacer"></th>
+                        <th (click)="sort('UNITS',ServiceData)" style="cursor: pointer;">GL CNT</th>
+                        <th class="spacer"></th>
+                        <th (click)="sort('SALES_MTD',ServiceData)" style="cursor: pointer;">Actual</th>
+                        <th (click)="sort('SALES_PACE',ServiceData)" style="cursor: pointer;">Pace</th>
+                        <th (click)="sort('SALES_TARGET',ServiceData)" style="cursor: pointer;">Forecast</th>
+                        <th (click)="sort('SALES_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
+                        <th (click)="sort('SALES_FORECAST',ServiceData)" style="cursor: pointer;"> % of Forecast</th>
+                        <th (click)="sort('SALES_LY',ServiceData)" style="cursor: pointer;">
+                            <span style="background-color: #fff !important;color: black !important;">{{FromDate
+                                |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                    {{ToDate
+                                    |date:'MMM'}} </span>
+                            </span> {{lastyearDate |
+                            date:'YYYY'}}
+                            
+                            </th>
+                        <th (click)="sort('LY_GROSS_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
+                        <th class="spacer"></th>
+                        <th (click)="sort('GROSS_MTD',ServiceData)" style="cursor: pointer;">
+                            <span style="background-color: #fff !important;color:black !important;font-size: 0.6rem;" *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate | date:'MM.dd.yyyy'}} </span>
+
+                            <span style="background-color: #fff !important;color:black !important" *ngIf="datetype() != 'C'" >{{datetype()}}</span>    
+                        </th>
+                        <th (click)="sort('GROSS_PACE',ServiceData)" style="cursor: pointer;">Pace</th>
+                        <th (click)="sort('GROSS_TARGET',ServiceData)" style="cursor: pointer;">Forecast</th>
+                        <th (click)="sort('GROSS_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
+                        <th (click)="sort('GROSS_FORECAST',ServiceData)" style="cursor: pointer;">% of Forecast</th>
+                        <th (click)="sort('GROSS_LY',ServiceData)" style="cursor: pointer;"> <span style="background-color: #fff !important;color: black !important;">{{FromDate
+                            |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                {{ToDate
+                                |date:'MMM'}} </span>
+                        </span> {{lastyearDate |
+                        date:'YYYY'}}</th>
+                        <th (click)="sort('LY_GROSS_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
+                        <th (click)="sort('GP',ServiceData)" style="cursor: pointer;">GP %</th>
+                    </tr>
+                </thead>
+                <tbody [ngClass]="{'hidden': NoData == true }">
+                    <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
+                        <tr [ngClass]="{ 'divBold': ServiceInfo.STORE === 'Report Total'}" [id]="'DV_'+i">
+                            <td style="padding-left: 1rem !important;">
+                                <span [id]="'D_'+i" title="{{ServiceInfo.STORE}}"
+                                    (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')"
+                                    class="layer1">
+                                    {{(ServiceInfo.STORE == undefined ? '-' : ( (ServiceInfo.STORE.toString() |
+                                    slice:0:30) + (ServiceInfo.STORE.toString().length > 30 ? '...' : '') ))}}
+                                </span>
+                            </td>
+                            <th class="spacer"></th>
+                            <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.UNITS)}">
+
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    ServiceInfo.UNITS == 0 || ServiceInfo.UNITS == null ? '' :
+                                    '&nbsp;'}} <span>
+                                        {{
+                                        ServiceInfo.UNITS == 0 || ServiceInfo.UNITS == null ? '' :
+                                        ServiceInfo.UNITS | number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <th class="spacer"></th>
+                            <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_MTD)}">
+                                <span class="d-flex justify-content-between">{{
+                                    ServiceInfo.SALES_MTD == 0 || ServiceInfo.SALES_MTD == null
+                                    ? '' :
+                                    '$'}}<span>
+                                        {{
+                                        ServiceInfo.SALES_MTD == 0 || ServiceInfo.SALES_MTD == null
+                                        ? '-' :
+                                        ServiceInfo.SALES_MTD | number:'1.2-2'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_PACE)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    ServiceInfo.SALES_PACE == 0 || ServiceInfo.SALES_PACE == null
+                                    ? '' :
+                                    '$'}}<span>
+                                        {{
+                                        ServiceInfo.SALES_PACE == 0 || ServiceInfo.SALES_PACE == null
+                                        ? '-' :
+                                        ServiceInfo.SALES_PACE | number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_TARGET)}">
+                                <span class="d-flex justify-content-between">{{
+                                    ServiceInfo.SALES_TARGET == 0 || ServiceInfo.SALES_TARGET == null
+                                    ? '' :
+                                    '$'}}<span>
+                                        {{
+                                        ServiceInfo.SALES_TARGET == 0 || ServiceInfo.SALES_TARGET == null
+                                        ? '-' :
+                                        ServiceInfo.SALES_TARGET | number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody5"
+                                [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_DIFF),positive:inTheGreen(ServiceInfo.SALES_DIFF)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    ServiceInfo.SALES_DIFF == 0 || ServiceInfo.SALES_DIFF == null
+                                    ? '' :
+                                    '$'}}&nbsp;&nbsp; <span>
+                                        {{
+                                        ServiceInfo.SALES_DIFF == 0 || ServiceInfo.SALES_DIFF == null
+                                        ? '-' : ServiceInfo.SALES_DIFF |
+                                        number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody5"
+                                [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_FORECAST),positive:inTheGreen(ServiceInfo.SALES_FORECAST)}">
+                                {{
+                                ServiceInfo.SALES_FORECAST == 0 || ServiceInfo.SALES_FORECAST == null
+                                ? '-' : (ServiceInfo.SALES_FORECAST
+                                |number:'1.0-0')+'%'}}</td>
+
+                            <td id="DataBody5"
+                                [ngClass]="{ negative: !inTheGreen(ServiceInfo.SALES_LY),positive:inTheGreen(ServiceInfo.SALES_LY)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    ServiceInfo.SALES_LY == 0 || ServiceInfo.SALES_LY == null
+                                    ? '' : '$'}}<span>
+                                        {{
+                                        ServiceInfo.SALES_LY == 0 || ServiceInfo.SALES_LY == null
+                                        ? '-' : ServiceInfo.SALES_LY |
+                                        number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(ServiceInfo.LY_SALES_DIFF)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    ServiceInfo.LY_SALES_DIFF == 0 || ServiceInfo.LY_SALES_DIFF == null
+                                    ? '' : '$'}} <span>
+                                        {{
+                                        ServiceInfo.LY_SALES_DIFF == 0 || ServiceInfo.LY_SALES_DIFF == null
+                                        ? '-' : ServiceInfo.LY_SALES_DIFF |
+                                        number:'1.0-0'}}
+                                    </span>
+                                </span>
+                            </td>
+                            <th class="spacer"></th>
+                            <!-- <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Discount)}">{{
+                                    ServiceInfo.Discount == 0 || ServiceInfo.Discount == null ||
+                                    ? '-' : ServiceInfo.Discount |
+                                    currency:'USD':'symbol':'1.0-0'}}</td> -->
+                            <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_MTD)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.GROSS_MTD == 0 || ServiceInfo.GROSS_MTD == null ? '' :
+                                    '$' ) }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.GROSS_MTD == 0 || ServiceInfo.GROSS_MTD == null ? '-' :
+                                        ServiceInfo.GROSS_MTD |number:'1.0-0' ) }}
+                                    </span>
+                                </span>
+
+                                <!-- {{
+                                (ServiceInfo.GROSS_MTD == 0 || ServiceInfo.GROSS_MTD == null ? '-' :
+                                ServiceInfo.GROSS_MTD |number:'1.2-2' ) }} -->
+
+                            </td>
+                            <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_PACE)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.GROSS_PACE == 0 || ServiceInfo.GROSS_PACE == null ? '' :
+                                    '$' ) }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.GROSS_PACE == 0 || ServiceInfo.GROSS_PACE == null ? '-' :
+                                        ServiceInfo.GROSS_PACE |number:'1.0-0' ) }}
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_TARGET)}">
+
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.GROSS_TARGET == 0 || ServiceInfo.GROSS_TARGET == null ? '' :
+                                    '$' ) }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.GROSS_TARGET == 0 || ServiceInfo.GROSS_TARGET == null ? '-' :
+                                        ServiceInfo.GROSS_TARGET |number:'1.0-0' ) }}
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td id="DataBody14"
+                                [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_DIFF),positive:inTheGreen(ServiceInfo.GROSS_DIFF)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.GROSS_DIFF == 0 || ServiceInfo.GROSS_DIFF == null ? '' :
+                                    '$' ) }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.GROSS_DIFF == 0 || ServiceInfo.GROSS_DIFF == null ? '-' :
+                                        ServiceInfo.GROSS_DIFF |number:'1.0-0' ) }}
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td id="DataBody5"
+                                [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_FORECAST),positive:inTheGreen(ServiceInfo.GROSS_FORECAST)}">
+                                {{
+                                ServiceInfo.GROSS_FORECAST == 0 || ServiceInfo.GROSS_FORECAST == null
+                                ? '-' : (ServiceInfo.GROSS_FORECAST
+                                |number:'1.0-0')+'%'}}</td>
+                            <td id="DataBody16" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GROSS_LY)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.GROSS_LY == 0 || ServiceInfo.GROSS_LY == null ? '' :
+                                    '$') }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.GROSS_LY == 0 || ServiceInfo.GROSS_LY == null ? '-' :
+                                        ServiceInfo.GROSS_LY |number:'1.0-0') }}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody18" [ngClass]="{ negative: !inTheGreen(ServiceInfo.LY_GROSS_DIFF)}">
+                                <span class="d-flex justify-content-between">
+                                    {{
+                                    (ServiceInfo.LY_GROSS_DIFF == 0 || ServiceInfo.LY_GROSS_DIFF == null ? '' :
+                                    '$' ) }}
+                                    <span>
+                                        {{
+                                        (ServiceInfo.LY_GROSS_DIFF == 0 || ServiceInfo.LY_GROSS_DIFF == null ? '-' :
+                                        ServiceInfo.LY_GROSS_DIFF |number:'1.0-0' ) }}
+                                    </span>
+                                </span>
+                            </td>
+                            <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GP)}">{{
+                                (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '-' :
+                                ServiceInfo.GP |number:'1.1-1' ) }}{{
+                                (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '' : '%'
+                                ) }}</td>
+                        </tr>
+                        <ng-container *ngFor="let data2 of ServiceInfo.Subdata; let j=index" style="cursor: default;">
+                            <tr [ngClass]="{ 'divBold': data2.STORE === 'Report Total','hidden' :ServiceInfo.Dealer == '+' || data2.DEPT == '' || data2.DEPT == null || data2.DEPT == undefined || data2.DEPT == ' ' || data2.DEPT == 'Total'}"
+                                [id]="'DV_'+j">
+                                <td style="padding-left: 1.5rem !important;" [id]="'DVN_'+j"
+                                    (click)="expandorcollapse(j,$event,data2.data2sign,data2,ServiceInfo)"
+                                    [ngStyle]="{'background-color':data2.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    {{data2.DEPT == '' || data2.DEPT == null || data2.DEPT == undefined ? '-' :
+                                    data2.DEPT }}
+                                </td>
+                                <th class="spacer"></th>
+                                <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(data2.UNITS)}">
+
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        data2.UNITS == 0 || data2.UNITS == null ? '' :
+                                        '&nbsp;'}} <span>
+                                            {{
+                                            data2.UNITS == 0 || data2.UNITS == null ? '' :
+                                            data2.UNITS | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+                                <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(data2.SALES_MTD)}">
+                                    <span class="d-flex justify-content-between">{{
+                                        data2.SALES_MTD == 0 || data2.SALES_MTD == null
+                                        ? '' :
+                                        '$'}}<span>
+                                            {{
+                                            data2.SALES_MTD == 0 || data2.SALES_MTD == null
+                                            ? '-' :
+                                            data2.SALES_MTD | number:'1.2-2'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(data2.SALES_PACE)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        data2.SALES_PACE == 0 || data2.SALES_PACE == null
+                                        ? '' :
+                                        '$'}}<span>
+                                            {{
+                                            data2.SALES_PACE == 0 || data2.SALES_PACE == null
+                                            ? '-' :
+                                            data2.SALES_PACE | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(data2.SALES_TARGET)}">
+                                    <span class="d-flex justify-content-between">{{
+                                        data2.SALES_TARGET == 0 || data2.SALES_TARGET == null
+                                        ? '' :
+                                        '$'}}<span>
+                                            {{
+                                            data2.SALES_TARGET == 0 || data2.SALES_TARGET == null
+                                            ? '-' :
+                                            data2.SALES_TARGET | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5"
+                                    [ngClass]="{ negative: !inTheGreen(data2.SALES_DIFF),positive:inTheGreen(data2.SALES_DIFF)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        data2.SALES_DIFF == 0 || data2.SALES_DIFF == null
+                                        ? '' :
+                                        '$'}}&nbsp;&nbsp; <span>
+                                            {{
+                                            data2.SALES_DIFF == 0 || data2.SALES_DIFF == null
+                                            ? '-' : data2.SALES_DIFF |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5"
+                                    [ngClass]="{ negative: !inTheGreen(data2.SALES_FORECAST),positive:inTheGreen(data2.SALES_FORECAST)}">
+                                    {{
+                                    data2.SALES_FORECAST == 0 || data2.SALES_FORECAST == null
+                                    ? '-' : (data2.SALES_FORECAST
+                                    |number:'1.0-0')+'%'}}</td>
+
+                                <td id="DataBody5"
+                                    [ngClass]="{ negative: !inTheGreen(data2.SALES_LY),positive:inTheGreen(data2.SALES_LY)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        data2.SALES_LY == 0 || data2.SALES_LY == null
+                                        ? '' : '$'}}<span>
+                                            {{
+                                            data2.SALES_LY == 0 || data2.SALES_LY == null
+                                            ? '-' : data2.SALES_LY |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2.LY_SALES_DIFF)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        data2.LY_SALES_DIFF == 0 || data2.LY_SALES_DIFF == null
+                                        ? '' : '$'}} <span>
+                                            {{
+                                            data2.LY_SALES_DIFF == 0 || data2.LY_SALES_DIFF == null
+                                            ? '-' : data2.LY_SALES_DIFF |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+                                <!-- <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(data2.Discount)}">{{
+                                        data2.Discount == 0 || data2.Discount == null ||
+                                        ? '-' : data2.Discount |
+                                        currency:'USD':'symbol':'1.0-0'}}</td> -->
+                                <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(data2.GROSS_MTD)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.GROSS_MTD == 0 || data2.GROSS_MTD == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (data2.GROSS_MTD == 0 || data2.GROSS_MTD == null ? '-' :
+                                            data2.GROSS_MTD |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                    <!-- {{
+                                    (data2.GROSS_MTD == 0 || data2.GROSS_MTD == null ? '-' :
+                                    data2.GROSS_MTD |number:'1.2-2' ) }} -->
+
+                                </td>
+                                <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(data2.GROSS_PACE)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.GROSS_PACE == 0 || data2.GROSS_PACE == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (data2.GROSS_PACE == 0 || data2.GROSS_PACE == null ? '-' :
+                                            data2.GROSS_PACE |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(data2.GROSS_TARGET)}">
+
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.GROSS_TARGET == 0 || data2.GROSS_TARGET == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (data2.GROSS_TARGET == 0 || data2.GROSS_TARGET == null ? '-' :
+                                            data2.GROSS_TARGET |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody14"
+                                    [ngClass]="{ negative: !inTheGreen(data2.GROSS_DIFF),positive:inTheGreen(data2.GROSS_DIFF)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.GROSS_DIFF == 0 || data2.GROSS_DIFF == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (data2.GROSS_DIFF == 0 || data2.GROSS_DIFF == null ? '-' :
+                                            data2.GROSS_DIFF |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody5"
+                                    [ngClass]="{ negative: !inTheGreen(data2.GROSS_FORECAST),positive:inTheGreen(data2.GROSS_FORECAST)}">
+                                    {{
+                                    data2.GROSS_FORECAST == 0 || data2.GROSS_FORECAST == null
+                                    ? '-' : (data2.GROSS_FORECAST
+                                    |number:'1.0-0')+'%'}}</td>
+                                <td id="DataBody16" [ngClass]="{ negative: !inTheGreen(data2.GROSS_LY)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.GROSS_LY == 0 || data2.GROSS_LY == null ? '' :
+                                        '$') }}
+                                        <span>
+                                            {{
+                                            (data2.GROSS_LY == 0 || data2.GROSS_LY == null ? '-' :
+                                            data2.GROSS_LY |number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody18" [ngClass]="{ negative: !inTheGreen(data2.LY_GROSS_DIFF)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data2.LY_GROSS_DIFF == 0 || data2.LY_GROSS_DIFF == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (data2.LY_GROSS_DIFF == 0 || data2.LY_GROSS_DIFF == null ? '-' :
+                                            data2.LY_GROSS_DIFF |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(data2.GP)}">{{
+                                    (data2.GP == 0 || data2.GP == null ? '-' :
+                                    data2.GP |number:'1.1-1' ) }}{{
+                                    (data2.GP == 0 || data2.GP == null ? '' : '%'
+                                    ) }}</td>
+                            </tr>
+                            <ng-container *ngIf="data2.Data2 != undefined">
+                                <ng-container *ngFor="let dt2 of data2.Data2,let k=index">
+                                    <tr [id]="'DVN_'+i" class="sub-title"
+                                        [ngClass]="{'hidden' :data2.data2sign == '+' || ServiceInfo.Dealer == '+' || data2.DEPT == '' || data2.DEPT == null || data2.DEPT == undefined || data2.DEPT == ' '}">
+                                        <td style=" padding-left: 2.3rem !important; ">
+                                            <span title="{{dt2.ASG_Subtype_Detail}}" class="layer2" [id]="'DVN_'+k">
+                                                {{(dt2.ASG_Subtype_Detail == undefined ? '--' : (
+                                                (dt2.ASG_Subtype_Detail.toString() | slice:0:30)
+                                                + (dt2.ASG_Subtype_Detail.toString().length > 30 ? '...' : '') ))}}
+                                            </span>                                           
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.UNITS)}">
+
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.UNITS == 0 || dt2.UNITS == null ? '' :
+                                                '&nbsp;'}} <span>
+                                                    {{
+                                                    dt2.UNITS == 0 || dt2.UNITS == null ? '' :
+                                                    dt2.UNITS | number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.SALES_MTD)}">
+                                            <span class="d-flex justify-content-between">{{
+                                                dt2.SALES_MTD == 0 || dt2.SALES_MTD == null
+                                                ? '' :
+                                                '$'}}<span>
+                                                    {{
+                                                    dt2.SALES_MTD == 0 || dt2.SALES_MTD == null
+                                                    ? '-' :
+                                                    dt2.SALES_MTD | number:'1.2-2'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.SALES_PACE)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.SALES_PACE == 0 || dt2.SALES_PACE == null
+                                                ? '' :
+                                                '$'}}<span>
+                                                    {{
+                                                    dt2.SALES_PACE == 0 || dt2.SALES_PACE == null
+                                                    ? '-' :
+                                                    dt2.SALES_PACE | number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.SALES_TARGET)}">
+                                            <span class="d-flex justify-content-between">{{
+                                                dt2.SALES_TARGET == 0 || dt2.SALES_TARGET == null
+                                                ? '' :
+                                                '$'}}<span>
+                                                    {{
+                                                    dt2.SALES_TARGET == 0 || dt2.SALES_TARGET == null
+                                                    ? '-' :
+                                                    dt2.SALES_TARGET | number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5"
+                                            [ngClass]="{ negative: !inTheGreen(dt2.SALES_DIFF),positive:inTheGreen(dt2.SALES_DIFF)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.SALES_DIFF == 0 || dt2.SALES_DIFF == null
+                                                ? '' :
+                                                '$'}}&nbsp;&nbsp; <span>
+                                                    {{
+                                                    dt2.SALES_DIFF == 0 || dt2.SALES_DIFF == null
+                                                    ? '-' : dt2.SALES_DIFF |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5"
+                                            [ngClass]="{ negative: !inTheGreen(dt2.SALES_FORECAST),positive:inTheGreen(dt2.SALES_FORECAST)}">
+                                            {{
+                                            dt2.SALES_FORECAST == 0 || dt2.SALES_FORECAST == null
+                                            ? '-' : (dt2.SALES_FORECAST
+                                            |number:'1.0-0')+'%'}}</td>
+
+                                        <td id="DataBody5"
+                                            [ngClass]="{ negative: !inTheGreen(dt2.SALES_LY),positive:inTheGreen(dt2.SALES_LY)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.SALES_LY == 0 || dt2.SALES_LY == null
+                                                ? '' : '$'}}<span>
+                                                    {{
+                                                    dt2.SALES_LY == 0 || dt2.SALES_LY == null
+                                                    ? '-' : dt2.SALES_LY |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(dt2.LY_SALES_DIFF)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.LY_SALES_DIFF == 0 || dt2.LY_SALES_DIFF == null
+                                                ? '' : '$'}} <span>
+                                                    {{
+                                                    dt2.LY_SALES_DIFF == 0 || dt2.LY_SALES_DIFF == null
+                                                    ? '-' : dt2.LY_SALES_DIFF |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <!-- <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(dt2.Discount)}">{{
+                                                dt2.Discount == 0 || dt2.Discount == null ||
+                                                ? '-' : dt2.Discount |
+                                                currency:'USD':'symbol':'1.0-0'}}</td> -->
+                                        <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(dt2.GROSS_MTD)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.GROSS_MTD == 0 || dt2.GROSS_MTD == null ? '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (dt2.GROSS_MTD == 0 || dt2.GROSS_MTD == null ? '-' :
+                                                    dt2.GROSS_MTD |number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                            <!-- {{
+                                            (dt2.GROSS_MTD == 0 || dt2.GROSS_MTD == null ? '-' :
+                                            dt2.GROSS_MTD |number:'1.2-2' ) }} -->
+
+                                        </td>
+                                        <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.GROSS_PACE)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.GROSS_PACE == 0 || dt2.GROSS_PACE == null ? '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (dt2.GROSS_PACE == 0 || dt2.GROSS_PACE == null ? '-' :
+                                                    dt2.GROSS_PACE |number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                        <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt2.GROSS_TARGET)}">
+
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.GROSS_TARGET == 0 || dt2.GROSS_TARGET == null ? '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (dt2.GROSS_TARGET == 0 || dt2.GROSS_TARGET == null ? '-' :
+                                                    dt2.GROSS_TARGET |number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                        <td id="DataBody14"
+                                            [ngClass]="{ negative: !inTheGreen(dt2.GROSS_DIFF),positive:inTheGreen(dt2.GROSS_DIFF)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.GROSS_DIFF == 0 || dt2.GROSS_DIFF == null ? '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (dt2.GROSS_DIFF == 0 || dt2.GROSS_DIFF == null ? '-' :
+                                                    dt2.GROSS_DIFF |number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+
+                                        </td>
+                                        <td id="DataBody5"
+                                            [ngClass]="{ negative: !inTheGreen(dt2.GROSS_FORECAST),positive:inTheGreen(dt2.GROSS_FORECAST)}">
+                                            {{
+                                            dt2.GROSS_FORECAST == 0 || dt2.GROSS_FORECAST == null
+                                            ? '-' : (dt2.GROSS_FORECAST
+                                            |number:'1.0-0')+'%'}}</td>
+                                        <td id="DataBody16" [ngClass]="{ negative: !inTheGreen(dt2.GROSS_LY)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.GROSS_LY == 0 || dt2.GROSS_LY == null ? '' :
+                                                '$') }}
+                                                <span>
+                                                    {{
+                                                    (dt2.GROSS_LY == 0 || dt2.GROSS_LY == null ? '-' :
+                                                    dt2.GROSS_LY |number:'1.0-0') }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody18" [ngClass]="{ negative: !inTheGreen(dt2.LY_GROSS_DIFF)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                (dt2.LY_GROSS_DIFF == 0 || dt2.LY_GROSS_DIFF == null ? '' :
+                                                '$' ) }}
+                                                <span>
+                                                    {{
+                                                    (dt2.LY_GROSS_DIFF == 0 || dt2.LY_GROSS_DIFF == null ? '-' :
+                                                    dt2.LY_GROSS_DIFF |number:'1.0-0' ) }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(dt2.GP)}">{{
+                                            (dt2.GP == 0 || dt2.GP == null ? '-' :
+                                            dt2.GP |number:'1.1-1' ) }}{{
+                                            (dt2.GP == 0 || dt2.GP == null ? '' : '%'
+                                            ) }}</td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </tbody>
+                <tbody *ngIf="NoData" style="pointer-events:none">
+                    <tr>
+                        <td colspan="20" style="color: black;text-align: center !important;">No Records Found</td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </div>       
+    </div>
+</main>

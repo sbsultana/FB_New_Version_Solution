@@ -7,6 +7,7 @@ import { common } from '../../../../common';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import { DateRangePicker } from '../../../../CommonFilters/date-range-picker/date-range-picker';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 // import { SalesgrossDetailsComponent } from '../../Sales/Gross/salesgross-details/salesgross-details.component';
 const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -61,8 +62,8 @@ export class Dashboard {
   storeIds!: any;
   dateType: any = 'MTD';
   groups: any = 0;
-  storeorgrp: any = 'G';
-  saleType: any = 'Retail,Lease,Wholesale,Misc,Fleet,Demo,Special Order,Rental,Dealer Trade';
+  storeorgrp: any = 'S';
+  saleType: any = 'Retail,Lease';
   retailorlease: any = this.saleType.split(',');
   columnName: any = 'Rank';
   columnState: any = 'asc';
@@ -83,8 +84,8 @@ export class Dashboard {
   ];
   popup: any = [{ type: 'Popup' }];
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,
-    ) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private toast: ToastService,private ngbmodal : NgbModal
+  ) {
     this.solutionurl = this.shared.api;
 
     // this.initializeDates();
@@ -247,7 +248,7 @@ export class Dashboard {
 
 
   StoresData(data: any) {
-  
+
     console.log(data, 'Data');
 
     this.storeIds = data.storeids;
@@ -649,7 +650,7 @@ export class Dashboard {
   AllStores: boolean = true;
   AllGroups: boolean = true;
 
-  storeorgroup: any = ['G'];
+  storeorgroup: any = ['S'];
   // retailorlease: any = [];
   // saleType: any = 'Retail,Lease,Wholesale,Misc,Fleet,Demo,Special Order,Rental,Dealer Trade';
 
@@ -741,6 +742,79 @@ export class Dashboard {
 
   storeorgroups(_block: any, val: string) {
     this.storeorgroup = [val];
+  }
+  selBlock: any;
+  screenheight: any = 0; divheight: any = 0; trposition: any = 0;
+  commentopen(item: any, i: any, slblock: any = '') {
+    this.screenheight = window.screen.height;
+    this.divheight = (<HTMLInputElement>document.getElementById('scrollcent')).offsetHeight;
+    this.trposition = (<HTMLInputElement>document.getElementById('DV_' + i)).offsetTop;
+    this.index = '';
+    console.log('Selected Obj :', item);
+    //return
+    this.selBlock = slblock + i.toString();
+    this.index = i.toString();
+    this.commentobj = {
+      TYPE: item.SalesPerson,
+      NAME: item.LABLE1,
+      STORES: item.StoreName,
+      STORENAME: item.StoreName,
+      Month: '',
+      ModuleId: '68',
+      ModuleRef: 'SPR',
+      state: 1,
+      indexval: i,
+    };
+  }
+  index = '';
+  commentobj: any = {};
+  addcmt(data: any) {
+    if (data == 'A') {
+      this.index = '';
+      const DetailsSF = this.ngbmodal.open({
+        size: 'xl',
+        backdrop: 'static',
+      });
+      // myObject['skillItem2'] = 15;
+      this.commentobj['state'] = 0;
+      (DetailsSF.componentInstance.SFComments = this.commentobj),
+        DetailsSF.result.then(
+          (data) => {
+            // console.log(data);
+          },
+          (reason) => {
+            // console.log(reason);
+            // 
+            if (reason == 'O') {
+              this.commentobj['state'] = 1;
+              this.index = this.commentobj['indexval'];
+            } else {
+              this.commentobj['state'] = 1;
+              this.index = this.commentobj['indexval'];
+              this.GetData(this.columnName, this.columnState);
+
+
+            }
+            // // on dismiss
+
+            // const Data = {
+            //   state: true,
+            // };
+            // this.apiSrvc.setBackgroundstate({ obj: Data });
+            // this.GetData();
+          }
+        );
+    }
+    if (data == 'AD') {
+      this.GetData(this.columnName, this.columnState);
+
+      // if (this.Filter == 'VariableTrendsvsBudget') {
+      //   this.GetData();
+      // }
+      // if (this.Filter == 'VariableTrendsvsStores') {
+      //   this.GetData();
+      // }
+    }
   }
 
   // Date selection
@@ -848,16 +922,16 @@ export class Dashboard {
     // });
 
     if (!this.storeIds || this.storeIds.length === 0) {
-    
+
       this.toast.show('Please select at least one store', 'warning', 'Warning');
       return;
     }
     else if (this.retailorlease.length == 0) {
-    
+
       this.toast.show('Please select any one Deal Type', 'warning', 'Warning');
     }
     else if (this.dealStatus.length == 0) {
-  
+
       this.toast.show('Please select atleast one Deal Status', 'warning', 'Warning');
     }
     else {
@@ -945,7 +1019,7 @@ export class Dashboard {
       { name: 'Rank By:', values: this.storeorgroup == 'S' ? 'Store' : 'Group' },
       // { name: 'New/Used:', values: this.neworused || 'All' },
       { name: 'Deal Type:', values: this.retailorlease || 'All' },
-      { name: 'Deal Status:', values: this.dealStatus.toString().replace('Finalized' ,'Finalized') || 'All' },
+      { name: 'Deal Status:', values: this.dealStatus.toString().replace('Finalized', 'Finalized') || 'All' },
     ];
 
 
