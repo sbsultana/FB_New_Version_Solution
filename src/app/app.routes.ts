@@ -90,6 +90,8 @@ export const routes: Routes = [
   { path: 'InventoryOpenRO', loadComponent: () => import('./Reports/Services/InventoryOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAbsorption', loadComponent: () => import('./Reports/Services/ServiceAbsorption/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceLaborTrendDetail', loadComponent: () => import('./Reports/Services/ServiceLaborTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ServiceTrendingReport', loadComponent: () => import('./Reports/Services/ServiceTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'TechFixedTrendDetails', loadComponent: () => import('./Reports/Services/TechFixedTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
 
   // OTHERS
 
