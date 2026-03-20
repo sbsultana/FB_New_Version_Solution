@@ -92,7 +92,9 @@ export const routes: Routes = [
   { path: 'ServiceLaborTrendDetail', loadComponent: () => import('./Reports/Services/ServiceLaborTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceTrendingReport', loadComponent: () => import('./Reports/Services/ServiceTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'TechFixedTrendDetails', loadComponent: () => import('./Reports/Services/TechFixedTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'GrossProfitPerHour', loadComponent: () => import('./Reports/Services/GrossProfitPerHour/dashboard/dashboard').then(m => m.Dashboard) },
 
+  
   // OTHERS
 
   { path: 'FinanceReserveRecon', loadComponent: () => import('./Reports/Others/FinaceReserveReconReport/dashboard/dashboard').then(m => m.Dashboard) },

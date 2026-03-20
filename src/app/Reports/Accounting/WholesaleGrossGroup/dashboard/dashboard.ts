@@ -283,7 +283,7 @@ export class Dashboard {
 
     else {
       // const data = {
-      //   Reference: 'Wholesale Gross Group ',
+      //   Reference: 'Wholesale Gross Group',
       //   storeValues: this.storeIds.toString(),
       //   groups: this.groups.toString(),
       // };
@@ -317,7 +317,7 @@ export class Dashboard {
   ngAfterViewInit() {
 
     this.apiSrvc.getStores().subscribe((res: any) => {
-      if (this.shared.common.pageName == 'Wholesale Gross Group ') {
+      if (this.shared.common.pageName == 'Wholesale Gross Group') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
@@ -330,7 +330,7 @@ export class Dashboard {
 
     this.email = this.apiSrvc.getExportToEmailPDFAllReports().subscribe((res) => {
       if (this.email != undefined) {
-        if (res.obj.title == 'Wholesale Gross Group ') {
+        if (res.obj.title == 'Wholesale Gross Group') {
           if (res.obj.stateEmailPdf == true) {
             // this.sendEmailData(res.obj.Email, res.obj.notes, res.obj.from);
           }
@@ -339,7 +339,7 @@ export class Dashboard {
     });
     this.print = this.apiSrvc.getExportToPrintAllReports().subscribe((res) => {
       if (this.print != undefined) {
-        if (res.obj.title == 'Wholesale Gross Group ') {
+        if (res.obj.title == 'Wholesale Gross Group') {
           if (res.obj.statePrint == true) {
             // this.GetPrintData();
           }
@@ -348,7 +348,7 @@ export class Dashboard {
     });
     this.Pdf = this.apiSrvc.getExportToPDFAllReports().subscribe((res) => {
       if (this.Pdf != undefined) {
-        if (res.obj.title == 'Wholesale Gross Group ') {
+        if (res.obj.title == 'Wholesale Gross Group') {
           if (res.obj.statePDF == true) {
             // this.generatePDF();
           }
@@ -358,7 +358,7 @@ export class Dashboard {
 
     this.excel = this.apiSrvc.getExportToExcelAllReports().subscribe((res) => {
       if (this.excel != undefined) {
-        if (res.obj.title == 'Wholesale Gross Group ') {
+        if (res.obj.title == 'Wholesale Gross Group') {
           if (res.obj.state == true) {
             this.exportToExcel();
           }
