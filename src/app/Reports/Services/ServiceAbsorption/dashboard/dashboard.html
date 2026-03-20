@@ -1,0 +1,229 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame<span class="light-font"> {{ displaytime }}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-multi-header lendersummary-tbl">
+                <table class="table mb-0 w-100">
+                      <thead>
+                        <tr>
+                            <th>
+                                <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
+                                        |date:'MMMM'}} </span> </span><br>
+                                <span>{{DupFromDate |date:'dd'}} <span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{DupToDate |date:'dd'}}<span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                        {{DupFromDate |
+                                        date:'yyyy'}}</span></span>
+                            </th>
+                            <th class="spacer"></th>
+                            <th colspan="4" style="cursor: pointer;" class="bdr-rt">Gross Profit</th>
+                            <th class="spacer"></th>
+                            <th colspan="5" style="cursor: pointer;" class="bdr-rt">Selling Expenses</th>
+                            <th class="spacer"></th>
+                            <th style="cursor: pointer;" class="bdr-rt"> Fixed <br> Absorption</th>
+
+                        </tr>
+                        <tr>
+                            <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">Location
+                            </th>
+                            <td class="spacer"></td>
+                            <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Service
+                                Gross
+                            </th>
+                            <th class="bdr-rt" (click)="sort('Parts Gross')" style="cursor: pointer;">
+                                Parts Gross</th>
+                            <th class="bdr-rt" (click)="sort('Body Gross')" style="cursor: pointer;">
+                                Body Gross</th>
+                            <th class="bdr-rt" (click)="sort('Total_Gross')" style="cursor: pointer;">Total Gross
+                            </th>
+                            <td class="spacer"></td>
+
+                            <th class="bdr-rt" (click)="sort('Svc Exp')" style="cursor: pointer;">Service
+                                Exp
+                            </th>
+                            <th class="bdr-rt" (click)="sort('Parts Exp')" style="cursor: pointer;">
+                                Parts Exp</th>
+                            <th class="bdr-rt" (click)="sort('Body Exp')" style="cursor: pointer;">
+                                Body Exp</th>
+                            <th class="bdr-rt" (click)="sort('Fixed Exp')" style="cursor: pointer;">
+                                Fixed Exp</th>
+                            <th class="bdr-rt" (click)="sort('Total_EXP')" style="cursor: pointer;">Total Exp
+                            </th>
+                            <td class="spacer"></td>
+
+                            <th class="bdr-rt" (click)="sort('FixedAbsorptionPercent')" style="cursor: pointer;">
+                                
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <!--  -->
+                    <!-- [ngStyle]="{'pointer-events':path2 =='' && path3==''? 'visible':'none'}" -->
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+                        <ng-container *ngFor="let SalesInfo of ServiceAbsorption; let i=index">
+                            <tr [ngClass]="{  'divBold': SalesInfo.dealername.toLowerCase() == 'report total'  }">
+                                <td style="pointer-events: none;">
+                                    <span [id]="'D_'+i" title="{{SalesInfo.dealername}}">
+                                        {{(SalesInfo.dealername == undefined ? '--' : ( (SalesInfo.dealername.toString()
+                                        |
+                                        slice:0:22) +
+                                        (SalesInfo.dealername.toString().length > 22 ? '...' : '') ))}} </span>
+                                </td>
+                                <td class="spacer"></td>
+
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Svc Gross'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Svc Gross'] == 0 || SalesInfo['Svc Gross'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Svc Gross'] == 0 ||
+                                            SalesInfo['Svc Gross'] == null ? '' : SalesInfo['Svc Gross'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Parts Gross'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Parts Gross'] == 0 || SalesInfo['Parts Gross'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Parts Gross'] == 0 ||
+                                            SalesInfo['Parts Gross'] == null ? '' : SalesInfo['Parts Gross'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Body Gross'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Body Gross'] == 0 || SalesInfo['Body Gross'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Body Gross'] == 0 ||
+                                            SalesInfo['Body Gross'] == null ? '' : SalesInfo['Body Gross'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Total_Gross'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Total_Gross'] == 0 || SalesInfo['Total_Gross'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Total_Gross'] == 0 ||
+                                            SalesInfo['Total_Gross'] == null ? '' : SalesInfo['Total_Gross'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="spacer"></td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Svc Exp'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Svc Exp'] == 0 || SalesInfo['Svc Exp'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Svc Exp'] == 0 ||
+                                            SalesInfo['Svc Exp'] == null ? '' : SalesInfo['Svc Exp'] |number :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Parts Exp'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Parts Exp'] == 0 || SalesInfo['Parts Exp'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Parts Exp'] == 0 ||
+                                            SalesInfo['Parts Exp'] == null ? '' : SalesInfo['Parts Exp'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Body Exp'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Body Exp'] == 0 || SalesInfo['Body Exp'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Body Exp'] == 0 ||
+                                            SalesInfo['Body Exp'] == null ? '' : SalesInfo['Body Exp'] |number :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Fixed Exp'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Fixed Exp'] == 0 || SalesInfo['Fixed Exp'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Fixed Exp'] == 0 ||
+                                            SalesInfo['Fixed Exp'] == null ? '' : SalesInfo['Fixed Exp'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Total_EXP'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Total_EXP'] == 0 || SalesInfo['Total_EXP'] == null
+                                        ? '' :'$' )}}
+                                        <span> {{(SalesInfo['Total_EXP'] == 0 ||
+                                            SalesInfo['Total_EXP'] == null ? '' : SalesInfo['Total_EXP'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="spacer"></td>
+
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesInfo.FixedAbsorptionPercent)}">
+                                    {{ (SalesInfo.FixedAbsorptionPercent == 0 ||
+                                    SalesInfo.FixedAbsorptionPercent == null ? '-' : SalesInfo.FixedAbsorptionPercent |
+                                    number : '1.1-1'
+                                    )}}{{
+                                    (SalesInfo.FixedAbsorptionPercent ==
+                                    0 ||
+                                    SalesInfo.FixedAbsorptionPercent == null ? '' : '%' )}}
+                                </td>
+                            </tr>
+
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+    </div>
+</main>

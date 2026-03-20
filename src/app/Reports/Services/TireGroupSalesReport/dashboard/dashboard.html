@@ -1,0 +1,924 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+
+                    <!-- Store Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(2)">Groupings <span class="light-font">
+                                ( {{grouping.length == 1 ?
+                                grouping[0].ARG_LABEL:'Selected' }}&nbsp;{{grouping.length == 1
+                                ? '' :
+                                grouping.length
+                                }} )
+                            </span>
+
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===2">
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="allstores text-start">
+                                            <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                                style="pointer-events: none;">Choose up to 2 Filters to Group Your
+                                                Data</a>
+                                        </div>
+                                        <div class="store-columns flex-grow-1">
+                                            <ng-container *ngFor="let grp of dataGrouping;let i=index">
+                                                <button class="btn btn-outline-primary store-button"
+                                                     (click)="multipleorsingle('GRP',grp)"
+                                                    [ngClass]="{'active':grouping.indexOf(grp)>=0,'inactive':grouping.indexOf(grp)<0,'d-none':grp.Active=='N'}">
+                                                    <span>{{grp.ARG_LABEL}}</span> <span
+                                                        *ngIf="grouping.indexOf(grp)>=0"
+                                                        style="float:right">
+                                                        {{grouping.indexOf(grp)+1}}
+                                                    </span>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+                   
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(4)">
+                            Department <span class="light-font">( {{Department.length ==
+                                1 ? Department :
+                                'Selected' }}
+                                {{Department.length == 1 ? '':
+                                Department.length }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 4">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
+                                    [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Parts')"
+                                    [ngClass]="{'active':Department.indexOf('Parts')>=0, 'inactive':Department.indexOf('Parts')<0}">Parts</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(5)">
+                            Sale Type <span class="light-font">( {{saleandservice.length
+                                > 1 ? 'Selected' : (saleandservice == 'W' ? ' Wholesale' :
+                                (saleandservice =='R' ? 'Counter Retail' :(saleandservice =='C' ? 'Customer Pay' :
+                                (saleandservice =='T' ?'Warranty' : (saleandservice =='I' ? 'Internal' : ''))) ))
+                                }}
+
+                                {{saleandservice.length > 1 ? saleandservice.length : '' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 5">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('PT','R')"
+                                    [ngClass]="{ 'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':saletype.indexOf('R')>=0, 'inactive':saletype.indexOf('R')<0}">Counter
+                                    Retail</button>
+                                <button class="outline-button" (click)="multipleorsingle('PT','W')"
+                                    [ngClass]="{'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':saletype.indexOf('W')>=0, 'inactive':saletype.indexOf('W')<0}">Wholesale</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','C')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('C')>=0, 'inactive':servicetype.indexOf('C')<0}">Customer
+                                    Pay</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','T')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('T')>=0, 'inactive':servicetype.indexOf('T')<0}">Warranty</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','I')"
+                                    [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('I')>=0, 'inactive':servicetype.indexOf('I')<0}">Internal</button>
+
+                                <button class="outline-button" (click)="multipleorsingle('LT','E')"
+                                    [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('E')>=0, 'inactive':servicetype.indexOf('E')<0}">Extended</button>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(9)">
+                            Report Totals <span class="light-font">( {{ TotalReport == 'T' ? 'Top' :'Bottom' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 9">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('TB','T')"
+                                    [class.active]="TotalReport=='T'">
+                                    Top
+                                </button>
+                                <button class="outline-button" (click)="multipleorsingle('TB','B')"
+                                    [class.active]="TotalReport=='B'">
+                                    Bottom
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+
+                            <th class="text-center bg-white"><span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
+                                        |date:'MMMM'}} </span>
+                                </span></th>
+                            <th class="spacer"></th>
+                            <th colspan="10" style="border-right: 2px solid #e0e1e2;">Retail Tire Performance</th>
+                            <th class="spacer"></th>
+                            <th colspan="5" style="border-right: 2px solid #e0e1e2;">Internal Tire Performance</th>
+
+                        </tr>
+                        <tr>
+                            <th class="text-center">
+                                <span style="color: white !important;">{{DupFromDate |date:'dd'}} <span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{DupToDate |date:'dd'}}<span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                        {{DupFromDate |
+                                        date:'yyyy'}}</span></span>
+                            </th>
+                            <th class="spacer"></th>
+                            <th (click)="sort('Retail_Tire_Sale')" style="cursor: pointer; text-align: right; ">Sales $
+                            </th>
+                            <th (click)="sort('Retail_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross $
+                            </th>
+                            <th (click)="sort('Retail_GP_Per')" style="cursor: pointer; text-align: right; ">GP %
+                            </th>
+                            <th (click)="sort('Retail_CarCount')" style="cursor: pointer; text-align: right; ">Car Count
+                            </th>
+                            <th (click)="sort('Retail_TireGoal')" style="cursor: pointer; text-align: right; ">Tire
+                                Goal</th>
+                            <th (click)="sort('Retail_Tires_Sold')" style="cursor: pointer; text-align: right; ">Tires
+                                Sold</th>
+                            <th (click)="sort('Retail_Goal_Per')" style="cursor: pointer; text-align: right; ">% of
+                                Goal</th>
+                            <th (click)="sort('Retail_AvgCost')" style="cursor: pointer; text-align: right; ">AVG Cost
+                            </th>
+                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; text-align: right; ">AVG
+                                Profit</th>
+                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; text-align: right; ">Missed
+                                Opportunity</th>
+
+                            <th class="spacer"></th>
+                            <th (click)="sort('Interal_Tire_sale')" style="cursor: pointer; text-align: right; ">Sales $
+                            </th>
+                            <th (click)="sort('Interal_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross
+                                $</th>
+                            <th (click)="sort('Internal_GP_Per')" style="cursor: pointer; text-align: right; ">GP %
+                            </th>
+                            <th (click)="sort('Internal_Tires_Sold')" style="cursor: pointer; text-align: right; ">Tires
+                                Sold</th>
+                            <th (click)="sort('Internal_AvgCost')" style="cursor: pointer; text-align: right; ">AVG Cost
+                            </th>
+
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="let LI of SalesData;let i=index ;">
+                            <tr [ngClass]="{'divBold': LI.Store_Name == undefined }">
+                                <td style="cursor: pointer" (click)="expandorcollapse(i,$event,LI.Dealer,LI,tmp)">
+                                    <span [id]="'D_'+i" title="{{LI.Store_Name}}">
+                                        {{(LI.Store_Name == undefined ? 'REPORT TOTALS' : (
+                                        (LI.Store_Name.toString() |
+                                        slice:0:22) +
+                                        (LI.Store_Name.toString().length > 22 ? '...' : '') ))}} </span>
+                                </td>
+
+                                <th class="spacer"></th>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_Tire_Sale)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_Tire_Sale == 0 || LI.Retail_Tire_Sale == null || LI.Retail_Tire_Sale
+                                        == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Retail_Tire_Sale == 0 || LI.Retail_Tire_Sale== null ? '-' :
+                                            LI.Retail_Tire_Sale |number:'1.2-2') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_Tire_Gross)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_Tire_Gross == 0 || LI.Retail_Tire_Gross == null ||
+                                        LI.Retail_Tire_Gross == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Retail_Tire_Gross == 0 || LI.Retail_Tire_Gross== null ? '-' :
+                                            LI.Retail_Tire_Gross |number:'1.2-2') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: LI.Retailcolor == 'R'}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_GP_Per == 0 || LI.Retail_GP_Per == null || LI.Retail_GP_Per ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Retail_GP_Per == 0 || LI.Retail_GP_Per== null ? '-' :
+                                            (LI.Retail_GP_Per |number:'1.0-0')+'%') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_CarCount)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_CarCount == 0 || LI.Retail_CarCount == null || LI.Retail_CarCount ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Retail_CarCount == 0 || LI.Retail_CarCount== null ? '-' :
+                                            (LI.Retail_CarCount |number:'1.0-0')) }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_TireGoal)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_TireGoal == 0 || LI.Retail_TireGoal == null || LI.Retail_TireGoal ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Retail_TireGoal == 0 || LI.Retail_TireGoal== null ? '-' :
+                                            (LI.Retail_TireGoal |number:'1.0-0')) }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_Tires_Sold)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_Tires_Sold == 0 || LI.Retail_Tires_Sold == null ||
+                                        LI.Retail_Tires_Sold ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Retail_Tires_Sold == 0 || LI.Retail_Tires_Sold== null ? '-' :
+                                            (LI.Retail_Tires_Sold |number:'1.0-0')) }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_Goal_Per)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_Goal_Per == 0 || LI.Retail_Goal_Per == null || LI.Retail_Goal_Per ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Retail_Goal_Per == 0 || LI.Retail_Goal_Per== null ? '-' :
+                                            (LI.Retail_Goal_Per |number:'1.0-0')+'%') }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_AvgCost)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_AvgCost == 0 || LI.Retail_AvgCost == null ||
+                                        LI.Retail_AvgCost == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Retail_AvgCost == 0 || LI.Retail_AvgCost== null ? '-' :
+                                            LI.Retail_AvgCost |number:'1.2-2') }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Retail_AvgProfit)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Retail_AvgProfit == 0 || LI.Retail_AvgProfit == null ||
+                                        LI.Retail_AvgProfit == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Retail_AvgProfit == 0 || LI.Retail_AvgProfit== null ? '-' :
+                                            LI.Retail_AvgProfit |number:'1.2-2') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Missed_opportunity)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Missed_opportunity == 0 || LI.Missed_opportunity == null ||
+                                        LI.Missed_opportunity == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Missed_opportunity == 0 || LI.Missed_opportunity== null ? '-' :
+                                            LI.Missed_opportunity |number:'1.2-2') }}</span></span>
+                                </td>
+
+
+
+
+                                <th class="spacer"></th>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Interal_Tire_sale)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Interal_Tire_sale == 0 || LI.Interal_Tire_sale == null ||
+                                        LI.Interal_Tire_sale
+                                        == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Interal_Tire_sale == 0 || LI.Interal_Tire_sale== null ? '-' :
+                                            LI.Interal_Tire_sale |number:'1.2-2') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Interal_Tire_Gross)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Interal_Tire_Gross == 0 || LI.Interal_Tire_Gross == null ||
+                                        LI.Interal_Tire_Gross == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Interal_Tire_Gross == 0 || LI.Interal_Tire_Gross== null ? '-' :
+                                            LI.Interal_Tire_Gross |number:'1.2-2') }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: LI.Internalcolor == 'R'}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Internal_GP_Per == 0 || LI.Internal_GP_Per == null || LI.Internal_GP_Per ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Internal_GP_Per == 0 || LI.Internal_GP_Per== null ? '-' :
+                                            (LI.Internal_GP_Per |number:'1.0-0')+'%') }}</span></span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Internal_Tires_Sold)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Internal_Tires_Sold == 0 || LI.Internal_Tires_Sold == null ||
+                                        LI.Internal_Tires_Sold ==
+                                        undefined ? '&nbsp;' :
+                                        '&nbsp;') }} <span> {{
+                                            ( LI.Internal_Tires_Sold == 0 || LI.Internal_Tires_Sold== null ? '-' :
+                                            (LI.Internal_Tires_Sold |number:'1.0-0')) }}</span></span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(LI.Internal_AvgCost)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( LI.Internal_AvgCost == 0 || LI.Internal_AvgCost == null ||
+                                        LI.Internal_AvgCost == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( LI.Internal_AvgCost == 0 || LI.Internal_AvgCost== null ? '-' :
+                                            LI.Internal_AvgCost |number:'1.2-2') }}</span></span>
+                                </td>
+                            </tr>
+                            <ng-container *ngIf="LI.Data2">
+                                <ng-container *ngFor="let sub of LI.Data2;">
+                                    <tr [ngClass]="{'hidden': LI.Dealer === '+'  }">
+                                        <td (click)="reconaccountpopup(tmp,sub,LI)" style="cursor: pointer">
+                                            <span [id]="'D_'+i" title="{{sub.data2}}" style="padding-left: 1.4rem;">
+                                                {{(sub.data2 == undefined ? 'REPORT TOTALS' : (
+                                                (sub.data2.toString() |
+                                                slice:0:22) +
+                                                (sub.data2.toString().length > 22 ? '...' : '') ))}} </span>
+                                        </td>
+
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_Tire_Sale)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_Tire_Sale == 0 || sub.Retail_Tire_Sale == null ||
+                                                sub.Retail_Tire_Sale
+                                                == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Retail_Tire_Sale == 0 || sub.Retail_Tire_Sale== null ? '-' :
+                                                    sub.Retail_Tire_Sale |number:'1.2-2') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_Tire_Gross)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_Tire_Gross == 0 || sub.Retail_Tire_Gross == null ||
+                                                sub.Retail_Tire_Gross == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Retail_Tire_Gross == 0 || sub.Retail_Tire_Gross== null ? '-' :
+                                                    sub.Retail_Tire_Gross |number:'1.2-2') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: sub.Retailcolor == 'R'}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_GP_Per == 0 || sub.Retail_GP_Per == null ||
+                                                sub.Retail_GP_Per
+                                                ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Retail_GP_Per == 0 || sub.Retail_GP_Per== null ? '-' :
+                                                    (sub.Retail_GP_Per |number:'1.0-0')+'%') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_CarCount)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_CarCount == 0 || sub.Retail_CarCount == null ||
+                                                sub.Retail_CarCount ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Retail_CarCount == 0 || sub.Retail_CarCount== null ? '-' :
+                                                    (sub.Retail_CarCount |number:'1.0-0')) }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_TireGoal)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_TireGoal == 0 || sub.Retail_TireGoal == null ||
+                                                sub.Retail_TireGoal ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Retail_TireGoal == 0 || sub.Retail_TireGoal== null ? '-' :
+                                                    (sub.Retail_TireGoal |number:'1.0-0')) }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_Tires_Sold)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_Tires_Sold == 0 || sub.Retail_Tires_Sold == null ||
+                                                sub.Retail_Tires_Sold ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Retail_Tires_Sold == 0 || sub.Retail_Tires_Sold== null ? '-' :
+                                                    (sub.Retail_Tires_Sold |number:'1.0-0')) }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_Goal_Per)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_Goal_Per == 0 || sub.Retail_Goal_Per == null ||
+                                                sub.Retail_Goal_Per ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Retail_Goal_Per == 0 || sub.Retail_Goal_Per== null ? '-' :
+                                                    (sub.Retail_Goal_Per |number:'1.0-0')+'%') }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_AvgCost)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_AvgCost == 0 || sub.Retail_AvgCost == null ||
+                                                sub.Retail_AvgCost == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Retail_AvgCost == 0 || sub.Retail_AvgCost== null ? '-' :
+                                                    sub.Retail_AvgCost |number:'1.2-2') }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Retail_AvgProfit)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Retail_AvgProfit == 0 || sub.Retail_AvgProfit == null ||
+                                                sub.Retail_AvgProfit == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Retail_AvgProfit == 0 || sub.Retail_AvgProfit== null ? '-' :
+                                                    sub.Retail_AvgProfit |number:'1.2-2') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Missed_opportunity)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Missed_opportunity == 0 || sub.Missed_opportunity == null ||
+                                                sub.Missed_opportunity == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Missed_opportunity == 0 || sub.Missed_opportunity== null ? '-'
+                                                    :
+                                                    sub.Missed_opportunity |number:'1.2-2') }}</span></span>
+                                        </td>
+
+
+
+
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Interal_Tire_sale)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Interal_Tire_sale == 0 || sub.Interal_Tire_sale == null ||
+                                                sub.Interal_Tire_sale
+                                                == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Interal_Tire_sale == 0 || sub.Interal_Tire_sale== null ? '-' :
+                                                    sub.Interal_Tire_sale |number:'1.2-2') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Interal_Tire_Gross)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Interal_Tire_Gross == 0 || sub.Interal_Tire_Gross == null ||
+                                                sub.Interal_Tire_Gross == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Interal_Tire_Gross == 0 || sub.Interal_Tire_Gross== null ? '-'
+                                                    :
+                                                    sub.Interal_Tire_Gross |number:'1.2-2') }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: sub.Internalcolor == 'R'}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Internal_GP_Per == 0 || sub.Internal_GP_Per == null ||
+                                                sub.Internal_GP_Per ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Internal_GP_Per == 0 || sub.Internal_GP_Per== null ? '-' :
+                                                    (sub.Internal_GP_Per |number:'1.0-0')+'%') }}</span></span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Internal_Tires_Sold)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Internal_Tires_Sold == 0 || sub.Internal_Tires_Sold == null ||
+                                                sub.Internal_Tires_Sold ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;') }} <span> {{
+                                                    ( sub.Internal_Tires_Sold == 0 || sub.Internal_Tires_Sold== null ?
+                                                    '-'
+                                                    :
+                                                    (sub.Internal_Tires_Sold |number:'1.0-0')) }}</span></span>
+                                        </td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(sub.Internal_AvgCost)}">
+                                            <span class="d-flex justify-content-between"> {{
+                                                ( sub.Internal_AvgCost == 0 || sub.Internal_AvgCost == null ||
+                                                sub.Internal_AvgCost == undefined ? '' :
+                                                '$') }} <span> {{
+                                                    ( sub.Internal_AvgCost == 0 || sub.Internal_AvgCost== null ? '-' :
+                                                    sub.Internal_AvgCost |number:'1.2-2') }}</span></span>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+
+                    </tbody>
+
+                    <tbody *ngIf="NoData != ''">
+                        <tr>
+                            <td colspan="18" style="text-align: center !important;">No Data Found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <ng-template #tmp>
+            <div class="modal-content">
+                <div class="recap position-relative">
+
+                    <div class="row d-flex w-100 m-0">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-12">
+                                    <div class="m-2 p-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 p-0 d-flex align-items-center">
+
+                                                <h2 class="m-0 p-0">
+                                                    <span>
+                                                        <span class="font-blue">
+                                                            // {{popupvalues.Store}}
+                                                        </span>
+
+
+                                                    </span>
+                                                </h2>
+                                                <!-- <img src="/images/Export.png" class="img-fluid ms-auto me-2"
+                                                    (click)="exportAsXLSX()" alt="" style="cursor: pointer;"> -->
+                                                <a type="button" class="px-3" style="cursor:pointer;"
+                                                    (click)="closePopup()">
+                                                    <button type="button" class="btn-close" aria-label="Close"></button>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scorecard-single-header mb-3" id="scrollcent" #scrollcent
+                                        (scroll)="updateVerticalScroll($event)"
+                                        style="overflow:auto; max-height: calc(100vh - 200px);">
+
+
+                                        <table class="table mb-0 w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th>Invoice #</th>
+                                                    <th>Date</th>
+                                                    <th>RO #</th>
+                                                    <th>Part #</th>
+                                                    <th>Vehicle ID</th>
+
+                                                    <th colspan="3">Total</th>
+                                                    <th colspan="3">Customer Pay</th>
+                                                    <th colspan="3">Warranty</th>
+                                                    <th colspan="3">Extended Warranty</th>
+
+                                                    <th colspan="3">Internal</th>
+                                                    <th colspan="3">Wholesale</th>
+                                                    <th colspan="3">Retail</th>
+
+
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="bdr-rt"></td>
+                                                    <td (click)="sort('Total_Tire_Sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Total_Tire_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Total_GP_Per')" class="bdr-rt">GP % </td>
+
+                                                    <td (click)="sort('Customer_sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Customer_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Customer_GP_per')" class="bdr-rt">GP % </td>
+
+                                                    <td (click)="sort('Warranty_sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Warranty_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Warranty_GP_Per')" class="bdr-rt">GP % </td>
+
+                                                    <td (click)="sort('ExtendedWarranty_sale')" class="bdr-rt"> Sales $
+                                                    </td>
+                                                    <td (click)="sort('ExtendedWarranty_Gross')" class="bdr-rt"> Gross $
+                                                    </td>
+                                                    <td (click)="sort('ExtendedWarranty_GP_Per')" class="bdr-rt">GP %
+                                                    </td>
+
+                                                    <td (click)="sort('Interal_sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Interal_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Interal_GP_Per')" class="bdr-rt">GP % </td>
+
+                                                    <td (click)="sort('Wholesale_sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Wholesale_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Wholesale_GP_Per')" class="bdr-rt">GP % </td>
+
+                                                    <td (click)="sort('Retail_Sale')" class="bdr-rt"> Sales $ </td>
+                                                    <td (click)="sort('Retail_Gross')" class="bdr-rt"> Gross $ </td>
+                                                    <td (click)="sort('Retail_GP_Per')" class="bdr-rt">GP % </td>
+
+
+
+                                                </tr>
+                                            </thead>
+                                            <ng-container *ngIf="ReconDetails && ReconDetails.length > 0;else NoRD">
+                                                <tbody>
+                                                    <tr *ngFor="let ld of ReconDetails ;let i=index">
+                                                        <td>{{ ld['InvoiceNumber'] || '-'}}</td>
+                                                        <td style="text-align: center !important;">{{ ld['Date'] ? (ld['Date'] |
+                                                            date:'MM.dd.yyyy' ) : '-'}}</td>
+                                                        <td>{{ ld['ronumber'] || '-'}}</td>
+                                                        <td>{{ ld['Partnumber'] || '-'}}</td>
+                                                        <td>{{ ld['VehID'] || '-'}}</td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Total_Tire_Sale'] == 0 || ld['Total_Tire_Sale'] ==
+                                                                null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Total_Tire_Sale'] == 0 || ld['Total_Tire_Sale']
+                                                                    == null ? '-' :
+                                                                    ld['Total_Tire_Sale'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Total_Tire_Gross'] == 0 || ld['Total_Tire_Gross']
+                                                                == null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Total_Tire_Gross'] == 0 ||
+                                                                    ld['Total_Tire_Gross'] == null ? '-' :
+                                                                    ld['Total_Tire_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.T_color == 'R'}"> {{
+                                                                ( ld.Total_GP_Per == 0 || ld.Total_GP_Per == null ||
+                                                                ld.Total_GP_Per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Total_GP_Per == 0 || ld.Total_GP_Per== null ?
+                                                                    '-' :
+                                                                    (ld.Total_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Customer_sale'] == 0 || ld['Customer_sale'] == null
+                                                                ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Customer_sale'] == 0 || ld['Customer_sale'] ==
+                                                                    null ? '-' :
+                                                                    ld['Customer_sale'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Customer_Gross'] == 0 || ld['Customer_Gross'] ==
+                                                                null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Customer_Gross'] == 0 || ld['Customer_Gross']
+                                                                    == null ? '-' :
+                                                                    ld['Customer_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.C_Color == 'R'}"> {{
+                                                                ( ld.Customer_GP_per == 0 || ld.Customer_GP_per == null
+                                                                ||
+                                                                ld.Customer_GP_per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Customer_GP_per == 0 || ld.Customer_GP_per==
+                                                                    null ? '-' :
+                                                                    (ld.Customer_GP_per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Warranty_sale'] == 0 || ld['Warranty_sale'] == null
+                                                                ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Warranty_sale'] == 0 || ld['Warranty_sale'] ==
+                                                                    null ? '-' :
+                                                                    ld['Warranty_sale'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Warranty_Gross'] == 0 || ld['Warranty_Gross'] ==
+                                                                null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Warranty_Gross'] == 0 || ld['Warranty_Gross']
+                                                                    == null ? '-' :
+                                                                    ld['Warranty_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.R_color == 'R'}"> {{
+                                                                ( ld.Warranty_GP_Per == 0 || ld.Warranty_GP_Per == null
+                                                                ||
+                                                                ld.Warranty_GP_Per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Warranty_GP_Per == 0 || ld.Warranty_GP_Per==
+                                                                    null ? '-' :
+                                                                    (ld.Warranty_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['ExtendedWarranty_sale'] == 0 ||
+                                                                ld['ExtendedWarranty_sale'] == null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['ExtendedWarranty_sale'] == 0 ||
+                                                                    ld['ExtendedWarranty_sale'] == null ? '-' :
+                                                                    ld['ExtendedWarranty_sale'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['ExtendedWarranty_Gross'] == 0 ||
+                                                                ld['ExtendedWarranty_Gross'] == null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['ExtendedWarranty_Gross'] == 0 ||
+                                                                    ld['ExtendedWarranty_Gross'] == null ? '-' :
+                                                                    ld['ExtendedWarranty_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.EW_Color == 'R'}"> {{
+                                                                ( ld.ExtendedWarranty_GP_Per == 0 ||
+                                                                ld.ExtendedWarranty_GP_Per == null ||
+                                                                ld.ExtendedWarranty_GP_Per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.ExtendedWarranty_GP_Per == 0 ||
+                                                                    ld.ExtendedWarranty_GP_Per== null ? '-' :
+                                                                    (ld.ExtendedWarranty_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Interal_sale'] == 0 || ld['Interal_sale'] == null ?
+                                                                '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Interal_sale'] == 0 || ld['Interal_sale'] ==
+                                                                    null ? '-' :
+                                                                    ld['Interal_sale'] |number:'1.2-2') }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Interal_Gross'] == 0 || ld['Interal_Gross'] == null
+                                                                ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Interal_Gross'] == 0 || ld['Interal_Gross'] ==
+                                                                    null ? '-' :
+                                                                    ld['Interal_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.I_Color == 'R'}"> {{
+                                                                ( ld.Interal_GP_Per == 0 || ld.Interal_GP_Per == null ||
+                                                                ld.Interal_GP_Per
+                                                                ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Interal_GP_Per == 0 || ld.Interal_GP_Per== null
+                                                                    ? '-' :
+                                                                    (ld.Interal_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Wholesale_sale'] == 0 || ld['Wholesale_sale'] ==
+                                                                null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Wholesale_sale'] == 0 || ld['Wholesale_sale']
+                                                                    == null ? '-' :
+                                                                    ld['Wholesale_sale'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Wholesale_Gross'] == 0 || ld['Wholesale_Gross'] ==
+                                                                null ? '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Wholesale_Gross'] == 0 || ld['Wholesale_Gross']
+                                                                    == null ? '-' :
+                                                                    ld['Wholesale_Gross'] |number:'1.2-2')
+                                                                    }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.Retailcolor == 'R'}"> {{
+                                                                ( ld.Wholesale_GP_Per == 0 || ld.Wholesale_GP_Per ==
+                                                                null ||
+                                                                ld.Wholesale_GP_Per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Wholesale_GP_Per == 0 || ld.Wholesale_GP_Per==
+                                                                    null ? '-' :
+                                                                    (ld.Wholesale_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Retail_Sale'] == 0 || ld['Retail_Sale'] == null ?
+                                                                '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Retail_Sale'] == 0 || ld['Retail_Sale'] == null
+                                                                    ? '-' :
+                                                                    ld['Retail_Sale'] |number:'1.2-2') }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"> {{
+                                                                (ld['Retail_Gross'] == 0 || ld['Retail_Gross'] == null ?
+                                                                '' :
+                                                                '$') }} <span> {{
+                                                                    (ld['Retail_Gross'] == 0 || ld['Retail_Gross'] ==
+                                                                    null ? '-' :
+                                                                    ld['Retail_Gross'] |number:'1.2-2') }}</span></span>
+                                                        </td>
+
+                                                        <td>
+                                                            <span class="d-flex justify-content-between"
+                                                                [ngClass]="{ negative: ld.Retailcolor == 'R'}"> {{
+                                                                ( ld.Retail_GP_Per == 0 || ld.Retail_GP_Per == null ||
+                                                                ld.Retail_GP_Per ==
+                                                                undefined ? '&nbsp;' :
+                                                                '&nbsp;') }} <span> {{
+                                                                    ( ld.Retail_GP_Per == 0 || ld.Retail_GP_Per== null ?
+                                                                    '-' :
+                                                                    (ld.Retail_GP_Per |number:'1.0-0')+'%')
+                                                                    }}</span></span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </ng-container>
+                                            <ng-template #NoRD>
+                                                <tr>
+                                                    <td colspan="7" *ngIf="ReconDetailsNoData== ''">
+                                                        <div 
+                                                            class="graph-loader d-flex align-items-center justify-content-center">
+                                                            <div class="spinner-border text-primary" role="status">
+                                                                <span class="visually-hidden">Loading...</span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td colspan="10" *ngIf="ReconDetailsNoData != ''"
+                                                        style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
+                                                        <label>{{ReconDetailsNoData}}</label>
+                                                    </td>
+                                                </tr>
+                                            </ng-template>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</main>

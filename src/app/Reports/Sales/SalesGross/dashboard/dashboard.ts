@@ -570,7 +570,7 @@ export class Dashboard {
                 this.shared.spinner.hide();
                 console.log(this.SalesData, '...................');
 
-              
+
               } else {
                 this.shared.spinner.hide();
                 this.NoData = true;

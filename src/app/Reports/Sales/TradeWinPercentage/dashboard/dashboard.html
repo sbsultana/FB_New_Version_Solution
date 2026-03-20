@@ -1,0 +1,809 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame<span class="light-font"> {{ displaytime }}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            New Used <span class="light-font">( {{ neworused.length === 0 ? 'Selected (0)' :
+                                neworused.length === 1 ?
+                                neworused[0] : 'Selected' }}
+
+                                {{ neworused.length > 1 ?neworused.length : '' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 3">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button"
+                                    [ngClass]="{'active':neworused.indexOf('New')>=0,'inactive':neworused.indexOf('New')<0}"
+                                    (click)="multipleorsingle('NU','New')">New</button>
+                                <button class="outline-button"
+                                    [ngClass]="{'active':neworused.indexOf('Used')>=0,'inactive':neworused.indexOf('Used')<0}"
+                                    (click)="multipleorsingle('NU','Used')">Used</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(4)">
+                            Deal Type <span class="light-font">( {{ retailorlease.length === 0 ? 'Selected (0)' :
+                                retailorlease.length === 1 ?
+                                retailorlease[0] : 'Selected' }}
+
+                                {{ retailorlease.length > 1 ?  retailorlease.length : ''
+                                }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 4">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('RL','Retail')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Retail')>=0, 'inactive':retailorlease.indexOf('Retail')<0}">Retail</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Lease')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Lease')>=0, 'inactive':retailorlease.indexOf('Lease')<0}">Lease</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Wholesale')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Wholesale')>=0, 'inactive':retailorlease.indexOf('Wholesale')<0}">Wholesale</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Misc')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Misc')>=0, 'inactive':retailorlease.indexOf('Misc')<0}">Misc.</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Fleet')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Fleet')>=0, 'inactive':retailorlease.indexOf('Fleet')<0}">Fleet</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Demo')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Demo')>=0, 'inactive':retailorlease.indexOf('Demo')<0}">Demo</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Special Order')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Special Order')>=0, 'inactive':retailorlease.indexOf('Special Order')<0}">Special
+                                    Order</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Rental')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Rental')>=0, 'inactive':retailorlease.indexOf('Rental')<0}">Rental</button>
+                                <button class="outline-button" (click)="multipleorsingle('RL','Dealer Trade')"
+                                    [ngClass]="{'active':retailorlease.indexOf('Dealer Trade')>=0, 'inactive':retailorlease.indexOf('Dealer Trade')<0}">Dealer
+                                    Trade</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(5)">
+                            Deal Status <span class="light-font">(  {{ dealstatus.length === 0 ? 'Selected (0)' : dealstatus.length === 1 ?
+                                    (dealstatus[0] == 'Capped' ? 'Booked' : dealstatus[0]) : 'Selected' }}
+                                  
+                                        {{ dealstatus.length > 1 ? dealstatus.length : '' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 5">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('DS','Delivered')"
+                                    [ngClass]="{'active':dealstatus.indexOf('Delivered')>=0, 'inactive':dealstatus.indexOf('Delivered')<0}">Delivered</button>
+                                <button class="outline-button" (click)="multipleorsingle('DS','Capped')"
+                                    [ngClass]="{'active':dealstatus.indexOf('Capped')>=0, 'inactive':dealstatus.indexOf('Capped')<0}">Booked</button>
+                                <button class="outline-button" (click)="multipleorsingle('DS','Finalized')"
+                                    [ngClass]="{'active':dealstatus.indexOf('Finalized')>=0, 'inactive':dealstatus.indexOf('Finalized')<0}">Finalized</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(6)">
+                            Report Totals <span class="light-font">( {{toporbottom=='T'
+                                    ?
+                                    'TOP' : 'Bottom'}}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 6">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('TB','T')"
+                                    [ngClass]="{'active':toporbottom.indexOf('T')>=0, 'inactive':toporbottom.indexOf('T')<0}">Top</button>
+                                <button class="outline-button" (click)="multipleorsingle('TB','B')"
+                                    [ngClass]="{'active':toporbottom.indexOf('B')>=0, 'inactive':toporbottom.indexOf('B')<0}">Bottom</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-multi-header lendersummary-tbl">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th>
+                                <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
+                                        |date:'MMMM'}} </span> </span><br>
+                                <span>{{DupFromDate |date:'dd'}} <span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{DupToDate |date:'dd'}}<span
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                        {{DupFromDate |
+                                        date:'yyyy'}}</span></span>
+                            </th>
+                            <td class="spacer"></td>
+                            <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">New </th>
+                            <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Trades</th>
+                            <th class="bdr-rt" (click)="sort('Parts Gross')" style="cursor: pointer;">TW %</th>
+
+
+                            <td class="spacer"></td>
+                            <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">Used </th>
+                            <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Trades</th>
+                            <th class="bdr-rt" (click)="sort('Parts Gross')" style="cursor: pointer;">TW %</th>
+
+                            <td class="spacer"></td>
+                            <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">Total </th>
+                            <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Trades</th>
+                            <th class="bdr-rt" (click)="sort('Parts Gross')" style="cursor: pointer;">TW %</th>
+                        </tr>
+                    </thead>
+                    <!--  -->
+                    <!-- [ngStyle]="{'pointer-events':path2 =='' && path3==''? 'visible':'none'}" -->
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+                        <ng-container *ngFor="let SalesInfo of ServiceAbsorption; let i=index">
+                            <tr [ngClass]="{  'divBold': SalesInfo.dealername.toLowerCase() == 'report totals'  }">
+                                <td style="pointer-events: none;">
+                                    <span [id]="'D_'+i" title="{{SalesInfo.dealername}}">
+                                        {{(SalesInfo.dealername == undefined ? '--' : ( (SalesInfo.dealername.toString()
+                                        |
+                                        slice:0:22) +
+                                        (SalesInfo.dealername.toString().length > 22 ? '...' : '') ))}} </span>
+                                </td>
+                                <td class="spacer"></td>
+
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['New_Deals'])}"
+                                    (click)="openDetails(SalesInfo,tmp,'New','')"
+                                    [ngClass]="[SalesInfo['New_Deals'] != 0 && SalesInfo['New_Deals'] != null && SalesInfo['New_Deals'] != undefined && SalesInfo['New_Deals'] != '' && SalesInfo['New_Deals'] != '-' ? 'popuppointer' : 'popupdisable']">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['New_Deals'] == 0 || SalesInfo['New_Deals'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['New_Deals'] == 0 ||
+                                            SalesInfo['New_Deals'] == null ? '' : SalesInfo['New_Deals'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['New_trades'])}"
+                                    [ngClass]="[SalesInfo['New_trades'] != 0 && SalesInfo['New_trades'] != null && SalesInfo['New_trades'] != undefined && SalesInfo['New_trades'] != '' && SalesInfo['New_trades'] != '-' ? 'popuppointer' : 'popupdisable']"
+                                    (click)="openDetails(SalesInfo,tmp,'New','Y')">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['New_trades'] == 0 || SalesInfo['New_trades'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['New_trades'] == 0 ||
+                                            SalesInfo['New_trades'] == null ? '' : SalesInfo['New_trades'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesInfo.TW_new)}">
+                                    {{ (SalesInfo.TW_new == 0 ||
+                                    SalesInfo.TW_new == null ? '-' : SalesInfo.TW_new |
+                                    number : '1.0-0'
+                                    )}}{{
+                                    (SalesInfo.TW_new ==
+                                    0 ||
+                                    SalesInfo.TW_new == null ? '' : '%' )}}
+                                </td>
+                                <td class="spacer"></td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Used_deals'])}"
+                                    [ngClass]="[SalesInfo['Used_deals'] != 0 && SalesInfo['Used_deals'] != null && SalesInfo['Used_deals'] != undefined && SalesInfo['Used_deals'] != '' && SalesInfo['Used_deals'] != '-' ? 'popuppointer' : 'popupdisable']"
+                                    (click)="openDetails(SalesInfo,tmp,'Used','')">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Used_deals'] == 0 || SalesInfo['Used_deals'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['Used_deals'] == 0 ||
+                                            SalesInfo['Used_deals'] == null ? '' : SalesInfo['Used_deals'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Used_trades'])}"
+                                    [ngClass]="[SalesInfo['Used_trades'] != 0 && SalesInfo['Used_trades'] != null && SalesInfo['Used_trades'] != undefined && SalesInfo['Used_trades'] != '' && SalesInfo['Used_trades'] != '-' ? 'popuppointer' : 'popupdisable']"
+                                    (click)="openDetails(SalesInfo,tmp,'Used','Y')">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Used_trades'] == 0 || SalesInfo['Used_trades'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['Used_trades'] == 0 ||
+                                            SalesInfo['Used_trades'] == null ? '' : SalesInfo['Used_trades'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesInfo.TW_Used)}">
+                                    {{ (SalesInfo.TW_Used == 0 ||
+                                    SalesInfo.TW_Used == null ? '-' : SalesInfo.TW_Used |
+                                    number : '1.0-0'
+                                    )}}{{
+                                    (SalesInfo.TW_Used ==
+                                    0 ||
+                                    SalesInfo.TW_Used == null ? '' : '%' )}}
+                                </td>
+
+                                <td class="spacer"></td>
+
+
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Total'])}"
+                                    [ngClass]="[SalesInfo['Total'] != 0 && SalesInfo['Total'] != null && SalesInfo['Total'] != undefined && SalesInfo['Total'] != '' && SalesInfo['Total'] != '-' ? 'popuppointer' : 'popupdisable']"
+                                    (click)="openDetails(SalesInfo,tmp,'New,Used','')">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['Total'] == 0 || SalesInfo['Total'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['Total'] == 0 ||
+                                            SalesInfo['Total'] == null ? '' : SalesInfo['Total'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td [ngClass]="{ negative: !inTheGreen(SalesInfo['totaltrades'])}"
+                                    [ngClass]="[SalesInfo['totaltrades'] != 0 && SalesInfo['totaltrades'] != null && SalesInfo['totaltrades'] != undefined && SalesInfo['totaltrades'] != '' && SalesInfo['totaltrades'] != '-' ? 'popuppointer' : 'popupdisable']"
+                                    (click)="openDetails(SalesInfo,tmp,'New,Used','Y')">
+                                    <span class="d-flex justify-content-between">
+                                        {{(SalesInfo['totaltrades'] == 0 || SalesInfo['totaltrades'] == null
+                                        ? '' :'&nbsp;' )}}
+                                        <span> {{(SalesInfo['totaltrades'] == 0 ||
+                                            SalesInfo['totaltrades'] == null ? '' : SalesInfo['totaltrades'] |number
+                                            :'1.0-0'
+                                            )}}
+                                        </span>
+                                    </span>
+                                </td>
+
+
+
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesInfo.TW_Total)}">
+                                    {{ (SalesInfo.TW_Total == 0 ||
+                                    SalesInfo.TW_Total == null ? '-' : SalesInfo.TW_Total |
+                                    number : '1.0-0'
+                                    )}}{{
+                                    (SalesInfo.TW_Total ==
+                                    0 ||
+                                    SalesInfo.TW_Total == null ? '' : '%' )}}
+                                </td>
+
+
+                            </tr>
+
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <ng-template #tmp>
+            <div class="modal-content">
+                <div class="recap position-relative">
+
+                    <div class="row d-flex w-100 m-0">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-12">
+                                    <div class="m-2 p-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 p-0 d-flex align-items-center">
+
+                                                <h2 class="m-0 p-0">
+                                                    <span>
+                                                        <span class="font-blue">
+                                                            // {{ popupvalues.Store}}
+                                                        </span>
+
+                                                        <span>
+                                                            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                                            {{ popupvalues.subtype}}
+                                                        </span>
+
+
+                                                    </span>
+                                                </h2>
+
+                                                <a type="button" class="ms-auto px-3" style="cursor:pointer;"
+                                                    (click)="closePopup()">
+                                                    <button type="button" class="btn-close" aria-label="Close"></button>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scorecard-double-header mb-3"
+                                        style="overflow:auto; max-height: calc(100vh - 200px);">
+                                        <div *ngIf="loader"
+                                            class="graph-loader d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+
+                                        <table class="table mb-0 w-100">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="19">&nbsp; </th>
+                                                    <th colspan="5">Trade 1 </th>
+                                                    <th colspan="5">Trade 2 </th>
+                                                </tr>
+                                                <tr>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('dealid')">Deal #
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('Stock')">Stock #
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('contractdate')">
+                                                        Date
+                                                    </th>
+                                                    <th style="width: 20%; " style="cursor: pointer;"
+                                                        (click)="sortColumn('customername')">
+                                                        Customer
+                                                    </th>
+                                                    <th style="width: 20%; " style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_year')">Year
+                                                    </th>
+                                                    <th style="width: 20%; " style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_make')">Make
+                                                    </th>
+                                                    <th style="width: 20%; " style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_model')">Model
+                                                    </th>
+
+
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_dealtype')">
+                                                        New/Used
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('vin')">VIN
+                                                    </th>
+                                                    <th style="text-align:right !important " style="cursor: pointer;"
+                                                        (click)="sortColumn('TradeAcv')">Trade
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('frontgross')">
+                                                        Front
+                                                        Gross
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('backgross')">Back
+                                                        Gross
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('totalgross')">
+                                                        Total
+                                                        Gross
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('salesperson1')">SP
+                                                        1
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('salesperson2')">SP
+                                                        2
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('fimanager')">F&I
+                                                        Mgr.
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('salesmanager')">
+                                                        Desk Mgr.
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('FinReserve')">
+                                                        FIN.Reserve
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('productcount')">
+                                                        Product Count
+                                                    </th>
+
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade1year')">
+                                                        Year
+                                                    </th>
+                                                    <th style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_trade1makename')">Make
+                                                    </th>
+                                                    <th style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_trade1modelname')">Model
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade1vin')">
+                                                        Vin
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade1acv')">
+                                                        ACV
+                                                    </th>
+
+
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade2year')">
+                                                        Year
+                                                    </th>
+                                                    <th style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_trade2makename')">Make
+                                                    </th>
+                                                    <th style="cursor: pointer;"
+                                                        (click)="sortColumn('ad_trade2modelname')">Model
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade2vin')">
+                                                        Vin
+                                                    </th>
+                                                    <th style="cursor: pointer;" (click)="sortColumn('ad_trade2acv')">
+                                                        ACV
+                                                    </th>
+
+
+                                                </tr>
+
+                                            </thead>
+
+                                            <!-- data-bs-toggle="modal" data-bs-target="#warningmessage" | filter : SGDSearchName -->
+                                            <tbody>
+                                                <ng-container *ngIf="(SalesPersonDetails ).length >0; else ifNotShow">
+                                                    <ng-container *ngIf="SalesPersonDetails.length > 0; else ifNotShow">
+                                                        <tr *ngFor="let det of SalesPersonDetails ; let i=index">
+                                                            <td (click)="openSalesModal()"
+                                                                [ngClass]="[det.dealid != 0 && det.dealid != null && det.dealid != undefined && det.dealid != '' && det.dealid != '-' ? 'popuppointer' : 'popupdisable']">
+                                                                {{ (det.dealid == 0 || det.dealid == null || det.dealid
+                                                                == undefined
+                                                                ?
+                                                                '-' :
+                                                                det.dealid ) }}
+                                                            </td>
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.Stock == 0 || det.Stock == null || det.Stock ==
+                                                                undefined ?
+                                                                ' -
+                                                                ' :
+                                                                det.Stock ) }}
+                                                            </td>
+                                                            <td>
+                                                                {{ (det.contractdate == 0 || det.contractdate == null ||
+                                                                det.contractdate ==
+                                                                undefined ? '-' :
+                                                                det.contractdate | date:'MM.dd.yyyy' ) }}
+                                                            </td>
+                                                            <td title="{{det.customername}}"
+                                                                style="cursor: default; text-align: left; white-space: nowrap;">
+                                                                {{(det.customername == undefined ||
+                                                                det.customername == null || det.customername == '' ? '-'
+                                                                : (
+                                                                (det.customername.toString() | slice:0:20) +
+                                                                (det.customername.toString().length > 20 ? '..' : '')
+                                                                ))}}</td>
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_year == 0 || det.ad_year == null ||
+                                                                det.ad_year ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_year ) }}
+                                                            </td>
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_make == 0 || det.ad_make == null ||
+                                                                det.ad_make ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_make ) }}
+                                                            </td>
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_model == 0 || det.ad_model == null ||
+                                                                det.ad_model ==
+                                                                undefined ?
+                                                                ' -
+                                                                ' :
+                                                                det.ad_model ) }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                {{ ( det.ad_dealtype == null || det.ad_dealtype ==
+                                                                undefined ? '-' :
+                                                                det.ad_dealtype
+                                                                ) }}
+                                                            </td>
+                                                            <td style="padding-right: .8rem !important;">
+                                                                {{ (det.vin == 0 || det.vin == null || det.vin ==
+                                                                undefined ? '-' :
+                                                                det.vin
+                                                                ) }}
+                                                            </td>
+                                                            <td style="text-align: right;">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.TradeAcv == 0 || det.TradeAcv == null ||
+                                                                    det.TradeAcv ==
+                                                                    undefined ?
+                                                                    '' :
+                                                                    '$' ) }}
+                                                                    <span>
+                                                                        {{ (det.TradeAcv == 0 || det.TradeAcv == null ||
+                                                                        det.TradeAcv ==
+                                                                        undefined ?
+                                                                        '-' :
+                                                                        det.TradeAcv | number:'1.0-0' ) }}
+                                                                    </span>
+                                                                </span>
+
+                                                            </td>
+                                                            <td style="text-align: right !important;"
+                                                                [ngClass]="{ negative: !inTheGreen(det.frontgross)}">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.frontgross == 0 || det.frontgross ==
+                                                                    null ||
+                                                                    det.frontgross ==
+                                                                    undefined ?
+                                                                    '' :'$' ) }}
+                                                                    <span>
+                                                                        {{ (det.frontgross == 0 || det.frontgross ==
+                                                                        null ||
+                                                                        det.frontgross ==
+                                                                        undefined ?
+                                                                        '-' :
+                                                                        det.frontgross | number:'1.2-2' ) }}
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td style="text-align: right !important;"
+                                                                [ngClass]="{ negative: !inTheGreen(det.backgross)}">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.backgross == 0 || det.backgross == null
+                                                                    ||
+                                                                    det.backgross ==
+                                                                    undefined ? ''
+                                                                    : '$' ) }}
+                                                                    <span>
+                                                                        {{ (det.backgross == 0 || det.backgross ==
+                                                                        null
+                                                                        ||
+                                                                        det.backgross ==
+                                                                        undefined ? '-'
+                                                                        : det.backgross |
+                                                                        number:'1.2-2' ) }}
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td style="text-align: right !important;"
+                                                                [ngClass]="{ negative: !inTheGreen(det.totalgross)}">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.totalgross == 0 || det.totalgross ==
+                                                                    null ||
+                                                                    det.totalgross == undefined ? '-' :'$' ) }}
+                                                                    <span>
+                                                                        {{ (det.totalgross == 0 || det.totalgross ==
+                                                                        null ||
+                                                                        det.totalgross == undefined ? '-' :
+                                                                        det.totalgross | number:'1.2-2' ) }}
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td title="{{det.salesperson1}}"
+                                                                style="cursor: default;white-space: nowrap;text-align: left !important;">
+
+                                                                {{(det.salesperson1 == null || det.salesperson1 == '' ||
+                                                                det.salesperson1 ==
+                                                                undefined ? '-' :
+                                                                det.salesperson1.toString() )}}
+                                                            </td>
+                                                            <td title="{{det.salesperson2}}"
+                                                                style="cursor: default;white-space: nowrap;text-align: left !important;">
+
+
+                                                                {{(det.salesperson2 == null || det.salesperson2 == '' ||
+                                                                det.salesperson2 ==
+                                                                undefined ? '-' :
+                                                                det.salesperson2.toString()
+                                                                )}}</td>
+                                                            <td title="{{det.fimanager}}"
+                                                                style="cursor: default;white-space: nowrap;text-align: left !important;">
+
+
+                                                                {{(det.fimanager == null || det.fimanager == '' ||
+                                                                det.fimanager ==
+                                                                undefined ? '-' :
+                                                                det.fimanager.toString() )}}</td>
+                                                            <td title="{{det.salesmanager}}"
+                                                                style="cursor: default;white-space: nowrap;text-align: left !important;">
+
+                                                                {{(det.salesmanager == null || det.salesmanager == '' ||
+                                                                det.salesmanager ==
+                                                                undefined ? '-' :
+                                                                det.salesmanager.toString()
+                                                                )}}</td>
+                                                            <td
+                                                                style="cursor: default;white-space: nowrap;text-align: right !important;">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.FinReserve == 0 || det.FinReserve == null ||
+                                                                    det.FinReserve
+                                                                    ==
+                                                                    undefined ?
+                                                                    '' :'$') }}
+                                                                    <span>
+                                                                        {{ (det.FinReserve == 0 || det.FinReserve ==
+                                                                        null ||
+                                                                        det.FinReserve
+                                                                        ==
+                                                                        undefined ?
+                                                                        '-' :
+                                                                        det.FinReserve | number:'1.0-0' ) }}
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                {{ (det.productcount == 0 || det.productcount == null ||
+                                                                det.productcount ==
+                                                                undefined ? '-' :
+                                                                det.productcount | number ) }}
+                                                            </td>
+
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade1year == 0 || det.ad_trade1year == null
+                                                                || det.ad_trade1year
+                                                                ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_trade1year ) }}
+                                                            </td>
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade1makename == 0 || det.ad_trade1makename
+                                                                == null ||
+                                                                det.ad_trade1makename ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_trade1makename ) }}
+                                                            </td>
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade1modelname == 0 ||
+                                                                det.ad_trade1modelname == null ||
+                                                                det.ad_trade1modelname ==
+                                                                undefined ?
+                                                                ' -
+                                                                ' :
+                                                                det.ad_trade1modelname ) }}
+                                                            </td>
+
+                                                            <td style="padding-right: .8rem !important;">
+                                                                {{ (det.ad_trade1vin == 0 || det.ad_trade1vin == null ||
+                                                                det.ad_trade1vin ==
+                                                                undefined ? '-' :
+                                                                det.ad_trade1vin
+                                                                ) }}
+                                                            </td>
+                                                            <td style="text-align: right;">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.ad_trade1acv == 0 || det.ad_trade1acv ==
+                                                                    null ||
+                                                                    det.ad_trade1acv ==
+                                                                    undefined ?
+                                                                    '' :
+                                                                    '$' ) }}
+                                                                    <span>
+                                                                        {{ (det.ad_trade1acv == 0 || det.ad_trade1acv ==
+                                                                        null ||
+                                                                        det.ad_trade1acv ==
+                                                                        undefined ?
+                                                                        '-' :
+                                                                        det.ad_trade1acv | number:'1.0-0' ) }}
+                                                                    </span>
+                                                                </span>
+
+                                                            </td>
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade2year == 0 || det.ad_trade2year == null
+                                                                || det.ad_trade2year
+                                                                ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_trade2year ) }}
+                                                            </td>
+
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade2makename == 0 || det.ad_trade2makename
+                                                                == null ||
+                                                                det.ad_trade2makename ==
+                                                                undefined
+                                                                ? '
+                                                                - '
+                                                                :
+                                                                det.ad_trade2makename ) }}
+                                                            </td>
+                                                            <td style="text-align: left !important;">
+                                                                {{ (det.ad_trade2modelname == 0 ||
+                                                                det.ad_trade2modelname == null ||
+                                                                det.ad_trade2modelname ==
+                                                                undefined ?
+                                                                ' -
+                                                                ' :
+                                                                det.ad_trade2modelname ) }}
+                                                            </td>
+
+                                                            <td style="padding-right: .8rem !important;">
+                                                                {{ (det.ad_trade2vin == 0 || det.ad_trade2vin == null ||
+                                                                det.ad_trade2vin ==
+                                                                undefined ? '-' :
+                                                                det.ad_trade2vin
+                                                                ) }}
+                                                            </td>
+                                                            <td style="text-align: right;">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ (det.ad_trade2acv == 0 || det.ad_trade2acv ==
+                                                                    null ||
+                                                                    det.ad_trade2acv ==
+                                                                    undefined ?
+                                                                    '' :
+                                                                    '$' ) }}
+                                                                    <span>
+                                                                        {{ (det.ad_trade2acv == 0 || det.ad_trade2acv ==
+                                                                        null ||
+                                                                        det.ad_trade2acv ==
+                                                                        undefined ?
+                                                                        '-' :
+                                                                        det.ad_trade2acv | number:'1.0-0' ) }}
+                                                                    </span>
+                                                                </span>
+
+                                                            </td>
+
+                                                        </tr>
+                                                    </ng-container>
+                                                </ng-container>
+                                                <ng-template #ifNotShow>
+                                                    <tr *ngIf="NoData">
+                                                        <td colspan="22"
+                                                            style="text-align: center; font-size: .8vw; height: 30px;">
+                                                            No
+                                                            Data
+                                                            Found!!!</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</main>
