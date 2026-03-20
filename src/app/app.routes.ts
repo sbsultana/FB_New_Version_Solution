@@ -82,6 +82,9 @@ export const routes: Routes = [
   { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAppointments', loadComponent: () => import('./Reports/Services/ServiceAppointments/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceGross', loadComponent: () => import('./Reports/Services/ServiceGross/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'UnappliedTimeReport', loadComponent: () => import('./Reports/Services/UnappliedTime/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'WorkMix', loadComponent: () => import('./Reports/Services/WorkMix/dashboard/dashboard').then(m => m.Dashboard) },
+
   { path: 'ServiceGrossGL', loadComponent: () => import('./Reports/Services/ServiceGrossGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FixedSummaryGL', loadComponent: () => import('./Reports/Services/ServiceSummaryGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ROTraffic', loadComponent: () => import('./Reports/Services/ROTraffic/dashboard/dashboard').then(m => m.Dashboard) },

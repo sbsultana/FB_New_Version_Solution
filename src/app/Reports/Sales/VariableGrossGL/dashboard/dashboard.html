@@ -38,7 +38,7 @@
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(9)">Departments: <span class="light-font">
                             ( {{Department.length==2
-                                ?'All' : Department }} )
+                            ?'All' : Department }} )
                         </span>
                         <span class="arrow"></span></button>
                     <div class="reportstores-card my-2" *ngIf="activePopover === 9">
@@ -47,9 +47,11 @@
                                 <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                                     <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(2, auto);">
                                         <ng-container>
-                                            <button class="btn btn-outline-primary store-button" (click)="multipleorsingle('Dept','New')"
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('Dept','New')"
                                                 [ngClass]="{'active':Department.indexOf('New')>=0, 'inactive':Department.indexOf('New')<0}">New</button>
-                                            <button class="btn btn-outline-primary store-button" (click)="multipleorsingle('Dept','Used')"
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('Dept','Used')"
                                                 [ngClass]="{'active':Department.indexOf('Used')>=0, 'inactive':Department.indexOf('Used')<0}">Used</button>
                                         </ng-container>
                                     </div>
@@ -127,22 +129,19 @@
 
             </div>
         </div>
-        <div class="scorecard-double-header variablegrossgl-tbl" id="scrollcent" #scrollcent>
+        <div class="scorecard-multi-header variablegrossgl-tbl" id="scrollcent" #scrollcent>
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <th class="text-center bg-white">&nbsp; </th>
-                        <th class="spacer"></th>
-                        <th colspan="8" style="border-right: 2px solid #e0e1e2;">Units</th>
-                        <th class="spacer"></th>
-                        <th colspan="11" style="border-right: 2px solid #e0e1e2;">Gross</th>
+                        <th class="text-center">&nbsp; </th>
+                        <th colspan="8">Units</th>
+                        <th colspan="11">Gross</th>
 
 
                     </tr>
                     <tr class="bdr-btm">
                         <th><span>{{date |date:'MMMM'}} - <span>{{date |date:'yyyy'}}
                                 </span></span></th>
-                        <th class="spacer"></th>
                         <!-- <th></th> -->
                         <th style="cursor: pointer;" class="bdr-rt" (click)="sort('UNITS_MTD',SalesData)">
                             {{Datebinding}}
@@ -162,7 +161,6 @@
                         <th style="cursor: pointer;" class="bdr-rt" (click)="sort('UNITS_LM',SalesData)">LM </th>
                         <th style="cursor: pointer;" class="bdr-rt" (click)="sort('UNITS_MOM',SalesData)">MOM%</th>
                         <!-- <th id="DataHead11" (click)="sort('FrontGross_PVR',SalesData)"> Diff</th> -->
-                        <th class="spacer"></th>
 
                         <th style="cursor: pointer;" class="bdr-rt" (click)="sort('GROSS_FG',SalesData)"> Front
                             Gross </th>
@@ -190,16 +188,19 @@
                 <tbody [ngClass]="{'hidden': NoData == true }">
 
                     <ng-container *ngFor="let SalesInfo of SalesData; let i=index">
-                        <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': SalesInfo.Dealer === '-', 'divBold': SalesInfo.data1 === 'Report Total'  }"
-                            [id]="'DV_'+i">
-                            <td id="DataBody1" [id]="'D_'+i" style="background-color:#a2d2ff !important"> <span
-                                    style="float: left;  color: white; ;" [id]="'D_'+i"></span>
+                        <tr [ngClass]="{
+  'title': i % 2 == 0,
+  'titleOdd': i % 2 != 0,
+  'lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.STORE !== 'Report Total',
+  'divBold': SalesInfo.STORE === 'Report Total'
+}" [id]="'DV_'+i">
+                            <td id="DataBody1" [id]="'D_'+i"> <span style="float: left;  color: white; ;"
+                                    [id]="'D_'+i"></span>
                                 <span [id]="'D_'+i" title="{{SalesInfo.STORE}}">
                                     {{(SalesInfo.STORE == undefined ? '--' : ( (SalesInfo.STORE.toString() |
                                     slice:0:22) +
                                     (SalesInfo.STORE.toString().length > 22 ? '...' : '') ))}} </span>
                             </td>
-                            <td class="spacer"></td>
 
 
                             <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(SalesInfo.UNITS_MTD)}">{{
@@ -251,7 +252,6 @@
                                 </span>
 
                             </td>
-                            <td class="spacer"></td>
 
 
 
@@ -383,7 +383,7 @@
                             <tr class="sub-title" [id]="'DVN_'+i" *ngIf="data2.DEPT != null"
                                 [ngClass]="{'hidden': SalesInfo.Dealer === '+' ,'divBold': SalesInfo.data1 === 'Report Total' }">
 
-                                <td id="DataBody1" style="cursor: pointer;"
+                                <td id="DataBody1" class="px-3" style="cursor: pointer;"
                                     [ngStyle]="{'pointer-events': data2.GROSS_MTD != '' && data2.GROSS_MTD != undefined && data2.GROSS_MTD != null && data2.GROSS_MTD != 0 ? 'visible' : 'none' }">
 
                                     <span [id]="'D_'+i" title="{{data2.DEPT}}" style="padding-left: 1.5rem !important;"
@@ -395,7 +395,6 @@
                                         slice:0:22) +
                                         (data2.DEPT.toString().length > 22 ? '...' : '') ))}} </span>
                                 </td>
-                                <th class="spacer"></th>
                                 <!-- <td></td> -->
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(data2.UNITS_MTD)}">{{
                                     data2.UNITS_MTD == 0 || data2.UNITS_MTD == null ? '-' :
@@ -446,7 +445,6 @@
                                     </span>
 
                                 </td>
-                                <td class="spacer"></td>
 
 
 
@@ -604,29 +602,25 @@
                         <div class="col-lg-12">
                             <div class="row">
                                 <div class="col-lg-12 col-12">
-                                    <div class="m-2 p-2">
-                                        <div class="row align-items-center">
-                                            <div class="col-12 p-0 d-flex align-items-center"
-                                                *ngIf="Salesdetails && Salesdetails.length > 0">
-                                                <h2 class="m-0 p-0">
-                                                    <img src="" alt=""> <span
-                                                        class="slash">//</span>{{Salesdetails[0].userName}} <span
-                                                        class="slash">//</span>{{ Salesdetails[0].var1 }}
-                                                </h2>
-                                                <img src="images/Download.svg" alt="Download" class="ms-auto px-3"
-                                                    style="cursor: pointer;" (click)="AcctDetasil_ExportAsXLSX()" />
+                                    <div class="col-12 py-3 d-flex align-items-center">
+                                        <h2 class="m-0 p-0" *ngIf="Salesdetails && Salesdetails.length > 0">
+                                            <span>
+                                                <span class="font-blue">
+                                                    // {{Salesdetails[0].userName}}
+                                                </span>
+                                                <span>
+                                                    <i class="fa fa-long-arrow-right"></i>
+                                                    {{ Salesdetails[0].var1 }}
+                                                </span>
+                                            </span>
+                                        </h2>
+                                        <img src="images/Download.svg" alt="Download" class="ms-auto px-3"
+                                            style="cursor: pointer;" (click)="AcctDetasil_ExportAsXLSX()" />
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
 
-
-                                                <!-- <a class="close-btn" role="button" (click)="close()">
-                                        <img src="images/x.png" alt="Close" />
-                                    </a> -->
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="scorecard-single-header mb-3"
+                                    <div class="scorecard-single-header"
                                         style="overflow: auto;max-height: calc(100vh - 200px);"
                                         (scroll)="updateVerticalScroll($event)" #scrollOne>
                                         <div *ngIf="spinnerLoader"
@@ -679,77 +673,70 @@
                                                         *ngIf="expandedIndex === j && FSSubDetailsMap[j]?.length">
                                                         <tr>
                                                             <td colspan="4" style="padding: 0;">
-                                                                <h6 class="title m-0 ms-2 p-2">
-                                                                    <img src="" alt=""> <span
-                                                                        class="slash">//&nbsp;&nbsp;<b>{{FSSubDetailsMap[j][0].As_dealername}}</b>
-                                                                        -
-                                                                        <b>{{FSSubDetailsMap[j][0].AccountNumber}}</b></span>
-                                                                </h6>
                                                                 <div class="nested-table-container">
                                                                     <table
                                                                         class="table table-borderless mb-0 inner-table">
                                                                         <thead>
-                                                                            <!-- <tr>
-                              <th colspan="4" class="text-start">{{FSSubDetailsMap[j][0].Store}} - {{FSSubDetailsMap[j][0].accountnumber}}</th>
-                            </tr> -->
                                                                             <tr>
-                                                                                <!-- <th class="alignleft">Store Name</th>
-                              <th class="text-center">Account Number</th> -->
-                                                                                <th class="alignleft">Control</th>
-                                                                                <th class="text-center">Date</th>
-                                                                                <th class="alignleft">Account
-                                                                                    Description</th>
-                                                                                <th class="alignright">Balance</th>
+                                                                                <th class="alignleft"
+                                                                                    style="border-radius: 10px 0 0 0;width: 15%;">
+                                                                                    Control</th>
+                                                                                <th class="text-center" style="width: 15%;">Date</th>
+                                                                                <th class="alignleft" style="width: 50%;">Detail Description
+                                                                                </th>
+                                                                                <th class="alignright"
+                                                                                    style="border-radius: 0 10px 0 0;width: 20%">
+                                                                                    Balance</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
                                                                             <tr *ngFor="let sub of FSSubDetailsMap[j]">
-                                                                                <!-- <td style="background: #d2deed; text-align: left !important;">
-                                <span>{{ sub.Store || '-' }}</span>
-                              </td>
-                              <td style="background: #d2deed; text-align: center !important;">
-                                <span>{{ sub.accountnumber || '-' }}</span>
-                              </td> -->
                                                                                 <td
-                                                                                    style="background: #d2deed; text-align: left !important;">
-                                                                                    <span>{{ sub.control || '-'
+                                                                                    style="text-align: left !important;">
+                                                                                    <span>{{ sub.Control || '-'
                                                                                         }}</span>
                                                                                 </td>
                                                                                 <td
-                                                                                    style="background: #d2deed; text-align: center !important;">
-                                                                                    <span>{{sub.Date ? (sub.Date | date:
-                                                                                        'MM.dd.yyyy') : '-' }}</span>
+                                                                                    style="text-align: center !important;">
+                                                                                    <span>{{ sub.Date | date:
+                                                                                        'MM.dd.yyyy'
+                                                                                        }}</span>
                                                                                 </td>
                                                                                 <td
-                                                                                    style="background: #d2deed; text-align: left !important;">
+                                                                                    style="text-align: left !important;">
                                                                                     <span
-                                                                                        style="white-space: normal; width: 400px; display: block;">{{
+                                                                                        style="white-space: normal; width: 450px; display: block;">{{
                                                                                         sub['Account Description'] ||
-                                                                                        '-' }}</span>
+                                                                                        '-'
+                                                                                        }}</span>
                                                                                 </td>
-                                                                                <td style="background: #d2deed; text-align: end !important;width: 15%;"
+                                                                                <td style="text-align: end !important;"
                                                                                     [ngClass]="{ negative: !inTheGreen(sub.Balance) }">
                                                                                     <span
                                                                                         class="d-flex justify-content-between">
-                                                                                        $<span>{{ sub.Balance !== null
-                                                                                            && sub.Balance !== undefined
-                                                                                            ? (sub.Balance | number) :
-                                                                                            '-' }}</span>
+                                                                                        $<span>{{ sub.Balance !==
+                                                                                            null &&
+                                                                                            sub.Balance !==
+                                                                                            undefined ?
+                                                                                            (sub.Balance | number)
+                                                                                            : '-' }}</span>
                                                                                     </span>
                                                                                 </td>
                                                                             </tr>
                                                                         </tbody>
-                                                                        <tfoot>
+                                                                        <tfoot style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
                                                                             <tr>
                                                                                 <td colspan="3" class="text-end">Sub
                                                                                     Total:</td>
                                                                                 <td class="px-2 py-1"
+                                                                                    style="border-radius: 0 0 10px 0;"
                                                                                     [ngClass]="{ negative: !inTheGreen(getPostingSubAmountTotal(j)) }">
                                                                                     <span
                                                                                         class="d-flex justify-content-between">
                                                                                         $<span>{{
                                                                                             getPostingSubAmountTotal(j)
-                                                                                            | number }}</span>
+                                                                                            | number
+                                                                                            }}</span>
                                                                                     </span>
                                                                                 </td>
                                                                             </tr>
@@ -763,7 +750,7 @@
                                             </tbody>
 
                                             <!-- Table Footer -->
-                                            <tfoot *ngIf="paginatedItems.length > 0">
+                                            <tfoot *ngIf="paginatedItems.length > 0" style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 996;font-family: 'Roboto' !important;">
                                                 <tr>
                                                     <td colspan="3" class="sticky-footer text-end pe-3 py-1">Total:</td>
                                                     <td class="sticky-footer px-2 py-1"
@@ -782,6 +769,62 @@
                                                 </tr>
                                             </ng-template>
                                         </table>
+                                    </div>
+                                    <div class="footer px-2 mb-3">
+                                        <div class="container-fluid mt-1 HideItems">
+                                            <div class="col-lg-12 rounded">
+                                                <div class="row">
+                                                    <div
+                                                        class="pagination-container d-flex align-items-center justify-content-end text-black mt-2">
+                                                        <div class="page-size me-3">
+                                                            <label for="pageSize" class="me-1">Page Size:</label>
+                                                            <select id="pageSize" [(ngModel)]="itemsPerPage"
+                                                                (change)="onPageSizeChange()"
+                                                                class="form-select d-inline-block" style="width: 80px;">
+                                                                <option [ngValue]="100">100</option>
+                                                                <option [ngValue]="300">300</option>
+                                                                <option [ngValue]="500">500</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="page-info me-3">
+                                                            {{ getStartRecordIndex() }} - {{ getEndRecordIndex() }} of
+                                                            {{
+                                                            filteredSalesdetailsData.length }}
+                                                        </div>
+                                                        <div class="pagination-buttons d-flex align-items-center gap-1">
+
+                                                            <button (click)="goToFirstPage()"
+                                                                [disabled]="currentPage === 1" class="btn p-0">
+                                                                <img src="images/Arrow_End_Left_Blk.svg" alt="First" />
+                                                            </button>
+
+                                                            <button (click)="prevPage()" [disabled]="currentPage === 1"
+                                                                class="btn p-0">
+                                                                <img src="images/Alt_Arrow_Left_Blk.svg"
+                                                                    alt="Previous" />
+                                                            </button>
+
+                                                            <span class="page-label mx-2">
+                                                                Page {{ currentPage }} of {{ getMaxPageNumber() }}
+                                                            </span>
+
+                                                            <button (click)="nextPage()"
+                                                                [disabled]="currentPage === getMaxPageNumber()"
+                                                                class="btn p-0">
+                                                                <img src="images/Alt_Arrow_Right_Blk.svg" alt="Next" />
+                                                            </button>
+
+                                                            <button (click)="goToLastPage()"
+                                                                [disabled]="currentPage === getMaxPageNumber()"
+                                                                class="btn p-0">
+                                                                <img src="images/Arrow_End_Right_Blk.svg" alt="Last" />
+                                                            </button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
