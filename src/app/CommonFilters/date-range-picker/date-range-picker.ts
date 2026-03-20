@@ -37,7 +37,7 @@ export class DateRangePicker {
   others: any = '';
   storedisplayname: any = ''
   storecount: any = null
-
+  customeVisibility: any = 'Y'
 
   constructor(private datepipe: DatePipe, private datesSrvc: Setdates) { }
 
@@ -51,6 +51,7 @@ export class DateRangePicker {
       this.maxDate = changes['Dates'].currentValue.MaxDate;
       this.DateType = changes['Dates'].currentValue.DateType;
       this.bsRangeValue = [new Date(this.FromDate), new Date(this.ToDate)];
+      this.customeVisibility =  changes['Dates'].currentValue?.custom ? changes['Dates'].currentValue?.custom : 'Y';
       console.log(this.Data, '........');
 
       if (this.Data == undefined || this.Data.length == 0) {

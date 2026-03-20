@@ -1,0 +1,47 @@
+<div class="container-fluid d-flex justify-content-center align-items-center" style="padding-top: 10vh;">
+    <div class="gross-popup">
+        <div class="header d-flex align-items-center">
+            <h5 class="title m-0 ms-2">
+                <img src="" alt=""> <span class="slash"><span style="color: #2d91f1;">//</span>
+                    {{PTRgraphdetails.NAME}}</span>
+            </h5>
+            <a type="button" class="close-btn ms-auto me-0" (click)="close()"><i class="fa-solid fa-xmark"></i> </a>
+        </div>
+        <div class="content">
+            <h6 class="slash text-center py-2">
+                <span style="color: #2d91f1;">
+                    {{
+                        PTRgraphdetails.Object.paytype == undefined || PTRgraphdetails.Object.paytype == ''
+                        ? 'TOTALS'
+                        : PTRgraphdetails.Object.paytype == 'Totals'
+                        ? 'TOTALS'
+                        : PTRgraphdetails.Object.paytype == 'C'
+                        ? 'CUSTOMER PAY'
+                        : PTRgraphdetails.Object.paytype == 'T'
+                        ? 'WARRANTY'
+                        : PTRgraphdetails.Object.paytype == 'I'
+                        ? 'INTERNAL'
+                        : PTRgraphdetails.Object.paytype == 'R'
+                        ? 'RETAIL'
+                        : PTRgraphdetails.Object.paytype == 'W'
+                        ? 'WHOLESALE'
+                        : (PTRgraphdetails.Object.paytype.toString() | slice:0:26) +
+                        (PTRgraphdetails.Object.paytype.toString().length > 26 ? '...' : '')
+                        }}
+                </span>
+                -
+                <span>
+                    {{ (PTRgraphdetails.Object.variable === '' || PTRgraphdetails.Object.variable === null) ? '-' : (PTRgraphdetails.Object.variable === 'GP' ?
+                          'GP%' : PTRgraphdetails.Object.variable) }}
+                </span>
+            </h6>
+            <div class="d-flex justify-content-center">
+            </div>
+            <div class="p-3 pt-2" style="width:100%;">
+                <canvas id="myChart" width="700" height="250" #mychart></canvas>
+            </div>
+        </div>
+        <div class="header ">
+        </div>
+    </div>
+</div>

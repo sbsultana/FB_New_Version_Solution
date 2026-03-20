@@ -1,0 +1,194 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="dp.show()">
+                            Month
+                            <span class="light-font">
+                                ( {{ Month | date:'MMMM/yyyy' }} )
+                            </span>
+                        </button>
+                        <input bsDatepicker [(ngModel)]="Month" [bsConfig]="bsConfig" readonly
+                            (keydown)="$event.preventDefault()" [bsConfig]="bsConfig" #dp="bsDatepicker"
+                            (onShown)="onOpenCalendar($event)" (ngModelChange)="changeDate($event)" [maxDate]="maxDate"
+                            [minDate]="minDate" style="position: absolute; opacity: 0; height: 0; width: 0;" />
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Period <span class="light-font">( {{ PreviousMonths === '3' ?
+                                'Last 3 Months' : PreviousMonths === '6' ? 'Last 6 Months' : PreviousMonths === '9' ?
+                                'Last 9 Months' :
+                                PreviousMonths === '13' ? 'Last 13 Months' : 'Select' }} )</span>
+                            <span class="arrow"></span>
+                        </button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button"
+                                    [ngClass]="{'active': PreviousMonths == '3', 'inactive': PreviousMonths != '3'}"
+                                    (click)="singleSelect('3')">Last 3 Months</button>
+                                <button class="outline-button" [ngClass]="{'active': PreviousMonths == '6'}"
+                                    (click)="singleSelect('6')">Last 6 Months</button>
+                                <button class="outline-button" [ngClass]="{'active': PreviousMonths == '9'}"
+                                    (click)="singleSelect('9')">Last 9 Months</button>
+                                <button class="outline-button" [ngClass]="{'active': PreviousMonths == '13'}"
+                                    (click)="singleSelect('13')">Last 13 Months</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(2)">
+                            Report Totals <span class="light-font">( {{ ReportTotal === 'B' ? 'Bottom' :
+                                ReportTotal === 'T' ? 'Top' : 'Select' }} )</span>
+                            <span class="arrow"></span>
+                        </button>
+                        <div class="timeframe" *ngIf="activePopover === 2">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button"
+                                    [ngClass]="{'active': ReportTotal === 'B','inactive': ReportTotal !== 'B'}"
+                                    (click)="TotalReport('B')">Bottom</button>
+                                <button class="outline-button" [ngClass]="{'active': ReportTotal === 'T'}"
+                                    (click)="TotalReport('T')">Top</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scorecard-single-header WholesaleGrossGroup-tbl w-75">
+            <table class="table mb-0 w-100">
+                <thead style="text-transform: uppercase;">
+                    <tr></tr>
+                    <tr>
+                        <th class="lightblue-bg">{{ServiceTrendingKeys[1]}}<span> -
+                            </span>{{ServiceTrendingKeys[ServiceTrendingKeys.length - 1]}}
+                        </th>
+                        <th class="spacer"></th>
+                        <th class="bdr-rt">Graph</th>
+                        <th class="spacer"></th>
+                        <th *ngFor="let date of ServiceTrendingKeys;let i=index">
+                            <span *ngIf="date=='PACE'">{{Month | date:'MMM' }}</span>
+                            <span>{{ date}}</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="ServiceLaborTrendData != undefined ">
+                        <ng-container *ngIf="ServiceLaborTrendData.length > 0; else NoServiceLaborTrendData">
+                            <ng-container *ngFor="let STR of ServiceLaborTrendData; let j=index">
+                                <tr class="lightblue-bg">
+                                    <td><span class="dlrship" style="text-transform: uppercase;"> {{(STR?.AST_DEALERNAME
+                                            == "" ||
+                                            STR?.AST_DEALERNAME == null ? '' : STR?.AST_DEALERNAME)}}
+                                        </span></td>
+                                    <td class="spacer"></td>
+                                    <td></td>
+                                    <td class="spacer"></td>
+                                    <td colspan="14"></td>
+                                </tr>
+                                <ng-container *ngFor="let subdata of STR?.sub; let x = index">
+                                    <ng-container *ngFor="let subcat of subdata.subcategory;let i=index">
+                                        <tr *ngIf="i==0"
+                                            [style.fontFamily]="STR.AST_DEALERNAME === 'Report Totals' ? 'FaktPro-Bold' : 'FaktPro-Normal'"
+                                            [ngClass]="{'total-ast_paytype': subdata.ast_paytype === 'Totals'}"
+                                            class="sub-title">
+                                            <td>
+                                                <span class="dlrship px-3" title="{{subcat.ast_paytype}}"
+                                                    style="cursor: pointer;">
+                                                    {{
+                                                    subcat.ast_paytype === 'Totals' ? 'TOTAL' :
+                                                    ( subcat.ast_paytype === undefined || subcat.ast_paytype === '' ?
+                                                    '--' :
+                                                    (
+                                                    (subcat.ast_paytype.toString() | slice:0:26) +
+                                                    (subcat.ast_paytype.toString().length > 26 ? '...' :
+                                                    '') )
+                                                    )
+                                                    }}
+                                                </span>
+                                            </td>
+                                            <td class="spacer"></td>
+                                            <td></td>
+                                            <td class="spacer"></td>
+                                            <td colspan="14"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="dlrship px-4"> {{ (subcat.variable === '' ||
+                                                    subcat.variable === null) ? '-' :
+                                                    (subcat.variable === 'GP' ?
+                                                    'GP%' : subcat.variable) }}
+                                                </span>
+                                            </td>
+                                            <td class="spacer"></td>
+                                            <td style="text-align: center !important; cursor: pointer;">
+                                                <img width="17px" src="images/LineChart_Icon2.png"
+                                                    class="ms-2 HideItems" style="cursor: pointer;" title="Show Graph"
+                                                    (click)="openGraph(Month,ServiceTrendingKeys,subcat,'MonthSummary')">
+                                            </td>
+                                            <td class="spacer"></td>
+                                            <ng-container *ngFor="let key of ServiceTrendingKeys">
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }" *ngIf="subcat.variable === 'RO COUNT' || subcat.variable === 'HOURS' || subcat.variable === 'HOURS / RO'
+                                     || subcat.variable === 'GP' || subcat.variable === 'VIN COUNT'">
+                                                    {{ subcat[key] ? (subcat.variable === 'GP' ? (subcat[key] |
+                                                    number :'1.0-0')+'%':
+                                                    (subcat[key] | number)) : '-' }}
+                                                </td>
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }"
+                                                    *ngIf="subcat.variable !== 'RO COUNT' && subcat.variable !== 'HOURS' && subcat.variable !== 'HOURS / RO' && subcat.variable !== 'VIN COUNT' && subcat.variable !== 'GP' && subcat.variable !== 'ELR'">
+                                                    <span class="d-flex justify-content-between"> {{
+                                                        (subcat[key] == 0 || subcat[key] == null ? '&nbsp;' :
+                                                        '$') }} <span> {{
+                                                            (subcat[key] == 0 || subcat[key] == null ? '-' :
+                                                            subcat[key] |number:'1.0-0') }}</span></span>
+                                                </td>
+                                                <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }"
+                                                    *ngIf="subcat.variable === 'ELR'">
+                                                    <span class="d-flex justify-content-between"> {{
+                                                        (subcat[key] == 0 || subcat[key] == null ? '&nbsp;' :
+                                                        '$') }} <span> {{
+                                                            (subcat[key] == 0 || subcat[key] == null ? '-' :
+                                                            subcat[key] |number:'1.2-2') }}</span></span>
+                                                </td>
+                                            </ng-container>
+                                        </tr>
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <th class="spacer"></th>
+                                <td colspan="16">&nbsp;</td>
+                            </tr>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #NoServiceLaborTrendData>
+                        <tr *ngIf="NoData">
+                            <td></td>
+                            <td colspan="16" style="text-align: center;font-size: 14px;pointer-events: none;">
+                                <label>No Data Found</label>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<!-- <button (click)="printDiv()">Print Report</button> -->

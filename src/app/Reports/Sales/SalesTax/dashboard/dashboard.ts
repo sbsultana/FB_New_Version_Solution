@@ -324,7 +324,6 @@ export class Dashboard {
 
 
   //////////////////////  REPORT CODE /////////////////////////////////////////////
-  activePopover: number = -1;
   custom: boolean = false;
   bsRangeValue!: Date[];
   @HostListener('document:click', ['$event'])
@@ -334,7 +333,8 @@ export class Dashboard {
       this.activePopover = -1;
     }
   }
-
+ activePopover: number = -1;
+  
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }

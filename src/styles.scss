@@ -1033,6 +1033,17 @@ select:focus {
 }
 
 ////////////////////////////////////////////Grid System//////////////////////////////////////
+.popuppointer {
+  cursor: pointer;
+  // color: #026df3;
+  // text-decoration: underline;
+}
+
+.popupdisable {
+  pointer-events: none;
+  color: #000;
+  // text-decoration: underline;
+}
 
 .scorecard-multi-header {
   display: flex;
@@ -3011,5 +3022,3 @@ select:focus {
     }
   }
 }
-
-

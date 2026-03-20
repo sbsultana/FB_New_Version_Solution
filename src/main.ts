@@ -12,6 +12,9 @@ import { environment } from './environments/environment';
 
 import { APP_BASE_HREF } from '@angular/common';
 import { TimeConversionPipe } from './app/Core/Providers/pipes/timeconversion.pipe';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 // const baseTag = document.querySelector('base');
 // if (baseTag) {
 //   const baseHref = environment.baseHref || '/';
@@ -25,7 +28,7 @@ bootstrapApplication(App, {
 
     provideRouter(routes),
     provideHttpClient(),
-    provideAnimations(),
+    provideAnimations(),    
     importProvidersFrom(
       // ToastrModule.forRoot({
       //   positionClass: 'toast-top-right',

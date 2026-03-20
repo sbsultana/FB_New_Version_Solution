@@ -1,0 +1,813 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+
+                    <!-- Store Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(4)">Groupings <span class="light-font">
+                                ( {{selectedDataGrouping.length == 1 ?
+                                selectedDataGrouping[0].ARG_LABEL:'Selected' }}&nbsp;{{selectedDataGrouping.length == 1
+                                ? '' :
+                                selectedDataGrouping.length
+                                }} )
+                            </span>
+
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===4">
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="allstores text-start">
+                                            <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                                style="pointer-events: none;">Choose up to 3 Filters to Group Your
+                                                Data</a>
+                                        </div>
+                                        <div class="store-columns flex-grow-1">
+                                            <ng-container *ngFor="let grp of dataGrouping;let i=index">
+                                                <button class="btn btn-outline-primary store-button"
+                                                    (click)='SelectedData(grp)'
+                                                    [ngClass]="{'active':selectedDataGrouping.indexOf(grp)>=0,'inactive':selectedDataGrouping.indexOf(grp)<0,'d-none':grp.Active=='N'}">
+                                                    <span>{{grp.ARG_LABEL}}</span> <span
+                                                        *ngIf="selectedDataGrouping.indexOf(grp)>=0"
+                                                        style="float:right">
+                                                        {{selectedDataGrouping.indexOf(grp)+1}}
+                                                    </span>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            Department <span class="light-font">( {{Department.length ==
+                                1 ? Department :
+                                'Selected' }}
+                                {{Department.length == 1 ? '':
+                                Department.length }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 3">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
+                                    [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Parts')"
+                                    [ngClass]="{'active':Department.indexOf('Parts')>=0, 'inactive':Department.indexOf('Parts')<0}">Parts</button>
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Details')"
+                                    [ngClass]="{'active':Department.indexOf('Details')>=0, 'inactive':Department.indexOf('Details')<0}">Details</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(2)">
+                            Report Totals <span class="light-font">( {{ TotalReport == 'T' ? 'Top' :'Bottom' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 2">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('TB','T')"
+                                    [class.active]="TotalReport=='T'">
+                                    Top
+                                </button>
+                                <button class="outline-button" (click)="multipleorsingle('TB','B')"
+                                    [class.active]="TotalReport=='B'">
+                                    Bottom
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th> <span style="color: white;">{{FromDate |date:'MMMM'}} <span
+                                        style="color: #fff !important"
+                                        *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                        |date:'MMMM'}} </span>
+                                </span></th>
+                            <th class="spacer"></th>
+                            <th colspan="1" style="border-right: 2px solid #e0e1e2;"> Sale </th>
+                            <th class="spacer"></th>
+                            <th colspan="7" style="border-right: 2px solid #e0e1e2;"> Gross </th>
+                            <th class="spacer"></th>
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;"> Volume </th>
+                            <th class="spacer"></th>
+                            <th colspan="3" style="border-right: 2px solid #e0e1e2;">Performance</th>
+                        </tr>
+                        <tr>
+                            <th><span style="color: white;">{{FromDate |date:'dd'}}
+                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{ToDate |date:'dd'}},
+                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                        |date:'yyyy'}}</span>
+                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                        date:'yyyy'}}</span>
+                                </span>
+                            </th>
+                            <th class="spacer"></th>
+                            <th (click)="sort('totalsale',ServiceData)" style="cursor: pointer;">Total</th>
+                            <th class="spacer"></th>
+                            <th (click)="sort('Total',ServiceData)" style="cursor: pointer;">Total</th>
+                            <th (click)="sort('TotalGross_Pace',ServiceData)" style="cursor: pointer;">Pace</th>
+                            <th (click)="sort('Gross_Target',ServiceData)" style="cursor: pointer;">Target</th>
+                            <th (click)="sort('Diff',ServiceData)" style="cursor: pointer;">Diff</th>
+                            <th (click)="sort('Lmonth',ServiceData)" style="cursor: pointer;"><span>{{FromDate
+                                    |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                        {{ToDate
+                                        |date:'MMM'}} </span>
+                                </span> {{lastyearDate |
+                                date:'YYYY'}}</th>
+                            <th (click)="sort('LDiff',ServiceData)" style="cursor: pointer;"> Diff</th>
+                            <th (click)="sort('YOY',ServiceData)" style="cursor: pointer;">YOY%</th>
+                            <th class="spacer"></th>
+                            <!-- <th (click)="sort('Discount',ServiceData)" style="cursor: pointer;">Discounts</th> -->
+                            <th (click)="sort('RoToal',ServiceData)" style="cursor: pointer;">Total</th>
+                            <th (click)="sort('Total_ROPACE',ServiceData)" style="cursor: pointer;">Pace</th>
+                            <th>Target</th>
+                            <th>Diff</th>
+                            <th class="spacer"></th>
+                            <th (click)="sort('Sales_Per_RO',ServiceData)" style="cursor: pointer;">Sales/RO</th>
+                            <th (click)="sort('Average_RO',ServiceData)" style="cursor: pointer;">Avg RO</th>
+                            <th (click)="sort('GP',ServiceData)" style="cursor: pointer;">GP%</th>
+                        </tr>
+                    </thead>
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+                        <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
+                            <tr [ngClass]="{ 'Selectedrow': ServiceInfo.Dealer === '-'   , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
+                                [id]="'DV_'+i">
+                                <td style="padding-left: 1rem !important;"
+                                    [ngStyle]="{'background-color':ServiceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    <span [id]="'D_'+i"
+                                        title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
+                                        (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'',tmp)"
+                                        class="layer1" *ngIf="selectedDataGrouping[0].columnName != 'cdate'">
+                                        {{(ServiceInfo.data1 == undefined ? '-' : ( (ServiceInfo.data1.toString() |
+                                        slice:0:30) + (ServiceInfo.data1.toString().length > 30 ? '...' : '') ))}}
+                                    </span>
+                                    <span [id]="'D_'+i"
+                                        title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
+                                        (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'',tmp)"
+                                        class="layer1" *ngIf="selectedDataGrouping[0].columnName == 'cdate'">
+                                        {{( ServiceInfo.data1 == undefined || ServiceInfo.data1 == '' ||
+                                        ServiceInfo.data1 == null ? '-' :(ServiceInfo.data1 !='REPORTS TOTAL' ?
+                                        (ServiceInfo.data1 | date:'MM/dd/YYYY' ): 'REPORTS TOTAL' ) )}}
+                                    </span>
+                                </td>
+                                <td class="spacer"></td>
+                                <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.totalsale)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.totalsale == 0 || ServiceInfo.totalsale == null ? '' :
+                                        '$'}} <span>
+                                            {{
+                                            ServiceInfo.totalsale == 0 || ServiceInfo.totalsale == null ? '' :
+                                            ServiceInfo.totalsale | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+                                <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.Total == 0 || ServiceInfo.Total == null ? '' :
+                                        '$'}} <span>
+                                            {{
+                                            ServiceInfo.Total == 0 || ServiceInfo.Total == null ? '' :
+                                            ServiceInfo.Total | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.TotalGross_Pace == 0 || ServiceInfo.TotalGross_Pace == null
+                                        ? '' :
+                                        '$'}}<span>
+                                            {{
+                                            ServiceInfo.TotalGross_Pace == 0 || ServiceInfo.TotalGross_Pace == null
+                                            ? '-' :
+                                            ServiceInfo.TotalGross_Pace | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Gross_Target)}">
+                                    <span class="d-flex justify-content-between">{{
+                                        ServiceInfo.Gross_Target == 0 || ServiceInfo.Gross_Target == null
+                                        ? '' :
+                                        '$'}}<span>
+                                            {{
+                                            ServiceInfo.Gross_Target == 0 || ServiceInfo.Gross_Target == null
+                                            ? '-' :
+                                            ServiceInfo.Gross_Target | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.Diff)">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.Diff == 0 || ServiceInfo.Diff == null
+                                        ? '' :
+                                        '$'}}&nbsp;&nbsp; <span>
+                                            {{
+                                            ServiceInfo.Diff == 0 || ServiceInfo.Diff == null
+                                            ? '-' : ServiceInfo.Diff |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Lmonth)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.Lmonth == 0 || ServiceInfo.Lmonth == null
+                                        ? '' : '$'}} <span>
+                                            {{
+                                            ServiceInfo.Lmonth == 0 || ServiceInfo.Lmonth == null
+                                            ? '-' : ServiceInfo.Lmonth |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.LDiff)">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        ServiceInfo.LDiff == 0 || ServiceInfo.LDiff == null
+                                        ? '' : '$'}}<span>
+                                            {{
+                                            ServiceInfo.LDiff == 0 || ServiceInfo.LDiff == null
+                                            ? '-' : ServiceInfo.LDiff |
+                                            number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.YOY)">
+                                    {{
+                                    ServiceInfo.YOY == 0 || ServiceInfo.YOY == null
+                                    ? '-' : (ServiceInfo.YOY
+                                    |number:'1.2-2')+'%'}}</td>
+                                <th class="spacer"></th>
+                                <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RoToal)}">{{
+                                    (ServiceInfo.RoToal == 0 || ServiceInfo.RoToal == null ? '-' :
+                                    ServiceInfo.RoToal |number:'1.0-0' ) }}</td>
+                                <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_ROPACE)}">{{
+                                    (ServiceInfo.Total_ROPACE == 0 || ServiceInfo.Total_ROPACE == null
+                                    ? '-' :
+                                    ServiceInfo.Total_ROPACE |number:'1.0-0' ) }}</td>
+                                <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_Target)}">{{
+                                    (ServiceInfo.RO_Target == 0 || ServiceInfo.RO_Target == null ? '-' :
+                                    ServiceInfo.RO_Target |number:'1.0-0' ) }}</td>
+                                <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.ROCountDiff)">
+                                    {{
+                                    (ServiceInfo.ROCountDiff == 0 || ServiceInfo.ROCountDiff == null ? '-' :
+                                    ServiceInfo.ROCountDiff |number:'1.0-0' ) }}</td>
+                                <th class="spacer"></th>
+                                <td id="DataBody16" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Sales_Per_RO)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (ServiceInfo.Sales_Per_RO == 0 || ServiceInfo.Sales_Per_RO == null ? '' :
+                                        '$') }}
+                                        <span>
+                                            {{
+                                            (ServiceInfo.Sales_Per_RO == 0 || ServiceInfo.Sales_Per_RO == null ? '-' :
+                                            ServiceInfo.Sales_Per_RO |number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody18" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Average_RO)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (ServiceInfo.Average_RO == 0 || ServiceInfo.Average_RO == null ? '' :
+                                        '$' ) }}
+                                        <span>
+                                            {{
+                                            (ServiceInfo.Average_RO == 0 || ServiceInfo.Average_RO == null ? '-' :
+                                            ServiceInfo.Average_RO |number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GP)}">{{
+                                    (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '-' :
+                                    ServiceInfo.GP |number:'1.1-1' ) }}{{
+                                    (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '' : '%'
+                                    ) }}</td>
+                            </tr>
+                            <ng-container *ngIf="ServiceInfo.Data2 != undefined">
+                                <ng-container *ngFor="let dt2 of ServiceInfo.Data2,let k=index">
+                                    <tr [id]="'DVN_'+i" class="sub-title"
+                                        [ngClass]="{'hidden': ServiceInfo.Dealer === '+' , 'title-l3' : k % 2 == 0 , 'titleOdd-l3' : k % 2 != 0}">
+                                        <td style=" padding-left: 2rem !important; ">
+                                            <span title="{{dt2.data2}}"
+                                                (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo,tmp)"
+                                                class="layer2" *ngIf="selectedDataGrouping[1].columnName != 'cdate'"
+                                                [id]="'DVN_'+k">
+                                                {{(dt2.data2 == undefined ? '--' : ( (dt2.data2.toString() | slice:0:30)
+                                                + (dt2.data2.toString().length > 30 ? '...' : '') ))}}
+                                            </span>
+                                            <span title="{{dt2.data2}}"
+                                                (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo,tmp)"
+                                                class="layer2" *ngIf="selectedDataGrouping[1].columnName == 'cdate'"
+                                                [id]="'DVN_'+k">
+                                                {{( dt2.data2 == undefined || dt2.data2 == '' || dt2.data2 ==
+                                                null ? '-' : dt2.data2 | date:'MM/dd/YYYY' )}}
+                                            </span>
+                                        </td>
+                                        <td class="spacer"></td>
+                                        <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.totalsale)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.totalsale == 0 || dt2.totalsale == null ? '' :
+                                                '$'}} <span>
+                                                    {{
+                                                    dt2.totalsale == 0 || dt2.totalsale == null ? '' :
+                                                    dt2.totalsale | number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Total)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{dt2.Total == undefined ? '' : (dt2.Total == 0 ||
+                                                dt2.Total == null ? '': '$')}}
+                                                <span>
+                                                    {{dt2.Total == undefined ? '' : (dt2.Total == 0 ||
+                                                    dt2.Total == null ? '-': dt2.Total | number:'1.0-0')}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.TotalGross_Pace)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt2.TotalGross_Pace == undefined ? '' :
+                                                (dt2.TotalGross_Pace == 0 || dt2.TotalGross_Pace == null ? '' :
+                                                '$')
+                                                }}
+                                                <span>
+                                                    {{ dt2.TotalGross_Pace == undefined ? '' :
+                                                    (dt2.TotalGross_Pace == 0 || dt2.TotalGross_Pace == null ? '-' :
+                                                    dt2.TotalGross_Pace |number:'1.0-0')
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Gross_Target)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt2.Gross_Target == undefined ? '' :
+                                                (dt2.Gross_Target == 0 || dt2.Gross_Target == null ? '' :
+                                                '$')
+                                                }}
+                                                <span>
+                                                    {{ dt2.Gross_Target == undefined ? '' :
+                                                    (dt2.Gross_Target == 0 || dt2.Gross_Target == null ? '-' :
+                                                    dt2.Gross_Target |number:'1.0-0')
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+
+                                        <td [ngClass]="getColorClass(dt2.Diff)">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt2.Diff == undefined ? '' :
+                                                (dt2.Diff == 0 || dt2.Diff == null ? '' :
+                                                '$')
+                                                }}
+                                                <span>
+                                                    {{ dt2.Diff == undefined ? '' :
+                                                    (dt2.Diff == 0 || dt2.Diff == null ? '-' :
+                                                    dt2.Diff |number:'1.0-0')
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(dt2.Lmonth)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.Lmonth == 0 || dt2.Lmonth == null
+                                                ? '' :'$'}}
+                                                <span>
+                                                    {{
+                                                    dt2.Lmonth == 0 || dt2.Lmonth == null
+                                                    ? '-' : dt2.Lmonth |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="getColorClass(dt2.LDiff)">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt2.LDiff == 0 || dt2.LDiff == null
+                                                ? '' : '$'}}
+                                                <span>
+                                                    {{
+                                                    dt2.LDiff == 0 || dt2.LDiff == null
+                                                    ? '-' : dt2.LDiff |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="getColorClass(dt2.YOY)">
+                                            {{
+                                            dt2.YOY == 0 || dt2.YOY == null
+                                            ? '-' : (dt2.YOY
+                                            |number:'1.2-2')+'%'}}</td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.RoToal)}">{{
+                                            dt2.RoToal == undefined ? '' :
+                                            (dt2.RoToal == 0 ||
+                                            dt2.RoToal == null ? '-' : dt2.RoToal |number:'1.0-0') }}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Total_ROPACE)}">{{dt2.Total_ROPACE ==
+                                            undefined ? '' : (dt2.Total_ROPACE
+                                            == 0 || dt2.Total_ROPACE == null ? '-' :
+                                            dt2.Total_ROPACE |number:'1.0-0' ) }}</td>
+                                        <td>
+                                            <span *ngIf="selectedDataGrouping.length <= 2 ">-</span>
+                                            <span *ngIf="selectedDataGrouping.length == 3"></span>
+                                        </td>
+                                        <td>
+                                            <span *ngIf="selectedDataGrouping.length <= 2 ">-</span>
+                                            <span *ngIf="selectedDataGrouping.length == 3"></span>
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Sales_Per_RO)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt2.Sales_Per_RO==
+                                                undefined ? '' : (dt2.Sales_Per_RO
+                                                == 0 || dt2.Sales_Per_RO == null ? '' : '$' ) }}
+                                                <span> {{ dt2.Sales_Per_RO==
+                                                    undefined ? '' : (dt2.Sales_Per_RO
+                                                    == 0 || dt2.Sales_Per_RO == null ? '-' : dt2.Sales_Per_RO
+                                                    |number:'1.2-2' ) }} </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Average_RO)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt2.Average_RO ==
+                                                undefined ? '' : (dt2.Average_RO == 0
+                                                || dt2.Average_RO == null ? '' : '$' )}}
+                                                <span>
+                                                    {{ dt2.Average_RO ==
+                                                    undefined ? '' : (dt2.Average_RO == 0
+                                                    || dt2.Average_RO == null ? '-' : dt2.Average_RO
+                                                    |number:'1.0-0' )}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt2.GP)}">{{ dt2.GP == undefined ? '':
+                                            (dt2.GP == 0 ||
+                                            dt2.GP == null ? '-' : dt2.GP | number : '1.1-1' )}}{{ (dt2.GP == 0 ||
+                                            dt2.GP == null ? '' : '%' )}}</td>
+                                    </tr>
+                                    <tr [id]="'DVN_'+i" class="sub-subtitle" *ngFor="let dt3 of dt2.subdata,let j=index"
+                                        [ngClass]="{'hidden': ServiceInfo.Dealer === '+' || dt2.data2sign =='+' , 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0}">
+                                        <td style=" padding-left: 3rem !important;">
+                                            <span title="{{dt3.data3}}"
+                                                (click)="openDetails(dt3,ServiceInfo,'3',dt2,tmp)" class="layer3"
+                                                *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
+                                                {{(dt3.data3 == undefined ? '--' : ( (dt3.data3.toString() | slice:0:30)
+                                                + (dt3.data3.toString().length > 30 ? '...' : '') ))}}
+                                            </span>
+                                            <span title="{{dt3.data3}}"
+                                                (click)="openDetails(dt3,ServiceInfo,'3',dt2,tmp)" class="layer3"
+                                                *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
+                                                {{( dt3.data3 == undefined || dt3.data3 == '' || dt3.data3 ==
+                                                null ? '-' : dt3.data3 | date:'MM/dd/YYYY' )}}
+                                            </span>
+                                        </td>
+                                        <td class="spacer"></td>
+                                        <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt3.totalsale)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt3.totalsale == 0 || dt3.totalsale == null ? '' :
+                                                '$'}} <span>
+                                                    {{
+                                                    dt3.totalsale == 0 || dt3.totalsale == null ? '' :
+                                                    dt3.totalsale | number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Total)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{dt3.Total == 0 ||
+                                                dt3.Total == null ? '' : '$'}}
+                                                <span>
+                                                    {{dt3.Total == 0 ||
+                                                    dt3.Total == null ? '-' : dt3.Total |number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_Pace)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ||
+                                                dt3.TotalGross_Pace == undefined ? '' : '$'}}
+                                                <span>
+                                                    {{dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ||
+                                                    dt3.TotalGross_Pace == undefined ? '-' : dt3.TotalGross_Pace
+                                                    |number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Gross_Target)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt3.Gross_Target == undefined ? '' :
+                                                (dt3.Gross_Target == 0 || dt3.Gross_Target == null ? '' :
+                                                '$')
+                                                }}
+                                                <span>
+                                                    {{ dt3.Gross_Target == undefined ? '' :
+                                                    (dt3.Gross_Target == 0 || dt3.Gross_Target == null ? '-' :
+                                                    dt3.Gross_Target |number:'1.0-0')
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+
+                                        <td [ngClass]="getColorClass(dt3.Diff)">
+                                            <span class="d-flex justify-content-between">
+                                                {{ dt3.Diff == undefined ? '' :
+                                                (dt3.Diff == 0 || dt3.Diff == null ? '' :
+                                                '$')
+                                                }}
+                                                <span>
+                                                    {{ dt3.Diff == undefined ? '' :
+                                                    (dt3.Diff == 0 || dt3.Diff == null ? '-' :
+                                                    dt3.Diff |number:'1.0-0')
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(dt3.Lmonth)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt3.Lmonth == 0 || dt3.Lmonth == null
+                                                ? '' : '$'}}
+                                                <span>
+                                                    {{
+                                                    dt3.Lmonth == 0 || dt3.Lmonth == null
+                                                    ? '-' : dt3.Lmonth |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="getColorClass(dt3.LDiff)">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                dt3.LDiff == 0 || dt3.LDiff == null
+                                                ? '' : '$'}}
+                                                <span>
+                                                    {{
+                                                    dt3.LDiff == 0 || dt3.LDiff == null
+                                                    ? '-' : dt3.LDiff |
+                                                    number:'1.0-0'}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td id="DataBody5" [ngClass]="getColorClass(dt3.YOY)">
+                                            {{
+                                            dt3.YOY == 0 || dt3.YOY == null
+                                            ? '-' : (dt3.YOY
+                                            |number:'1.2-2')+'%'}}</td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.RoToal)}">{{ (dt3.RoToal == 0
+                                            ||
+                                            dt3.RoToal == null ? '-' : dt3.RoToal |number:'1.0-0' ) }}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Total_ROPACE)}">{{ (dt3.Total_ROPACE
+                                            == 0 || dt3.Total_ROPACE == null || dt3.Total_ROPACE == undefined
+                                            ? '-' :
+                                            dt3.Total_ROPACE |number:'1.0-0' ) }}</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <th class="spacer"></th>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Sales_Per_RO)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (dt3.Sales_Per_RO
+                                                == 0 ||
+                                                dt3.Sales_Per_RO == null ? '' : '$' )
+                                                }}
+                                                <span>
+                                                    {{ (dt3.Sales_Per_RO
+                                                    == 0 ||
+                                                    dt3.Sales_Per_RO == null ? '-' : dt3.Sales_Per_RO
+                                                    |number:'1.2-2' )
+                                                    }}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Average_RO)}">
+                                            <span class="d-flex justify-content-between">
+                                                {{ (dt3.Average_RO == 0
+                                                || dt3.Average_RO == null ? '' : '$' )}}
+                                                <span>
+                                                    {{ (dt3.Average_RO == 0
+                                                    || dt3.Average_RO == null ? '-' : dt3.Average_RO
+                                                    |number:'1.0-0' )}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td [ngClass]="{ negative: !inTheGreen(dt3.GP)}">{{ (dt3.GP == 0 ||
+                                            dt3.GP == null ? '-' : dt3.GP | number : '1.1-1' )}}{{ (dt3.GP == 0 ||
+                                            dt3.GP == null ? '' : '%' )}}</td>
+                                    </tr>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </tbody>
+                    <tbody *ngIf="NoData" style="pointer-events:none">
+                        <tr>
+                            <td></td>
+                            <td colspan="22" style="color: black;text-align: center !important;">No Records Found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <ng-template #tmp>
+            <div class="modal-content">
+                <div class="recap position-relative">
+
+                    <div class="row d-flex w-100 m-0">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-12">
+                                    <div class="m-2 p-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 p-0 d-flex align-items-center">
+
+                                                <h2 class="m-0 p-0">
+                                                    <span>
+                                                        <span class="font-blue">
+                                                            // {{Servicedetails[0].var1Value}}
+                                                        </span>
+
+                                                        <span
+                                                            *ngIf='Servicedetails[0].layer==2 || Servicedetails[0].layer==3'>
+                                                            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                                            {{Servicedetails[0].var2Value}}
+                                                        </span>
+
+                                                        <span *ngIf='Servicedetails[0].layer==3'>
+                                                            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                                                            {{Servicedetails[0].var3Value}}
+                                                        </span>
+                                                    </span>
+                                                </h2>
+                                                <img src="images/Export.png" class="img-fluid ms-auto me-2"
+                                                    (click)="exportAsXLSX()" alt="" style="cursor: pointer;">
+                                                <a type="button" class="px-3" style="cursor:pointer;"
+                                                    (click)="closePopup()">
+                                                    <button type="button" class="btn-close" aria-label="Close"></button>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scorecard-single-header mb-3" id="scrollcent" #scrollcent (scroll)="updateVerticalScroll($event)"
+                                        style="overflow:auto; max-height: calc(100vh - 200px);">
+                                        <div *ngIf="spinnerLoader"
+                                            class="graph-loader d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+
+                                        <table class="table mb-0 w-100">
+
+                                            <thead>
+                                                <tr>
+                                                    <th>RO #</th>
+                                                    <th>Department</th>
+                                                    <th class="align-center">Account #</th>
+                                                    <th class="align-center">Account Type</th>
+                                                    <th class="align-center">Account Type Detail</th>
+                                                    <th>Description</th>
+                                                    <th>Sale Type</th>
+                                                    <th class="align-right">Posting Amount</th>
+                                                    <th class="align-center">Accounting Date</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr *ngFor="let Ad of ServicePersonDetails;  let i=index">
+                                                    <td (click)="viewRO(Ad)"
+                                                        [ngClass]="[Ad.ASG_Ronumber != 0 && Ad.ASG_Ronumber != null && Ad.ASG_Ronumber != undefined && Ad.ASG_Ronumber != '' && Ad.ASG_Ronumber != '-' ? 'popuppointer' : 'popupdisable']">
+                                                        {{(Ad.ASG_Ronumber == undefined || Ad.ASG_Ronumber == null ||
+                                                        Ad.ASG_Ronumber ==
+                                                        '' ? '-' :
+                                                        Ad.ASG_Ronumber)}}
+                                                    </td>
+                                                    <td>
+                                                        {{ (Ad.ASG_Department == '' || Ad.ASG_Department == null ||
+                                                        Ad.ASG_Department ==
+                                                        undefined ? '-' :
+                                                        Ad.ASG_Department )}}
+                                                    </td>
+                                                    <td class="align-center">{{ (Ad.ASG_AccountNumber == ''||
+                                                        Ad.ASG_AccountNumber == null
+                                                        || Ad.ASG_AccountNumber ==
+                                                        undefined || Ad.ASG_AccountNumber == 0? '-' :
+                                                        Ad.ASG_AccountNumber ) }}
+                                                    </td>
+                                                    <td class="text-start">{{ (Ad.ASG_AccountType == '' ||
+                                                        Ad.ASG_AccountType == null ||
+                                                        Ad.ASG_AccountType
+                                                        == undefined ? '-' :
+                                                        Ad.ASG_AccountType ) }}</td>
+
+                                                    <td class="text-start"> {{ (Ad.ASG_Account_type_detail == '' ||
+                                                        Ad.ASG_Account_type_detail == null || Ad.ASG_Account_type_detail
+                                                        == undefined
+                                                        ? '-' :
+                                                        Ad.ASG_Account_type_detail ) }}
+                                                    </td>
+                                                    <td class="text-start"> {{ (Ad.ASG_AccountFullDetail == '' ||
+                                                        Ad.ASG_AccountFullDetail == null ||
+                                                        Ad.ASG_AccountFullDetail == undefined ? '-' :
+                                                        Ad.ASG_AccountFullDetail ) }}
+                                                    </td>
+                                                    <td class="text-start"> {{ (Ad.ASG_Subtype_Detail == 0 ||
+                                                        Ad.ASG_Subtype_Detail ==
+                                                        null ||
+                                                        Ad.ASG_Subtype_Detail == undefined ? '-' : Ad.ASG_Subtype_Detail
+                                                        ) }}
+                                                    </td>
+
+                                                    <td class="align-right"
+                                                        [ngClass]="{ negative: !inTheGreen(Ad.ASG_postingamount)}"
+                                                        style="padding: 0.2rem 2.2rem !important;"> {{
+                                                        (Ad.ASG_postingamount == 0 ||
+                                                        Ad.ASG_postingamount == null || Ad.ASG_postingamount ==
+                                                        undefined ? '-' :
+                                                        Ad.ASG_postingamount | currency:
+                                                        'USD':'symbol':'1.0-0') }}
+                                                    </td>
+                                                    <td class="align-center"> {{ (Ad.ASG_accountingdate == 0 ||
+                                                        Ad.ASG_accountingdate ==
+                                                        null || Ad.ASG_accountingdate == undefined ? '-' :
+                                                        Ad.ASG_accountingdate |
+                                                        date:'MM/dd/yyyy')
+                                                        }}
+                                                    </td>
+                                                </tr>
+                                                <div class="loader" style="margin-top: 26%;margin-left: 30%;"
+                                                    *ngIf="spinnerLoadersec">
+                                                </div>
+
+                                                <tr *ngIf="NoDataDetails">
+                                                    <td colspan="9" style="text-align: center;">No Data Found!!!</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</main>
