@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, Output, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, Output, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { Sharedservice } from '../../Core/Providers/Shared/sharedservice';
 import { Setdates } from '../../Core/Providers/SetDates/setdates';
 import { ActivatedRoute, Router, NavigationStart, RouterModule, } from '@angular/router';
@@ -23,6 +23,7 @@ import { NotificationService } from '../../Core/Providers/Shared/notification.se
 import { AuthServices } from '../../Core/Providers/Shared/auth.service 1';
 import { common } from '../../common';
 import { Subscription } from 'rxjs';
+import { ExportService } from '../../Core/Providers/Shared/export.service';
 
 declare var bootstrap: any;
 @Component({
@@ -58,7 +59,7 @@ export class Header {
   private processingToken = false; // ✅ Prevent premature logout
   private sub!: Subscription;
   userData: any;
-  constructor() {
+  constructor(private exportService: ExportService) {
     this.apiCall.GetHeaderData().subscribe((res: any) => {
       this.componentData = res.obj;
       this.shared.common.pageName = this.componentData.title
@@ -398,8 +399,8 @@ export class Header {
         }
       })
   }
-groupsandstoresdataAll:any=[]
-   getGruopsandStoresAll() {
+  groupsandstoresdataAll: any = []
+  getGruopsandStoresAll() {
     const obj = {
       // "userid": JSON.parse(localStorage.getItem('UserDetails')!).userid,
       "userid": 0,
@@ -435,6 +436,26 @@ groupsandstoresdataAll:any=[]
 
         }
       })
+  }
+
+  @Input() title!: string;
+  @Input() tableId!: string;
+
+
+  excel() {
+    this.exportService.exportExcel(this.componentData?.title, this.componentData?.title);
+  }
+
+  pdf() {
+    this.exportService.exportPDF(this.componentData?.title, this.componentData?.title);
+  }
+
+  print() {
+    this.exportService.print(this.tableId, this.componentData?.title);
+  }
+
+  email() {
+    this.exportService.emailPDF(this.tableId, this.componentData?.title);
   }
 }
 

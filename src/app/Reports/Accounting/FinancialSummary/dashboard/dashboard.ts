@@ -1,4 +1,4 @@
-import { Component, ElementRef, Injector, ViewChild ,HostListener} from '@angular/core';
+import { Component, ElementRef, Injector, ViewChild, HostListener } from '@angular/core';
 import { Api } from '../../../../Core/Providers/Api/api';
 import { common } from '../../../../common';
 import { SharedModule } from '../../../../Core/Providers/Shared/shared.module';
@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Workbook } from 'exceljs';
+import { Workbook, Row } from 'exceljs';
 import FileSaver from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -26,7 +26,7 @@ import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, BsDatepickerModule,Stores],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -132,7 +132,7 @@ export class Dashboard {
     } else {
       this.date = new Date(lastMonth.setMonth(lastMonth.getMonth()));
     }
- 
+
     if (localStorage.getItem('Fav') != 'Y') {
       const data = {
         title: 'Financial Summary',
@@ -191,7 +191,7 @@ export class Dashboard {
 
   applyDateChange() {
     if (!this.storeIds || this.storeIds.length === 0) {
-     
+
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -379,7 +379,7 @@ export class Dashboard {
               this.NoData = true;
             }
           } else {
-         
+
             this.toast.show('Invalid Details.', 'danger', 'Error');
           }
         },
@@ -506,7 +506,7 @@ export class Dashboard {
       if (this.excel != undefined) {
         if (res.obj.title == 'Financial Summary') {
           if (res.obj.state == true) {
-            this.exportAsXLSX();
+            this.exportToExcelFinancialSummary();
           }
         }
       }
@@ -696,431 +696,253 @@ export class Dashboard {
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
-  ExcelStoreNames: any = [];
-  exportAsXLSX(): void {
-    const CurrentDate = this.datepipe.transform(
-      this.Current_Date,
-      'MMMM yyyy'
-    );
-    const CurrentYear = this.datepipe.transform(this.Current_Date, 'yyyy');
-    const LMYDate = this.datepipe.transform(this.LMY_Date, 'MMMM yyyy');
-    const LastYear = this.datepipe.transform(this.LMY_Date, 'yyyy');
 
-    const LMDate = this.datepipe.transform(this.LM_Date, 'MMMM yyyy');
 
-    const FSData = this.FSData.map((_arrayElement: any) =>
-      Object.assign({}, _arrayElement)
-    );
+  exportToExcelFinancialSummary() {
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Financial Summary');
-    worksheet.views = [
-      {
-        state: 'frozen',
-        ySplit: 12, // Number of rows to freeze (2 means the first two rows are frozen)
-        topLeftCell: 'A13', // Specify the cell to start freezing from (in this case, the third row)
-        showGridLines: false,
-      },
-    ];
-    worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Financial Summary']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
+
+    /* ================= HEADER ROW 1 ================= */
+
+    worksheet.getCell('A1').value = 'For the period ending';
+
+    worksheet.getCell('B1').value = 'MTD';
+    worksheet.mergeCells('B1:E1');
+
+    worksheet.getCell('F1').value = 'LY MTD';
+    worksheet.mergeCells('F1:G1');
+
+    worksheet.getCell('H1').value = 'LM';
+    worksheet.mergeCells('H1:I1');
+
+    worksheet.getCell('J1').value = 'YTD';
+    worksheet.mergeCells('J1:L1');
+
+    worksheet.getCell('M1').value = 'LY YTD';
+    worksheet.mergeCells('M1:N1');
+
+    worksheet.getRow(1).eachCell(cell => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '0554EF' } };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
       };
     });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
 
-    worksheet.addRow('');
-    const DateToday = this.datepipe.transform(
-      new Date(),
-      'MM.dd.yyyy h:mm:ss a'
-    );
-    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    const Month = this.datepipe.transform(this.Month, 'MMMM yyyy');
-    worksheet.addRow([DateToday]).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-    };
+    /* ================= HEADER ROW 2 ================= */
 
-    const ReportFilter = worksheet.addRow(['Report Filters :']);
-    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+    const header2 = [
+      this.datepipe.transform(this.currentMonth, 'MMMM yyyy'),
 
-    const DealType = worksheet.addRow(['Month :']);
-    const dealtype = worksheet.getCell('B6');
-    dealtype.value = Month;
-    dealtype.font = { name: 'Arial', family: 4, size: 9 };
-    dealtype.alignment = { vertical: 'middle', horizontal: 'left' };
-    DealType.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    // const Groups = worksheet.getCell('A7');
-    // Groups.value = 'Group :';
-    // const groups = worksheet.getCell('B7');
-    // groups.value =
-    //   'WESTERN AUTO';
-    // groups.font = { name: 'Arial', family: 4, size: 9 };
-    // groups.alignment = {
-    //   vertical: 'middle',
-    //   horizontal: 'left',
-    //   wrapText: true,
-    // };
-    // ===== STORE VALUE FOR EXCEL (FROM UI SELECTION) =====
-
-    let storeValue = '';
-
-    const selectedStoreIds: string[] =
-      this.storeIds && this.storeIds.length
-        ? this.storeIds.map((id: any) => id.toString())
-        : [];
-
-    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
-
-    // ✅ Bind ONLY selected store names
-    storeValue = allStores
-      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
-      .map((s: any) => s.storename.trim())
-      .filter(Boolean)
-      .join(', ');
-
-    // ✅ Final fallback (safety)
-    if (!storeValue && selectedStoreIds.length) {
-      storeValue = selectedStoreIds.join(', ');
-    }
-
-
-    worksheet.mergeCells('B8', 'K10');
-    const Stores = worksheet.getCell('A8');
-    Stores.value = 'Store :';
-    const stores = worksheet.getCell('B8');
-    stores.value =
-      storeValue;
-    stores.font = { name: 'Arial', family: 4, size: 9 };
-    stores.alignment = {
-      vertical: 'top',
-      horizontal: 'left',
-      wrapText: true,
-    };
-    Stores.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    let dateYear = worksheet.getCell('A11');
-    dateYear.value = 'For the period ending'
-    dateYear.alignment = { vertical: 'middle', horizontal: 'center' };
-    dateYear.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    dateYear.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    dateYear.border = { right: { style: 'thin' } };
-
-    worksheet.mergeCells('B11', 'E11');
-    let units = worksheet.getCell('B11');
-    units.value = 'MTD';
-    units.alignment = { vertical: 'middle', horizontal: 'center' };
-    units.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    units.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    units.border = { right: { style: 'thin' } };
-
-    worksheet.mergeCells('F11', 'G11');
-    let frontgross = worksheet.getCell('F11');
-    frontgross.value = 'LY MTD';
-    frontgross.alignment = { vertical: 'middle', horizontal: 'center' };
-    frontgross.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    frontgross.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    frontgross.border = { right: { style: 'thin' } };
-
-    worksheet.mergeCells('H11', 'I11');
-    let backgross = worksheet.getCell('H11');
-    backgross.value = 'LM';
-    backgross.alignment = { vertical: 'middle', horizontal: 'center' };
-    backgross.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    backgross.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    backgross.border = { right: { style: 'thin' } };
-
-    worksheet.mergeCells('J11', 'L11');
-    let totalgross = worksheet.getCell('J11');
-    totalgross.value = 'YTD';
-    totalgross.alignment = { vertical: 'middle', horizontal: 'center' };
-    totalgross.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    totalgross.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    totalgross.border = { right: { style: 'thin' } };
-    worksheet.mergeCells('M11', 'N11');
-    let LY = worksheet.getCell('M11');
-    LY.value = 'LY';
-    LY.alignment = { vertical: 'middle', horizontal: 'center' };
-    LY.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    LY.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: '0554ef' },
-      bgColor: { argb: 'FF0000FF' },
-    };
-    LY.border = { right: { style: 'thin' } };
-    // worksheet.addRow('');
-    let Headings = [
-      CurrentDate,
-      CurrentDate,
+      this.datepipe.transform(this.currentMonth, 'MMMM'),
       'Pace',
-
       'Budget',
       'Variance',
-      LMYDate,
+
+      this.datepipe.transform(this.LMY_Date, 'MMMM'),
       'Variance',
-      LMDate,
+
+      this.datepipe.transform(this.LM_Date, 'MMMM'),
       'Variance',
-      CurrentYear,
-      'Budget	',
+
+      this.datepipe.transform(this.currentMonth, 'yyyy'),
+      'Budget',
       'Variance',
-      LastYear,
-      'Variance',
+
+      this.datepipe.transform(this.LMY_Date, 'yyyy'),
+      'Variance'
     ];
-    const headerRow = worksheet.addRow(Headings);
-    headerRow.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'black' },
-    };
-    headerRow.height = 20
-    headerRow.alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'center',
-    };
-    headerRow.eachCell((cell, number) => {
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'dbe7ff' },
-        bgColor: { argb: 'FF0000FF' },
-      };
-      cell.border = { right: { style: 'thin' } };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    const headerRow2 = worksheet.addRow(header2);
+
+    headerRow2.eachCell(cell => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '4584FF' } };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
     });
 
-    // Generate a unique file name
-    FSData.forEach((d: any) => {
-      const Obj = [
-        d.LABLE1 == '' ? '-' : d.LABLE1 == null ? '-' : d.LABLE1,
+    /* ===== VARIANCE COLUMN INDEXES ===== */
 
-        d.MTD == '' ? '-' : d.MTD == null ? '-' : d.MTD,
-        d.PACE == '' ? '-' : d.PACE == null ? '-' : d.PACE,
-        d.BUDGET == '' ? '-' : d.BUDGET == null ? '-' : d.BUDGET,
-        d.VARIANCE == '' ? '-' : d.VARIANCE == null ? '-' : d.VARIANCE,
-        d.LMY_MTD == '' ? '-' : d.LMY_MTD == null ? '-' : d.LMY_MTD,
-        d.LMY_VARIANCE == ''
-          ? '-'
-          : d.LMY_VARIANCE == null
-            ? '-'
-            : d.LMY_VARIANCE,
-        d.LM_MTD == '' ? '-' : d.LM_MTD == null ? '-' : d.LM_MTD,
-        d.LM_VARIANCE == ''
-          ? '-'
-          : d.LM_VARIANCE == null
-            ? '-'
-            : d.LM_VARIANCE,
-        d.YTD == '' ? '-' : d.YTD == null ? '-' : d.YTD,
-        d.CY_BUDGET == ''
-          ? '-'
-          : d.CY_BUDGET == null
-            ? '-'
-            : parseInt(d.CY_BUDGET),
-        d.CY_VARIANCE == ''
-          ? '-'
-          : d.CY_VARIANCE == null
-            ? '-'
-            : d.CY_VARIANCE,
-        d.LY_YTD == '' ? '-' : d.LY_YTD == null ? '-' : d.LY_YTD,
-        d.LY_VARIANCE == ''
-          ? '-'
-          : d.LY_VARIANCE == null
-            ? '-'
-            : d.LY_VARIANCE,
-      ];
-      // console.log(Obj);
-      const row = worksheet.addRow(Obj);
-      if (
-        d.LABLE1 == 'New Units' ||
-        d.LABLE1 == 'Used Units' ||
-        d.LABLE1 == 'Unit Retail Sales' ||
-        d.LABLE1 == 'Fleet Units' ||
-        d.LABLE1 == 'Pre-Owned Units'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
+    const varianceColumns: number[] = [];
+    header2.forEach((h: any, i) => {
+      if (h && h.toString().toLowerCase().includes('variance')) {
+        varianceColumns.push(i + 1);
+      }
+    });
+
+    /* ================= FORMAT FUNCTION ================= */
+
+    const formatRow = (row: Row, data: any, index: number) => {
+
+      const isHeaderRow = data.MainTitle === 'MainHeader';
+      const isBold = data.Fs_Titles === 'FontBold';
+      const isPadding = data.Fs_Titles === 'PaddingLeft';
+      const isSpecial = this.isSpecialRow(data.LABLE1);
+      const valueType = data.ValueType; // 🔥 IMPORTANT
+
+      const totalCols = 14;
+
+      /* ===== BACKGROUND ===== */
+      let bgColor = '';
+      if (isHeaderRow) bgColor = 'D9E7FF';
+      else bgColor = index % 2 === 0 ? 'F9FBFF' : 'FFFFFF';
+
+      /* ===== FORCE ALL CELLS ===== */
+      for (let i = 1; i <= totalCols; i++) {
+        row.getCell(i);
+      }
+
+      row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+
+        /* ===== FULL ROW BG ===== */
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: bgColor }
+        };
+
+        /* ===== FIRST COLUMN ===== */
+        if (colNumber === 1) {
+          cell.font = {
+            name: 'Calibri',
+            bold: isBold || isSpecial || isHeaderRow,
+            color: { argb: '000000' }
+          };
+
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: isHeaderRow ? 1 : (isPadding ? 3 : 2)
+          };
+          return;
+        }
+
+        /* ===== HEADER ROW (ONLY LABEL) ===== */
+        if (isHeaderRow) {
+          cell.value = '';
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          cell.font = { name: 'Calibri', bold: true };
+          return;
+        }
+
+        /* ===== EMPTY → HYPHEN ===== */
+        if (cell.value === null || cell.value === undefined || cell.value === '' || cell.value === 0) {
+          cell.value = '-';
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          cell.font = { name: 'Calibri', bold: isBold };
+          return;
+        }
+
+        const num = Number(cell.value);
+
+        let fontStyle: any = {
+          name: 'Calibri',
+          bold: isBold
+        };
+
+        /* ===== NUMBER FORMATTING ===== */
+        if (!isNaN(num)) {
+
+          if (valueType === '$') {
+            cell.numFmt = '"$" * #,##0; "$" * -#,##0';
+          }
+          else if (valueType === '#') {
             cell.numFmt = '#,##0';
           }
-        });
-      } else if (
-        d.LABLE1 == 'Selling Gross%' ||
-        d.LABLE1 == 'Net to Sales' ||
-        d.LABLE1 == 'Net to Gross' ||
-        d.LABLE1 == 'Fixed Expenses%' ||
-        d.LABLE1 == 'Other Expenses%'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            if (typeof cell.value === 'number') {
-              cell.value = cell.value / 100;
-            }
+          else if (valueType === '%') {
             cell.numFmt = '0%';
+            cell.value = num / 100;
           }
-        });
-      } else {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
-            cell.numFmt = '$#,##0';
+
+          /* 🔴 NEGATIVE RED ONLY SPECIAL + VARIANCE */
+          if (isSpecial && varianceColumns.includes(colNumber) && num < 0) {
+            fontStyle.color = { argb: 'FF0000' };
           }
-        });
-      }
-      row.getCell(1).alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-      row.font = { name: 'Arial', family: 4, size: 8 };
-      const lastRow = worksheet.lastRow?.number ?? 0;
-      row.eachCell((cell) => {
-        cell.border = {
-          right: { style: 'thin' },
-          bottom: row.number === lastRow ? { style: 'thin' } : undefined
-        };
-        cell.alignment = {
-          vertical: 'top',
-          horizontal: 'right',
-          indent: 1
-        };
+        }
+
+        cell.font = fontStyle;
+
+        /* ===== ALIGNMENT ===== */
+        if (valueType === '%') {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        }
+
       });
-      if (row.number % 2) {
-        row.eachCell((cell, number) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'f9fbff' },
-            bgColor: { argb: 'FF0000FF' },
-          };
-        });
-      }
-      if (
-        d.LABLE1 === 'Unit Retail Sales' ||
-        d.LABLE1 === 'Total Sales Gross' ||
-        d.LABLE1 === 'Total Store Gross' ||
-        d.LABLE1 === 'Selling Gross' ||
-        d.LABLE1 === 'Selling Gross%' ||
-        d.LABLE1 === 'Total Expenses' ||
-        d.LABLE1 === 'Operating Profit' ||
-        d.LABLE1 === 'Net Adds/Deducts' ||
-        d.LABLE1 === 'Net Profit' ||
-        d.LABLE1 === 'Total Store Super Gross'
-      ) {
-        row.eachCell((cell) => {
-          cell.font = { name: 'Arial', family: 4, size: 8, bold: true };
-        });
-      }
+    };
+
+    /* ================= DATA ================= */
+
+    this.FSData.forEach((data: any, i: number) => {
+
+      const row = worksheet.addRow([
+        data.LABLE1,
+        data.MTD,
+        data.PACE,
+        data.BUDGET,
+        data.VARIANCE,
+        data.LMY_MTD,
+        data.LMY_VARIANCE,
+        data.LM_MTD,
+        data.LM_VARIANCE,
+        data.YTD,
+        data.CY_BUDGET,
+        data.CY_VARIANCE,
+        data.LY_YTD,
+        data.LY_VARIANCE
+      ]);
+
+      formatRow(row, data, i);
     });
 
-    worksheet.getColumn(1).width = 23;
-    worksheet.getColumn(1).alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'left',
-    };
-    worksheet.getColumn(2).width = 15;
-    worksheet.getColumn(3).width = 15;
-    worksheet.getColumn(4).width = 15;
-    worksheet.getColumn(5).width = 15;
-    worksheet.getColumn(6).width = 15;
-    worksheet.getColumn(7).width = 15;
-    worksheet.getColumn(8).width = 15;
-    worksheet.getColumn(9).width = 15;
-    worksheet.getColumn(10).width = 15;
-    worksheet.getColumn(11).width = 15;
-    worksheet.getColumn(12).width = 15;
-    worksheet.getColumn(13).width = 15;
-    worksheet.getColumn(14).width = 15;
-    worksheet.addRow([]);
-    workbook.xlsx.writeBuffer().then((data: any) => {
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    /* ================= BORDERS ================= */
+
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
       });
-      FileSaver.saveAs(
-        blob,
-        'Financial Summary_' + DATE_EXTENSION + EXCEL_EXTENSION
-      );
+    });
+
+    /* ================= WIDTH ================= */
+
+    worksheet.columns = [
+      { width: 35 },
+      ...Array(13).fill({ width: 18 })
+    ];
+
+    /* ================= FREEZE ================= */
+
+    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 2 }];
+
+    /* ================= DOWNLOAD ================= */
+
+    workbook.xlsx.writeBuffer().then(data => {
+      FileSaver.saveAs(new Blob([data]), 'FinancialSummary.xlsx');
     });
   }
+  // Special rows
+  isSpecialRow(name: string): boolean {
+    return [
+      'Total Selling Gross (New)',
+      'Total Selling Gross (Used)',
+      'Net Income Before Taxes',
+      'Total Operating Department Profit',
+      'Operating Profit',
+      'Net Profit'
+    ].includes(name);
+  }
+
 
 
   GetPrintData() {
@@ -1330,10 +1152,10 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-          
+
               this.toast.success(res.response);
             } else {
-            
+
               this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },

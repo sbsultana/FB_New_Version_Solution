@@ -5,13 +5,13 @@
     <div>
         <div class="container-fluid">
             <app-salesgross-reports [header]="header"></app-salesgross-reports>
-            <div class="scorecard-multi-header salesgross-tbl" #printSection id="print-section"
+            <div class="scorecard-multi-header salesgross-tbl mt-2" #printSection id="print-section"
                 *ngIf="GridView == 'Global' && actionType == 'Y'">
-                <table class="table mb-0 w-100">
+                <table class="table mb-0 w-100" id="Sales Gross">
                     <thead>
                         <tr class="bdr-btm">
-                            <th class="text-start bdr-rt">
-                                <span> Date </span>: {{FromDate |date:'MMMM'}} <label
+                            <th class="text-center bdr-rt">
+                                {{FromDate |date:'MMMM'}} <label
                                     *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                     {{ToDate
                                     |date:'MMMM'}} </label>
@@ -107,18 +107,20 @@
                     </thead>
                     <tbody>
                         <ng-container *ngFor="let SalesInfo of SalesData; let i=index">
-                            <tr [ngClass]="{'divBold': SalesInfo.data1.toLowerCase() === 'report totals','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORT TOTALS'  }"
+                            <tr [ngClass]="{'divBold': SalesInfo.data1 === 'REPORTS TOTAL','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORTS TOTAL'  }"
                                 [id]="'D_'+i"
                                 [ngStyle]="{'pointer-events':SalesInfo.data1.toLowerCase() === 'report totals' ? 'none' :'default','cursor':SalesInfo.data1.toLowerCase() === 'report totals' ? 'default':'pointer'}">
                                 <td (click)="expandorcollapse(i,$event,SalesInfo.Dealer,SalesInfo,'')">
-                                    <span class="d-flex justify-content-between" [id]="'D_'+i" style="cursor: pointer;">
+                                    <span class="d-flex justify-content-between align-items-center" [id]="'D_'+i"
+                                        style="cursor: pointer;">
                                         <span [id]="'D_'+i" title="{{SalesInfo.data1}}">
                                             {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
                                             (SalesInfo.data1.toString().length > 40 ? '...' : '') ))}}
-                                          
+
                                         </span>
+                                        &nbsp;&nbsp;
                                         <span *ngIf="SalesInfo.data1.toLowerCase() != 'report totals'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
                                                 alt="Expand" [id]="'D_'+i">
@@ -140,7 +142,8 @@
                                     == null ? 0 :
                                     SalesInfo.Units_MTD | number)
                                     }}</td>
-                                <td><span *ngIf="selectedDataGrouping[0].columnname == 'store'" (click)="openDetails(SalesInfo,'','1')"
+                                <td><span *ngIf="selectedDataGrouping[0].columnname == 'store'"
+                                        (click)="openDetails(SalesInfo,'','1')"
                                         [ngClass]="{ negative: !inTheGreen(SalesInfo.Units_Target), 'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1  }">{{
                                         SalesInfo.Units_Target == 0 ||
                                         SalesInfo.Units_Target == null ? 0 : SalesInfo.Units_Target | number}}</span>
@@ -148,7 +151,8 @@
                                 </td>
                                 <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{ negative: !inTheGreen(SalesInfo.Units_Diff), 'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1  }">
-                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.Units_Diff == 0 ||
+                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.Units_Diff
+                                        == 0 ||
                                         SalesInfo.Units_Diff == null || SalesInfo.Units_Target == 0 ||
                                         SalesInfo.Units_Target == null ? 0 : SalesInfo.Units_Diff)}} </span>
                                     <span *ngIf="selectedDataGrouping[0].columnname != 'store'"></span>
@@ -393,13 +397,15 @@
                                     <!-- Differ -->
                                     <td
                                         [ngClass]="{ negative: !inTheGreen((data2.Units_Pace == 0 || data2.Units_Pace == null  ? 0 : (data2.Units_Pace - data2.Units_Target))),'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1 }">
-                                        <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (data2.Units_Pace == 0 || data2.Units_Pace ==
+                                        <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (data2.Units_Pace
+                                            == 0 || data2.Units_Pace ==
                                             null || data2.Units_Target == 0 || data2.Units_Target == null ? 0 :
                                             (data2.Units_Pace - data2.Units_Target))}} </span>
                                         <span *ngIf="selectedDataGrouping[0].columnname != 'store'"></span>
                                     </td>
                                     <td (click)="openDetails(data2,SalesInfo,'2')"
-                                        [ngClass]="{'pointercursor': selectedDataGrouping.length == 2 , 'pointernone' :selectedDataGrouping.length == 3  }">{{
+                                        [ngClass]="{'pointercursor': selectedDataGrouping.length == 2 , 'pointernone' :selectedDataGrouping.length == 3  }">
+                                        {{
                                         data2.PerDay == 0 || data2.PerDay == null ? 0 : data2.PerDay |
                                         number:'1.2-2'}}</td>
                                     <td (click)="openDetails(data2,SalesInfo,'2')"
@@ -674,12 +680,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="scorecard-multi-header backgross-tbl" *ngIf="GridView != 'Global'">
+            <div class="scorecard-multi-header backgross-tbl mt-1" *ngIf="GridView != 'Global'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr class="bdr-btm">
-                            <th class="text-start bdr-rt">
-                                <span> Date </span>: {{FromDate |date:'MMMM'}} <label
+                            <th class="text-center bdr-rt">
+                                {{FromDate |date:'MMMM'}} <label
                                     *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                     {{ToDate
                                     |date:'MMMM'}} </label>
@@ -705,7 +711,7 @@
                             </th> -->
                             <th class="text-center">
                                 <!-- {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }} -->
-                                  <label>{{FromDate |date:'dd'}} <label
+                                <label>{{FromDate |date:'dd'}} <label
                                         *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
                                         |date:'yyyy'}}</label>
                                     - {{ToDate |date:'dd'}}<label
@@ -757,16 +763,24 @@
                     </thead>
                     <tbody>
                         <ng-container *ngFor="let SalesInfo of BackGross; let i=index">
-                            <tr [ngClass]="{'divBold': SalesInfo.data1.toLowerCase() === 'report totals','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORT TOTALS'}"
+                            <tr [ngClass]="{'divBold': SalesInfo.data1 === 'REPORTS TOTAL','lightblue-bg': SalesInfo.Dealer === '-' && SalesInfo.data1 !== 'REPORTS TOTAL'}"
                                 [id]="'D_'+i">
                                 <td (click)="expandorcollapse(i,$event,SalesInfo.Dealer,SalesInfo,'')">
-                                    <span class="d-flex justify-content-between" [id]="'D_'+i" style="cursor: pointer;">
+                                    <span class="d-flex justify-content-between align-items-center" [id]="'D_'+i"
+                                        style="cursor: pointer;">
                                         <span [id]="'D_'+i" title="{{SalesInfo.data1}}">
                                             {{(SalesInfo.data1 == undefined || SalesInfo.data1.trim() == '' ||
                                             SalesInfo.data1 == null ? '-' : ( (SalesInfo.data1.toString() |
                                             slice:0:40) +
                                             (SalesInfo.data1.toString().length > 40 ? '...' : '') ))}}
-                             
+
+                                        </span>
+                                        &nbsp;&nbsp;
+                                        <span *ngIf="SalesInfo.data1.toLowerCase() != 'report totals'">
+                                            <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
+                                                alt="Expand" [id]="'D_'+i">
+                                            <img *ngIf="SalesInfo.Dealer === '-'" src="images/Minus_CircleIcon.svg"
+                                                [id]="'D_'+i" alt="Collapse">
                                         </span>
                                         <!-- <span *ngIf="SalesInfo.data1 !== 'REPORTS TOTAL'">
                                             <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
@@ -861,14 +875,16 @@
                                 </td>
                                 <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{ negative: !inTheGreen(SalesInfo.FRCOUNT),'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1}">
-                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.FRCOUNT == 0 ||
+                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.FRCOUNT ==
+                                        0 ||
                                         SalesInfo.FRCOUNT == null ? '-' : SalesInfo.FRCOUNT ) }}
                                     </span>
                                     <span *ngIf="selectedDataGrouping[0].columnname != 'store'"></span>
                                 </td>
                                 <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{ negative: !inTheGreen(SalesInfo.FIPen),'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1}">
-                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.FIPen == 0 ||
+                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.FIPen == 0
+                                        ||
                                         SalesInfo.FIPen == null ? '-' : SalesInfo.FIPen ) }}{{ (SalesInfo.FIPen == 0 ||
                                         SalesInfo.FIPen == null ? '' : '%') }}
                                     </span>
@@ -904,7 +920,8 @@
                                 </td>
                                 <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{ negative: !inTheGreen(SalesInfo.Productpen),'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1}">
-                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.Productpen == 0 ||
+                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{ (SalesInfo.Productpen
+                                        == 0 ||
                                         SalesInfo.Productpen == null ? '-' : SalesInfo.Productpen ) }}{{
                                         (SalesInfo.Productpen == 0 ||
                                         SalesInfo.Productpen == null ? '' : '%' ) }}
@@ -913,7 +930,9 @@
                                 </td>
                                 <td (click)="openDetails(SalesInfo,'','1')"
                                     [ngClass]="{ negative: !inTheGreen(SalesInfo.peorductPertra),'pointercursor': selectedDataGrouping.length==1 , 'pointernone' :selectedDataGrouping.length>1}">
-                                    <span *ngIf="selectedDataGrouping[0].columnname == 'store'">{{(SalesInfo.peorductPertra == 0 ||
+                                    <span
+                                        *ngIf="selectedDataGrouping[0].columnname == 'store'">{{(SalesInfo.peorductPertra
+                                        == 0 ||
                                         SalesInfo.peorductPertra == null ? '-' : SalesInfo.peorductPertra |
                                         number:'1.2-2' )}}</span>
                                     <span *ngIf="selectedDataGrouping[0].columnname != 'store'"></span>
@@ -932,7 +951,7 @@
                                             {{data2.data2 == undefined || data2.data2.trim() == '' || data2.data2 ==
                                             null ?
                                             '-' : data2.data2}} </span>
-                                          
+
                                     </td>
                                     <td (click)="openDetails(data2,SalesInfo,'2')"
                                         [ngClass]="{'pointercursor': selectedDataGrouping.length == 2 , 'pointernone' :selectedDataGrouping.length == 3  }">
@@ -1108,7 +1127,7 @@
                                     </td>
                                     <td></td>
                                     <td></td>
-                                    <td>                                    </td>
+                                    <td> </td>
                                     <td (click)="openDetails(dt3,SalesInfo,'3')" style="cursor: pointer;"
                                         [ngClass]="{ negative: !inTheGreen(dt3.figross)}"> <span
                                             class="d-flex justify-content-between"> {{

@@ -16,7 +16,7 @@ import { Setdates } from '../../../../Core/Providers/SetDates/setdates';
 import { common } from '../../../../common';
 
 import { HttpClient } from '@angular/common/http';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
@@ -139,12 +139,12 @@ export class Dashboard implements OnInit {
     private datepipe: DatePipe,
     public modalService: NgbModal,
     private http: HttpClient,
-     private ngbmodalActive: NgbActiveModal,
-     private toast: ToastService,
+    private ngbmodalActive: NgbActiveModal,
+    private toast: ToastService,
   ) {
     this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
     if (typeof window !== 'undefined') {
-   
+
       this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
       if (localStorage.getItem('Fav') != 'Y') {
         const data = {
@@ -193,7 +193,7 @@ export class Dashboard implements OnInit {
     this.getGLAccountsInfo(this.searchTerm);
   }
   getStoresList(): void {
-    this.shared.spinner.show();
+    // this.shared.spinner.show();
     const obj = {
       userid: 1,
     };
@@ -205,11 +205,11 @@ export class Dashboard implements OnInit {
           this.storeIds = this.stores.map((s) => s.ID);
 
           // this.onApply();
-          this.shared.spinner.hide();
+          // this.shared.spinner.hide();
         }
       },
       error: (err: any) => {
-        this.shared.spinner.hide();
+        // this.shared.spinner.hide();
         console.error('Error fetching stores:', err);
       },
     });
@@ -407,12 +407,12 @@ export class Dashboard implements OnInit {
   }
 
   onSearchInput() {
-  // if search field becomes empty, reload original API
-  if (!this.searchText.trim()) {
-    this.searchTerm = '';
-    this.getGLAccountsInfo('');
+    // if search field becomes empty, reload original API
+    if (!this.searchText.trim()) {
+      this.searchTerm = '';
+      this.getGLAccountsInfo('');
+    }
   }
-}
 
   StatusFiltering(type: string) {
     this.statusFilter = [type];
@@ -578,7 +578,7 @@ export class Dashboard implements OnInit {
       FLEXCOL1: flexcol1,
     };
 
-    console.log(accountTypeRaw,'Account Type Raw');
+    console.log(accountTypeRaw, 'Account Type Raw');
     this.shared.api
       .postmethod(this.shared.common.routeEndpoint + 'GetAccountMappingFiltersV2', body)
       .subscribe((res: any) => {
@@ -625,14 +625,14 @@ export class Dashboard implements OnInit {
           return;
         }
 
-  //        // ALWAYS pass accountType
-  // if (this.actbal === 'Activity'){
-  //   this.OnChange('OA', '', '', this.accounttype);
-  // } else {
-  //   this.OnChange('ATD', '', '', this.accounttype);
-  //    return;
-  // }
- 
+        //        // ALWAYS pass accountType
+        // if (this.actbal === 'Activity'){
+        //   this.OnChange('OA', '', '', this.accounttype);
+        // } else {
+        //   this.OnChange('ATD', '', '', this.accounttype);
+        //    return;
+        // }
+
 
 
         /* -----------------------
@@ -661,8 +661,8 @@ export class Dashboard implements OnInit {
          OA — Operational Area
       ------------------------*/
         if (ref === 'OA') {
-          console.log(this.accounttype,'Account Type');
-          
+          console.log(this.accounttype, 'Account Type');
+
           this.resetLowerLevels('OA');
           this.Departmenttype = list.filter((e: { OperationalArea: any }) => e.OperationalArea);
 
@@ -754,14 +754,14 @@ export class Dashboard implements OnInit {
       ------------------------*/
         if (ref === 'FS') {
           this.Financialsummary = list.filter((e: any) => e.Fin_Summary);
-          
+
         }
-         else {
-  this.financialsummary =
-    this.Financialsummary.length === 1
-      ? this.Financialsummary[0].Fin_Summary_Key
-      : '0';
-}
+        else {
+          this.financialsummary =
+            this.Financialsummary.length === 1
+              ? this.Financialsummary[0].Fin_Summary_Key
+              : '0';
+        }
 
         /* -----------------------
          BS — Balance Summary
@@ -881,75 +881,75 @@ export class Dashboard implements OnInit {
     }
   }
 
- closeBootstrapModal() {
-  const modalEl = document.getElementById('mapModal');
-  if (!modalEl) return;
+  closeBootstrapModal() {
+    const modalEl = document.getElementById('mapModal');
+    if (!modalEl) return;
 
-  const modal = bootstrap.Modal.getInstance(modalEl) 
-              || new bootstrap.Modal(modalEl);  
+    const modal = bootstrap.Modal.getInstance(modalEl)
+      || new bootstrap.Modal(modalEl);
 
-  modal.hide();
+    modal.hide();
 
-  // clean backdrop & body lock
-  document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
-  document.body.classList.remove('modal-open');
-  document.body.style.overflow = '';
-}
-
-  save(): void {
-  this.submitted = true;
-
-  this.missingFields = this.getMissingFields();
-  if (this.missingFields.length > 0) {
-    this.modalService.open(this.Alert, { centered: true });
-    return;
+    // clean backdrop & body lock
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
   }
 
-  const payload = {
-    companyid: this.bulkEditRecords[0].companyId,
-    accountnumber: this.bulkEditRecords[0].accountNumber,
-    accountdescription: this.bulkEditRecords[0].accountDescription,
-    accounttype: this.accounttype,
-    accountTypeDetail: this.actbal == 'Activity' ? '' : this.selectedaccounttypedetail,
-    operationalArea: this.departmenttype,
-    department: this.department,
-    subType: this.subtype,
-    subTypeDetail: this.subtypedetail,
-    subTypeFullDetail: '',
-    OperationalType: this.actbal,
-    flexCol1: '',
-    flexCol2: '',
-    finSummary: this.actbal == 'Balance' ? '' : this.financialsummary,
-  };
+  save(): void {
+    this.submitted = true;
 
-  this.shared.spinner.show();
+    this.missingFields = this.getMissingFields();
+    if (this.missingFields.length > 0) {
+      this.modalService.open(this.Alert, { centered: true });
+      return;
+    }
 
-  this.shared.api.postmethod('accountmapping/AccountMappingActionV2', payload).subscribe({
-    next: (res: any) => {
-      this.shared.spinner.hide();
+    const payload = {
+      companyid: this.bulkEditRecords[0].companyId,
+      accountnumber: this.bulkEditRecords[0].accountNumber,
+      accountdescription: this.bulkEditRecords[0].accountDescription,
+      accounttype: this.accounttype,
+      accountTypeDetail: this.actbal == 'Activity' ? '' : this.selectedaccounttypedetail,
+      operationalArea: this.departmenttype,
+      department: this.department,
+      subType: this.subtype,
+      subTypeDetail: this.subtypedetail,
+      subTypeFullDetail: '',
+      OperationalType: this.actbal,
+      flexCol1: '',
+      flexCol2: '',
+      finSummary: this.actbal == 'Balance' ? '' : this.financialsummary,
+    };
 
-      if (res && (res.status ==200 )) {
-        
-        this.toast.show('This Account Mapped successfully', 'success', 'Success');
+    this.shared.spinner.show();
 
-        this.getGLAccountsInfo();
+    this.shared.api.postmethod('accountmapping/AccountMappingActionV2', payload).subscribe({
+      next: (res: any) => {
+        this.shared.spinner.hide();
 
- (<HTMLInputElement>document.getElementById('forceCloseModal')).click();
- 
-        this.onclose();
-      } else {
-     
-        this.toast.show(res?.message || 'Failed to save mapping', 'danger', 'Error');
-      }
-    },
-    error: (err) => {
-      this.shared.spinner.hide();
-      console.error('UpdateAccountMapping error', err);
-     
-      this.toast.show('Error saving mapping.', 'danger', 'Error');
-    },
-  });
-}
+        if (res && (res.status == 200)) {
+
+          this.toast.show('This Account Mapped successfully', 'success', 'Success');
+
+          this.getGLAccountsInfo();
+
+          (<HTMLInputElement>document.getElementById('forceCloseModal')).click();
+
+          this.onclose();
+        } else {
+
+          this.toast.show(res?.message || 'Failed to save mapping', 'danger', 'Error');
+        }
+      },
+      error: (err) => {
+        this.shared.spinner.hide();
+        console.error('UpdateAccountMapping error', err);
+
+        this.toast.show('Error saving mapping.', 'danger', 'Error');
+      },
+    });
+  }
 
   MapAccountCancel(): void {
     this.submitted = false;
@@ -1008,176 +1008,170 @@ export class Dashboard implements OnInit {
   ngAfterViewInit(): void {
     this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: any) => {
       if (res && res.obj && res.obj.title == 'Account Mapping' && res.obj.state == true) {
-        this.exportToExcel(); // merged export will create both sheets
+        this.exportToExcelAccountingMapping(); // merged export will create both sheets
       }
     });
-     const modalEl = document.getElementById('mapModal');
-  if (modalEl) {
-    this.modalInstance = new bootstrap.Modal(modalEl);
+    const modalEl = document.getElementById('mapModal');
+    if (modalEl) {
+      this.modalInstance = new bootstrap.Modal(modalEl);
+    }
   }
-  }
-  exportToExcel() {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Account Mapping');
+  exportToExcelAccountingMapping() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Accounting Mapping');
 
-    worksheet.addRow([]);
-
-    // Title
-    const titleRow = worksheet.addRow(['ACCOUNT MAPPING REPORT']);
-    worksheet.mergeCells('A2:L2');
-    titleRow.font = { bold: true, size: 15 };
-    titleRow.alignment = { horizontal: 'center' };
-
-    worksheet.addRow([]);
-    // ========================= FILTER SECTION =========================
-
-    // REPORT MONTH
-    const reportMonth = this.frommonth
-      ? this.frommonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })
-      : '-';
-
-    worksheet.addRow(['Report Month:', reportMonth]);
-    if (worksheet.lastRow) worksheet.lastRow.getCell(1).font = { bold: true };
-
-    // CATEGORY
-    worksheet.addRow(['Category:', this.selectedCategory || '-']);
-    if (worksheet.lastRow) worksheet.lastRow.getCell(1).font = { bold: true };
-
-    // MAPPED / UNMAPPED
-    const mapStatus = this.statusFilter[0] === 'M' ? 'Mapped' : 'Unmapped';
-    worksheet.addRow(['Mapped Type:', mapStatus]);
-    if (worksheet.lastRow) worksheet.lastRow.getCell(1).font = { bold: true };
-
-    // SEARCH TERM
-    worksheet.addRow(['Search:', this.searchText || '-']);
-    if (worksheet.lastRow) worksheet.lastRow.getCell(1).font = { bold: true };
-    // ---------------------- STORE NAME SECTION ----------------------
-    // let storeNames: any[] = [];
-    // let store = this.storeIds;
-
-    // const selectedStores = this.stores.filter((s: any) =>
-    //   store.includes(s.ID)
-    // );
-
-    // if (store.length === this.stores.length) {
-    //   storeNames = ["All Stores"];
-    // } else {
-    //   storeNames = selectedStores.map((s: any) => s.storename);
-    // }
-
-    // const storeRow = worksheet.addRow(["Stores:", storeNames.join(", ")]);
-    // storeRow.font = { bold: true };
-    // storeRow.getCell(2).font = { color: { argb: "0066CC" } };
-
-    // worksheet.addRow([]);
-
-    // ---------------------- TABLE HEADERS ----------------------
-    const headers = [
+    /* ================= HEADER ================= */
+    worksheet.addRow([
       'Store',
       'Acct Desc',
-      'Acct Number',
-      'Account Type',
-      // 'Account Type Detail',
-      'Operational Area',
-      'Department',
+      'Acct #',
+      'Acct Type',
+      'Acct Type Detail',
+      'Opera Area',
+      'Dept',
       'Sub Type',
       'Sub Type Detail',
-      'Fin Summary',
+      'Fin Category',
       'MTD',
-      'YTD',
-    ];
+      'YTD'
+    ]);
 
-    const headerRow = worksheet.addRow(headers);
-
-    headerRow.font = { bold: true, color: { argb: 'FFFFFF' }, size: 10 };
-    headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
-
-    headerRow.eachCell((cell) => {
+    /* ================= HEADER STYLE ================= */
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell(cell => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '2a91f0' },
+        fgColor: { argb: 'D9E7FF' }
       };
+      cell.font = { bold: true, color: { argb: '000000' } };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
       cell.border = {
         top: { style: 'thin' },
-        left: { style: 'thin' },
         bottom: { style: 'thin' },
-        right: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
       };
     });
 
-    worksheet.views = [{ state: 'frozen', ySplit: 4 }];
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any) => {
+      row.eachCell((cell: any, colNumber: number) => {
 
-    // ---------------------- COLUMN WIDTHS ----------------------
-    worksheet.columns = [
-      { width: 25 },
-      { width: 35 },
-      { width: 15 },
-      { width: 15 },
-      // { width: 20 },
-      { width: 20 },
-      { width: 20 },
-      { width: 20 },
-      { width: 25 },
-      { width: 20 },
-      { width: 15 },
-      { width: 15 },
-    ];
+        /* ===== FORCE FONT (IMPORTANT) ===== */
+        cell.font = {
+          name: 'Calibri',
+          size: 11,
+          ...(cell.value < 0 ? { color: { argb: 'FF0000' } } : {})
+        };
 
-    // ---------------------- DATA ROWS ----------------------
-    let rowIndex = 0;
+        // LEFT TEXT
+        if ([1, 2, 8, 9, 10].includes(colNumber)) {
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: 1
+          };
+        }
 
-    this.AccountingMapping.forEach((item: any) => {
+        // CENTER
+        else if ([3, 4, 5, 6, 7].includes(colNumber)) {
+          cell.alignment = {
+            horizontal: 'center',
+            vertical: 'middle'
+          };
+        }
+
+        // RIGHT NUMBERS
+        else {
+          cell.alignment = {
+            horizontal: 'right',
+            vertical: 'middle',
+            indent: 1
+          };
+        }
+
+        /* ===== NUMBER FORMATS ===== */
+        if (typeof cell.value === 'number') {
+
+          // Currency
+          if (colNumber === 11 || colNumber === 12) {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+        }
+      });
+    };
+
+    /* ================= DATA ================= */
+    this.AccountingMapping.forEach((am: any, i: number) => {
+
       const row = worksheet.addRow([
-        item.as_companyName || '-',
-        item.accountDescription || '-',
-        item.accountNumber || '-',
-        item.accountType || '-',
-        // item.acctSubtype || '-',
-        item.operationalArea || '-',
-        item.department || '-',
-        item.subType || '-',
-        item.subTypeDetail || '-',
-        item.Fin_Summary || '-',
-        item.MTD === null ? '-' : item.MTD,
-        item.YTD === null ? '-' : item.YTD,
+        am.as_companyName || '-',
+        am.accountDescription || '-',
+        am.accountNumber || '-',
+        am.accountType || '-',
+        ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
+        am.operationalArea || '-',
+        am.department || '-',
+        am.subType || '-',
+        am.subTypeDetail || '-',
+        ['S', 'C', 'I', 'X', 'E'].includes(this.selectedheadertab[0]) ? (am.Fin_Summary || '-') : '',
+        am.MTD || 0,
+        am.YTD || 0
       ]);
 
-      row.eachCell((cell) => {
-        cell.border = {
-          top: { style: 'thin' },
-          bottom: { style: 'thin' },
-          left: { style: 'thin' },
-          right: { style: 'thin' },
+      /* ===== ZEBRA ROWS ===== */
+      row.eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: i % 2 === 0 ? 'FFFFFF' : 'F9FBFF' }
         };
-        cell.alignment = { vertical: 'middle', horizontal: 'center' };
       });
 
-      // Currency formatting
-      row.getCell(11).numFmt = '$#,##0.00';
-      row.getCell(12).numFmt = '$#,##0.00';
-
-      // Zebra Striping
-      if (rowIndex % 2 === 1) {
-        row.eachCell((cell) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-          };
-        });
-      }
-
-      rowIndex++;
+      formatRow(row);
     });
 
-    // ---------------------- DOWNLOAD FILE ----------------------
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    /* ================= BORDERS ================= */
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
       });
+    });
 
-      FileSaver.saveAs(blob, 'Account_Mapping_Report.xlsx');
+    /* ================= FREEZE (Sticky First Column + Header) ================= */
+    worksheet.views = [
+      {
+        state: 'frozen',
+        xSplit: 1, // 👈 first column sticky
+        ySplit: 1  // 👈 header sticky
+      }
+    ];
+
+    /* ================= COLUMN WIDTH ================= */
+    worksheet.columns = [
+      { width: 35 }, // Store
+      { width: 35 }, // Desc
+      { width: 15 },
+      { width: 15 },
+      { width: 20 },
+      { width: 18 },
+      { width: 15 },
+      { width: 20 },
+      { width: 25 },
+      { width: 20 },
+      { width: 18 },
+      { width: 18 }
+    ];
+
+    /* ================= DOWNLOAD ================= */
+    workbook.xlsx.writeBuffer().then(data => {
+      FileSaver.saveAs(new Blob([data]), 'AccountingMapping.xlsx');
     });
   }
 }

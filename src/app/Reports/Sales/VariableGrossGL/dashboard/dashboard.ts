@@ -216,23 +216,31 @@ export class Dashboard implements OnInit {
   Salesdetails: any = []
   openDetails(Item: any, ParentItem: any, cat: any) {
 
-    this.Salesdetails = [
-      {
-        StartDate: this.shared.datePipe.transform(this.date, 'yyyy-MM') + '-01',
-        saletype: this.saleType,
-        var1: Item.DEPT,
-        var2: this.saleType,
-        var3: '',
-        var1Value: Item.data1,
-        var2Value: '',
-        var3Value: '',
-        userName: Item.STORE,
-        storeids: Item.STOREID == 0 ? this.storeIds : Item.STOREID,
-        DepartmentN: this.Department.indexOf('New') >= 0 ? 'N' : '',
-        DepartmentU: this.Department.indexOf('Used') >= 0 ? 'U' : '',
-      },
-    ];
-    this.GetDetails('', '')
+    this.Salesdetails = [{
+      StartDate: this.shared.datePipe.transform(this.date, 'yyyy-MM') + '-01',
+      saletype: this.saleType,
+
+      var1: Item.DEPT,
+      var2: this.saleType,
+      var3: '',
+
+      var1Value: Item.data1,
+      var2Value: '',
+      var3Value: '',
+
+      userName: Item.STORE,
+      storeids: Item.STOREID == 0 ? this.storeIds : Item.STOREID,
+
+      DepartmentN: this.Department.includes('New') ? 'N' : '',
+      DepartmentU: this.Department.includes('Used') ? 'U' : '',
+
+      parent: ParentItem,
+      category: cat
+    }];
+    this.expandedIndex = null;
+    this.FSSubDetailsMap = {};
+    this.currentPage = 1;
+    this.GetDetails('', 0);
   }
   details: any = [];
   spinnerLoader: boolean = true;
@@ -250,40 +258,82 @@ export class Dashboard implements OnInit {
   Opacity: any = 'N';
 
 
-  GetDetails(acctno: any, index: any) {
-    this.spinnerLoader = true
-    this.acctNo = acctno;
-    this.details = [];
-    const obj = {
-      "AS_IDS": this.Salesdetails[0].storeids,
-      "DATE": this.Salesdetails[0].StartDate,
-      "VAR1": this.Salesdetails[0].var1,
-      "VAR2": this.Salesdetails[0].var2.toString(),
-      "Accountnumber": acctno
+  GetDetails(acctno: any, index: number) {
+
+    // 🔹 MAIN DATA LOAD
+    if (!acctno) {
+      this.spinnerLoader = true;
+
+      const obj = {
+        AS_IDS: this.Salesdetails[0].storeids,
+        DATE: this.Salesdetails[0].StartDate,
+        VAR1: this.Salesdetails[0].var1,
+        VAR2: this.Salesdetails[0].var2.toString(),
+        Accountnumber: ''
+      };
+
+      this.apiSrvc
+        .postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossGLDetailsV1', obj)
+        .subscribe((res: any) => {
+
+          if (res.status === 200) {
+
+            this.SalesdetailsData = (res.response || []).map((item: any) => ({
+              Store: item.Store || item.As_dealername || '-',
+              AccountNumber: item.AccountNumber || '-',
+              AccountDescription: item['Account Description'] || '-',
+              Balance: item.Balance || 0
+            }));
+
+            this.filterData();
+            this.spinnerLoader = false;
+            this.NoData = this.SalesdetailsData.length === 0;
+          }
+        });
+
+      return;
     }
+
+    // 🔹 TOGGLE CLOSE (if already open)
+    if (this.expandedIndex === index) {
+      this.expandedIndex = null;
+      return;
+    }
+
+    // 🔹 IF DATA ALREADY LOADED → JUST OPEN (no API call again)
+    if (this.FSSubDetailsMap[index]) {
+      this.expandedIndex = index;
+      return;
+    }
+
+    // 🔹 LOAD SUB DETAILS
+    this.spinnerLoader = true;
+
+    const obj = {
+      AS_IDS: this.Salesdetails[0].storeids,
+      DATE: this.Salesdetails[0].StartDate,
+      VAR1: this.Salesdetails[0].var1,
+      VAR2: this.Salesdetails[0].var2.toString(),
+      Accountnumber: acctno
+    };
 
     this.apiSrvc
       .postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossGLDetailsV1', obj)
-      .subscribe((res) => {
-        if (res.status == 200) {
-          if (acctno == '') {
-            this.SalesdetailsData = res.response;
-            this.filterData()
-          }
-          if (acctno != '') {
-            this.expandedIndex = index;
-            this.FSSubDetailsMap[index] = res.response;
-          }
-          this.filteredSalesdetailsData = this.SalesdetailsData || [];
+      .subscribe((res: any) => {
+
+        if (res.status === 200) {
+
+          this.FSSubDetailsMap[index] = (res.response || []).map((item: any) => ({
+            Control: item.Control || '-',
+            Date: item.Date,
+            AccountDescription: item['Account Description'] || '-',
+            Balance: item.Balance || 0
+          }));
+
+          this.expandedIndex = index;
           this.spinnerLoader = false;
-          if (this.SalesdetailsData.length > 0) {
-            this.NoData = false;
-          } else {
-            this.NoData = true;
-          }
         }
       });
-
   }
   expandedIndex: number | null = null;
   FSSubDetailsMap: { [index: number]: any[] } = {};

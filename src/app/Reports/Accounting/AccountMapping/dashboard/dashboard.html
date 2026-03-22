@@ -155,8 +155,31 @@
               <td class="text-start">{{ am.subTypeDetail || '-' }}</td>
               <td class="text-start" *ngIf="['S','C','I','X','E'].includes(selectedheadertab[0])">{{
                 am.Fin_Summary || '-' }}</td>
-              <td class="text-end">{{ am.MTD | currency:'USD' }}</td>
-              <td class="text-end">{{ am.YTD | currency:'USD' }}</td>
+              <td style="text-align: right;">
+                <span class="d-flex justify-content-between">
+                  {{
+                  (am.MTD == 0 || am.MTD == null || am.MTD == undefined ? '' : '$')
+                  }}
+                  <span>
+                    {{
+                    (am.MTD == 0 || am.MTD == null ? '-' : (am.MTD | number:'1.2-2'))
+                    }}
+                  </span>
+                </span>
+              </td>
+
+              <td style="text-align: right;">
+                <span class="d-flex justify-content-between">
+                  {{
+                  (am.YTD == 0 || am.YTD == null || am.YTD == undefined ? '' : '$')
+                  }}
+                  <span>
+                    {{
+                    (am.YTD == 0 || am.YTD == null ? '-' : (am.YTD | number:'1.2-2'))
+                    }}
+                  </span>
+                </span>
+              </td>
 
             </tr>
           </tbody>

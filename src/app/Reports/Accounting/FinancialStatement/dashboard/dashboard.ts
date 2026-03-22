@@ -16,6 +16,8 @@ import { Subscription } from 'rxjs';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import numeral from 'numeral';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import * as ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-dashboard',
@@ -119,7 +121,7 @@ export class Dashboard {
 
   applyDateChange() {
     if (!this.storeIds || this.storeIds.length === 0) {
-    
+
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -160,7 +162,7 @@ export class Dashboard {
         this.spinner.hide();
 
         if (res.status !== 200) {
-        
+
           this.toast.show('Invalid Details', 'danger', 'Error');
           return;
         }
@@ -237,7 +239,7 @@ export class Dashboard {
       if (this.excel != undefined) {
         if (res.obj.title == 'Financial Statement') {
           if (res.obj.state == true) {
-            this.exportToExcel();
+            this.exportToExcelFinancialStatement();
           }
         }
       }
@@ -443,145 +445,6 @@ export class Dashboard {
     }
     return false;
   }
-  // exportToExcel(): void {
-  //   const workbook = this.shared.getWorkbook();
-  //   const worksheet = workbook.addWorksheet('Financial Statement');
-
-  //   const formattedMonth = this.shared.datePipe.transform(this.Month, 'MMMM yyyy');
-
-
-  //   const currentMonth = this.shared.datePipe.transform(this.Month, 'MMMM yyyy');
-  //   const storeName = 'WesternAuto';
-
-  //   worksheet.mergeCells('A1:A1');
-  //   worksheet.mergeCells('B1:G1');
-  //   worksheet.getCell('A1').value = currentMonth;
-  //   worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
-  //   worksheet.getCell('A1').font = { bold: true, color: { argb: 'FFFFFFFF' } };
-
-  //   worksheet.getCell('B1').value = storeName;
-  //   worksheet.getCell('B1').alignment = { horizontal: 'center', vertical: 'middle' };
-  //   worksheet.getCell('B1').font = { bold: true, color: { argb: '#000' } };
-
-  //   worksheet.getRow(1).fill = {
-  //     type: 'pattern',
-  //     pattern: 'solid',
-  //     fgColor: { argb: 'FFFFFFFF' },
-  //   };
-  //   worksheet.getRow(1).height = 25;
-
-
-  //   const dynamicMonths = this.lastFourMonthsArray.map((m: any) =>
-  //     this.shared.datePipe.transform(m, 'MMMM yyyy')
-  //   );
-
-  //   const headerRow = ['Department', 'Actual', 'Budget', 'Variance', ...dynamicMonths];
-  //   worksheet.addRow(headerRow);
-
-  //   const headerRowIndex = worksheet.lastRow?.number ?? 2;
-  //   const headerRowRef = worksheet.getRow(headerRowIndex);
-  //   headerRowRef.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-  //   headerRowRef.alignment = { horizontal: 'center', vertical: 'middle' };
-  //   headerRowRef.fill = {
-  //     type: 'pattern',
-  //     pattern: 'solid',
-  //     fgColor: { argb: 'FF2F5597' },
-  //   };
-  //   headerRowRef.height = 22;
-
-
-
-  // this.FSData.forEach((data: any) => {
-
-  //   const mainRowValues = [
-  //     data.DisplayName,
-  //     data.Actual,
-  //     data.Budget,
-  //     data.Variance,
-  //     data.LM1,
-  //     data.LM2,
-  //     data.LM3
-  //   ];
-  //   const mainRow = worksheet.addRow(mainRowValues);
-
-
-  //   if (data.IsHeader === 'T') {
-  //     mainRow.font = { bold: true };
-  //     mainRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFDDEBF7' } };
-  //   } else if (data.IsHeader === 'Y') {
-  //     mainRow.font = { bold: true };
-  //     mainRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFBFD4F2' } };
-  //   }
-
-  //   mainRow.eachCell((cell, colNum) => {
-  //     if (colNum === 1) {
-  //       cell.alignment = { horizontal: 'left', vertical: 'middle' };
-  //     } else {
-  //       const val = cell.value;
-  //       if (val == null || val === '-') {
-  //         cell.value = '-';
-  //       } else if (typeof val === 'number') {
-  //         if (val < 0)
-  //           cell.value = `($${Math.abs(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
-  //         else
-  //           cell.value = `$${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  //       }
-  //       cell.alignment = { horizontal: 'right', vertical: 'middle' };
-  //     }
-  //   });
-
-
-  //   if (data.SubData && data.SubData.length > 0) {
-  //     data.SubData.forEach((sub: any) => {
-  //       const subRowValues = [
-  //         `   ${sub['SUBTYPE DETAIL'] ?? ''}`, // indent the name
-  //         sub.Actual,
-  //         sub.Budget,
-  //         sub.Variance,
-  //         sub.LM1,
-  //         sub.LM2,
-  //         sub.LM3
-  //       ];
-  //       const subRow = worksheet.addRow(subRowValues);
-
-
-  //       subRow.fill = {
-  //         type: 'pattern',
-  //         pattern: 'solid',
-  //         fgColor: { argb: 'FFE8EEF7' },
-  //       };
-
-  //       subRow.font = { size: 10, color: { argb: 'FF000000' } };
-
-  //       subRow.eachCell((cell, colNum) => {
-  //         if (colNum === 1) {
-  //           cell.alignment = { horizontal: 'left', vertical: 'middle' };
-  //         } else {
-  //           const val = cell.value;
-  //           if (val == null || val === '-') {
-  //             cell.value = '-';
-  //           } else if (typeof val === 'number') {
-  //             if (val < 0)
-  //               cell.value = `($${Math.abs(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`;
-  //             else
-  //               cell.value = `$${val.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  //           }
-  //           cell.alignment = { horizontal: 'right', vertical: 'middle' };
-  //         }
-  //       });
-  //     });
-  //   }
-  // });
-
-
-
-  //   worksheet.columns.forEach((col: any, i: number) => {
-  //     col.width = i === 0 ? 30 : 15;
-  //   });
-
-
-  //   this.shared.exportToExcel(workbook, `Financial Statement_${currentMonth}`);
-  // }
 
   formatExcelValue(value: any, valueType: string) {
     if (value === null || value === '' || value === undefined || value === 0 || value === '0') {
@@ -598,150 +461,231 @@ export class Dashboard {
         return value;
     }
   }
-  exportToExcel(): void {
-    const workbook = this.shared.getWorkbook();
+
+
+  exportToExcelFinancialStatement() {
+    const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Financial Statement');
 
-    const formattedMonth = this.shared.datePipe.transform(
-      this.selectedDate,
-      'MMMM yyyy'
-    );
+    /* ================= HEADER ROW 1 ================= */
+    worksheet.addRow([
+      this.datepipe.transform(this.currentMonth, 'MMMM yyyy'), this.storename
+    ]);
+    worksheet.mergeCells('B1:G1');
 
-    // ================= STORE VALUE FOR EXCEL =================
-    let storeValue = '';
-
-    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
-    const selectedStoreIds: string[] = Array.isArray(this.storeIds)
-      ? this.storeIds.map((id: any) => id.toString())
-      : [];
-
-    // ✅ No selection OR all selected → show ALL store names
-    if (!selectedStoreIds.length || selectedStoreIds.length === allStores.length) {
-      storeValue = allStores
-        .map((s: any) => s.storename?.trim())
-        .filter(Boolean)
-        .join(', ');
-    }
-    // ✅ Partial selection → show ONLY selected store names
-    else {
-      storeValue = allStores
-        .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
-        .map((s: any) => s.storename?.trim())
-        .filter(Boolean)
-        .join(', ');
-    }
-
-    // ================= FILTERS =================
-    const filters = [
-      { name: 'Store:', values: storeValue },
-      { name: 'Month:', values: formattedMonth },
-    ];
-
-    const currentMonth = formattedMonth;
-
-    // ================= TITLE =================
-    worksheet.mergeCells('A1:G1');
-    const title = worksheet.getCell('A1');
-    title.value = 'Financial Statement';
-    title.alignment = { horizontal: 'center', vertical: 'middle' };
-    title.font = { bold: true, size: 14 };
-    worksheet.getRow(1).height = 25;
-
-    // ================= FILTER ROWS =================
-    let startIndex = 2;
-    filters.forEach(filter => {
-      const labelCell = worksheet.getCell(`A${startIndex}`);
-      const valueCell = worksheet.getCell(`B${startIndex}`);
-
-      labelCell.value = filter.name;
-      labelCell.font = { bold: true };
-      labelCell.alignment = { horizontal: 'left' };
-
-      worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
-      valueCell.value = filter.values;
-      valueCell.alignment = { wrapText: true };
-
-      startIndex++;
-    });
-
-    worksheet.addRow([]);
-
-    // ================= HEADER =================
-    const dynamicMonths = this.lastFourMonthsArray.map(m =>
-      this.shared.datePipe.transform(m, 'MMMM yyyy')
-    );
-
-    const headerRow = [
+    /* ================= HEADER ROW 2 ================= */
+    worksheet.addRow([
       'Department',
       'Actual',
       'Budget',
       'Variance',
-      ...dynamicMonths
-    ];
+      this.lastFourMonthsArray[0],
+      this.lastFourMonthsArray[1],
+      this.lastFourMonthsArray[2]
+    ]);
 
-    const headerRow1 = worksheet.addRow(headerRow);
-
-    headerRow1.eachCell({ includeEmpty: true }, cell => {
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.alignment = { horizontal: 'center' };
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF2F5597' }
-      };
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' },
-      };
+    /* ================= HEADER STYLE ================= */
+    [1, 2].forEach(r => {
+      worksheet.getRow(r).eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: r === 1 ? '0554EF' : '4584FF' }
+        };
+        cell.font = {
+          bold: true,
+          color: { argb: 'FFFFFF' },
+          name: 'Calibri'
+        };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
     });
 
-    // ================= DATA =================
-    this.FSData.forEach((data: any) => {
-      const mainValues = [
-        data.DisplayName || '',
-        data.Actual,
-        data.Budget,
-        data.Variance,
-        data.LM1,
-        data.LM2,
-        data.LM3,
-      ];
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (
+      row: any,
+      level = 0,
+      valueTypes: any[] = [],
+      isSpecial = false,
+      isTitleRow = false,
+      isHeaderRow = false
+    ) => {
 
-      const mainRow = worksheet.addRow(mainValues);
+      row.eachCell((cell: any, colNumber: number) => {
 
-      if (data.IsHeader === 'T' || data.IsHeader === 'Y') {
-        const color = data.IsHeader === 'T' ? 'FFDDEBF7' : 'FFBFD4F2';
-        mainRow.font = { bold: true };
-        mainRow.eachCell(cell => {
-          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color } };
-          cell.font = { bold: true };
-          cell.border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' }
+        /* ===== FIRST COLUMN INDENT ===== */
+        if (colNumber === 1) {
+          let indentLevel = 3; // default normal
+          if (isTitleRow) indentLevel = 2;
+          else if (isHeaderRow) indentLevel = 1;
+
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: indentLevel
+          };
+          cell.font = {
+            name: 'Calibri',
+            bold: isTitleRow || isSpecial
+          };
+          return;
+        }
+
+        const valueType = valueTypes[colNumber - 2];
+
+        /* ===== HYPHENS / EMPTY CENTER ===== */
+        if (cell.value === '-' || cell.value === '' || cell.value === null) {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          cell.font = { name: 'Calibri', bold: isTitleRow };
+          return;
+        }
+
+        let numericValue = Number(cell.value); // ensure numeric for checking negative
+
+        if (!isNaN(numericValue)) {
+
+          /* ===== FORMATS ===== */
+          if (valueType === '$') {
+            cell.numFmt = '"$" * #,##0; "$" * -#,##0';
+          } else if (valueType === '#') {
+            cell.numFmt = '#,##0';
+          } else if (valueType === '%') {
+            cell.numFmt = '0.00%';
+            cell.value = numericValue / 100;
+          }
+
+          /* ===== 🔴 NEGATIVE VARIANCE ONLY SPECIAL ===== */
+          if (isSpecial && colNumber === 4 && numericValue < 0) {
+            cell.font = {
+              name: 'Calibri',
+              bold: isTitleRow,
+              color: { argb: 'FF0000' }
+            };
+          } else {
+            cell.font = { name: 'Calibri', bold: isTitleRow };
+          }
+
+        } else {
+          cell.font = { name: 'Calibri', bold: isTitleRow };
+        }
+
+        /* ===== ALIGNMENT ===== */
+        if (valueType === '%') {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        }
+      });
+    };
+
+    /* ================= DATA ROWS ================= */
+    this.FSData.forEach((data: any, i: number) => {
+
+      const isHeaderRow = data.IsHeader === 'Y';
+      const isTitleRow = data.IsHeader === 'T';
+      const isSpecial = this.isSpecialRow(data.DisplayName);
+
+      const row = worksheet.addRow([
+        data.DisplayName,
+        isHeaderRow ? '' : this.formatExcelValue(data.Actual, data.ValueType),
+        isHeaderRow ? '' : this.formatExcelValue(data.Budget, data.ValueType),
+        isHeaderRow ? '' : this.formatExcelValue(data.Variance, data.ValueType),
+        isHeaderRow ? '' : this.formatExcelValue(data.LM1, data.ValueType),
+        isHeaderRow ? '' : this.formatExcelValue(data.LM2, data.ValueType),
+        isHeaderRow ? '' : this.formatExcelValue(data.LM3, data.ValueType)
+      ]);
+
+      /* ===== HEADER ROW ===== */
+      if (isHeaderRow) {
+        row.eachCell((cell: any, colNumber: number) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'D9E7FF' }
+          };
+          if (colNumber !== 1) cell.value = '';
+          cell.font = { bold: true, name: 'Calibri' };
+          cell.alignment = {
+            horizontal: colNumber === 1 ? 'left' : 'center',
+            vertical: 'middle'
           };
         });
       }
 
-      mainRow.eachCell({ includeEmpty: true }, (cell, colNum) => {
-        if (colNum === 1) {
-          cell.alignment = { horizontal: 'left' };
-          return;
-        }
+      /* ===== TITLE ROW ===== */
+      if (isTitleRow) {
+        row.eachCell(cell => {
+          cell.font = { bold: true, name: 'Calibri' };
+        });
+        formatRow(row, 0, Array(6).fill(data.ValueType), isSpecial, true, false);
+      }
 
-        const formatted = this.formatExcelValue(cell.value, data.ValueType);
+      /* ===== SPECIAL ROW ===== */
+      if (isSpecial) {
+        row.eachCell(cell => {
+          cell.font = { bold: true, name: 'Calibri' };
+          cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+        });
+      }
 
-        if (formatted !== '-') {
-          cell.value = formatted;
-          if (data.ValueType === '$') cell.numFmt = '$#,##0.00';
-          else if (data.ValueType === '#') cell.numFmt = '#,##0';
-          else if (data.ValueType === '%') cell.numFmt = '0.00%';
-        }
+      /* ===== ZEBRA ===== */
+      if (i % 2 === 0 && !isHeaderRow && !isTitleRow) {
+        row.eachCell(cell => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'F9FBFF' }
+          };
+        });
+      }
 
-        cell.alignment = { horizontal: 'right' };
+      row.outlineLevel = 0;
+
+      /* ===== NORMAL ROW ===== */
+      if (!isHeaderRow && !isTitleRow) {
+        formatRow(row, 0, Array(6).fill(data.ValueType), isSpecial, false, false);
+      }
+
+      /* ===== LEVEL 2 SUBROWS ===== */
+      if (Array.isArray(data.SubData)) {
+        data.SubData.forEach((sub: any) => {
+
+          const isSubSpecial = this.isSpecialRow(sub.DisplayName);
+
+          const row2 = worksheet.addRow([
+            sub['SUBTYPE DETAIL'] || '',
+            this.formatExcelValue(sub.Actual, sub.ValueType),
+            this.formatExcelValue(sub.Budget, sub.ValueType),
+            this.formatExcelValue(sub.Variance, sub.ValueType),
+            this.formatExcelValue(sub.LM1, sub.ValueType),
+            this.formatExcelValue(sub.LM2, sub.ValueType),
+            this.formatExcelValue(sub.LM3, sub.ValueType)
+          ]);
+
+          row2.outlineLevel = 1;
+
+          row2.eachCell(cell => {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFFFFF' }
+            };
+          });
+
+          formatRow(row2, 1, Array(6).fill(sub.ValueType), isSubSpecial, false, false);
+        });
+      }
+    });
+
+    /* ================= BORDERS ================= */
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
         cell.border = {
           top: { style: 'thin' },
           left: { style: 'thin' },
@@ -749,72 +693,29 @@ export class Dashboard {
           right: { style: 'thin' }
         };
       });
-
-      // ================= SUB DATA =================
-      if (data.SubData?.length) {
-        data.SubData.forEach((sub: any) => {
-          const subValues = [
-            `   ${sub['SUBTYPE DETAIL'] || ''}`,
-            sub.Actual,
-            sub.Budget,
-            sub.Variance,
-            sub.LM1,
-            sub.LM2,
-            sub.LM3,
-          ];
-
-          const subRow = worksheet.addRow(subValues);
-          subRow.font = { size: 10 };
-
-          subRow.eachCell({ includeEmpty: true }, (cell, colNum) => {
-            cell.fill = {
-              type: 'pattern',
-              pattern: 'solid',
-              fgColor: { argb: 'FFE8EEF7' }
-            };
-
-            cell.border = {
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              bottom: { style: 'thin' },
-              right: { style: 'thin' }
-            };
-
-            if (colNum === 1) {
-              cell.alignment = { horizontal: 'left' };
-              return;
-            }
-
-            const formatted = this.formatExcelValue(cell.value, sub.ValueType);
-
-            if (formatted !== '-') {
-              cell.value = formatted;
-              if (sub.ValueType === '$') cell.numFmt = '$#,##0.00';
-              else if (sub.ValueType === '#') cell.numFmt = '#,##0';
-              else if (sub.ValueType === '%') cell.numFmt = '0.00%';
-            }
-
-            cell.alignment = { horizontal: 'right' };
-          });
-        });
-      }
     });
 
-    // ================= COLUMN STYLES =================
-    worksheet.getColumn(1).alignment = { horizontal: 'left' };
-    worksheet.columns.forEach((col, i) => {
-      col.width = i === 0 ? 30 : 18;
-    });
+    /* ================= FREEZE ================= */
+    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 2 }];
 
-    // ================= EXPORT =================
-    this.shared.exportToExcel(
-      workbook,
-      `Financial Statement_${currentMonth}`
-    );
+    /* ================= WIDTH ================= */
+    worksheet.columns = [
+      { width: 40 },
+      { width: 18 },
+      { width: 18 },
+      { width: 18 },
+      { width: 18 },
+      { width: 18 },
+      { width: 18 }
+    ];
+
+    worksheet.properties.outlineLevelRow = 1;
+
+    /* ================= DOWNLOAD ================= */
+    workbook.xlsx.writeBuffer().then(data => {
+      FileSaver.saveAs(new Blob([data]), 'FinancialStatement.xlsx');
+    });
   }
-
-
-
 
 
 }

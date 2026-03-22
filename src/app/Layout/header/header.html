@@ -34,7 +34,8 @@
                     <app-riv-icon *ngIf="!userNetworkInfo.networkStatus" src="images/riv/vpn_disconnected.riv"
                         stateMachine="State Machine 1" [width]="26" [height]="26" class="network"
                         [style.cursor]="'default'" (click)="onNetworkClick()"></app-riv-icon>
-                    <img src="/images/Download.svg" class="img-fluid" alt="" (click)="onExcelClick()">
+                    <img src="images/Download.svg" class="img-fluid me-0" alt="" (click)="onExcelClick()">
+                    <!-- <img src="images/Download.svg" class="img-fluid" alt="" (click)="excel()"> -->
                     <img src="images/Logout.svg" class="img-fluid" alt="" (click)="logoutSession()" title="Logout">
                 </div>
             </div>

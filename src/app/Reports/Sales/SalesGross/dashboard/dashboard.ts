@@ -12,6 +12,8 @@ import { SalesgrossDetails } from '../salesgross-details/salesgross-details';
 import { CurrencyPipe } from '@angular/common';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 
 @Component({
@@ -871,9 +873,9 @@ export class Dashboard {
         if (res.obj.title == 'Sales Gross') {
           if (res.obj.state == true) {
             if (this.GridView == 'Global') {
-              this.exportToExcel();
+              this.exportToExcelSalesGross();
             } else {
-              this.exportToBackGrossExcel();
+              this.exportToExcelBackGross();
             }
           }
         }
@@ -1164,452 +1166,737 @@ export class Dashboard {
   ExcelStoreNames: any = [];
 
 
-  exportToExcel(): void {
-    const workbook = this.shared.getWorkbook();
+  // exportToExcel(): void {
+  //   const workbook = this.shared.getWorkbook();
+  //   const worksheet = workbook.addWorksheet('Sales Gross');
+  //   let storeNames: any[] = [];
+  //   const store = this.storeIds
+  //   storeNames = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => store.includes(item.ID));
+  //   if (store.length == this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length) { this.ExcelStoreNames = 'All Stores' }
+  //   else { this.ExcelStoreNames = storeNames.map(function (a: any) { return a.storename; }); }
+  //   const PresentYear = this.shared.datePipe.transform(this.FromDate, 'yyyy');
+  //   const FromDate = this.shared.datePipe.transform(this.FromDate, 'dd');
+  //   const ToDate = this.shared.datePipe.transform(this.ToDate, 'dd');
+  //   const PresentMonth = this.shared.datePipe.transform(this.FromDate, 'MMMM');
+
+  //   let filters: any = [
+  //     // { name: 'Stores :', values: this.ExcelStoreNames.toString() },
+  //     { name: 'Groupings :', values: this.selectedDataGrouping[0]?.ARG_LABEL + (this.selectedDataGrouping[1]?.ARG_LABEL != '' && this.selectedDataGrouping[1]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[1]?.ARG_LABEL : '') + (this.selectedDataGrouping[2]?.ARG_LABEL != '' && this.selectedDataGrouping[2]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[2]?.ARG_LABEL : '') },
+  //     { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate },
+  //     { name: 'Sales Persons :', values: this.salesPersonId == 0 || this.salesPersonId == '' ? 'All Sales Persons' : this.salesPersonId == null ? '-' : this.salesPersonId },
+  //     { name: 'Sales Managers :', values: this.salesManagerId == 0 || this.salesManagerId == '' ? 'All Sales Managers' : this.salesManagerId == null ? '-' : this.salesManagerId },
+  //     { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
+  //     { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
+  //     { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
+  //     { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
+  //   ]
+  //   // const ReportFilter = worksheet.addRow(['Report Controls :']);
+  //   // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+  //   const titleRow = worksheet.addRow(['Sales Gross']);
+  //   titleRow.eachCell((cell, number) => {
+  //     cell.alignment = {
+  //       indent: 1,
+  //       vertical: 'middle',
+  //       horizontal: 'left',
+  //     };
+  //   });
+  //   titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
+  //   titleRow.worksheet.mergeCells('A2', 'D2');
+
+  //   const Stores1 = worksheet.getCell('A3');
+  //   Stores1.value = 'Stores :';
+  //   worksheet.mergeCells('B3', 'Z3');
+  //   const stores1 = worksheet.getCell('B3');
+  //   stores1.value = this.ExcelStoreNames.toString().replaceAll(',', ', ');
+  //   stores1.font = { name: 'Arial', family: 4, size: 9 };
+  //   stores1.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, };
+
+
+  //   let startIndex = 3
+  //   filters.forEach((val: any) => {
+  //     startIndex++
+  //     worksheet.addRow('');
+  //     worksheet.getCell(`A${startIndex}`);
+  //     worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
+  //     worksheet.getCell(`A${startIndex}`).value = val.name;
+  //     worksheet.getCell(`B${startIndex}`).value = val.values
+  //   })
+
+  //   worksheet.addRow('');
+  //   worksheet.getCell('A12');
+  //   worksheet.mergeCells('B12:F12');
+  //   worksheet.mergeCells('G12:K12');
+  //   worksheet.mergeCells('L12:P12');
+  //   worksheet.mergeCells('Q12:U12');
+
+  //   worksheet.getCell('A12').value = `${PresentMonth}`;
+  //   worksheet.getCell('B12').value = 'UNITS';
+  //   worksheet.getCell('G12').value = 'FRONT GROSS';
+  //   worksheet.getCell('L12').value = 'BACK GROSS';
+  //   worksheet.getCell('Q12').value = 'TOTAL GROSS';
+
+
+  //   worksheet.getRow(1).height = 25;
+
+
+  //   ['A12', 'B12', 'G12', 'L12', 'Q12'].forEach(key => {
+  //     const cell = worksheet.getCell(key);
+  //     cell.alignment = { vertical: 'middle', horizontal: 'center' };
+  //     cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+  //     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F5597' } };
+  //   });
+
+
+
+  //   const dateLabel =
+  //     this.datetype() === 'C'
+  //       ? `${this.shared.datePipe.transform(this.FromDate, 'MM.dd.yyyy')}-${this.shared.datePipe.transform(this.ToDate, 'MM.dd.yyyy')}`
+  //       : this.datetype();
+
+  //   const secondHeader = [
+  //     `${FromDate} - ${ToDate}, ${PresentYear}`,
+
+  //     dateLabel, 'PACE', 'TARGET', '+/-', 'PER DAY',
+  //     dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
+  //     dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
+  //     dateLabel, 'PACE', 'TARGET', '+/-', 'PVR'
+  //   ];
+
+  //   const headerRow = worksheet.addRow(secondHeader);
+
+  //   headerRow.eachCell((cell) => {
+  //     cell.alignment = { horizontal: 'center', vertical: 'middle' };
+  //     cell.font = { bold: true };
+  //   });
+
+  //   const bindingHeaders = [
+  //     'data1', 'Units_MTD', 'Units_Pace', 'Units_Target', 'Units_Diff', 'PerDay',
+  //     'FrontGross_MTD', 'FrontGross_Pace', 'FrontGross_Target', 'FrontGross_Diff', 'FrontGross_PVR',
+  //     'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
+  //     'TotalGross_MTD', 'TotalGross_Pace', 'TotalGross_Target', 'TotalGross_Diff', 'TotalGross_PVR',
+  //   ];
+  //   const currencyFields = [
+  //     'FrontGross_MTD', 'FrontGross_Pace', 'FrontGross_Target', 'FrontGross_Diff', 'FrontGross_PVR',
+  //     'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
+  //     'TotalGross_MTD', 'TotalGross_Pace', 'TotalGross_Target', 'TotalGross_Diff', 'TotalGross_PVR',];
+
+  //   const capitalize = (str: string) =>
+  //     str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
+
+  //   for (const info of this.SalesData) {
+  //     const rowData = bindingHeaders.map(key => {
+  //       const val = info[key];
+  //       if (key === 'data1') return capitalize(val)
+  //       if (key === 'Units_Diff' && info['Units_Pace'] != 0 && info['Units_Pace'] != null && info['Units_Target'] != 0 && info['Units_Target'] != null) return (info['Units_Pace'] - info['Units_Target']);
+  //       if (key === 'FrontGross_Diff' && info['FrontGross_Pace'] != 0 && info['FrontGross_Pace'] != null && info['FrontGross_Target'] != 0 && info['FrontGross_Target'] != null) return val;
+  //       if (key === 'BackGross_Diff' && info['BackGross_Pace'] != 0 && info['BackGross_Pace'] != null && info['BackGross_Target'] != 0 && info['BackGross_Target'] != null) return val;
+  //       if (key === 'TotalGross_Diff' && info['TotalGross_Pace'] != 0 && info['TotalGross_Pace'] != null && info['TotalGross_Target'] != 0 && info['TotalGross_Target'] != null) return val;
+
+  //       if (key != 'FrontGross_Diff' && key != 'BackGross_Diff' && key != 'TotalGross_Diff') return val === 0 || val == null ? '-' : val
+  //     });
+
+  //     const dealerRow = worksheet.addRow(rowData);
+  //     dealerRow.font = { bold: true };
+
+  //     bindingHeaders.forEach((key, index) => {
+  //       const cell = dealerRow.getCell(index + 1);
+  //       if (currencyFields.includes(key) && typeof cell.value === 'number') {
+  //         cell.numFmt = '"$"#,##0';
+  //         cell.alignment = { horizontal: 'right' };
+  //         if (cell.value < 0) {
+  //           cell.font = { color: { argb: 'FFFF0000' }, }
+  //         }
+  //       } else if (!isNaN(Number(cell.value))) {
+  //         cell.alignment = { horizontal: 'right' };
+  //       }
+  //     });
+
+  //     if (info.Data2 != undefined) {
+  //       for (const data2 of info.Data2) {
+  //         const nestedRowData = bindingHeaders.map(key => {
+  //           if (key === 'data1') return '   ' + capitalize(data2['data2']);
+  //           if (key === 'FrontGross_PVR') return (data2['FrontGross_MTD'] / data2['Units_MTD']);
+  //           if (key === 'BackGross_PVR') return (data2['BackGross_MTD'] / data2['Units_MTD']);
+  //           if (key === 'TotalGross_PVR') return (data2['TotalGross_MTD'] / data2['Units_MTD']);
+
+  //           if (key === 'Units_Diff' && data2['Units_Pace'] != 0 && data2['Units_Pace'] != null && data2['Units_Target'] != 0 && data2['Units_Target'] != null) return (data2['Units_Pace'] - data2['Units_Target']);
+  //           if (key === 'FrontGross_Diff' && data2['FrontGross_Pace'] != 0 && data2['FrontGross_Pace'] != null && data2['FrontGross_Target'] != 0 && data2['FrontGross_Target'] != null) return (data2['FrontGross_Pace'] - data2['FrontGross_Target']);
+  //           if (key === 'BackGross_Diff' && data2['BackGross_Pace'] != 0 && data2['BackGross_Pace'] != null && data2['BackGross_Target'] != 0 && data2['BackGross_Target'] != null) return (data2['BackGross_Pace'] - data2['BackGross_Target']);
+  //           if (key === 'TotalGross_Diff' && data2['TotalGross_Pace'] != 0 && data2['TotalGross_Pace'] != null && data2['TotalGross_Target'] != 0 && data2['TotalGross_Target'] != null) return (data2['TotalGross_Pace'] - data2['TotalGross_Target']);
+
+  //           const val = data2[key];
+  //           return val === 0 || val == null ? '-' : val;
+  //         });
+  //         const nestedRow = worksheet.addRow(nestedRowData);
+
+  //         bindingHeaders.forEach((key, index) => {
+  //           const cell = nestedRow.getCell(index + 1);
+  //           if (currencyFields.includes(key) && typeof cell.value === 'number') {
+  //             cell.numFmt = '"$"#,##0';
+  //             cell.alignment = { horizontal: 'right' };
+  //             if (cell.value < 0) {
+  //               cell.font = { color: { argb: 'FFFF0000' }, }
+  //             }
+  //           } else if (!isNaN(Number(cell.value))) {
+  //             cell.alignment = { horizontal: 'right' };
+  //           }
+  //         });
+
+
+  //         if (data2.SubData != undefined) {
+  //           for (const data3 of data2.SubData) {
+  //             const nestedRowData = bindingHeaders.map(key => {
+  //               if (key === 'data1') return '          ' + capitalize(data3['data3']);
+  //               if (key === 'FrontGross_PVR') return (data3['FrontGross_MTD'] / data3['Units_MTD']);
+  //               if (key === 'BackGross_PVR') return (data3['BackGross_MTD'] / data3['Units_MTD']);
+  //               if (key === 'TotalGross_PVR') return (data3['TotalGross_MTD'] / data3['Units_MTD']);
+
+  //               if (key === 'Units_Target') return '';
+  //               if (key === 'FrontGross_Target') return '';
+  //               if (key === 'BackGross_Target') return '';
+  //               if (key === 'TotalGross_Target') return '';
+
+  //               if (key === 'FrontGross_Diff') return '';
+  //               if (key === 'BackGross_Diff') return '';
+  //               if (key === 'TotalGross_Diff') return '';
+
+  //               const val = data3[key];
+  //               return val === 0 || val == null ? '-' : val;
+  //             });
+  //             const nestedRow = worksheet.addRow(nestedRowData);
+
+  //             bindingHeaders.forEach((key, index) => {
+  //               const cell = nestedRow.getCell(index + 1);
+  //               if (currencyFields.includes(key) && typeof cell.value === 'number') {
+  //                 cell.numFmt = '"$"#,##0';
+  //                 cell.alignment = { horizontal: 'right' };
+  //                 if (cell.value < 0) {
+  //                   cell.font = { color: { argb: 'FFFF0000' }, }
+  //                 }
+  //               } else if (!isNaN(Number(cell.value))) {
+  //                 cell.alignment = { horizontal: 'right' };
+  //               }
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //   worksheet.columns.forEach((column: any) => {
+  //     let maxLength = 20;
+  //     column.width = maxLength + 2;
+  //   });
+  //   workbook.xlsx.writeBuffer().then((data: any) => {
+  //     const blob = new Blob([data], {
+  //       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  //     });
+  //     this.shared.exportToExcel(workbook, 'Sales Gross')
+
+  //   });
+  // }
+
+  exportToExcelBackGross() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Back Gross');
+
+    const from = new Date(this.FromDate);
+    const to = new Date(this.ToDate);
+
+    const monthText =
+      from.toLocaleString('default', { month: 'long' }) +
+      (from.getMonth() !== to.getMonth()
+        ? ' - ' + to.toLocaleString('default', { month: 'long' })
+        : '');
+
+    const dateText =
+      from.getDate() +
+      (from.getFullYear() !== to.getFullYear() ? ' ' + from.getFullYear() : '') +
+      ' - ' +
+      to.getDate() +
+      (from.getFullYear() !== to.getFullYear()
+        ? ' ' + to.getFullYear()
+        : ', ' + from.getFullYear());
+
+    let dateHeader = '';
+    if (this.datetype() === 'C') {
+      const fromText =
+        ('0' + (from.getMonth() + 1)).slice(-2) + '.' +
+        ('0' + from.getDate()).slice(-2) + '.' +
+        from.getFullYear();
+
+      const toText =
+        ('0' + (to.getMonth() + 1)).slice(-2) + '.' +
+        ('0' + to.getDate()).slice(-2) + '.' +
+        to.getFullYear();
+
+      dateHeader = `${fromText}\n-\n${toText}`;
+    } else {
+      dateHeader = this.datetype();
+    }
+
+    /* ================= HEADER ================= */
+    worksheet.addRow([
+      monthText,
+      'Units',
+      'Back Gross', '', '', '', '',
+      'Finance Sales', '', '', '',
+      'Product Sales', '', '', '', ''
+    ]);
+
+    worksheet.mergeCells('B1:B1');
+    worksheet.mergeCells('C1:G1');
+    worksheet.mergeCells('H1:K1');
+    worksheet.mergeCells('L1:P1');
+
+    worksheet.addRow([
+      dateText,
+      dateHeader,
+      dateHeader, 'Pace', 'Target', '+/-', 'PVR',
+      'Gross', 'PVR', 'Count', 'Pen %',
+      'Gross', 'PVR', 'Count', 'Pen %', 'Per Trans'
+    ]);
+
+    /* ================= HEADER STYLE ================= */
+    [1, 2].forEach(r => {
+      worksheet.getRow(r).eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: r === 1 ? '0554EF' : '4584FF' }
+        };
+        cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any, level = 0) => {
+      row.eachCell((cell: any, colNumber: number) => {
+
+        if (colNumber === 1) {
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: level * 2
+          };
+          return;
+        }
+
+        if (typeof cell.value === 'number') {
+
+          // Units + Count
+          if (colNumber === 2 || colNumber === 10 || colNumber === 14) {
+            cell.numFmt = '#,##0';
+          }
+
+          // Pen %
+          else if (colNumber === 11 || colNumber === 15) {
+            cell.numFmt = '0%';
+            cell.value = cell.value / 100;
+          }
+
+          // Per Trans
+          else if (colNumber === 16) {
+            cell.numFmt = '0.00';
+          }
+
+          // Currency
+          else {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+
+          if (cell.value < 0) {
+            cell.font = { color: { argb: 'FF0000' } };
+          }
+        }
+
+        cell.alignment = {
+          horizontal: 'right',
+          vertical: 'middle'
+        };
+      });
+    };
+
+    /* ================= DATA ================= */
+    this.BackGross.forEach((lvl1: any) => {
+
+      const row1 = worksheet.addRow([
+        lvl1.data1 || '-',
+        lvl1.Units_MTD || 0,
+
+        lvl1.BackGross_MTD || 0,
+        lvl1.BackGross_Pace || 0,
+        lvl1.BackGross_Target || 0,
+        lvl1.BackGross_Diff || 0,
+        lvl1.BackGross_PVR || 0,
+
+        lvl1.figross || 0,
+        lvl1.FigrossPVR || 0,
+        lvl1.FRCOUNT || 0,
+        lvl1.FIPen || 0,
+
+        lvl1.ProductSale || 0,
+        lvl1.ProductPVR || 0,
+        lvl1.productdealcount || 0,
+        lvl1.Productpen || 0,
+        lvl1.peorductPertra || 0
+      ]);
+
+      row1.outlineLevel = 0;
+
+      // ✅ Level 0 color
+      row1.eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'D9E7FF' }
+        };
+      });
+
+      // ✅ REPORT TOTAL
+      if (lvl1.data1 === 'REPORTS TOTAL') {
+        row1.eachCell(cell => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '8DB4FF' }
+          };
+          cell.font = { bold: true };
+        });
+      }
+
+      formatRow(row1, 0);
+
+      /* LEVEL 2 */
+      if (Array.isArray(lvl1.data2)) {
+        lvl1.data2.forEach((lvl2: any) => {
+
+          const row2 = worksheet.addRow([
+            lvl2.data2 || '-',
+            lvl2.Units_MTD || 0,
+
+            lvl2.BackGross_MTD || 0,
+            lvl2.BackGross_Pace || 0,
+            lvl2.BackGross_Target || 0,
+            lvl2.BackGross_dif || 0,
+            lvl2.BackGross_PVR || 0,
+
+            lvl2.figross || 0,
+            lvl2.FigrossPVR || 0,
+            lvl2.FRCOUNT || 0,
+            lvl2.FIPen || 0,
+
+            lvl2.ProductSale || 0,
+            lvl2.ProductPVR || 0,
+            lvl2.productdealcount || 0,
+            lvl2.Productpen || 0,
+            lvl2.peorductPertra || 0
+          ]);
+
+          row2.outlineLevel = 1;
+          formatRow(row2, 1);
+
+          /* LEVEL 3 */
+          if (Array.isArray(lvl2.SubData)) {
+            lvl2.SubData.forEach((lvl3: any) => {
+
+              const row3 = worksheet.addRow([
+                lvl3.data3 || '-',
+                lvl3.Units_MTD || 0,
+
+                lvl3.BackGross_MTD || 0,
+                lvl3.BackGross_Pace || 0,
+                '', '', '',
+
+                lvl3.figross || 0,
+                lvl3.FigrossPVR || 0,
+                lvl3.FRCOUNT || 0,
+                lvl3.FIPen || 0,
+
+                lvl3.ProductSale || 0,
+                lvl3.ProductPVR || 0,
+                lvl3.productdealcount || 0,
+                lvl3.Productpen || 0,
+                lvl3.peorductPertra || 0
+              ]);
+
+              row3.outlineLevel = 2;
+              formatRow(row3, 2);
+            });
+          }
+
+        });
+      }
+
+    });
+
+    /* ================= BORDERS ================= */
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    /* ================= FREEZE ================= */
+    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 2 }];
+
+    /* ================= WIDTH ================= */
+    worksheet.columns.forEach((col, i) => {
+      col.width = i === 0 ? 35 : 15;
+    });
+
+    worksheet.properties.outlineLevelRow = 2;
+
+    /* ================= DOWNLOAD ================= */
+    workbook.xlsx.writeBuffer().then(data => {
+      saveAs(new Blob([data]), 'BackGross.xlsx');
+    });
+  }
+
+
+  exportToExcelSalesGross() {
+    const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Gross');
-    let storeNames: any[] = [];
-    const store = this.storeIds
-    storeNames = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => store.includes(item.ID));
-    if (store.length == this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length) { this.ExcelStoreNames = 'All Stores' }
-    else { this.ExcelStoreNames = storeNames.map(function (a: any) { return a.storename; }); }
-    const PresentYear = this.shared.datePipe.transform(this.FromDate, 'yyyy');
-    const FromDate = this.shared.datePipe.transform(this.FromDate, 'dd');
-    const ToDate = this.shared.datePipe.transform(this.ToDate, 'dd');
-    const PresentMonth = this.shared.datePipe.transform(this.FromDate, 'MMMM');
+    /* ================= HEADER ROW 1 ================= */
+    const from = new Date(this.FromDate);
+    const to = new Date(this.ToDate);
+    const monthText =
+      from.toLocaleString('default', { month: 'long' }) +
+      (from.getMonth() !== to.getMonth()
+        ? ' - ' + to.toLocaleString('default', { month: 'long' })
+        : '');
 
-    let filters: any = [
-      // { name: 'Stores :', values: this.ExcelStoreNames.toString() },
-      { name: 'Groupings :', values: this.selectedDataGrouping[0]?.ARG_LABEL + (this.selectedDataGrouping[1]?.ARG_LABEL != '' && this.selectedDataGrouping[1]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[1]?.ARG_LABEL : '') + (this.selectedDataGrouping[2]?.ARG_LABEL != '' && this.selectedDataGrouping[2]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[2]?.ARG_LABEL : '') },
-      { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate },
-      { name: 'Sales Persons :', values: this.salesPersonId == 0 || this.salesPersonId == '' ? 'All Sales Persons' : this.salesPersonId == null ? '-' : this.salesPersonId },
-      { name: 'Sales Managers :', values: this.salesManagerId == 0 || this.salesManagerId == '' ? 'All Sales Managers' : this.salesManagerId == null ? '-' : this.salesManagerId },
-      { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
-      { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
-    ]
-    // const ReportFilter = worksheet.addRow(['Report Controls :']);
-    // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
-    const titleRow = worksheet.addRow(['Sales Gross']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
+    const dateText =
+      from.getDate() +
+      (from.getFullYear() !== to.getFullYear() ? ' ' + from.getFullYear() : '') +
+      ' - ' +
+      to.getDate() +
+      (from.getFullYear() !== to.getFullYear()
+        ? ' ' + to.getFullYear()
+        : ', ' + from.getFullYear());
+    let dateHeader = '';
 
-    const Stores1 = worksheet.getCell('A3');
-    Stores1.value = 'Stores :';
-    worksheet.mergeCells('B3', 'Z3');
-    const stores1 = worksheet.getCell('B3');
-    stores1.value = this.ExcelStoreNames.toString().replaceAll(',', ', ');
-    stores1.font = { name: 'Arial', family: 4, size: 9 };
-    stores1.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, };
+    if (this.datetype() === 'C') {
+      const fromText =
+        ('0' + (from.getMonth() + 1)).slice(-2) + '.' +
+        ('0' + from.getDate()).slice(-2) + '.' +
+        from.getFullYear();
 
+      const toText =
+        ('0' + (to.getMonth() + 1)).slice(-2) + '.' +
+        ('0' + to.getDate()).slice(-2) + '.' +
+        to.getFullYear();
 
-    let startIndex = 3
-    filters.forEach((val: any) => {
-      startIndex++
-      worksheet.addRow('');
-      worksheet.getCell(`A${startIndex}`);
-      worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
-      worksheet.getCell(`A${startIndex}`).value = val.name;
-      worksheet.getCell(`B${startIndex}`).value = val.values
-    })
-
-    worksheet.addRow('');
-    worksheet.getCell('A12');
-    worksheet.mergeCells('B12:F12');
-    worksheet.mergeCells('G12:K12');
-    worksheet.mergeCells('L12:P12');
-    worksheet.mergeCells('Q12:U12');
-
-    worksheet.getCell('A12').value = `${PresentMonth}`;
-    worksheet.getCell('B12').value = 'UNITS';
-    worksheet.getCell('G12').value = 'FRONT GROSS';
-    worksheet.getCell('L12').value = 'BACK GROSS';
-    worksheet.getCell('Q12').value = 'TOTAL GROSS';
-
-
-    worksheet.getRow(1).height = 25;
-
-
-    ['A12', 'B12', 'G12', 'L12', 'Q12'].forEach(key => {
-      const cell = worksheet.getCell(key);
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F5597' } };
-    });
-
-
-
-    const dateLabel =
-      this.datetype() === 'C'
-        ? `${this.shared.datePipe.transform(this.FromDate, 'MM.dd.yyyy')}-${this.shared.datePipe.transform(this.ToDate, 'MM.dd.yyyy')}`
-        : this.datetype();
-
-    const secondHeader = [
-      `${FromDate} - ${ToDate}, ${PresentYear}`,
-
-      dateLabel, 'PACE', 'TARGET', '+/-', 'PER DAY',
-      dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
-      dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
-      dateLabel, 'PACE', 'TARGET', '+/-', 'PVR'
-    ];
-
-    const headerRow = worksheet.addRow(secondHeader);
-
-    headerRow.eachCell((cell) => {
-      cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      cell.font = { bold: true };
-    });
-
-    const bindingHeaders = [
-      'data1', 'Units_MTD', 'Units_Pace', 'Units_Target', 'Units_Diff', 'PerDay',
-      'FrontGross_MTD', 'FrontGross_Pace', 'FrontGross_Target', 'FrontGross_Diff', 'FrontGross_PVR',
-      'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
-      'TotalGross_MTD', 'TotalGross_Pace', 'TotalGross_Target', 'TotalGross_Diff', 'TotalGross_PVR',
-    ];
-    const currencyFields = [
-      'FrontGross_MTD', 'FrontGross_Pace', 'FrontGross_Target', 'FrontGross_Diff', 'FrontGross_PVR',
-      'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
-      'TotalGross_MTD', 'TotalGross_Pace', 'TotalGross_Target', 'TotalGross_Diff', 'TotalGross_PVR',];
-
-    const capitalize = (str: string) =>
-      str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
-
-    for (const info of this.SalesData) {
-      const rowData = bindingHeaders.map(key => {
-        const val = info[key];
-        if (key === 'data1') return capitalize(val)
-        if (key === 'Units_Diff' && info['Units_Pace'] != 0 && info['Units_Pace'] != null && info['Units_Target'] != 0 && info['Units_Target'] != null) return (info['Units_Pace'] - info['Units_Target']);
-        if (key === 'FrontGross_Diff' && info['FrontGross_Pace'] != 0 && info['FrontGross_Pace'] != null && info['FrontGross_Target'] != 0 && info['FrontGross_Target'] != null) return val;
-        if (key === 'BackGross_Diff' && info['BackGross_Pace'] != 0 && info['BackGross_Pace'] != null && info['BackGross_Target'] != 0 && info['BackGross_Target'] != null) return val;
-        if (key === 'TotalGross_Diff' && info['TotalGross_Pace'] != 0 && info['TotalGross_Pace'] != null && info['TotalGross_Target'] != 0 && info['TotalGross_Target'] != null) return val;
-
-        if (key != 'FrontGross_Diff' && key != 'BackGross_Diff' && key != 'TotalGross_Diff') return val === 0 || val == null ? '-' : val
-      });
-
-      const dealerRow = worksheet.addRow(rowData);
-      dealerRow.font = { bold: true };
-
-      bindingHeaders.forEach((key, index) => {
-        const cell = dealerRow.getCell(index + 1);
-        if (currencyFields.includes(key) && typeof cell.value === 'number') {
-          cell.numFmt = '"$"#,##0';
-          cell.alignment = { horizontal: 'right' };
-          if (cell.value < 0) {
-            cell.font = { color: { argb: 'FFFF0000' }, }
-          }
-        } else if (!isNaN(Number(cell.value))) {
-          cell.alignment = { horizontal: 'right' };
-        }
-      });
-
-      if (info.Data2 != undefined) {
-        for (const data2 of info.Data2) {
-          const nestedRowData = bindingHeaders.map(key => {
-            if (key === 'data1') return '   ' + capitalize(data2['data2']);
-            if (key === 'FrontGross_PVR') return (data2['FrontGross_MTD'] / data2['Units_MTD']);
-            if (key === 'BackGross_PVR') return (data2['BackGross_MTD'] / data2['Units_MTD']);
-            if (key === 'TotalGross_PVR') return (data2['TotalGross_MTD'] / data2['Units_MTD']);
-
-            if (key === 'Units_Diff' && data2['Units_Pace'] != 0 && data2['Units_Pace'] != null && data2['Units_Target'] != 0 && data2['Units_Target'] != null) return (data2['Units_Pace'] - data2['Units_Target']);
-            if (key === 'FrontGross_Diff' && data2['FrontGross_Pace'] != 0 && data2['FrontGross_Pace'] != null && data2['FrontGross_Target'] != 0 && data2['FrontGross_Target'] != null) return (data2['FrontGross_Pace'] - data2['FrontGross_Target']);
-            if (key === 'BackGross_Diff' && data2['BackGross_Pace'] != 0 && data2['BackGross_Pace'] != null && data2['BackGross_Target'] != 0 && data2['BackGross_Target'] != null) return (data2['BackGross_Pace'] - data2['BackGross_Target']);
-            if (key === 'TotalGross_Diff' && data2['TotalGross_Pace'] != 0 && data2['TotalGross_Pace'] != null && data2['TotalGross_Target'] != 0 && data2['TotalGross_Target'] != null) return (data2['TotalGross_Pace'] - data2['TotalGross_Target']);
-
-            const val = data2[key];
-            return val === 0 || val == null ? '-' : val;
-          });
-          const nestedRow = worksheet.addRow(nestedRowData);
-
-          bindingHeaders.forEach((key, index) => {
-            const cell = nestedRow.getCell(index + 1);
-            if (currencyFields.includes(key) && typeof cell.value === 'number') {
-              cell.numFmt = '"$"#,##0';
-              cell.alignment = { horizontal: 'right' };
-              if (cell.value < 0) {
-                cell.font = { color: { argb: 'FFFF0000' }, }
-              }
-            } else if (!isNaN(Number(cell.value))) {
-              cell.alignment = { horizontal: 'right' };
-            }
-          });
-
-
-          if (data2.SubData != undefined) {
-            for (const data3 of data2.SubData) {
-              const nestedRowData = bindingHeaders.map(key => {
-                if (key === 'data1') return '          ' + capitalize(data3['data3']);
-                if (key === 'FrontGross_PVR') return (data3['FrontGross_MTD'] / data3['Units_MTD']);
-                if (key === 'BackGross_PVR') return (data3['BackGross_MTD'] / data3['Units_MTD']);
-                if (key === 'TotalGross_PVR') return (data3['TotalGross_MTD'] / data3['Units_MTD']);
-
-                if (key === 'Units_Target') return '';
-                if (key === 'FrontGross_Target') return '';
-                if (key === 'BackGross_Target') return '';
-                if (key === 'TotalGross_Target') return '';
-
-                if (key === 'FrontGross_Diff') return '';
-                if (key === 'BackGross_Diff') return '';
-                if (key === 'TotalGross_Diff') return '';
-
-                const val = data3[key];
-                return val === 0 || val == null ? '-' : val;
-              });
-              const nestedRow = worksheet.addRow(nestedRowData);
-
-              bindingHeaders.forEach((key, index) => {
-                const cell = nestedRow.getCell(index + 1);
-                if (currencyFields.includes(key) && typeof cell.value === 'number') {
-                  cell.numFmt = '"$"#,##0';
-                  cell.alignment = { horizontal: 'right' };
-                  if (cell.value < 0) {
-                    cell.font = { color: { argb: 'FFFF0000' }, }
-                  }
-                } else if (!isNaN(Number(cell.value))) {
-                  cell.alignment = { horizontal: 'right' };
-                }
-              });
-            }
-          }
-        }
-      }
+      dateHeader = `${fromText}\n-\n${toText}`; // same as HTML (with line break)
+    } else {
+      dateHeader = this.datetype();
     }
-    worksheet.columns.forEach((column: any) => {
-      let maxLength = 20;
-      column.width = maxLength + 2;
-    });
-    workbook.xlsx.writeBuffer().then((data: any) => {
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      this.shared.exportToExcel(workbook, 'Sales Gross')
+    worksheet.addRow([
+      monthText,
+      'Units', '', '', '', '',
+      'Front Gross', '', '', '', '',
+      'Back Gross', '', '', '', '',
+      'Total Gross', '', '', '', ''
+    ]);
 
+    // worksheet.mergeCells('A1:A2');
+    worksheet.mergeCells('B1:F1');
+    worksheet.mergeCells('G1:K1');
+    worksheet.mergeCells('L1:P1');
+    worksheet.mergeCells('Q1:U1');
+
+    /* ================= HEADER ROW 2 ================= */
+    worksheet.addRow([
+      dateText,
+      dateHeader, 'Pace', 'Target', '+/-', 'Per Day',
+      dateHeader, 'Pace', 'Target', '+/-', 'PVR',
+      dateHeader, 'Pace', 'Target', '+/-', 'PVR',
+      dateHeader, 'Pace', 'Target', '+/-', 'PVR'
+    ]);
+
+    /* ================= HEADER STYLE ================= */
+    [1, 2].forEach(r => {
+      worksheet.getRow(r).eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: r === 1 ? '0554EF' : '4584FF' }
+        };
+        cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any, level: number = 0) => {
+      row.eachCell((cell: any, colNumber: number) => {
+
+        if (colNumber === 1) {
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: level * 2
+          };
+          return;
+        }
+
+        if (typeof cell.value === 'number') {
+
+          if (colNumber === 6) {
+            cell.numFmt = '0.00';
+          }
+          else if (colNumber >= 7) {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+          else {
+            cell.numFmt = '#,##0';
+          }
+
+          if (cell.value < 0) {
+            cell.font = { color: { argb: 'FF0000' } };
+          }
+        }
+
+        cell.alignment = {
+          horizontal: 'right',
+          vertical: 'middle'
+        };
+      });
+    };
+
+    /* ================= DATA ================= */
+    this.SalesData.forEach((lvl1: any, i: number) => {
+
+      const row1 = worksheet.addRow([
+        lvl1.data1,
+        lvl1.Units_MTD, lvl1.Units_Pace, lvl1.Units_Target, lvl1.Units_Diff, lvl1.PerDay,
+        lvl1.FrontGross_MTD, lvl1.FrontGross_Pace, lvl1.FrontGross_Target, lvl1.FrontGross_Diff, lvl1.FrontGross_PVR,
+        lvl1.BackGross_MTD, lvl1.BackGross_Pace, lvl1.BackGross_Target, lvl1.BackGross_Diff, lvl1.BackGross_PVR,
+        lvl1.TotalGross_MTD, lvl1.TotalGross_Pace, lvl1.TotalGross_Target, lvl1.TotalGross_Diff, lvl1.TotalGross_PVR
+      ]);
+
+      row1.outlineLevel = 0;
+      row1.eachCell(cell => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'D9E7FF' }
+        };
+      });
+      /* ===== REPORT TOTAL ===== */
+      if (lvl1.data1 === 'REPORTS TOTAL') {
+        row1.eachCell(cell => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '8DB4FF' }
+          };
+          cell.font = { bold: true };
+        });
+      }
+
+      // /* ===== Alternate Row ===== */
+      // else if (i % 2 === 0) {
+      //   row1.eachCell(cell => {
+      //     cell.fill = {
+      //       type: 'pattern',
+      //       pattern: 'solid',
+      //       fgColor: { argb: 'F9FBFF' }
+      //     };
+      //   });
+      // }
+
+      formatRow(row1, 0);
+
+      /* ================= LEVEL 2 ================= */
+      lvl1.Data2?.forEach((lvl2: any) => {
+
+        const row2 = worksheet.addRow([
+          lvl2.data2,
+          lvl2.Units_MTD, lvl2.Units_Pace, lvl2.Units_Target,
+          lvl2.Units_Pace - lvl2.Units_Target, lvl2.PerDay,
+          lvl2.FrontGross_MTD, lvl2.FrontGross_Pace, lvl2.FrontGross_Target,
+          lvl2.FrontGross_Pace - lvl2.FrontGross_Target, lvl2.FrontGross_MTD / (lvl2.Units_MTD || 1),
+          lvl2.BackGross_MTD, lvl2.BackGross_Pace, lvl2.BackGross_Target,
+          lvl2.BackGross_Pace - lvl2.BackGross_Target, lvl2.BackGross_MTD / (lvl2.Units_MTD || 1),
+          lvl2.TotalGross_MTD, lvl2.TotalGross_Pace, lvl2.TotalGross_Target,
+          lvl2.TotalGross_Pace - lvl2.TotalGross_Target, lvl2.TotalGross_MTD / (lvl2.Units_MTD || 1)
+        ]);
+
+        row2.outlineLevel = 1;
+
+        formatRow(row2, 1);
+
+        /* ================= LEVEL 3 ================= */
+        lvl2.SubData?.forEach((lvl3: any) => {
+
+          const row3 = worksheet.addRow([
+            lvl3.data3,
+            lvl3.Units_MTD, lvl3.Units_Pace, '', '',
+            lvl3.PerDay,
+            lvl3.FrontGross_MTD, lvl3.FrontGross_Pace, '', '',
+            lvl3.FrontGross_MTD / (lvl3.Units_MTD || 1),
+            lvl3.BackGross_MTD, lvl3.BackGross_Pace, '', '',
+            lvl3.BackGross_MTD / (lvl3.Units_MTD || 1),
+            lvl3.TotalGross_MTD, lvl3.TotalGross_Pace, '', '',
+            lvl3.TotalGross_MTD / (lvl3.Units_MTD || 1)
+          ]);
+
+          row3.outlineLevel = 2;
+          formatRow(row3, 2);
+        });
+
+      });
+
+    });
+
+    /* ================= BORDERS ================= */
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    /* ================= FREEZE ================= */
+    worksheet.views = [
+      { state: 'frozen', xSplit: 1, ySplit: 2 }
+    ];
+
+    /* ================= COLUMN WIDTH ================= */
+    worksheet.columns.forEach((col, index) => {
+      col.width = index === 0 ? 35 : 15;
+    });
+
+    /* ================= GROUPING ================= */
+    worksheet.properties.outlineLevelRow = 2;
+
+    /* ================= DOWNLOAD ================= */
+    workbook.xlsx.writeBuffer().then(data => {
+      saveAs(new Blob([data]), 'SalesGross.xlsx');
     });
   }
-
-  exportToBackGrossExcel(): void {
-    const workbook = this.shared.getWorkbook();
-    const worksheet = workbook.addWorksheet('Sales Gross BackGross');
-    let storeNames: any[] = [];
-    const store = this.storeIds
-    storeNames = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => store.includes(item.ID));
-    if (store.length == this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length) { this.ExcelStoreNames = 'All Stores' }
-    else { this.ExcelStoreNames = storeNames.map(function (a: any) { return a.storename; }); }
-    const PresentYear = this.shared.datePipe.transform(this.FromDate, 'yyyy');
-    const FromDate = this.shared.datePipe.transform(this.FromDate, 'dd');
-    const ToDate = this.shared.datePipe.transform(this.ToDate, 'dd');
-    const PresentMonth = this.shared.datePipe.transform(this.FromDate, 'MMMM');
-
-    let filters: any = [
-      // { name: 'Stores :', values: this.ExcelStoreNames.toString() },
-      { name: 'Groupings :', values: this.selectedDataGrouping[0]?.ARG_LABEL + (this.selectedDataGrouping[1]?.ARG_LABEL != '' && this.selectedDataGrouping[1]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[1]?.ARG_LABEL : '') + (this.selectedDataGrouping[2]?.ARG_LABEL != '' && this.selectedDataGrouping[2]?.ARG_LABEL != undefined ? ', ' + this.selectedDataGrouping[2]?.ARG_LABEL : '') },
-      { name: 'Time Frame :', values: this.FromDate + ' to ' + this.ToDate },
-      { name: 'Sales Persons :', values: this.salesPersonId == 0 || this.salesPersonId == '' ? 'All Sales Persons' : this.salesPersonId == null ? '-' : this.salesPersonId },
-      { name: 'Sales Managers :', values: this.salesManagerId == 0 || this.salesManagerId == '' ? 'All Sales Managers' : this.salesManagerId == null ? '-' : this.salesManagerId },
-      { name: 'F&I Managers :', values: this.financeManagerId == 0 || this.financeManagerId == '' ? 'All F&I Managers' : this.financeManagerId == null ? '-' : this.financeManagerId },
-      { name: 'New Used : ', values: this.dealType == '' ? '-' : this.dealType == null ? '-' : this.dealType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Type :', values: this.saleType == '' ? '-' : this.saleType == null ? '-' : this.saleType.toString().replaceAll(',', ', ') },
-      { name: 'Deal Status :', values: this.dealStatus == '' ? '-' : this.dealStatus == null ? '-' : this.dealStatus.toString().replaceAll(',', ', ').replace('Capped', 'Booked') },
-    ]
-    // const ReportFilter = worksheet.addRow(['Report Controls :']);
-    // ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
-    const titleRow = worksheet.addRow(['Sales Gross BackGross']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
-
-    const Stores1 = worksheet.getCell('A3');
-    Stores1.value = 'Stores :';
-    worksheet.mergeCells('B3', 'Z3');
-    const stores1 = worksheet.getCell('B3');
-    stores1.value = this.ExcelStoreNames.toString().replaceAll(',', ', ');
-    stores1.font = { name: 'Arial', family: 4, size: 9 };
-    stores1.alignment = { vertical: 'top', horizontal: 'left', wrapText: true, };
-
-
-    let startIndex = 3
-    filters.forEach((val: any) => {
-      startIndex++
-      worksheet.addRow('');
-      worksheet.getCell(`A${startIndex}`);
-      worksheet.mergeCells(`B${startIndex}:C${startIndex}`);
-      worksheet.getCell(`A${startIndex}`).value = val.name;
-      worksheet.getCell(`B${startIndex}`).value = val.values
-    })
-
-    worksheet.addRow('');
-    worksheet.getCell('A12');
-    worksheet.getCell('B12');
-    worksheet.mergeCells('C12:G12');
-    worksheet.mergeCells('H12:K12');
-    worksheet.mergeCells('L12:P12');
-
-    worksheet.getCell('A12').value = `${PresentMonth}`;
-    worksheet.getCell('B12').value = 'UNITS';
-    worksheet.getCell('C12').value = 'BACK GROSS';
-    worksheet.getCell('H12').value = 'FINANCE SALES';
-    worksheet.getCell('L12').value = 'PRODUCT SALES';
-
-
-    worksheet.getRow(1).height = 25;
-
-
-    ['A12', 'B12', 'C12', 'H12', 'L12'].forEach(key => {
-      const cell = worksheet.getCell(key);
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2F5597' } };
-    });
-
-
-
-    const dateLabel =
-      this.datetype() === 'C'
-        ? `${this.shared.datePipe.transform(this.FromDate, 'MM.dd.yyyy')}-${this.shared.datePipe.transform(this.ToDate, 'MM.dd.yyyy')}`
-        : this.datetype();
-
-    const secondHeader = [
-      `${FromDate} - ${ToDate}, ${PresentYear}`,
-      dateLabel,
-      dateLabel, 'PACE', 'TARGET', '+/-', 'PVR',
-      'GROSS', 'PVR', 'COUNT', 'PEN %',
-      'GROSS', 'PVR', 'COUNT', 'PEN %', 'PER TRANS',
-
-    ];
-
-    const headerRow = worksheet.addRow(secondHeader);
-
-    headerRow.eachCell((cell) => {
-      cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      cell.font = { bold: true };
-    });
-
-    const bindingHeaders = [
-      'data1', 'Units_MTD',
-      'BackGross_MTD', 'BackGross_Pace', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
-      'figross', 'FigrossPVR', 'FRCOUNT', 'FIPen',
-      'ProductSale', 'ProductPVR', 'productdealcount', 'Productpen', 'peorductPertra',
-    ];
-    const currencyFields = [
-      'BackGross_MTD', 'BackGross_Pace', 'BackGross_dif', 'BackGross_Target', 'BackGross_Diff', 'BackGross_PVR',
-      'figross', 'FigrossPVR', 'ProductSale', 'ProductPVR',
-    ];
-
-    const capitalize = (str: string) =>
-      str ? str.toString().replace(/\b\w/g, char => char.toUpperCase()) : '';
-
-    for (const info of this.BackGross) {
-      const rowData = bindingHeaders.map(key => {
-        const val = info[key];
-        if (key === 'data1') return capitalize(val)
-        if (key === 'BackGross_Diff' && info['BackGross_Pace'] != 0 && info['BackGross_Pace'] != null && info['BackGross_Target'] != 0 && info['BackGross_Target'] != null) return val;
-        if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
-        if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
-        if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
-        return val === 0 || val == null ? '-' : val
-      });
-
-      const dealerRow = worksheet.addRow(rowData);
-      dealerRow.font = { bold: true };
-
-      bindingHeaders.forEach((key, index) => {
-        const cell = dealerRow.getCell(index + 1);
-        if (currencyFields.includes(key) && typeof cell.value === 'number') {
-          cell.numFmt = '"$"#,##0';
-          cell.alignment = { horizontal: 'right' };
-          if (cell.value < 0) {
-            cell.font = { color: { argb: 'FFFF0000' }, }
-          }
-        } else if (!isNaN(Number(cell.value))) {
-          cell.alignment = { horizontal: 'right' };
-        }
-      });
-
-      if (info.data2 != undefined) {
-        for (const data2 of info.data2) {
-          const nestedRowData = bindingHeaders.map(key => {
-            if (key === 'data1') return '   ' + capitalize(data2['data2']);
-            if (key === 'BackGross_Pace' && this.datetype() != 'MTD') return (data2['BackGross_MTD'])
-            if (key === 'BackGross_Pace' && this.datetype() == 'MTD') return (data2['BackGross_Pace'])
-            if (key === 'BackGross_Diff') return (data2['BackGross_dif'])
-            const val = data2[key];
-            if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
-            if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
-            if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
-            return val === 0 || val == null ? '-' : val;
-          });
-          const nestedRow = worksheet.addRow(nestedRowData);
-
-          bindingHeaders.forEach((key, index) => {
-            const cell = nestedRow.getCell(index + 1);
-            if (currencyFields.includes(key) && typeof cell.value === 'number') {
-              cell.numFmt = '"$"#,##0';
-              cell.alignment = { horizontal: 'right' };
-              if (cell.value < 0) {
-                cell.font = { color: { argb: 'FFFF0000' }, }
-              }
-            } else if (!isNaN(Number(cell.value))) {
-              cell.alignment = { horizontal: 'right' };
-            }
-          });
-
-
-          if (data2.SubData != undefined) {
-            for (const data3 of data2.SubData) {
-              const nestedRowData = bindingHeaders.map(key => {
-                if (key === 'data1') return '          ' + capitalize(data3['data3']);
-                if (key === 'BackGross_Pace' && this.datetype() != 'MTD') return (data2['BackGross_MTD'])
-                if (key === 'BackGross_Pace' && this.datetype() == 'MTD') return (data2['BackGross_Pace'])
-                const val = data3[key];
-                if (key === 'FIPen' || key === 'Productpen') return this.cp.transform(val, 'USD', '', '1.0-0') + '%';
-                if (key === 'FRCOUNT' || key === 'productdealcount') return this.cp.transform(val, 'USD', '', '1.0-0');
-                if (key === 'peorductPertra') return this.cp.transform(val, 'USD', '', '1.2-2');
-                return val === 0 || val == null ? '-' : val;
-              });
-              const nestedRow = worksheet.addRow(nestedRowData);
-
-              bindingHeaders.forEach((key, index) => {
-                const cell = nestedRow.getCell(index + 1);
-                if (currencyFields.includes(key) && typeof cell.value === 'number') {
-                  cell.numFmt = '"$"#,##0';
-                  cell.alignment = { horizontal: 'right' };
-                  if (cell.value < 0) {
-                    cell.font = { color: { argb: 'FFFF0000' }, }
-                  }
-                } else if (!isNaN(Number(cell.value))) {
-                  cell.alignment = { horizontal: 'right' };
-                }
-              });
-            }
-          }
-        }
-      }
-    }
-    worksheet.columns.forEach((column: any) => {
-      let maxLength = 20;
-      column.width = maxLength + 2;
-    });
-    workbook.xlsx.writeBuffer().then((data: any) => {
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-      this.shared.exportToExcel(workbook, 'Sales Gross BackGross ')
-
-    });
-  }
-
 
 
 }
