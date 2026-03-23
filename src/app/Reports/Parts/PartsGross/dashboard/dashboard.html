@@ -1,0 +1,2060 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+
+                    <!-- Store Dropdown -->
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(4)">Groupings <span class="light-font">
+                                ( {{selectedDataGrouping.length == 1 ?
+                                selectedDataGrouping[0].ARG_LABEL:'Selected' }}&nbsp;{{selectedDataGrouping.length == 1
+                                ? '' :
+                                selectedDataGrouping.length
+                                }} )
+                            </span>
+
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===4">
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="allstores text-start">
+                                            <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                                style="pointer-events: none;">Choose up to 2 Filters to Group Your
+                                                Data</a>
+                                        </div>
+                                        <div class="store-columns flex-grow-1">
+                                            <ng-container *ngFor="let grp of dataGrouping;let i=index">
+                                                <button class="btn btn-outline-primary store-button"
+                                                    (click)='SelectedData(grp)'
+                                                    [ngStyle]="{'display': grp.ARG_ID == 47 ? 'none' : 'block'}"
+                                                    [ngClass]="{'active':selectedDataGrouping.indexOf(grp)>=0,'inactive':selectedDataGrouping.indexOf(grp)<0,'disabled':grp.Active=='N'}">
+                                                    <span>{{grp.ARG_LABEL}}</span> <span
+                                                        *ngIf="selectedDataGrouping.indexOf(grp)>=0"
+                                                        style="float:right">
+                                                        {{selectedDataGrouping.indexOf(grp)+1}}
+                                                    </span>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame <span class="light-font"> {{displaytime}}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+
+
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            Department <span class="light-font">( {{Department.length ==
+                                1 ? Department :
+                                'Selected' }}
+                                {{Department.length == 1 ? '':
+                                Department.length }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 3">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
+                                    [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Parts')"
+                                    [ngClass]="{'active':Department.indexOf('Parts')>=0, 'inactive':Department.indexOf('Parts')<0}">Parts</button>
+                                <button class="outline-button" (click)="multipleorsingle('Dept','Others')"
+                                    style="pointer-events: none;opacity:0.4;"
+                                    [ngClass]="{'active':Department.indexOf('Others')>=0, 'inactive':Department.indexOf('Others')<0}">Others
+                                    per Svc Dept Mapping</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(7)">
+                            Sale Type <span class="light-font">( {{saleandservice.length
+                                > 1 ? 'Selected' : (saleandservice == 'W' ? ' Wholesale' :
+                                (saleandservice =='R' ? 'Counter Retail' :(saleandservice =='C' ? 'Customer Pay' :
+                                (saleandservice =='T' ?'Warranty' : (saleandservice =='I' ? 'Internal' : ''))) ))
+                                }} {{saleandservice.length > 1 ?  saleandservice.length  : '' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 7">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('PT','R')"
+                                    [ngClass]="{ 'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('R')>=0, 'inactive':Paytype.indexOf('R')<0}">Counter
+                                    Retail</button>
+                                <button class="outline-button" (click)="multipleorsingle('PT','W')"
+                                    [ngClass]="{'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('W')>=0, 'inactive':Paytype.indexOf('W')<0}">Wholesale</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','C')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('C')>=0, 'inactive':servicetype.indexOf('C')<0}">Customer
+                                    Pay</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','T')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('T')>=0, 'inactive':servicetype.indexOf('T')<0}">Warranty</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','I')"
+                                    [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('I')>=0, 'inactive':servicetype.indexOf('I')<0}">Internal</button>
+
+                                <button class="outline-button" (click)="multipleorsingle('LT','E')"
+                                    [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('E')>=0, 'inactive':servicetype.indexOf('E')<0}">Extended</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(5)">
+                            Parts Source <span class="light-font">( {{partsSource== 'All' ?
+                                'All' : (partsSource == 'N' ? 'W/O Bulk Oil and Tire' : (partsSource == 'B' ? 'Bulk Oil'
+                                : (partsSource == 'T' ? 'Tires' : '')))}}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 5">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('PS','All')"
+                                    [ngClass]="{'active': partsSource=='All', 'inactive':partsSource !='All' }">All
+                                </button>
+                                <button class="outline-button" (click)="multipleorsingle('PS','N')"
+                                    [ngClass]="{'active':partsSource=='N' ||partsSource=='All', 'inactive':partsSource!='N' && partsSource !='All'}">W/O
+                                    Bulk Oil and Tire</button>
+                                <button class="outline-button" (click)="multipleorsingle('PS','B')"
+                                    [ngClass]="{'active':partsSource=='B' || partsSource=='All', 'inactive':partsSource!='B' && partsSource !='All'}">Bulk
+                                    Oil
+                                </button>
+                                <button class="outline-button" (click)="multipleorsingle('PS','T')"
+                                    [ngClass]="{'active':partsSource=='T' || partsSource=='All', 'inactive':partsSource!='T' && partsSource !='All'}">Tires</button>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(6)">
+                            Report Totals <span class="light-font">( {{ TotalReport == 'T' ? 'Top' :'Bottom' }}
+                                )</span>
+                            <span class="arrow"></span>
+                        </button>
+
+                        <div class="timeframe" *ngIf="activePopover === 6">
+                            <div class="date-filter-card mt-2">
+                                <button class="outline-button" (click)="multipleorsingle('TB','T')"
+                                    [class.active]="TotalReport=='T'">
+                                    Top
+                                </button>
+                                <button class="outline-button" (click)="multipleorsingle('TB','B')"
+                                    [class.active]="TotalReport=='B'">
+                                    Bottom
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-double-header" id="scrollcent" #scrollcent *ngIf="GridView== 'Global' "
+                (scroll)="updateVerticalScroll($event,'Global')">
+                <table class="table mb-0 w-100" >
+                    <thead>
+                        <tr>
+                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
+                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                    |date:'MMMM'}} </span></th>
+                            <th class="spacer"></th>
+                            <th colspan="5" style="border-right: 2px solid #e0e1e2;">Total Parts</th>
+                            <th class="spacer"></th>
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                                <!--  -->
+                                <span class="d-flex align-items-center position-relative px-2">
+                                    <div class="backgrossbtn" (click)="GetServicedata()">
+                                        Service Details
+                                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    </div><span class="m-auto">Mechanical</span>
+                                </span>
+                            </th>
+                            <th class="spacer"></th>
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                                <span class="d-flex align-items-center position-relative px-2">
+                                    <div class="backgrossbtn" (click)="GetPartsDrilldata()">
+                                        Parts Details
+                                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                    </div><span class="m-auto">Retail/Wholesale</span>
+                                </span>
+                            </th>
+                            <th class="spacer"></th>
+                            <th colspan="3" style="border-right: 2px solid #e0e1e2;">Performance</th>
+
+                        </tr>
+                        <tr class="bdr-btm">
+                            <th><span>{{FromDate |date:'dd'}} </span> <span
+                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                    |date:'yyyy'}}</span>
+                                <span>
+                                    - {{ToDate |date:'dd'}}
+                                </span>
+                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    |date:'yyyy'}}</span><span
+                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    date:'yyyy'}}</span>
+                            </th>
+                            <th class="spacer"></th>
+                            <!-- <th></th> -->
+                            <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
+                            <!-- <th>Discounts</th> -->
+                            <th (click)="sort('Total_PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross
+                            </th>
+                            <th (click)="sort('Total_PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('Total_PartsGrossTarget')" style="cursor: pointer;" class="bdr-rt">
+                                Target</th>
+                            <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            <th class="spacer"></th>
+
+                            <th (click)="sort('ServiceGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
+                            <th (click)="sort('ServiceGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('ServiceGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                            </th>
+                            <th (click)="sort('ServiceGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            <th class="spacer"></th>
+
+                            <th (click)="sort('PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
+                            <th (click)="sort('PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('PartsGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                            </th>
+                            <th (click)="sort('PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            <th class="spacer"></th>
+                            <th (click)="sort('Parts_RO')" style="cursor: pointer;" class="bdr-rt">Parts/RO</th>
+                            <th (click)="sort('Lost_PerDay')" style="cursor: pointer;" class="bdr-rt">Lost/day</th>
+                            <th (click)="sort('Retention')" style="cursor: pointer;" class="bdr-rt">GP%</th>
+                            <!-- <th></th> -->
+                        </tr>
+                    </thead>
+
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+
+                        <ng-container *ngFor="let PartsInfo of PartsData; let i=index">
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': PartsInfo.Dealer === '-' , 'divBold': PartsInfo.data1 === 'Reports Total'  }"
+                                [id]="'DV_'+i">
+                                <td id="DataBody1" [id]="'D_'+i"
+                                    [ngStyle]="{'background-color':PartsInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    <span style="float: left;  color: white;"
+                                        (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')"
+                                        [id]="'D_'+i">{{PartsInfo.Dealer}}</span>
+
+                                    <span [id]="'D_'+i" title="{{PartsInfo.data1}}"
+                                        (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')">
+                                        <!-- {{(PartsInfo.data1 == undefined ? '--' : ( (PartsInfo.data1.toString() |
+                                        slice:0:26) +
+                                        (PartsInfo.data1.toString().length > 26 ? '...' : '') ))}}  -->
+                                        <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0].columnName!= 'cdate'">
+                                            {{( PartsInfo.data1 == undefined || PartsInfo.data1 == '' ? '--' :
+                                            (PartsInfo.data1 == 'C' ?
+                                            'Customer Pay':(PartsInfo.data1 == 'T' ? 'Warranty' : (PartsInfo.data1
+                                            ==
+                                            'I' ? 'Internal' : (PartsInfo.data1 == 'R' ? 'Retail': (PartsInfo.data1
+                                            ==
+                                            'W' ? 'Wholesale': ( PartsInfo.data1 == 'E' ? 'Extended Warranty' :
+                                            (PartsInfo.data1.toString() |
+                                            slice:0:26) +
+                                            (PartsInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
+                                        </span>
+
+                                        <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0].columnName == 'cdate'">
+                                            {{( PartsInfo.data1 == undefined || PartsInfo.data1 == '' ||
+                                            PartsInfo.data1 == null ? '-' :(PartsInfo.data1 !='Reports Total' ?
+                                            (PartsInfo.data1 | date:'MM/dd/YYYY' ): 'Reports Total' ) )}}
+                                        </span>
+
+
+
+                                    </span>
+                                </td>
+                                <td class="spacer"></td>
+
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsSale)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ? ' '
+                                        : '$'}}
+                                        <span>
+                                            {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ?
+                                            '-' :
+                                            PartsInfo.Total_PartsSale | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ? ' '
+                                        : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ?
+                                            '-' :
+                                            PartsInfo.Total_PartsGross | number:'1.2-2') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' :
+                                        '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace
+                                            == null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            PartsInfo.Total_PartsGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGrossTarget)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGrossTarget == 0 || PartsInfo.Total_PartsGrossTarget
+                                        ==
+                                        null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
+                                            (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
+                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
+                                            :
+                                            '$') }}
+                                            <span>
+                                                {{
+                                                (PartsInfo.Total_PartsGrossTarget == 0 ||
+                                                PartsInfo.Total_PartsGrossTarget ==
+                                                null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
+                                                    || (Department.indexOf('Service') < 0 &&
+                                                    Department.indexOf('Parts')>= 0 )
+                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    'N' ? '-' :
+                                                    PartsInfo.Total_PartsGrossTarget | number:'1.0-0') }}
+                                            </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff ==
+                                        null||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff
+                                            ==
+                                            null||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            PartsInfo.Total_PartsGross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+                                <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? ' ' : '$'
+                                        }}
+                                        <span>
+                                            {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? '-' :
+                                            PartsInfo.ServiceGross | number:'1.2-2' }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            PartsInfo.ServiceGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
+                                            (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
+                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
+                                            : '$') }}
+                                            <span>
+                                                {{ (PartsInfo.ServiceGross_Target == 0 ||
+                                                PartsInfo.ServiceGross_Target == null
+                                                ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
+                                                    || (Department.indexOf('Service') < 0 &&
+                                                    Department.indexOf('Parts')>= 0 )
+                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    'N' ? '-' :
+                                                    PartsInfo.ServiceGross_Target | number:'1.0-0') }}
+                                            </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff ==
+                                            null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            PartsInfo.ServiceGross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? ' ' : '$' ) }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? '-' :
+                                            PartsInfo.PartsGross | number:'1.2-2' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            PartsInfo.PartsGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Target)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
+                                            (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
+                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ?' ' :
+                                            '$') }}
+                                            <span>
+                                                {{
+                                                (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target ==
+                                                null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
+                                                    || (Department.indexOf('Service') < 0 &&
+                                                    Department.indexOf('Parts')>= 0 )
+                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    'N' ? '-' :
+                                                    PartsInfo.PartsGross_Target | number:'1.0-0') }}
+                                            </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            PartsInfo.PartsGross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+                                <td id="DataBody2">{{ PartsInfo.Parts_RO == 0 || PartsInfo.Parts_RO == null ? '-' :
+                                    PartsInfo.Parts_RO | number:'1.2-2'}}</td>
+                                <td id="DataBody3">{{ PartsInfo.Lost_PerDay == 0 || PartsInfo.Lost_PerDay == null ?
+                                    '-'
+                                    : PartsInfo.Lost_PerDay | number:'1.2-2'}}</td>
+                                <td id="DataBody4">{{ PartsInfo.Retention == 0 || PartsInfo.Retention == null ? '-'
+                                    :
+                                    PartsInfo.Retention | number:'1.1-1'}}{{ PartsInfo.Retention == 0 ||
+                                    PartsInfo.Retention == null ? ' ' :
+                                    '%'}}</td>
+
+                            </tr>
+                            <ng-container *ngFor="let data2 of PartsInfo.Data2;let j=index">
+                                <tr class="sub-title" [id]="'DVN_'+i" *ngIf="data2.data2 != '' && data2.data2 != ' '  "
+                                    [ngClass]="{'hidden': PartsInfo.Dealer === '+', 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0  }">
+                                    <td> <span style="float: left; margin-right: 0.8rem; color: #363b4f;" [id]="'DN_'+i"
+                                            [ngClass]="{'disable': PartsInfo.data1 === 'Reports Total' }"></span>
+                                        <span [id]="'DN_'+i" style="margin-left: 1rem;"
+                                            (click)="openDetails(data2,PartsInfo,'2')">
+                                            <!-- {{data2.data2
+                                            == undefined ? '-' : data2.data2}} 
+                                         -->
+                                            <!-- {{( data2.data2 == undefined ? '--' : (data2.data2 == 'C' ?
+                                            'Customer Pay':(data2.data2 == 'W' ? 'Warranty' : (data2.data2 == 'I' ? 'Internal' : ( (data2.data2.toString() |
+                                            slice:0:26) +
+                                            (data2.data2.toString().length > 26 ? '...' : '') ) ))))}} -->
+                                            <span *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
+                                                {{( data2.data2 == undefined || data2.data2 == '' ? '--' :
+                                                (data2.data2 == 'C' ?
+                                                'Customer Pay':(data2.data2 == 'T' ? 'Warranty' : (data2.data2
+                                                == 'I' ? 'Internal' : (data2.data2 == 'R' ? 'Retail':
+                                                (data2.data2 == 'W' ? 'Wholesale': ( data2.data2 == 'E' ? 'Extended
+                                                Warranty' : (data2.data2.toString() |
+                                                slice:0:26) +
+                                                (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
+                                            </span>
+                                            <span *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
+                                                {{( data2.data2 == undefined || data2.data2 == '' || data2.data2 ==
+                                                null ? '-' : data2.data2 | date:'MM/dd/YYYY' )}}
+                                            </span>
+
+
+                                        </span>
+                                    </td>
+                                    <th class="spacer"></th>
+                                    <!-- <td></td> -->
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsSale)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? ' ' :
+                                            '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? '-' :
+                                                data2.Total_PartsSale | number:'1.0-0' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? ' ' :
+                                            '$') }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? '-'
+                                                :
+                                                data2.Total_PartsGross | number:'1.2-2' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+
+
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace == null
+                                            ?
+                                            ' ' :'$') }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace ==
+                                                null ?
+                                                '-' :
+                                                data2.Total_PartsGross_Pace | number:'1.0-0' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <th class="spacer"></th>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross
+                                            == 0 || data2.ServiceGross == null ? ' ' :'$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross
+                                                == 0 || data2.ServiceGross == null ? '-' : data2.ServiceGross |
+                                                currency:'USD':'symbol':'1.2-2' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' ) }}
+                                            <span>
+
+                                                {{
+                                                (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.ServiceGross_Pace | number:'1.0-0' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Target)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
+                                            data2.ServiceGross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                            (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
+                                                (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
+                                                || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
+                                                ' :'$' ) }}
+                                                <span>
+
+                                                    {{
+                                                    (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target ==
+                                                    null ||
+                                                    data2.ServiceGross_Target == '-' ||
+                                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                    (Department.indexOf('Service') >= 0 &&
+                                                    Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
+                                                        < 0 && Department.indexOf('Parts')>= 0 )
+                                                        || partsSource == 'B' || partsSource == 'T' || partsSource
+                                                        == 'N'? '-' :
+                                                        data2.ServiceGross_Target | number:'1.0-0' ) }}
+                                                </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Diff)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
+                                            data2.ServiceGross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
+                                                data2.ServiceGross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.ServiceGross_Diff | number:'1.0-0' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <th class="spacer"></th>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{ (data2.PartsGross
+                                            == 0
+                                            || data2.PartsGross == null ? ' ' :'$' )}}
+                                            <span>
+                                                {{ (data2.PartsGross
+                                                == 0
+                                                || data2.PartsGross == null ? '-' : data2.PartsGross |
+                                                currency:'USD':'symbol':'1.2-2' )}}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' )}}
+                                            <span>
+                                                {{
+                                                (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.PartsGross_Pace | number:'1.0-0' )}}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Target)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ||
+                                            data2.PartsGross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                            (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
+                                                (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
+                                                || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
+                                                ' :'$' )}}
+                                                <span>
+                                                    {{
+                                                    (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null
+                                                    ||
+                                                    data2.PartsGross_Target == '-' ||
+                                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                    (Department.indexOf('Service') >= 0 &&
+                                                    Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
+                                                        < 0 && Department.indexOf('Parts')>= 0 )
+                                                        || partsSource == 'B' || partsSource == 'T' || partsSource
+                                                        == 'N'? '-' :
+                                                        data2.PartsGross_Target | number:'1.0-0' )}}
+                                                </span>
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Diff)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
+                                            data2.PartsGross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' )}}
+                                            <span>
+                                                {{
+                                                (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
+                                                data2.PartsGross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.PartsGross_Diff | number:'1.0-0' )}}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <th class="spacer"></th>
+                                    <td>{{data2.Parts_RO == 0 || data2.Parts_RO == null ? '-' : data2.Parts_RO |
+                                        number:'1.2-2'}}</td>
+                                    <td>{{data2.Lost_PerDay == 0 || data2.Lost_PerDay == null ? '-' :
+                                        data2.Lost_PerDay
+                                        }}</td>
+                                    <td> {{data2.Retention == 0 || data2.Retention == null ? '-' : data2.Retention |
+                                        number:'1.1-1'}}{{data2.Retention == 0 || data2.Retention == null ? ' ' :
+                                        '%'}}
+                                    </td>
+
+                                </tr>
+
+                            </ng-container>
+
+                        </ng-container>
+                        <!-- <div class="loader" style="margin-top: 5%;margin-left: 30%;" *ngIf="spinnerLoader"></div> -->
+
+                    </tbody>
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="20" style="color: black;pointer-events:none ; text-align: center !important;">
+                                No
+                                Records Found</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div> 
+            <div class="scorecard-double-header" id="scrollcent" #scrollcent *ngIf="GridView== 'Service' "
+                (scroll)="updateVerticalScroll($event,'Service')">
+                <table class="table mb-0 w-100" >
+                    <thead>
+                        <tr>
+                            <th class="text-center bg-white">{{FromDate |date:'MMMM'}} <span
+                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                    |date:'MMMM'}} </span></th>
+                            <th class="spacer"></th>
+
+                            <th colspan="5" style="border-right: 2px solid #e0e1e2;">Total Parts</th>
+                            <th class="spacer"></th>
+
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                                <!--  -->
+                                <span class="d-flex align-items-center position-relative px-2">
+                                    <div class="backgrossbtn" (click)="getPartsData()">
+                                        <i class="fa fa-arrow-left" aria-hidden="true" style="cursor: pointer; "></i>
+                                        Back to Overview
+                                    </div><span class="m-auto">Service</span>
+                                </span>
+                            </th>
+                            <th class="spacer"></th>
+
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">Customer Pay</th>
+                            <th class="spacer"></th>
+
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">Warranty</th>
+                            <th class="spacer"></th>
+
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">Extended</th>
+                            <th class="spacer"></th>
+
+                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">Internal</th>
+
+
+                        </tr>
+                        <tr class="bdr-btm">
+                            <th>{{FromDate |date:'dd'}} <span
+                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                    |date:'yyyy'}}</span>
+                                - {{ToDate |date:'dd'}}<span
+                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    |date:'yyyy'}}</span><span
+                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    date:'yyyy'}}</span></th>
+                            <th class="spacer"></th>
+
+                            <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
+                            <!-- <th>Discounts</th> -->
+                            <th (click)="sort('Total_PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross
+                            </th>
+                            <th (click)="sort('Total_PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('Total_PartsGrossTarget')" style="cursor: pointer;" class="bdr-rt">
+                                Target</th>
+                            <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            <th class="spacer"></th>
+
+
+                            <th (click)="sort('ServiceGross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                            <th (click)="sort('ServiceGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('ServiceGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                            </th>
+                            <th (click)="sort('ServiceGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            <th class="spacer"></th>
+
+
+                            <th (click)="sort('CPgross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                            <th (click)="sort('CPgross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('CPgross_Target')" style="cursor: pointer;" class="bdr-rt">Target</th>
+                            <th (click)="sort('CPgross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            <th class="spacer"></th>
+
+                            <th (click)="sort('Wgross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                            <th (click)="sort('Wgross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('Wgross_Target')" style="cursor: pointer;" class="bdr-rt">Target</th>
+                            <th (click)="sort('Wgross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            <th class="spacer"></th>
+
+                            <th (click)="sort('Egross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                            <th (click)="sort('Egross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('Egross_Target')" style="cursor: pointer;" class="bdr-rt">Target</th>
+                            <th (click)="sort('Egross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            <th class="spacer"></th>
+
+
+
+                            <th (click)="sort('Igross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                            <th (click)="sort('Igross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('Igross_Target')" style="cursor: pointer;" class="bdr-rt">Target</th>
+                            <th (click)="sort('Igross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            <!-- <th></th> -->
+                        </tr>
+                    </thead>
+
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+
+                        <ng-container *ngFor="let serviceInfo of ServcieGrossData; let i=index">
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': serviceInfo.Dealer === '-', 'divBold': serviceInfo.data1 === 'Reports Total'  }"
+                                [id]="'DV_'+i">
+                                <td id="DataBody1"
+                                    [ngStyle]="{'background-color':serviceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    <span style="float: left; color: white;"
+                                        (click)="expandorcollapse(i,$event,serviceInfo.Dealer,serviceInfo,'')"
+                                        [id]="'D_'+i">{{serviceInfo.Dealer}}</span>
+
+                                    <span [id]="'D_'+i" title="{{serviceInfo.data1}}"
+                                        (click)="expandorcollapse(i,$event,serviceInfo.Dealer,serviceInfo,'')">
+                                        <!-- {{(serviceInfo.data1 == undefined ? '--' : ( (serviceInfo.data1.toString() |
+                                        slice:0:26) +
+                                        (serviceInfo.data1.toString().length > 26 ? '...' : '') ))}}  -->
+                                        <span *ngIf="selectedDataGrouping[0].columnName!= 'cdate'">
+                                            {{( serviceInfo.data1 == undefined || serviceInfo.data1 == '' ? '--' :
+                                            (serviceInfo.data1 == 'C' ?
+                                            'Customer Pay':(serviceInfo.data1 == 'T' ? 'Warranty' :
+                                            (serviceInfo.data1
+                                            ==
+                                            'I' ? 'Internal' : (serviceInfo.data1 == 'R' ? 'Retail':
+                                            (serviceInfo.data1
+                                            ==
+                                            'W' ? 'Wholesale': ( (serviceInfo.data1.toString() |
+                                            slice:0:26) +
+                                            (serviceInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
+                                        </span>
+
+                                        <span *ngIf="selectedDataGrouping[0].columnName == 'cdate'">
+                                            {{( serviceInfo.data1 == undefined || serviceInfo.data1 == '' ||
+                                            serviceInfo.data1 == null ? '-' :(serviceInfo.data1=='Reports Total' ?
+                                            'Reports Total' : (serviceInfo.data1 | date:'MM/dd/YYYY' )) )}}
+                                        </span>
+
+
+
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsSale)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ serviceInfo.Total_PartsSale == 0 || serviceInfo.Total_PartsSale == null ?
+                                        ' ' : '$'
+                                        }}
+                                        <span>
+                                            {{ serviceInfo.Total_PartsSale == 0 || serviceInfo.Total_PartsSale ==
+                                            null ? ''
+                                            :
+                                            serviceInfo.Total_PartsSale | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Total_PartsGross == 0 || serviceInfo.Total_PartsGross == null ?
+                                        ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Total_PartsGross == 0 || serviceInfo.Total_PartsGross ==
+                                            null ? '-'
+                                            :
+                                            serviceInfo.Total_PartsGross | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross_Pace)}"> <span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Total_PartsGross_Pace == 0 || serviceInfo.Total_PartsGross_Pace
+                                        ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Total_PartsGross_Pace == 0 ||
+                                            serviceInfo.Total_PartsGross_Pace ==
+                                            null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Total_PartsGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span></td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGrossTarget)}"> <span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Total_PartsGrossTarget == 0 ||
+                                        serviceInfo.Total_PartsGrossTarget
+                                        ==
+                                        null||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Total_PartsGrossTarget == 0 ||
+                                            serviceInfo.Total_PartsGrossTarget
+                                            ==
+                                            null||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.Total_PartsGrossTarget | number:'1.0-0') }}
+                                        </span>
+                                    </span></td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross_Diff)}"> <span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.Total_PartsGross_Diff
+                                        ==
+                                        null||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Total_PartsGross_Diff == 0 ||
+                                            serviceInfo.Total_PartsGross_Diff ==
+                                            null||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.Total_PartsGross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span></td>
+                                <th class="spacer"></th>
+
+                                <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(serviceInfo.ServiceGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{serviceInfo.ServiceGross == 0 || serviceInfo.ServiceGross == null ? ' ' :
+                                        '$' }}
+                                        <span>
+                                            {{serviceInfo.ServiceGross == 0 || serviceInfo.ServiceGross == null ?
+                                            '-' :
+                                            serviceInfo.ServiceGross | number:'1.0-0' }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.ServiceGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.ServiceGross_Pace == 0 || serviceInfo.ServiceGross_Pace == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.ServiceGross_Pace == 0 || serviceInfo.ServiceGross_Pace ==
+                                            null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.ServiceGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(serviceInfo.ServiceGross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ (serviceInfo.ServiceGross_Target == 0 || serviceInfo.ServiceGross_Target
+                                        ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{ (serviceInfo.ServiceGross_Target == 0 ||
+                                            serviceInfo.ServiceGross_Target ==
+                                            null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.ServiceGross_Target | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.ServiceGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.ServiceGross_Diff ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.ServiceGross_Diff
+                                            == null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' :
+                                            serviceInfo.ServiceGross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(serviceInfo.CPgross)}"><span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.CPgross == 0 || serviceInfo.CPgross == null ? ' ' : '$' ) }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.CPgross == 0 || serviceInfo.CPgross == null ? '-' :
+                                            serviceInfo.CPgross | number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.CPgross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.CPgross_Pace == 0 || serviceInfo.CPgross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.CPgross_Pace == 0 || serviceInfo.CPgross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.CPgross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.CPgross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.CPgross_Target == 0 || serviceInfo.CPgross_Target == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.CPgross_Target == 0 || serviceInfo.CPgross_Target == null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.CPgross_Target | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.CPgross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.CPgross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+
+
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(serviceInfo.Wgross)}"><span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Wgross == 0 || serviceInfo.Wgross == null ? ' ' : '$' ) }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Wgross == 0 || serviceInfo.Wgross == null ? '-' :
+                                            serviceInfo.Wgross | number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Wgross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Wgross_Pace == 0 || serviceInfo.Wgross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Wgross_Pace == 0 || serviceInfo.Wgross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Wgross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Wgross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Wgross_Target == 0 || serviceInfo.Wgross_Target == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Wgross_Target == 0 || serviceInfo.Wgross_Target == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.Wgross_Target | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Wgross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Wgross_Diff == 0 || serviceInfo.Wgross_Diff == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Wgross_Diff == 0 || serviceInfo.Wgross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Wgross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(serviceInfo.Egross)}"><span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Egross == 0 || serviceInfo.Egross == null ? ' ' : '$' ) }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Egross == 0 || serviceInfo.Egross == null ? '-' :
+                                            serviceInfo.Egross | number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Egross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Egross_Pace == 0 || serviceInfo.Egross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Egross_Pace == 0 || serviceInfo.Egross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Egross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Egross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Egross_Target == 0 || serviceInfo.Egross_Target == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Egross_Target == 0 || serviceInfo.Egross_Target == null
+                                            ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.Egross_Target | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Egross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Egross_Diff == 0 || serviceInfo.Egross_Diff == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Egross_Diff == 0 || serviceInfo.Egross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Egross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <th class="spacer"></th>
+
+
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(serviceInfo.Igross)}"><span
+                                        class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Igross == 0 || serviceInfo.Igross == null ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Igross == 0 || serviceInfo.Igross == null ? '-' :
+                                            serviceInfo.Igross | number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Igross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Igross_Pace == 0 || serviceInfo.Igross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Igross_Pace == 0 || serviceInfo.Igross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Igross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <!-- <th class="spacer"></th> -->
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Igross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Igross_Target == 0 || serviceInfo.Igross_Target == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Igross_Target == 0 || serviceInfo.Igross_Target == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            serviceInfo.Igross_Target | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Igross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (serviceInfo.Igross_Diff == 0 || serviceInfo.Igross_Diff == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        <span>
+                                            {{
+                                            (serviceInfo.Igross_Diff == 0 || serviceInfo.Igross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            serviceInfo.Igross_Diff | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                            </tr>
+                            <ng-container *ngFor="let data2 of serviceInfo.Data2;let j=index">
+                                <tr class="sub-title" [id]="'DVN_'+i" *ngIf="data2.data2 != '' && data2.data2 != ' ' "
+                                    [ngClass]="{'hidden': serviceInfo.Dealer === '+', 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0  }">
+                                    <td> <span style="float: left; margin-right: 0.8rem; color: #363b4f;" [id]="'DN_'+i"
+                                            [ngClass]="{'disable': serviceInfo.data1 === 'Reports Total' }"></span>
+                                        <span [id]="'DN_'+i" style="margin-left: 1rem;"
+                                            (click)="openDetails(data2,serviceInfo,'2')">
+
+                                            <span *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
+                                                {{( data2.data2 == undefined || data2.data2 == '' ? '--' :
+                                                (data2.data2 == 'C' ?
+                                                'Customer Pay':(data2.data2 == 'T' ? 'Warranty' : (data2.data2
+                                                == 'I' ? 'Internal' : (data2.data2 == 'R' ? 'Retail':
+                                                (data2.data2 == 'W' ? 'Wholesale': ( (data2.data2.toString() |
+                                                slice:0:26) +
+                                                (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
+                                            </span>
+                                            <span *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
+                                                {{( data2.data2 == undefined || data2.data2 == '' || data2.data2 ==
+                                                null ? '-' : data2.data2 | date:'MM/dd/YYYY' )}}
+                                            </span>
+
+
+                                        </span>
+                                    </td>
+                                    <th class="spacer"></th>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsSale)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? ' ' : '$'
+                                            ) }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? '-' :
+                                                data2.Total_PartsSale | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? ' ' :
+                                            '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? '-'
+                                                :
+                                                data2.Total_PartsGross | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+
+
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace == null
+                                            ?
+                                            ' ' : '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace ==
+                                                null ?
+                                                '-' :
+                                                data2.Total_PartsGross_Pace | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <th class="spacer"></th>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross
+                                            == 0 || data2.ServiceGross == null ? ' ' : '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross
+                                                == 0 || data2.ServiceGross == null ? '-' : data2.ServiceGross |
+                                                number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.ServiceGross_Pace | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Target)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
+                                            data2.ServiceGross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null
+                                                ||
+                                                data2.ServiceGross_Target == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.ServiceGross_Target | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Diff)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
+                                            data2.ServiceGross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
+                                                data2.ServiceGross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.ServiceGross_Diff | number:'1.0-0' ) }}
+                                            </span>
+                                        </span></td>
+                                    <th class="spacer"></th>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.CPgross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{ (data2.CPgross
+                                            == 0
+                                            || data2.CPgross == null ? ' ' : '$' )}}
+                                            <span>
+                                                {{ (data2.CPgross
+                                                == 0
+                                                || data2.CPgross == null ? '-' : data2.CPgross |
+                                                number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.CPgross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.CPgross_Pace == 0 || data2.CPgross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.CPgross_Pace == 0 || data2.CPgross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.CPgross_Pace | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.CPgross_Target)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.CPgross_Target == 0 || data2.CPgross_Target == null ||
+                                            data2.CPgross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.CPgross_Target == 0 || data2.CPgross_Target == null ||
+                                                data2.CPgross_Target == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.CPgross_Target | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.CPgross_Diff)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.CPgross_Diff == 0 || data2.CPgross_Diff == null ||
+                                            data2.CPgross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.CPgross_Diff == 0 || data2.CPgross_Diff == null ||
+                                                data2.CPgross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.CPgross_Diff | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <th class="spacer"></th>
+
+
+
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Wgross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{ (data2.Wgross
+                                            == 0
+                                            || data2.Wgross == null ? ' ' : '$' )}}
+                                            <span>
+                                                {{ (data2.Wgross
+                                                == 0
+                                                || data2.Wgross == null ? '-' : data2.Wgross |
+                                                number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Wgross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Wgross_Pace == 0 || data2.Wgross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Wgross_Pace == 0 || data2.Wgross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Wgross_Pace | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Wgross_Target)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Wgross_Target == 0 || data2.Wgross_Target == null ||
+                                            data2.Wgross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$')}}
+                                            <span>
+                                                {{
+                                                (data2.Wgross_Target == 0 || data2.Wgross_Target == null ||
+                                                data2.Wgross_Target == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Wgross_Target | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Wgross_Diff)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Wgross_Diff == 0 || data2.Wgross_Diff == null ||
+                                            data2.Wgross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ?' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Wgross_Diff == 0 || data2.Wgross_Diff == null ||
+                                                data2.Wgross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Wgross_Diff | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <th class="spacer"></th>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Egross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{ (data2.Egross
+                                            == 0
+                                            || data2.Egross == null ? ' ' : '$' )}}
+                                            <span>
+                                                {{ (data2.Egross
+                                                == 0
+                                                || data2.Egross == null ? '-' : data2.Egross |
+                                                number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Egross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Egross_Pace == 0 || data2.Egross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Egross_Pace == 0 || data2.Egross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Egross_Pace | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Egross_Target)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Egross_Target == 0 || data2.Egross_Target == null ||
+                                            data2.Egross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Egross_Target == 0 || data2.Egross_Target == null ||
+                                                data2.Egross_Target == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Egross_Target | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Egross_Diff)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Egross_Diff == 0 || data2.Egross_Diff == null ||
+                                            data2.Egross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Egross_Diff == 0 || data2.Egross_Diff == null ||
+                                                data2.Egross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Egross_Diff | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <th class="spacer"></th>
+
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Igross)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{ (data2.Igross
+                                            == 0
+                                            || data2.Igross == null ? ' ' : '$' )}}
+                                            <span>
+                                                {{ (data2.Igross
+                                                == 0
+                                                || data2.Igross == null ? '-' : data2.Igross |
+                                                number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Igross_Pace)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Igross_Pace == 0 || data2.Igross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Igross_Pace == 0 || data2.Igross_Pace == null ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Igross_Pace | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Igross_Target)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Igross_Target == 0 || data2.Igross_Target == null ||
+                                            data2.Igross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Igross_Target == 0 || data2.Igross_Target == null ||
+                                                data2.Igross_Target == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Igross_Target | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Igross_Diff)}"> <span
+                                            class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Igross_Diff == 0 || data2.Igross_Diff == null ||
+                                            data2.Igross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            <span>
+                                                {{
+                                                (data2.Igross_Diff == 0 || data2.Igross_Diff == null ||
+                                                data2.Igross_Diff == '-' ||
+                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                data2.Igross_Diff | number:'1.0-0' )}}
+                                            </span>
+                                        </span></td>
+
+                                </tr>
+
+                            </ng-container>
+
+                        </ng-container>
+
+                    </tbody>
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="1"></td>
+                            <td colspan="22" style="color: black;pointer-events:none ;text-align: center;">No
+                                Records Found</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="scorecard-double-header" id="scrollcent" #scrollcent *ngIf="GridView== 'Parts' "
+                (scroll)="updateVerticalScroll($event,'Parts')">
+                <table class="table mb-0 w-100" >
+                    <thead>
+                            <tr>
+                                <th class="text-center bg-white">{{FromDate |date:'MMMM'}} <span
+                                        *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                        |date:'MMMM'}} </span></th>
+                                <th class="spacer"></th>
+
+                                <th colspan="5" style="border-right: 2px solid #e0e1e2;">Total Parts</th>
+                                <th class="spacer"></th>
+
+                                <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                                    <!--  -->
+                                    <span class="d-flex align-items-center position-relative px-2">
+                                        <div class="backgrossbtn" (click)="getPartsData()">
+                                            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                            Back to Overview
+                                        </div><span class="m-auto">Parts</span>
+                                    </span>
+                                </th>
+                                <th class="spacer"></th>
+
+                                <th colspan="4" style="border-right: 2px solid #e0e1e2;">Counter Retail</th>
+                                <th class="spacer"></th>
+
+                                <th colspan="4" style="border-right: 2px solid #e0e1e2;">Wholesale</th>
+
+                            </tr>
+                            <tr class="bdr-btm">
+                                <th rowspan="2">{{FromDate |date:'dd'}} <span
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                        |date:'yyyy'}}</span>
+                                    - {{ToDate |date:'dd'}}<span
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                        |date:'yyyy'}}</span><span
+                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                        date:'yyyy'}}</span></th>
+                                <th class="spacer"></th>
+
+                                <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
+                                <!-- <th>Discounts</th> -->
+                                <th (click)="sort('Total_PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross
+                                </th>
+                                <th (click)="sort('Total_PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                                </th>
+                                <th (click)="sort('Total_PartsGrossTarget')" style="cursor: pointer;" class="bdr-rt">
+                                    Target</th>
+                                <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                                </th>
+                                <th class="spacer"></th>
+
+
+                                <th (click)="sort('PartsGross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                                <th (click)="sort('PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                                <th (click)="sort('PartsGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                                </th>
+                                <th (click)="sort('PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                                <th class="spacer"></th>
+
+
+                                <th (click)="sort('Retailgross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                                <th (click)="sort('Retailgross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                                <th (click)="sort('Retailgross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                                </th>
+                                <th (click)="sort('CPgross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                                <th class="spacer"></th>
+
+                                <th (click)="sort('Wholesalegross')" style="cursor: pointer;" class="bdr-rt">MTD</th>
+                                <th (click)="sort('Wholesalegross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                                </th>
+                                <th (click)="sort('Wholesalegross_Target')" style="cursor: pointer;" class="bdr-rt">
+                                    Target</th>
+                                <th (click)="sort('Wholesalegross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                                </th>
+
+
+                                <!-- <th></th> -->
+                            </tr>
+                        </thead>
+
+                        <tbody [ngClass]="{'hidden': NoData == true }">
+
+                            <ng-container *ngFor="let serviceInfo of PartsDrillData; let i=index">
+                                <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': serviceInfo.Dealer === '-', 'divBold': serviceInfo.data1 === 'Reports Total'  }"
+                                    [id]="'DV_'+i">
+                                    <td id="DataBody1"
+                                        [ngStyle]="{'background-color':serviceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                        <span style="float: left; color: white;"
+                                            (click)="expandorcollapse(i,$event,serviceInfo.Dealer,serviceInfo,'')"
+                                            [id]="'D_'+i">{{serviceInfo.Dealer}}</span>
+
+                                        <span [id]="'D_'+i" title="{{serviceInfo.data1}}"
+                                            (click)="expandorcollapse(i,$event,serviceInfo.Dealer,serviceInfo,'')">
+                                            <!-- {{(serviceInfo.data1 == undefined ? '--' : ( (serviceInfo.data1.toString() |
+                                slice:0:26) +
+                                (serviceInfo.data1.toString().length > 26 ? '...' : '') ))}}  -->
+                                            <span *ngIf="selectedDataGrouping[0].columnName!= 'cdate'">
+                                                {{( serviceInfo.data1 == undefined || serviceInfo.data1 == '' ? '--' :
+                                                (serviceInfo.data1 == 'C' ?
+                                                'Customer Pay':(serviceInfo.data1 == 'T' ? 'Warranty' :
+                                                (serviceInfo.data1
+                                                ==
+                                                'I' ? 'Internal' : (serviceInfo.data1 == 'R' ? 'Retail':
+                                                (serviceInfo.data1
+                                                ==
+                                                'W' ? 'Wholesale': ( (serviceInfo.data1.toString() |
+                                                slice:0:26) +
+                                                (serviceInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
+                                            </span>
+
+                                            <span *ngIf="selectedDataGrouping[0].columnName == 'cdate'">
+                                                {{( serviceInfo.data1 == undefined || serviceInfo.data1 == '' ||
+                                                serviceInfo.data1 == null ? '-' :(serviceInfo.data1=='Reports Total' ?
+                                                'Reports Total' : (serviceInfo.data1 | date:'MM/dd/YYYY' )) )}}
+                                            </span>
+
+
+
+                                        </span>
+                                    </td>
+                                    <th class="spacer"></th>
+
+                                    <td id="DataBody5"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsSale)}">
+                                        {{ serviceInfo.Total_PartsSale == 0 || serviceInfo.Total_PartsSale == null ? ''
+                                        :
+                                        serviceInfo.Total_PartsSale | currency:'USD':'symbol':'1.0-0'}}
+                                    </td>
+
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross)}">
+                                        {{
+                                        (serviceInfo.Total_PartsGross == 0 || serviceInfo.Total_PartsGross == null ? '-'
+                                        :
+                                        serviceInfo.Total_PartsGross | currency:'USD':'symbol':'1.0-0') }}</td>
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross_Pace)}"> {{
+                                        (serviceInfo.Total_PartsGross_Pace == 0 || serviceInfo.Total_PartsGross_Pace ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.Total_PartsGross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGrossTarget)}"> {{
+                                        (serviceInfo.Total_PartsGrossTarget == 0 || serviceInfo.Total_PartsGrossTarget
+                                        ==
+                                        null||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        serviceInfo.Total_PartsGrossTarget | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross_Diff)}"> {{
+                                        (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.Total_PartsGross_Diff ==
+                                        null||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        serviceInfo.Total_PartsGross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
+                                    <th class="spacer"></th>
+
+                                    <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross)}">
+                                        {{serviceInfo.PartsGross == 0 || serviceInfo.PartsGross == null ? '-' :
+                                        serviceInfo.PartsGross | currency:'USD':'symbol':'1.0-0' }}
+                                    </td>
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Pace)}">
+                                        {{
+                                        (serviceInfo.PartsGross_Pace == 0 || serviceInfo.PartsGross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.PartsGross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Target)}">
+                                        {{ (serviceInfo.PartsGross_Target == 0 || serviceInfo.PartsGross_Target ==
+                                        null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.PartsGross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Diff)}">
+                                        {{
+                                        (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.PartsGross_Diff == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.PartsGross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
+                                    <th class="spacer"></th>
+
+                                    <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(serviceInfo.Retailgross)}">{{
+                                        (serviceInfo.Retailgross == 0 || serviceInfo.Retailgross == null ? '-' :
+                                        serviceInfo.Retailgross | currency:'USD':'symbol':'1.0-0' ) }}
+
+                                    </td>
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Retailgross_Pace)}">
+                                        {{
+                                        (serviceInfo.Retailgross_Pace == 0 || serviceInfo.Retailgross_Pace == null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.Retailgross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Retailgross_Target)}">
+                                        {{
+                                        (serviceInfo.Retailgross_Target == 0 || serviceInfo.Retailgross_Target == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        serviceInfo.Retailgross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7">-
+                                        <!-- {{
+                                (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
+                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                serviceInfo.CPgross_Diff | currency:'USD':'symbol':'1.0-0') }} -->
+                                    </td>
+                                    <th class="spacer"></th>
+
+                                    <td id="DataBody14"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Wholesalegross)}">{{
+                                        (serviceInfo.Wholesalegross == 0 || serviceInfo.Wholesalegross == null ? '-' :
+                                        serviceInfo.Wholesalegross | currency:'USD':'symbol':'1.0-0' ) }}
+
+                                    </td>
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Wholesalegross_Pace)}">
+                                        {{
+                                        (serviceInfo.Wholesalegross_Pace == 0 || serviceInfo.Wholesalegross_Pace == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.Wholesalegross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Wholesalegross_Target)}">
+                                        {{
+                                        (serviceInfo.Wholesalegross_Target == 0 || serviceInfo.Wholesalegross_Target ==
+                                        null ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        serviceInfo.Wholesalegross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
+
+                                    <td id="DataBody7"
+                                        [ngClass]="{ negative: !inTheGreen(serviceInfo.Wholesalegross_Diff)}">
+                                        {{
+                                        (serviceInfo.Wholesalegross_Diff == 0 || serviceInfo.Wholesalegross_Diff == null
+                                        ||
+                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                        serviceInfo.Wholesalegross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
+
+
+
+                                </tr>
+                                <ng-container *ngFor="let data2 of serviceInfo.Data2;let j=index">
+                                    <tr class="sub-title" [id]="'DVN_'+i"
+                                        *ngIf="data2.data2 != '' && data2.data2 != ' ' "
+                                        [ngClass]="{'hidden': serviceInfo.Dealer === '+', 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0  }">
+                                        <td> <span style="float: left; margin-right: 0.8rem; color: #363b4f;"
+                                                [id]="'DN_'+i"
+                                                [ngClass]="{'disable': serviceInfo.data1 === 'Reports Total' }"></span>
+                                            <span [id]="'DN_'+i" style="margin-left: 1rem;"
+                                                (click)="openDetails(data2,serviceInfo,'2')">
+
+                                                <span *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
+                                                    {{( data2.data2 == undefined || data2.data2 == '' ? '--' :
+                                                    (data2.data2 == 'C' ?
+                                                    'Customer Pay':(data2.data2 == 'T' ? 'Warranty' : (data2.data2
+                                                    == 'I' ? 'Internal' : (data2.data2 == 'R' ? 'Retail':
+                                                    (data2.data2 == 'W' ? 'Wholesale': ( (data2.data2.toString() |
+                                                    slice:0:26) +
+                                                    (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
+                                                </span>
+                                                <span *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
+                                                    {{( data2.data2 == undefined || data2.data2 == '' || data2.data2 ==
+                                                    null ? '-' : data2.data2 | date:'MM/dd/YYYY' )}}
+                                                </span>
+
+
+                                            </span>
+                                        </td>
+                                        <th class="spacer"></th>
+
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsSale)}">{{
+                                            (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? '-' :
+                                            data2.Total_PartsSale | currency:'USD':'symbol':'1.0-0' ) }}</td>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}">{{
+                                            (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? '-' :
+                                            data2.Total_PartsGross | currency:'USD':'symbol':'1.0-0' ) }}</td>
+
+
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross_Pace)}">{{
+                                            (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace == null ?
+                                            '-' :
+                                            data2.Total_PartsGross_Pace | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <th class="spacer"></th>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross)}">{{
+                                            (data2.PartsGross
+                                            == 0 || data2.PartsGross == null ? '-' : data2.PartsGross |
+                                            currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Pace)}">{{
+                                            (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.PartsGross_Pace | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Target)}">{{
+                                            (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ||
+                                            data2.PartsGross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.PartsGross_Target | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Diff)}">{{
+                                            (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
+                                            data2.PartsGross_Diff == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.PartsGross_Diff | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <th class="spacer"></th>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Retailgross)}">{{
+                                            (data2.Retailgross
+                                            == 0
+                                            || data2.Retailgross == null ? '-' : data2.Retailgross |
+                                            currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Retailgross_Pace)}">{{
+                                            (data2.Retailgross_Pace == 0 || data2.Retailgross_Pace == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.Retailgross_Pace | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Retailgross_Target)}">{{
+                                            (data2.Retailgross_Target == 0 || data2.Retailgross_Target == null ||
+                                            data2.Retailgross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.Retailgross_Target | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td>-</td>
+                                        <th class="spacer"></th>
+
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross)}">{{
+                                            (data2.Wholesalegross
+                                            == 0
+                                            || data2.Wholesalegross == null ? '-' : data2.Wholesalegross |
+                                            currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Pace)}">{{
+                                            (data2.Wholesalegross_Pace == 0 || data2.Wholesalegross_Pace == null ||
+                                            data2.Wholesalegross_Pace == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.Wholesalegross_Pace | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Target)}">{{
+                                            (data2.Wholesalegross_Target == 0 || data2.Wholesalegross_Target == null ||
+                                            data2.Wholesalegross_Target == '-' ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.Wholesalegross_Target | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Diff)}">{{
+                                            (data2.Wholesalegross_Diff == 0 || data2.Wholesalegross_Diff == null ||
+                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            data2.Wholesalegross_Diff | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+
+                                    </tr>
+
+                                </ng-container>
+
+                            </ng-container>
+
+                        </tbody>
+                        <tbody *ngIf="NoData">
+                            <tr>
+                                <td colspan="1"></td>
+                                <td colspan="22" style="color: black;pointer-events:none ;text-align: center;">No
+                                    Records Found</td>
+
+                            </tr>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</main>
