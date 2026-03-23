@@ -1,0 +1,43 @@
+.tradewinperformance-tbl {
+
+    .boxshadow-none {
+        box-shadow: none !important;
+    }
+
+    th:nth-child(1),
+    th:nth-child(4),
+    th:nth-child(7),
+
+    td:nth-child(1),
+    td:nth-child(4),
+    td:nth-child(7) {
+        box-shadow:
+            inset 0 0.4px 0 0 #e0edff,
+            inset -3px 0 0 0 #e0edff,
+            inset 0 -0.4px 0 0 #e0edff,
+            inset 0.4px 0 0 0 #e0edff;
+    }
+
+    .box-border {
+        box-shadow:
+            inset 0 0.4px 0 0 #e0edff,
+            inset -3px 0 0 0 #e0edff,
+            inset 0 -0.4px 0 0 #e0edff,
+            inset 0.4px 0 0 0 #e0edff;
+    }
+
+    .lightenblue-bg {
+        background-color: #d9e7ff !important;
+        font-size: .875rem;
+        font-weight: 700;
+        color: #000;
+        font-family: "Roboto";
+    }
+}
+
+::ng-deep .modal-dialog {
+    max-width: 90%;
+    /* adjust width */
+    left: 20px;
+    z-index: 9999;
+}

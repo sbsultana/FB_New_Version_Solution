@@ -1,0 +1,493 @@
+<div>
+    <div class="recap position-relative">
+        <div class="row d-flex w-100 m-0">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 col-12">
+                        <div class="m-2 p-2">
+                            <div class="row align-items-center">
+                                <div class="col-12 p-0 d-flex align-items-center">
+                                    <h2 class="m-0 p-0">
+                                        <span>
+                                            <span class="font-blue">
+                                                // {{( Partsdetails[0].userName == undefined ? '--' :
+                                                (Partsdetails[0].userName == 'C' ?
+                                                'Customer Pay':(Partsdetails[0].userName == 'T' ? 'Warranty' :
+                                                (Partsdetails[0].userName
+                                                == 'I' ? 'Internal' : (Partsdetails[0].userName == 'R' ? 'Retail':
+                                                (Partsdetails[0].userName == 'W' ? 'Wholesale': (
+                                                Partsdetails[0].userName == 'E' ? 'Entended Warranty' :
+                                                (Partsdetails[0].userName.toString() |
+                                                slice:0:26) +
+                                                (Partsdetails[0].userName.toString().length > 26 ? '...' : '') )
+                                                ))))))}}
+
+                                            </span>
+                                            <!-- <span *ngIf="Salesdetails?.[0]?.var2Value">
+                                                <i class="fa fa-long-arrow-right"></i>
+                                                {{ Salesdetails?.[0]?.var2Value }}
+                                            </span>
+                                            <span
+                                                *ngIf="Salesdetails?.[0]?.var3Value && Salesdetails?.[0]?.var3Value !== ''">
+                                                <i class="fa fa-long-arrow-right"></i>
+                                                {{ Salesdetails?.[0]?.var3Value }}
+                                            </span> -->
+                                        </span>
+                                    </h2>
+                                    <img src="images/Download.svg" alt="Download" class="ms-auto px-3"
+                                        style="cursor: pointer;" (click)="exportAsXLSX()" />
+                                    <!-- <i class="fa fa-minus-circle text-hover pt-1 me-2" aria-hidden="true"
+                                        [class.unclickable]="!zoomOutPossible || isMinZoom"
+                                        style="cursor: pointer; font-size: 1.1rem; color: #878e98;"
+                                        (click)="changeFontSize('decrease')"></i>
+                                    <i class="fa fa-plus-circle text-hover pt-1 me-3" aria-hidden="true"
+                                        [class.unclickable]="!zoomInPossible || isMaxZoom"
+                                        style="cursor: pointer; font-size: 1.1rem; color: #878e98;"
+                                        (click)="changeFontSize('increase')"></i> -->
+
+                                    <!-- <a class="close-btn" role="button" (click)="close()">
+                                        <img src="images/x.png" alt="Close" />
+                                    </a> -->
+                                    <button type="button" class="btn-close" (click)="close()" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scorecard-double-header mb-3"
+                            style="overflow: auto;max-height: calc(100vh - 200px);"
+                            (scroll)="updateVerticalScroll($event)" #scrollOne>
+                            <div *ngIf="spinnerLoader"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <table class="table mb-0 w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Date</th>
+                                        <th style="width: 23%;">Customer</th>
+                                        <!-- <th>Part</th> -->
+                                        <th>Part #</th>
+                                        <th>Description</th>
+                                        <th> Tires</th>
+                                        <th colspan="3">Total </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('C') >= 0">Customer Pay
+                                        </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('T') >= 0">Warranty
+                                        </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('E') >= 0">Extended
+                                            Warranty </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">Internal
+                                        </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">Counter
+                                            Retail </th>
+                                        <th colspan="3" *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0"> Wholesale
+                                        </th>
+                                    </tr>
+
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th style="width: 23%;">&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+
+                                        <ng-container>
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('C') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('T') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('E') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0">
+                                            <th>Sales</th>
+                                            <th>Gross</th>
+                                            <th>GP%</th>
+                                        </ng-container>
+                                    </tr>
+
+                                </thead>
+
+                                <!-- data-bs-toggle="modal" data-bs-target="#warningmessage" | filter : SGDSearchName -->
+                                <tbody>
+                                    <tr *ngFor="let det of PartsPersonDetails;let i=index;" [id]="'SP_'+i"
+                                     >
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.InvoiceNumber == 0 || det.InvoiceNumber == null || det.InvoiceNumber
+                                            ==
+                                            undefined ? '-' :
+                                            det.InvoiceNumber ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.CDate == 0 || det.CDate == null || det.CDate == undefined ? '-'
+                                            : det.CDate |
+                                            date:'MM.dd.yyyy' ) }}
+                                        </td>
+                                        <td class="text-start" [id]="'SD_'+i" title="{{det.Customername}}"
+                                            style="cursor: default;text-transform: capitalize;"> {{(det.Customername ==
+                                            undefined ||
+                                            det.Customername ==
+                                            null || det.Customername ==
+                                            '' ? '--' : (
+                                            (det.Customername.toString().toLowerCase() | slice:0:20) +
+                                            (det.Customername.toString().length > 20 ? '..' : '') ))}}</td>
+                                        <!-- <td>
+                                    {{ ( det.Part == null || det.Part == undefined ? '-' : det.Part ) }}
+                                </td> -->
+                                        <td class="text-start" [id]="'SD_'+i" title="{{det.Partnumber}}"
+                                            style="cursor: default;">
+                                            {{(det.Partnumber == 0 || det.Partnumber == null || det.Partnumber ==
+                                            undefined ?
+                                            '--' : (
+                                            (det.Partnumber.toString() | slice:0:12) +
+                                            (det.Partnumber.toString().length > 12 ? '..' : '') ))}}
+
+                                        </td>
+                                        <td class="text-start" [id]="'SD_'+i" title="{{det.AP_description}}"
+                                            style="cursor: default;"> {{(det.AP_description == undefined ||
+                                            det.AP_description ==
+                                            null || det.AP_description ==
+                                            '' ? '--' : (
+                                            (det.AP_description.toString() | slice:0:20) +
+                                            (det.AP_description.toString().length > 20 ? '..' : '') ))}}</td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.TireQuantity == 0 || det.TireQuantity == null || det.TireQuantity ==
+                                            undefined ? '-' :
+                                            det.TireQuantity ) }}
+                                        </td>
+
+
+                                        <td [id]="'SP_'+i"> {{ (det.Total_Sale == 0 || det.Total_Sale == null ||
+                                            det.Total_Sale
+                                            == undefined
+                                            ? '-' :
+                                            det.Total_Sale | currency:'USD':'symbol' )}}</td>
+                                        <td [id]="'SP_'+i"> {{ (det.Total_Gross == 0 || det.Total_Gross == null ||
+                                            det.Total_Gross == undefined
+                                            ? '-' :
+                                            det.Total_Gross | currency:'USD':'symbol' )}}</td>
+
+                                        <td [id]="'SP_'+i"> {{ (det.Total_Retention == 0 || det.Total_Retention == null
+                                            ||
+                                            det.Total_Retention
+                                            == undefined
+                                            ?'-' :
+                                            det.Total_Retention | number:'1.1-1' )}}{{ (det.Total_Retention == 0 ||
+                                            det.Total_Retention == null || det.Total_Retention
+                                            == undefined
+                                            ?'' :
+                                            '%' )}}</td>
+
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('C') >= 0">
+                                            <td [id]="'SP_'+i"> {{ (det.Cust_Sale == 0 || det.Cust_Sale == null ||
+                                                det.Cust_Sale
+                                                ==
+                                                undefined
+                                                ? '-' :
+                                                det.Cust_Sale | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Cust_Gross == 0 || det.Cust_Gross == null ||
+                                                det.Cust_Gross
+                                                == undefined ?
+                                                '-' :
+                                                det.Cust_Gross | currency:'USD':'symbol' )}}</td>
+
+
+                                            <td [id]="'SP_'+i"> {{ (det.Cust_Retention == 0 || det.Cust_Retention ==
+                                                null ||
+                                                det.Cust_Retention ==
+                                                undefined ?'-' :
+                                                det.Cust_Retention | number:'1.1-1' )}}{{ (det.Cust_Retention == 0 ||
+                                                det.Cust_Retention == null || det.Cust_Retention ==
+                                                undefined ?'' :
+                                                '%')}}</td>
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Cust_ELR == 0 || det.Cust_ELR == null || det.Cust_ELR == undefined ? '-' :
+                                    det.Cust_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Cust_Hours == 0 || det.Cust_Hours == null || det.Cust_Hours == undefined ?
+                                    '-' :
+                                    det.Cust_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Cust_Discount == 0 || det.Cust_Discount == null || det.Cust_Discount ==
+                                    undefined ? '-':
+                                    det.Cust_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+                                        </ng-container>
+
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('T') >= 0">
+                                            <td [id]="'SP_'+i"> {{ (det.Warranty_Sale == 0 || det.Warranty_Sale == null
+                                                ||
+                                                det.Warranty_Sale == undefined
+                                                ? '-' :
+                                                det.Warranty_Sale | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Warranty_Gross == 0 || det.Warranty_Gross ==
+                                                null ||
+                                                det.Warranty_Gross ==
+                                                undefined ? '-'
+                                                :
+                                                det.Warranty_Gross | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Warranty_Retention == 0 ||
+                                                det.Warranty_Retention ==
+                                                null ||
+                                                det.Warranty_Retention ==
+                                                undefined ?'-' :
+                                                det.Warranty_Retention | number:'1.1-1')}}{{ (det.Warranty_Retention ==
+                                                0 ||
+                                                det.Warranty_Retention == null ||
+                                                det.Warranty_Retention ==
+                                                undefined ?'' :
+                                                '%')}}</td>
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Warranty_ELR == 0 || det.Warranty_ELR == null || det.Warranty_ELR ==
+                                    undefined ? '-' :
+                                    det.Warranty_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Warranty_Hours == 0 || det.Warranty_Hours == null || det.Warranty_Hours ==
+                                    undefined ? '-'
+                                    :
+                                    det.Warranty_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Warranty_Discount == 0 || det.Warranty_Discount == null ||
+                                    det.Warranty_Discount ==
+                                    undefined ? '-':
+                                    det.Warranty_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('E') >= 0">
+                                            <td [id]="'SP_'+i"> {{ (det.Extended_Sale == 0 || det.Extended_Sale == null
+                                                ||
+                                                det.Extended_Sale == undefined
+                                                ? '-' :
+                                                det.Extended_Sale | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Extended_Gross == 0 || det.Extended_Gross ==
+                                                null ||
+                                                det.Extended_Gross ==
+                                                undefined ? '-'
+                                                :
+                                                det.Extended_Gross | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Extended_Retention == 0 ||
+                                                det.Extended_Retention ==
+                                                null ||
+                                                det.Extended_Retention ==
+                                                undefined ?'-' :
+                                                det.Extended_Retention | number:'1.1-1')}}{{ (det.Extended_Retention ==
+                                                0 ||
+                                                det.Extended_Retention == null ||
+                                                det.Extended_Retention ==
+                                                undefined ?'' :
+                                                '%')}}</td>
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Warranty_ELR == 0 || det.Warranty_ELR == null || det.Warranty_ELR ==
+                                    undefined ? '-' :
+                                    det.Warranty_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Warranty_Hours == 0 || det.Warranty_Hours == null || det.Warranty_Hours ==
+                                    undefined ? '-'
+                                    :
+                                    det.Warranty_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Warranty_Discount == 0 || det.Warranty_Discount == null ||
+                                    det.Warranty_Discount ==
+                                    undefined ? '-':
+                                    det.Warranty_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td [id]="'SP_'+i"> {{ (det.Internal_Sale == 0 || det.Internal_Sale == null
+                                                ||
+                                                det.Internal_Sale == undefined
+                                                ? '-' :
+                                                det.Internal_Sale | currency:'USD':'symbol' )}}</td>
+
+
+                                            <td [id]="'SP_'+i"> {{ (det.Internal_Gross == 0 || det.Internal_Gross ==
+                                                null ||
+                                                det.Internal_Gross ==
+                                                undefined ? '-'
+                                                :
+                                                det.Internal_Gross | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Internal_Retention == 0 ||
+                                                det.Internal_Retention ==
+                                                null ||
+                                                det.Internal_Retention ==
+                                                undefined ?'-' :
+                                                det.Internal_Retention | number:'1.1-1' )}}{{ (det.Internal_Retention ==
+                                                0 ||
+                                                det.Internal_Retention == null ||
+                                                det.Internal_Retention ==
+                                                undefined ?'' :
+                                                '%' )}}</td>
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Internal_ELR == 0 || det.Internal_ELR == null || det.Internal_ELR ==
+                                    undefined ? '-' :
+                                    det.Internal_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Internal_Hours == 0 || det.Internal_Hours == null || det.Internal_Hours ==
+                                    undefined ? '-'
+                                    :
+                                    det.Internal_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Internal_Discount == 0 || det.Internal_Discount == null ||
+                                    det.Internal_Discount ==
+                                    undefined ? '-':
+                                    det.Internal_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">
+
+                                            <td [id]="'SP_'+i"> {{ (det.Counter_sale == 0 || det.Counter_sale == null ||
+                                                det.Counter_sale == undefined
+                                                ? '-' :
+                                                det.Counter_sale | currency:'USD':'symbol' )}}</td>
+                                            <td [id]="'SP_'+i"> {{ (det.Counter_Gross == 0 || det.Counter_Gross == null
+                                                ||
+                                                det.Counter_Gross ==
+                                                undefined ? '-' :
+                                                det.Counter_Gross | currency:'USD' )}}</td>
+
+
+                                            <td [id]="'SP_'+i"> {{ (det.Counter_Retention == 0 || det.Counter_Retention
+                                                == null
+                                                ||
+                                                det.Counter_Retention ==
+                                                undefined ?'-' :
+                                                det.Counter_Retention | number:'1.1-1' )}}{{ (det.Counter_Retention == 0
+                                                ||
+                                                det.Counter_Retention == null ||
+                                                det.Counter_Retention ==
+                                                undefined ?'' :
+                                                '%' )}}</td>
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Counter_ELR == 0 || det.Counter_ELR == null || det.Counter_ELR == undefined
+                                    ? '-' :
+                                    det.Counter_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Counter_Hours == 0 || det.Counter_Hours == null || det.Counter_Hours ==
+                                    undefined ? '-' :
+                                    det.Counter_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Counter_Discount == 0 || det.Counter_Discount == null ||
+                                    det.Counter_Discount == undefined
+                                    ? '-':
+                                    det.Counter_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+
+                                        </ng-container>
+
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0">
+                                            <td [id]="'SP_'+i"> {{ (det.Wholesale_Sale == 0 || det.Wholesale_Sale ==
+                                                null ||
+                                                det.Wholesale_Sale == undefined
+                                                ? '-' :
+                                                det.Wholesale_Sale | currency:'USD':'symbol' )}}</td>
+                                            <td [id]="'SP_'+i"> {{ (det.Wholesale_Gross == 0 || det.Wholesale_Gross ==
+                                                null ||
+                                                det.Wholesale_Gross
+                                                == undefined ?
+                                                '-' :
+                                                det.Wholesale_Gross | currency:'USD':'symbol' )}}</td>
+
+                                            <td [id]="'SP_'+i"> {{ (det.Wholesale_Retention == 0 ||
+                                                det.Wholesale_Retention ==
+                                                null
+                                                ||
+                                                det.Wholesale_Retention ==
+                                                undefined ?'-' :
+                                                det.Wholesale_Retention | number:'1.1-1' )}}{{ (det.Wholesale_Retention
+                                                == 0 ||
+                                                det.Wholesale_Retention == null ||
+                                                det.Wholesale_Retention ==
+                                                undefined ?'' :
+                                                '%' )}}
+                                            </td>
+
+                                            <!-- <td [id]="'SP_'+i"> {{ (det.Wholesale_ELR == 0 || det.Wholesale_ELR == null || det.Wholesale_ELR ==
+                                    undefined ? '-' :
+                                    det.Wholesale_ELR | currency:'USD':'symbol':'1.0-0' )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Wholesale_Hours == 0 || det.Wholesale_Hours == null || det.Wholesale_Hours
+                                    == undefined ?
+                                    '-' :
+                                    det.Wholesale_Hours )}}</td>
+                              <td [id]="'SP_'+i"> {{ (det.Wholesale_Discount == 0 || det.Wholesale_Discount == null ||
+                                    det.Wholesale_Discount ==
+                                    undefined ? '-':
+                                    det.Wholesale_Discount | currency:'USD':'symbol':'1.0-0' )}}</td> -->
+
+                                        </ng-container>
+                                        <div class="loader" style="margin-top: 30%;margin-left: 30%;"
+                                            *ngIf="spinnerLoadersec">
+                                        </div>
+
+                                    </tr>
+                                    <tr style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;box-shadow: 1px -4px 0px #2d91f1;"
+                                        *ngIf="!spinnerLoader && !spinnerLoadersec">
+                                        <td colspan="3"></td>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+
+                                    </tr>
+                                    <tr *ngIf="NoData">
+                                        <td colspan="3">No Data Found!!</td>
+
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+                                        <ng-container *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0">
+                                            <td colspan="3"></td>
+                                        </ng-container>
+
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
