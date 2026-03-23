@@ -53,39 +53,36 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="dropdown">
-                        <div *ngIf="SalesContest != undefined" class="divBold ms-2">
-                            <span *ngIf="SalesContest.length>0">
-                                Count:{{(SalesContest).length}}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="dropdown">
-                       
-                        <span class="divBold ms-auto me-2">{{AsofNow}}</span>
-                    </div>
-
                     <div class="dropdown">
                         <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
                     </div>
-
+                    <div class="asofnow ms-auto mx-3">
+                        <div class="dropdown">
+                            <div *ngIf="SalesContest != undefined" class="d-flex justify-content-end align-items-center divBold ms-2 font-medium">
+                                <span *ngIf="SalesContest.length>0" class="me-2">
+                                    Count:{{(SalesContest).length}}
+                                </span>
+                                <div>
+                                    <span class="divBold ms-auto">{{AsofNow}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="scorecard-multi-header lendersummary-tbl">
+            <div class="scorecard-multi-header salescontest-tbl">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr class="bdr-btm">
                             <th (click)="sort('Rank',order)" style="cursor: pointer;"> Rank</th>
                             <th (click)="sort('StoreName',order)" style="cursor: pointer;"> Store
                             </th>
-                            <th class="spacer"></th>
+
                             <th colspan="4">New</th>
-                            <th class="spacer"></th>
+
 
                             <th colspan="4">Used</th>
-                            <th class="spacer"></th>
+
 
                             <th colspan="5">Total</th>
 
@@ -93,36 +90,34 @@
                         <tr>
                             <th class="bdr-rt"></th>
                             <th class="bdr-rt"></th>
-                            <th class="spacer"></th>
+
 
 
                             <th class="bdr-rt" (click)="sort('New_MTD',order)" style="cursor: pointer;">
                                 <span
-                                    style="background-color: #fff !important;color:black !important;font-size: 0.6rem;"
                                     *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
                                         style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
-                                <span style="background-color: #fff !important;color:black !important"
+                                <span
                                     *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th>
                             <th class="bdr-rt" (click)="sort('New_Pace',order)" style="cursor: pointer;">Pace</th>
                             <th class="bdr-rt" (click)="sort('New_Target',order)" style="cursor: pointer;">Target</th>
                             <th class="bdr-rt" (click)="sort('New_Variance',order)" style="cursor: pointer;">Variance
                             </th>
-                            <th class="spacer"></th>
+
 
 
                             <th class="bdr-rt" (click)="sort('Used_MTD',order)" style="cursor: pointer;">
                                 <span
-                                    style="background-color: #fff !important;color:black !important;font-size: 0.6rem;"
                                     *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
                                         style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
-                                <span style="background-color: #fff !important;color:black !important"
+                                <span
                                     *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th>
                             <th class="bdr-rt" (click)="sort('Used_Pace',order)" style="cursor: pointer;">Pace</th>
@@ -130,24 +125,22 @@
                             <th class="bdr-rt" (click)="sort('Used_Variance',order)" style="cursor: pointer;">Variance
                             </th>
 
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('Total_MTD',order)" style="cursor: pointer;">
                                 <span
-                                    style="background-color: #fff !important;color:black !important;font-size: 0.6rem;"
                                     *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
                                         style="line-height: 0 !important;color: black !important;">-</div> {{ ToDate |
                                     date:'MM.dd.yyyy'}} </span>
 
 
-                                <span style="background-color: #fff !important;color:black !important"
+                                <span
                                     *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th>
                             <th class="bdr-rt" (click)="sort('Total_Pace',order)" style="cursor: pointer;">Pace</th>
                             <th class="bdr-rt" (click)="sort('Total_Target',order)" style="cursor: pointer;">Target</th>
                             <th class="bdr-rt" (click)="sort('Total_Variance',order)" style="cursor: pointer;">Variance
                             </th>
-                            <th class="bdr-rt" (click)="sort('Total_Percentage',order)" style="cursor: pointer;">% <span
-                                    style="text-transform: lowercase !important;background-color: white !important;color: black !important;">to</span>
+                            <th class="bdr-rt" (click)="sort('Total_Percentage',order)" style="cursor: pointer;">% <span>to</span>
                                 Target</th>
 
 
@@ -160,7 +153,7 @@
                                 <tr *ngFor="let Appointment of SalesContest ; let i=index"
                                     [ngClass]="{'divbold' : i == SalesContest.length-1 }">
                                     <ng-container>
-                                        <td class="aligncenter">
+                                        <td class="text-center">
                                             <span>
                                                 {{Appointment["Rank"] || '-'}}
                                             </span>
@@ -168,7 +161,7 @@
                                         </td>
                                         <td style="text-align: left !important;">
                                             {{Appointment["StoreName"] || '-'}}</td>
-                                        <th class="spacer"></th>
+
 
                                         <ng-container *ngFor="let k of keys;let i=index">
                                             <td [ngClass]="{ negative: !inTheGreen(Appointment[k])}"
@@ -199,19 +192,19 @@
 
 
                                             </td>
-                                            <td class="spacer" *ngIf="i == 3 || i == 7 "></td>
+
                                         </ng-container>
                                     </ng-container>
                                 </tr>
-                                <tr style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;box-shadow: 1px -4px 0px #2d91f1;"
+                                <tr style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;"
                                     class="divBold" *ngFor="let Appointment of TotalData; let i=index">
                                     <ng-container>
-                                        <td class="aligncenter">
+                                        <td class="text-center">
 
                                         </td>
                                         <td style="text-align: left !important;">
                                             {{Appointment["StoreName"] || '-'}}</td>
-                                        <th class="spacer"></th>
+
 
                                         <ng-container *ngFor="let k of keys;let i=index">
                                             <td [ngClass]="{ negative: !inTheGreen(Appointment[k])}"
@@ -236,7 +229,7 @@
 
 
                                             </td>
-                                            <td class="spacer" *ngIf="i == 3 || i == 7 "></td>
+
                                         </ng-container>
                                     </ng-container>
 
@@ -251,7 +244,7 @@
                                                 No Data Found
                                             </td> -->
                                 <td colspan="18"
-                                    style="text-align: center !important;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                                    style="text-align: center !important;font-size: 1rem;background: #fff !important;color: black; display: revert;">
                                     <label>No Data Found</label>
                                 </td>
                             </tr>

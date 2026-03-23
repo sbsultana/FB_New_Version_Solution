@@ -96,26 +96,24 @@
                 </div>
             </div>
         </div>
-        <div class="scorecard-double-header WholesaleGrossGroup-tbl w-100">
+        <div class="scorecard-multi-header usedvehiclestocking-tbl w-100">
             <table class="table mb-0 w-100">
                 <thead>
-                    <tr style="box-shadow: inset 0px -1px 0 0 #eaebec;">
-                        <th colspan="2" class="bdr-rt"></th>
-
-
+                    <tr>
+                        <th class="bdr-rt"></th>
+                        <th class="bdr-rt"></th>
                         <th colspan="18" [attr.colspan]="DupDateType != 'YTD' ? '18' : '15'" class="bdr-rt">Sold
                             Units
                         </th>
                         <!-- <th *ngIf="expandDataArray.length > 0">&nbsp;</th> -->
                         <ng-container *ngIf="CIBlock == 'Show'">
-                            <th class="spacer"></th>
                             <th colspan="7" class="bdr-rt">Current Inventory</th>
                         </ng-container>
 
                     </tr>
-                    <tr style="box-shadow: inset 0px -1px 0 0 #eaebec;">
-
-                        <th colspan="2" class="bdr-rt"></th>
+                    <tr>
+                        <th class="bdr-rt"></th>
+                        <th class="bdr-rt"></th>
                         <ng-container *ngIf="DupDateType != 'YTD'">
                             <th colspan="3" class="bdr-rt">
                                 <span *ngIf="DateType == 'MTD'">{{month | date:'MMM'}}</span>
@@ -138,7 +136,6 @@
 
 
                         <ng-container *ngIf="CIBlock == 'Show'">
-                            <th class="spacer"></th>
                             <th></th>
                             <th>Days</th>
                             <th>Average</th>
@@ -147,8 +144,8 @@
                             <th colspan="2"></th>
                         </ng-container>
                     </tr>
-                    <tr>
-                        <th (click)="sort('RankNumber',InventoryData)" style="cursor: pointer;">Rank</th>
+                    <tr class="lightenblue-bg">
+                        <th class="lightenblue-bg" (click)="sort('RankNumber',InventoryData)" style="cursor: pointer;">Rank</th>
                         <th (click)="sort('ad_model',InventoryData)" style="cursor: pointer;" class="bdr-rt">Model
                         </th>
                         <ng-container *ngIf="DupDateType != 'YTD'">
@@ -194,7 +191,8 @@
                         </th>
                         <th (click)="sort('Count8',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>
-                        <th (click)="sort('AvgAgeChange',InventoryData)" style="cursor: pointer;" class="bdr-rt">
+                        <th (click)="sort('AvgAgeChange',InventoryData)" style="cursor: pointer;"
+                            class="bdr-rt box-border">
                             Change</th>
                         <!-- 
                             <th (click)="sort('Count9',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
@@ -207,7 +205,6 @@
                                 Acquisition Source</th> -->
 
                         <ng-container *ngIf="CIBlock == 'Show'">
-                            <th class="spacer"></th>
                             <th (click)="sort('InStock',InventoryData)" style="cursor: pointer;">In Stock</th>
                             <th (click)="sort('DaysSupply',InventoryData)" style="cursor: pointer;">Supply</th>
                             <th (click)="sort('AvgAge',InventoryData)" style="cursor: pointer;">Age</th>
@@ -223,7 +220,7 @@
                     <ng-container *ngIf="InventoryData && InventoryData.length > 0;else NoData">
                         <ng-container *ngFor="let ID of InventoryData; let i=index">
                             <tr>
-                                <td>{{ID.RankNumber}}</td>
+                                <td class="text-center">{{ID.RankNumber}}</td>
                                 <td class="text-start" style="cursor: pointer;" (click)="expandorcollapse(ID.ad_model)">
                                     <span class="d-flex justify-content-between">
                                         {{ID.ad_model ||
@@ -339,7 +336,8 @@
                                 <td [ngClass]="{ negative: !inTheGreen(ID.Count8)}">{{ID['Count8'] ? (ID['Count8'] |
                                     number:'1.0-0' )
                                     : '-'}}</td>
-                                <td [ngClass]="{ negative: !inTheGreen(ID.AvgAgeChange)}">{{ID['AvgAgeChange'] ?
+                                <td [ngClass]="{ negative: !inTheGreen(ID.AvgAgeChange)}" class="box-border">
+                                    {{ID['AvgAgeChange'] ?
                                     (ID['AvgAgeChange'] | number:'1.1-1') + '%' : '-'}}</td>
 
                                 <!-- <td [ngClass]="{ negative: !inTheGreen(ID.Count9)}">{{ID['Count9'] ? (ID['Count9'] |
@@ -355,7 +353,6 @@
                                 <!-- <td *ngIf="expandDataArray.length > 0">&nbsp;</td> -->
 
                                 <ng-container *ngIf="CIBlock == 'Show'">
-                                    <td class="spacer"></td>
                                     <td [ngClass]="{ negative: !inTheGreen(ID.InStock)}">{{ID['InStock'] ?
                                         (ID['InStock'] |
                                         number:'1.0-0' ) : '-'}}</td>
@@ -395,10 +392,8 @@
                             </tr>
                             <ng-container
                                 *ngIf="ID.Data2 && ID.Data2.length > 0  && expandDataArray.indexOf(ID.ad_model) >= 0">
-                                <tr class="divBold tp-bx-shdw">
-
-                                    <td class="lft-bx-shdw" (click)="sort('Year',ID.Data2)"
-                                        style="cursor: pointer;text-align: center;">
+                                <tr class="lightenblue-bg">
+                                    <td class="lightenblue-bg" (click)="sort('Year',ID.Data2)">
                                         Year</td>
                                     <td (click)="sort('ad_model',ID.Data2)" style="cursor: pointer;text-align: center;"
                                         class="bdr-rt">Model</td>
@@ -456,7 +451,7 @@
                                         {{lastyear |
                                         date:'yyyy'}}</td>
                                     <td (click)="sort('AvgAgeChange',ID.Data2)"
-                                        style="cursor: pointer;text-align: center;" class="bdr-rt">Change</td>
+                                        style="cursor: pointer;text-align: center;" class="box-border">Change</td>
 
                                     <!-- <td (click)="sort('Count9',ID.Data2)"
                                             style="cursor: pointer;text-align: center;">{{month |
@@ -472,7 +467,6 @@
                                             Acquisition Source</td> -->
 
                                     <ng-container *ngIf="CIBlock == 'Show'">
-                                        <td class="spacer"></td>
                                         <td (click)="sort('InStock',ID.Data2)"
                                             style="cursor: pointer;text-align: center;">In
                                             Stock</td>
@@ -497,18 +491,18 @@
                                 <tr *ngFor="let dt2 of ID.Data2; let j=index"
                                     [ngClass]="{'btm-bx-shdw' : j == ID.Data2.length -1}">
 
-                                    <td style="padding-left: 1rem;" class="lft-bx-shdw"
+                                    <td class="text center font-blue lft-bx-shdw"
                                         [ngStyle]="{'pointer-events' : dt2.ad_year ? 'default' : 'none',
                                          'cursor' : dt2.ad_year ? 'pointer' : 'none' ,'color' :dt2.ad_year ? '#4183bb' :  'black' , 'text-decoration': dt2.ad_year ? 'underline' : 'none' }"
                                         (click)="aspopup(tmp,ID,dt2.ad_year,dt2.ad_model)">{{dt2.ad_year}}</td>
-                                    <td class="text-start" style="padding-left: 1.5rem;"
+                                    <td class="text-start font-blue"
                                         [ngStyle]="{'pointer-events' : dt2.ad_year ? 'default' : 'none',
                                          'cursor' : dt2.ad_year ? 'pointer' : 'none' ,'color' :dt2.ad_year ? '#4183bb' :  'black' , 'text-decoration': dt2.ad_year ? 'underline' : 'none' }"
                                         (click)="aspopup(tmp,ID,dt2.ad_year,dt2.ad_model)"> {{dt2.ad_model || '-'}}
                                     </td>
 
                                     <ng-container *ngIf="DupDateType != 'YTD'">
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Count1)}"
+                                        <td class="font-blue" [ngClass]="{ negative: !inTheGreen(dt2.Count1)}"
                                             [ngStyle]="{'pointer-events' : dt2.ad_year ? 'default' : 'none',
                                          'cursor' : dt2.ad_year ? 'pointer' : 'none' ,'color' :dt2.ad_year ? '#4183bb' :  'black' , 'text-decoration': dt2.ad_year ? 'underline' : 'none' }"
                                             (click)="aspopup(tmp,ID,dt2.ad_year,dt2.ad_model)">{{dt2['Count1'] ?
@@ -618,7 +612,7 @@
                                         (dt2['Count8'] |
                                         number:'1.0-0' )
                                         : '-'}}</td>
-                                    <td [ngClass]="{ negative: !inTheGreen(dt2.AvgAgeChange)}">
+                                    <td [ngClass]="{ negative: !inTheGreen(dt2.AvgAgeChange)}" class="box-border">
                                         {{dt2['AvgAgeChange'] ?
                                         (dt2['AvgAgeChange'] | number:'1.1-1') + '%' : '-'}}</td>
 
@@ -637,7 +631,6 @@
                                     <!-- <td class="text-start" > {{dt2.ACQsrc || '-'}} 
                                         </td> -->
                                     <ng-container *ngIf="CIBlock == 'Show'">
-                                        <td class="spacer"></td>
                                         <td [ngClass]="{ negative: !inTheGreen(dt2.InStock)}">{{dt2['InStock'] ?
                                             (dt2['InStock'] |
                                             number:'1.0-0' ) : '-'}}</td>
@@ -684,7 +677,6 @@
                             </th>
                             <!-- <th *ngIf="expandDataArray.length > 0 && NoInventoryData != ''">&nbsp;</th> -->
                             <ng-container *ngIf="CIBlock == 'Show' && NoInventoryData != ''">
-                                <th class="spacer"></th>
                                 <th colspan="7">{{NoInventoryData}}</th>
                             </ng-container>
                         </tr>
@@ -700,28 +692,33 @@
 
 
 <ng-template #tmp>
-    <div class="container-fluid d-flex justify-content-center align-items-center mt-4">
-        <div class="gross-popup mt-4" [ngStyle]="{'width' :  popupvalues.type == 'D' ? '100%' : '90%'}">
-            <div class="header d-flex align-items-center ">
-                <h5 class="title m-0 ms-2">
-                    <img src="" alt="">
-                    <span class="slash">// <span class="slash_header"></span> <span class="pt-0">
-                            {{popupvalues.Year}}
+    <div class="container-fluid recap d-flex justify-content-center align-items-center">
+        <div class="gross-popup my-3 w-100">
+            <div class="header d-flex align-items-center mb-2 mx-1">
+                <h2 class="m-0 p-0">
+                    <span>
+                        <span class="font-blue"> // {{popupvalues.Year}}
+                        </span>
+                        <span><i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                            {{popupvalues.Model}}
                         </span>
                     </span>
-                    <span class="slash">// <span class="slash_header">
-                        </span> <span class="pt-0"> {{popupvalues.Model}}
-                        </span>
-                    </span>
-                </h5>
+                </h2>
                 <!-- <img src="../../../../assetsimages/Export.png" (click)="excelDownload()" class="img-fluid me-2 ms-auto"
                     alt="" style="cursor: pointer;"> -->
-                <a type="button" class="close-btn ms-auto me-0" (click)="closePopup()"><i class="fa-solid fa-xmark"></i>
-                </a>
+                <!-- <a type="button" class="close-btn ms-auto me-0" (click)="closePopup()"><i class="fa-solid fa-xmark"></i>
+                </a> -->
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closePopup()"></button>
             </div>
             <div class="content">
+                <div *ngIf="(UsedVehicleStockingDetails == null || UsedVehicleStockingDetails.length === 0) && UsedVehicleStockingDetailsNoData === ''"
+                    class="graph-loader d-flex align-items-center justify-content-center">
+                    <div class="spinner-border text-primary" role="status" aria-hidden="true"></div>
+                    <span class="visually-hidden ms-2">Loading...</span>
+                </div>
                 <div class="scorecard-single-header">
-                    <table class="table mb-0">
+                    <table class="table mb-0 w-100">
                         <thead>
                             <tr>
                                 <th>Year</th>
@@ -774,11 +771,11 @@
                         <ng-template #NoRD>
                             <tr>
                                 <td colspan="11" *ngIf="UsedVehicleStockingDetailsNoData== ''">
-                                    <div class="graph-loader d-flex align-items-center justify-content-center">
+                                    <!-- <div class="graph-loader d-flex align-items-center justify-content-center">
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </td>
                                 <td colspan="11" *ngIf="UsedVehicleStockingDetailsNoData != ''"
                                     style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">

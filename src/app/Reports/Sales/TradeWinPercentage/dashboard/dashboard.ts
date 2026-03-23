@@ -431,7 +431,7 @@ loader:boolean=false
   popupReference!: NgbModalRef;
   popupvalues: any = { Acctno: '', AcctDesc: '', Dept: '', Store: '', Storename: '', subtype: '' }
   openDetails(data: any, temp: any, block: any, trade: any) {
-    this.shared.spinner.show()
+    // this.shared.spinner.show()
     this.popupvalues.Store = data.dealername
     // this.popupvalues.Storename = StoreName;
     this.loader=true
@@ -459,7 +459,7 @@ loader:boolean=false
     this.loader=false
         
         if (res.status == 200) {
-          this.shared.spinner.hide()
+          // this.shared.spinner.hide()
           if (res && res.response && res.response.length > 0) {
             this.SalesPersonDetails = res.response;
             this.SalesPersonDetailsNoData = ''
