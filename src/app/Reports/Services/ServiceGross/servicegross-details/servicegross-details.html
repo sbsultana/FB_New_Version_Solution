@@ -1,0 +1,397 @@
+<div>
+    <div class="recap position-relative">
+        <div class="row d-flex w-100 m-0">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12 col-12">
+                        <div class="m-2 p-2">
+                            <div class="row align-items-center">
+                                <div class="col-12 p-0 d-flex align-items-center">
+                                    <h2 class="m-0 p-0">
+                                        <span>
+                                            <span class="font-blue"
+                                                *ngIf="Servicedetails[0].layer == 1 && this.Servicedetails[0].var1 != 'cdate' ">
+                                                // {{Servicedetails[0].userName}}
+                                            </span>
+                                            <span
+                                                *ngIf="Servicedetails[0].layer == 1 && this.Servicedetails[0].var1 == 'cdate' ">
+                                                <i class="fa fa-long-arrow-right"></i>
+                                                {{Servicedetails[0].userName == '' || Servicedetails[0].userName ==
+                                                undefined ||
+                                                Servicedetails[0].userName == ' ' || Servicedetails[0].userName == null
+                                                ? '-' :
+                                                Servicedetails[0].userName| date:'MM/dd/YYYY'}}
+                                            </span>
+                                            <span
+                                                *ngIf="Servicedetails[0].layer == 2 && this.Servicedetails[0].var2 != 'cdate' ">
+                                                <i class="fa fa-long-arrow-right"></i>
+                                                {{Servicedetails[0].userName}}
+                                            </span>
+
+                                            <span
+                                                *ngIf="Servicedetails[0].layer == 2 && this.Servicedetails[0].var2 == 'cdate' ">
+                                                {{Servicedetails[0].userName == '' || Servicedetails[0].userName ==
+                                                undefined ||
+                                                Servicedetails[0].userName == ' ' || Servicedetails[0].userName == null
+                                                ? '-' :
+                                                Servicedetails[0].userName| date:'MM/dd/YYYY'}}
+                                            </span>
+
+                                            <span
+                                                *ngIf="Servicedetails[0].layer == 3 && this.Servicedetails[0].var3 != 'cdate' ">
+                                                {{Servicedetails[0].userName}}
+                                            </span>
+                                            <span
+                                                *ngIf="Servicedetails[0].layer == 3 && this.Servicedetails[0].var3 == 'cdate' ">
+                                                {{Servicedetails[0].userName == '' || Servicedetails[0].userName ==
+                                                undefined ||
+                                                Servicedetails[0].userName == ' ' || Servicedetails[0].userName == null
+                                                ? '-' :
+                                                Servicedetails[0].userName| date:'MM/dd/YYYY'}}
+                                            </span>
+                                        </span>
+                                    </h2>
+                                    <img src="images/Download.svg" alt="Download" class="ms-auto px-3"
+                                        style="cursor: pointer;" (click)="exportAsXLSX()" />
+                                    <!-- <i class="fa fa-minus-circle text-hover pt-1 me-2" aria-hidden="true"
+                                        [class.unclickable]="!zoomOutPossible || isMinZoom"
+                                        style="cursor: pointer; font-size: 1.1rem; color: #878e98;"
+                                        (click)="changeFontSize('decrease')"></i>
+                                    <i class="fa fa-plus-circle text-hover pt-1 me-3" aria-hidden="true"
+                                        [class.unclickable]="!zoomInPossible || isMaxZoom"
+                                        style="cursor: pointer; font-size: 1.1rem; color: #878e98;"
+                                        (click)="changeFontSize('increase')"></i> -->
+
+                                    <!-- <a class="close-btn" role="button" (click)="close()">
+                                        <img src="images/x.png" alt="Close" />
+                                    </a> -->
+                                    <button type="button" class="btn-close" (click)="close()" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scorecard-double-header mb-3"
+                            style="overflow: auto;max-height: calc(100vh - 200px);"
+                            (scroll)="updateVerticalScroll($event)" #scrollOne>
+                            <div *ngIf="spinnerLoader"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <table class="table mb-0 w-100">
+                                <thead>
+                                    <tr>
+                                        <th>RO #</th>
+                                        <th>Date</th>
+                                        <th style="width: 20%;">Customer</th>
+                                        <th>Vehicle</th>
+                                        <th>VIN</th>
+                                        <th colspan="13">Total </th>
+
+                                        <th colspan="5">Customer Pay </th>
+
+                                        <th colspan="5">Warranty </th>
+
+                                        <th colspan="5">Internal </th>
+
+                                        <th colspan="5" style="display: none;">Service Contract </th>
+                                    </tr>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th style="width: 20%;">&nbsp;</th>
+                                        <th>&nbsp;</th>
+                                        <th>&nbsp;</th>
+
+                                        <th style="text-align: left;">Op Code</th>
+                                        <th style="text-align: left;">Op Code Desc</th>
+                                        <th>Gross</th>
+
+                                        <th style=" border-left: 2px solid grey ;">Labor</th>
+                                        <th>Parts</th>
+                                        <th> Tires</th>
+                                        <th style=" border-right: 2px solid grey ;">Lube</th>
+
+                                        <th>Cost</th>
+                                        <th>Sale</th>
+                                        <th>GP%</th>
+                                        <th>ELR</th>
+                                        <th>Hours</th>
+                                        <th>Discount</th>
+
+                                        <th>Gross</th>
+                                        <th>GP%</th>
+                                        <th>ELR</th>
+                                        <th>Hours</th>
+                                        <th>Discount</th>
+
+                                        <th>Gross</th>
+                                        <th>GP%</th>
+                                        <th>ELR</th>
+                                        <th>Hours</th>
+                                        <th>Discount</th>
+
+                                        <th>Gross</th>
+                                        <th>GP%</th>
+                                        <th>ELR</th>
+                                        <th>Hours</th>
+                                        <th>Discount</th>
+                                    </tr>
+
+                                </thead>
+
+                                <!-- data-bs-toggle="modal" data-bs-target="#warningmessage" | filter : SGDSearchName -->
+                                <tbody>
+                                    <tr *ngFor="let det of ServicePersonDetails;let i=index" [id]="'SD_'+i"
+                                        (mouseover)="hoverclass($event,i)">
+
+                                        <td [id]="'SD_'+i" (click)="viewRO(det)"
+                                            [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
+                                            {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber == undefined ?
+                                            '-' :
+                                            det.ronumber ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.closedate == 0 || det.closedate == null || det.closedate ==
+                                            undefined ? '-'
+                                            : det.closedate |
+                                            date:'MM.dd.yyyy' ) }}
+                                        </td>
+                                        <td title="{{det.CName}}" style="cursor: default;text-align: left!important;"
+                                            [id]="'SD_'+i">
+                                            {{(det.CName == undefined ||
+                                            det.CName == null || det.CName == '' ? '-' : (
+                                            (det.CName.toString() | slice:0:20) +
+                                            (det.CName.toString().length > 20 ? '...' : '') ))}}</td>
+                                        <td [id]="'SD_'+i" title="{{det.vehicle}}">
+                                            {{(det.vehicle == undefined ||
+                                            det.vehicle == null || det.vehicle == '' ? '-' : (
+                                            (det.vehicle.toString() | slice:0:20) +
+                                            (det.vehicle.toString().length > 20 ? '...' : '') ))}}
+
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.vin == 0 || det.vin == null || det.vin == undefined ? '-' : det.vin
+                                            ) }}
+                                        </td>
+
+                                        <td style="min-width: 50px !important;text-align: left;" [id]="'SP_'+i"> {{
+                                            (det.opcode == 0 ||
+                                            det.opcode ==
+                                            null ||
+                                            det.opcode == undefined ? '-' :
+                                            det.opcode )}}</td>
+
+                                        <td style="min-width: 50px !important;text-align: left;white-space: nowrap;"
+                                            [id]="'SP_'+i" title="{{det.ASD_opcodedescription}}">
+                                            {{(det.ASD_opcodedescription == undefined ||
+                                            det.ASD_opcodedescription == null || det.ASD_opcodedescription == '' ? '-' :
+                                            (
+                                            (det.ASD_opcodedescription.toString() | slice:0:15) +
+                                            (det.ASD_opcodedescription.toString().length > 15 ? '...' : '') ))}}
+
+                                        </td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i">
+                                            {{ (det.Totalgross == 0 ||
+                                            det.Totalgross ==
+                                            null ||
+                                            det.Totalgross == undefined ? '-' :
+                                            det.Totalgross | currency:'USD':'symbol':'1.2-2' )}}</td>
+                                        <!-- [ngStyle]="{'border-bottom': ServicePersonDetails.length-1 == i ? '1px solid grey' : 'none'  }" -->
+                                        <td style="min-width: 50px !important ;border-left: 2px solid grey;"
+                                            [id]="'SP_'+i"> {{
+                                            (det.Totallabour == 0 ||
+                                            det.Totallabour ==
+                                            null ||
+                                            det.Totallabour == undefined ? '-' :
+                                            det.Totallabour | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.TotalParts == 0
+                                            ||
+                                            det.TotalParts ==
+                                            null ||
+                                            det.TotalParts == undefined ? '-' :
+                                            det.TotalParts | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.TotalTires == 0
+                                            ||
+                                            det.TotalTires ==
+                                            null ||
+                                            det.TotalTires == undefined ? '-' :
+                                            det.TotalTires | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td style="min-width: 50px !important; border-right: 2px solid grey ;"
+                                            [id]="'SP_'+i">
+                                            {{ (det.TotalBulkOil == 0 ||
+                                            det.TotalBulkOil ==
+                                            null ||
+                                            det.TotalBulkOil == undefined ? '-' :
+                                            det.TotalBulkOil | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.Totalcost == 0
+                                            ||
+                                            det.Totalcost ==
+                                            null ||
+                                            det.Totalcost == undefined ? '-' :
+                                            det.Totalcost | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.TotalSale == 0
+                                            ||
+                                            det.TotalSale ==
+                                            null ||
+                                            det.TotalSale == undefined ? '-' :
+                                            det.TotalSale | currency:'USD':'symbol':'1.0-0' )}}</td>
+                                        <td [id]="'SP_'+i"
+                                            style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                            {{
+                                            (det.Retention == 0 ||
+                                            det.Retention == null ||
+                                            det.Retention == undefined || det.Retention == ''
+                                            ? '-' : det.Retention | number:'1.1-1')}}{{ (det.Retention == 0 ||
+                                            det.Retention ==
+                                            null ||
+                                            det.Retention == undefined || det.Retention == ''
+                                            ? '' :'%')}} </td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.TotalELR == 0 ||
+                                            det.TotalELR == null
+                                            || det.TotalELR
+                                            == undefined
+                                            ? '-' : det.TotalELR | currency:'USD':'symbol':'1.2-2' ) }}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.Totalhours == 0
+                                            ||
+                                            det.Totalhours ==
+                                            null ||
+                                            det.Totalhours == undefined ? '-' :
+                                            det.Totalhours | number : '1.2-2' ) }}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.Discount == 0 ||
+                                            det.Discount == null
+                                            ||
+                                            det.Discount == undefined
+                                            ? '-' : det.Discount | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i"> {{ (det.CustomerPayGross
+                                            == 0 ||
+                                            det.CustomerPayGross == null
+                                            || det.CustomerPayGross == undefined ? '-' : det.CustomerPayGross |
+                                            currency:'USD':'symbol':'1.2-2' ) }}</td>
+
+                                        <td [id]="'SP_'+i"
+                                            style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                            {{
+                                            (det.Retention == 0 ||
+                                            det.CustomerRetention == null ||
+                                            det.CustomerRetention == undefined || det.CustomerRetention == ''
+                                            ? '-' : det.CustomerRetention | number:'1.1-1')}}{{ (det.CustomerRetention
+                                            == 0 ||
+                                            det.CustomerRetention == null ||
+                                            det.CustomerRetention == undefined || det.CustomerRetention == ''
+                                            ? '' :'%')}} </td>
+
+                                        <td [id]="'SP_'+i"> {{ (det.CustomerPayELR == 0 || det.CustomerPayELR == null ||
+                                            det.CustomerPayELR ==
+                                            undefined ? '-'
+                                            : det.CustomerPayELR |
+                                            currency:'USD':'symbol':'1.2-2' ) }}</td>
+                                        <td [id]="'SP_'+i"> {{ (det.CustomerPayhours == 0 || det.CustomerPayhours ==
+                                            null ||
+                                            det.CustomerPayhours == undefined
+                                            ? '-' : det.CustomerPayhours |number:'1.2-2') }}</td>
+                                        <td [id]="'SP_'+i"> {{ (det.DiscountCP == 0 || det.DiscountCP == null ||
+                                            det.DiscountCP
+                                            ==
+                                            undefined ? '-' : det.DiscountCP |
+                                            currency:'USD':'symbol':'1.0-0' ) }}</td>
+
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.WarrantyGross == 0 || det.WarrantyGross == null || det.WarrantyGross
+                                            ==
+                                            undefined ? '-' :
+                                            det.WarrantyGross |
+                                            currency:'USD':'symbol':'1.2-2' ) }}
+                                        </td>
+
+                                        <td [id]="'SP_'+i"
+                                            style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                            {{
+                                            (det.Retention == 0 ||
+                                            det.WarrantyRetention == null ||
+                                            det.WarrantyRetention == undefined || det.WarrantyRetention == ''
+                                            ? '-' : det.WarrantyRetention | number:'1.1-1')}}{{ (det.WarrantyRetention
+                                            == 0 ||
+                                            det.WarrantyRetention == null ||
+                                            det.WarrantyRetention == undefined || det.WarrantyRetention == ''
+                                            ? '' :'%')}} </td>
+
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.WarrantyELR == 0 || det.WarrantyELR == null || det.WarrantyELR ==
+                                            undefined
+                                            ? '-' :
+                                            det.WarrantyELR |
+                                            currency:'USD':'symbol':'1.2-2') }}
+                                        </td>
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.Warrantyhours == 0 || det.Warrantyhours == null || det.Warrantyhours
+                                            ==
+                                            undefined ? '-' :
+                                            det.Warrantyhours |number:'1.2-2') }}
+                                        </td>
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.DiscountWP == 0 || det.DiscountWP == null || det.DiscountWP ==
+                                            undefined ?
+                                            '-' : det.DiscountWP |
+                                            currency:'USD':'symbol':'1.0-0' ) }}
+                                        </td>
+
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.InternalGross == 0 || det.InternalGross == null || det.InternalGross
+                                            ==
+                                            undefined ? '-' :
+                                            det.InternalGross |
+                                            currency:'USD':'symbol':'1.2-2' ) }}
+                                        </td>
+                                        <td [id]="'SP_'+i"
+                                            style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                            {{
+                                            (det.Retention == 0 ||
+                                            det.InternalRetention == null ||
+                                            det.InternalRetention == undefined || det.InternalRetention == ''
+                                            ? '-' : det.InternalRetention | number:'1.1-1')}}{{ (det.InternalRetention
+                                            == 0 ||
+                                            det.InternalRetention == null ||
+                                            det.InternalRetention == undefined || det.InternalRetention == ''
+                                            ? '' :'%')}} </td>
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.InternalELR == 0 || det.InternalELR == null || det.InternalELR ==
+                                            undefined
+                                            ? '-' :
+                                            det.InternalELR |
+                                            currency:'USD':'symbol':'1.2-2' ) }}
+                                        </td>
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.Internalhours == 0 || det.Internalhours == null || det.Internalhours
+                                            ==
+                                            undefined ? '-' :
+                                            det.Internalhours |number:'1.2-2') }}
+                                        </td>
+                                        <td [id]="'SP_'+i">
+                                            {{ (det.DiscountIP == 0 || det.DiscountIP == null || det.DiscountIP ==
+                                            undefined ?
+                                            '-' : det.DiscountIP |
+                                            currency:'USD':'symbol':'1.0-0' ) }}
+                                        </td>
+                                    </tr>
+                                    <ng-template #ifNotShow>
+                                        <tr *ngIf="NoData">
+                                            <td colspan="22" style="text-align: center; font-size: .8vw; height: 30px;">
+                                                No
+                                                Data
+                                                Found!!!</td>
+                                        </tr>
+                                    </ng-template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
