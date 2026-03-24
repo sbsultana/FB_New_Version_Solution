@@ -29,7 +29,7 @@
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(7)">Contest Type <span
                                 class="light-font">
-                                ( {{filtertype}} )
+                                ( {{dupFiltertype}} )
                             </span>
                             <span class="arrow"></span></button>
                         <div class="reportstores-card my-2" *ngIf="activePopover === 7">
@@ -168,7 +168,7 @@
                                                 style="text-align: right !important;">
                                                 <span *ngIf="i != 12">
                                                     <span class="d-flex justify-content-between"
-                                                        *ngIf="filtertype.toString() == 'Gross'"> {{
+                                                        *ngIf="dupFiltertype.toString() == 'Gross'"> {{
                                                         ( Appointment[k]
                                                         == null ? '' :
                                                         '$') }} <span> {{
@@ -176,7 +176,7 @@
                                                             Appointment[k] == null ? '-' :
                                                             Appointment[k] |number:'1.0-0')
                                                             }}</span></span>
-                                                    <span *ngIf="filtertype.toString() == 'Units'"> {{
+                                                    <span *ngIf="dupFiltertype.toString() == 'Units'"> {{
                                                         (
                                                         Appointment[k] == null ? '-' :
                                                         Appointment[k] | number:'1.0-0')
@@ -211,7 +211,7 @@
                                                 style="text-align: right !important;">
                                                 <span *ngIf="i != 3 && i != 7 && i != 11 && i != 12">
                                                     <span class="d-flex justify-content-between"
-                                                        *ngIf="filtertype.toString() == 'Gross'"> {{
+                                                        *ngIf="dupFiltertype.toString() == 'Gross'"> {{
                                                         ( Appointment[k]
                                                         == null ? '' :
                                                         '$') }} <span> {{
@@ -219,7 +219,7 @@
                                                             Appointment[k] == null ? '-' :
                                                             Appointment[k] |number:'1.0-0')
                                                             }}</span></span>
-                                                    <span *ngIf="filtertype.toString() == 'Units'"> {{
+                                                    <span *ngIf="dupFiltertype.toString() == 'Units'"> {{
                                                         (
                                                         Appointment[k] == null ? '-' :
                                                         Appointment[k] | number:'1.0-0')
