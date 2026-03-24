@@ -696,33 +696,91 @@ export class Dashboard {
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
+  getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
 
+    const ids = this.storeIds.toString().split(',');
 
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Financial Summary',
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Month',
+          value: this.datepipe.transform(this.currentMonth, 'MMMM yyyy')
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
   exportToExcelFinancialSummary() {
 
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Financial Summary');
 
-    /* ================= HEADER ROW 1 ================= */
+    /* ================= 1. FILTERS AT TOP ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    worksheet.getCell('A1').value = 'For the period ending';
+    const startRow = filterRowCount + 1;
 
-    worksheet.getCell('B1').value = 'MTD';
-    worksheet.mergeCells('B1:E1');
+    /* ================= 2. HEADER ROW 1 ================= */
 
-    worksheet.getCell('F1').value = 'LY MTD';
-    worksheet.mergeCells('F1:G1');
+    worksheet.getCell(`A${startRow}`).value = 'For the period ending';
 
-    worksheet.getCell('H1').value = 'LM';
-    worksheet.mergeCells('H1:I1');
+    worksheet.getCell(`B${startRow}`).value = 'MTD';
+    worksheet.mergeCells(`B${startRow}:E${startRow}`);
 
-    worksheet.getCell('J1').value = 'YTD';
-    worksheet.mergeCells('J1:L1');
+    worksheet.getCell(`F${startRow}`).value = 'LY MTD';
+    worksheet.mergeCells(`F${startRow}:G${startRow}`);
 
-    worksheet.getCell('M1').value = 'LY YTD';
-    worksheet.mergeCells('M1:N1');
+    worksheet.getCell(`H${startRow}`).value = 'LM';
+    worksheet.mergeCells(`H${startRow}:I${startRow}`);
 
-    worksheet.getRow(1).eachCell(cell => {
+    worksheet.getCell(`J${startRow}`).value = 'YTD';
+    worksheet.mergeCells(`J${startRow}:L${startRow}`);
+
+    worksheet.getCell(`M${startRow}`).value = 'LY YTD';
+    worksheet.mergeCells(`M${startRow}:N${startRow}`);
+
+    worksheet.getRow(startRow).eachCell(cell => {
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '0554EF' } };
       cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
       cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -734,7 +792,7 @@ export class Dashboard {
       };
     });
 
-    /* ================= HEADER ROW 2 ================= */
+    /* ================= 3. HEADER ROW 2 ================= */
 
     const header2 = [
       this.datepipe.transform(this.currentMonth, 'MMMM yyyy'),
@@ -764,9 +822,15 @@ export class Dashboard {
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '4584FF' } };
       cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
       cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
     });
 
-    /* ===== VARIANCE COLUMN INDEXES ===== */
+    /* ================= VARIANCE COLUMN INDEX ================= */
 
     const varianceColumns: number[] = [];
     header2.forEach((h: any, i) => {
@@ -783,23 +847,20 @@ export class Dashboard {
       const isBold = data.Fs_Titles === 'FontBold';
       const isPadding = data.Fs_Titles === 'PaddingLeft';
       const isSpecial = this.isSpecialRow(data.LABLE1);
-      const valueType = data.ValueType; // 🔥 IMPORTANT
+      const valueType = data.ValueType;
 
       const totalCols = 14;
 
-      /* ===== BACKGROUND ===== */
       let bgColor = '';
       if (isHeaderRow) bgColor = 'D9E7FF';
       else bgColor = index % 2 === 0 ? 'F9FBFF' : 'FFFFFF';
 
-      /* ===== FORCE ALL CELLS ===== */
       for (let i = 1; i <= totalCols; i++) {
         row.getCell(i);
       }
 
       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
 
-        /* ===== FULL ROW BG ===== */
         cell.fill = {
           type: 'pattern',
           pattern: 'solid',
@@ -810,8 +871,7 @@ export class Dashboard {
         if (colNumber === 1) {
           cell.font = {
             name: 'Calibri',
-            bold: isBold || isSpecial || isHeaderRow,
-            color: { argb: '000000' }
+            bold: isBold || isSpecial || isHeaderRow
           };
 
           cell.alignment = {
@@ -822,7 +882,6 @@ export class Dashboard {
           return;
         }
 
-        /* ===== HEADER ROW (ONLY LABEL) ===== */
         if (isHeaderRow) {
           cell.value = '';
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -830,36 +889,26 @@ export class Dashboard {
           return;
         }
 
-        /* ===== EMPTY → HYPHEN ===== */
         if (cell.value === null || cell.value === undefined || cell.value === '' || cell.value === 0) {
           cell.value = '-';
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
-          cell.font = { name: 'Calibri', bold: isBold };
           return;
         }
 
         const num = Number(cell.value);
+        let fontStyle: any = { name: 'Calibri', bold: isBold };
 
-        let fontStyle: any = {
-          name: 'Calibri',
-          bold: isBold
-        };
-
-        /* ===== NUMBER FORMATTING ===== */
         if (!isNaN(num)) {
 
           if (valueType === '$') {
             cell.numFmt = '"$" * #,##0; "$" * -#,##0';
-          }
-          else if (valueType === '#') {
+          } else if (valueType === '#') {
             cell.numFmt = '#,##0';
-          }
-          else if (valueType === '%') {
+          } else if (valueType === '%') {
             cell.numFmt = '0%';
             cell.value = num / 100;
           }
 
-          /* 🔴 NEGATIVE RED ONLY SPECIAL + VARIANCE */
           if (isSpecial && varianceColumns.includes(colNumber) && num < 0) {
             fontStyle.color = { argb: 'FF0000' };
           }
@@ -867,13 +916,9 @@ export class Dashboard {
 
         cell.font = fontStyle;
 
-        /* ===== ALIGNMENT ===== */
-        if (valueType === '%') {
-          cell.alignment = { horizontal: 'center', vertical: 'middle' };
-        } else {
-          cell.alignment = { horizontal: 'right', vertical: 'middle' };
-        }
-
+        cell.alignment = valueType === '%'
+          ? { horizontal: 'center', vertical: 'middle' }
+          : { horizontal: 'right', vertical: 'middle' };
       });
     };
 
@@ -923,7 +968,11 @@ export class Dashboard {
 
     /* ================= FREEZE ================= */
 
-    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 2 }];
+    worksheet.views = [{
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: startRow + 1
+    }];
 
     /* ================= DOWNLOAD ================= */
 
@@ -931,7 +980,7 @@ export class Dashboard {
       FileSaver.saveAs(new Blob([data]), 'FinancialSummary.xlsx');
     });
   }
-  // Special rows
+  //Special rows
   isSpecialRow(name: string): boolean {
     return [
       'Total Selling Gross (New)',

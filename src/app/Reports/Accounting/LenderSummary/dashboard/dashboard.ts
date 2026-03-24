@@ -678,4 +678,64 @@ export class Dashboard {
       this.GetLenders()
     }
   }
+
+  // Excel Filter Headers
+
+  getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
+
+    const ids = this.storeIds.toString().split(',');
+
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Lender Summary',
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Timeframe',
+          value: this.DateType === 'C'
+            ? `${this.FromDate} to ${this.ToDate}`   // Custom range
+            : `${this.displaytime} (${this.FromDate} to ${this.ToDate})` // MTD/YTD etc
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
 }

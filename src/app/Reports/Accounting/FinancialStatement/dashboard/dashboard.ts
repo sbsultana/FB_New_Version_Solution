@@ -247,13 +247,6 @@ export class Dashboard {
 
 
   }
-  // @HostListener('document:click', ['$event'])
-  // onDocumentClick(event: MouseEvent) {
-  //   const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
-  //   if (!clickedInside) {
-  //     this.activePopover = -1;
-  //   }
-  // }
 
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
@@ -462,18 +455,68 @@ export class Dashboard {
     }
   }
 
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Financial Statement',
+      filters: [
+        {
+          label: 'Store',
+          value: this.storename || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || 'All Groups'
+        },
+        {
+          label: 'Month',
+          value: this.datepipe.transform(this.currentMonth, 'MMMM yyyy')
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
 
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
   exportToExcelFinancialStatement() {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Financial Statement');
 
-    /* ================= HEADER ROW 1 ================= */
-    worksheet.addRow([
-      this.datepipe.transform(this.currentMonth, 'MMMM yyyy'), this.storename
-    ]);
-    worksheet.mergeCells('B1:G1');
+    /* ================= 1. FILTERS AT TOP ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    /* ================= HEADER ROW 2 ================= */
+    /* ================= 2. HEADER ================= */
+    const headerStartRow = filterRowCount + 1;
+
+    // Header Row 1
+    worksheet.addRow([
+      this.datepipe.transform(this.currentMonth, 'MMMM yyyy'),
+      this.storename || 'All Stores'
+    ]);
+    worksheet.mergeCells(`B${headerStartRow}:G${headerStartRow}`);
+
+    // Header Row 2
     worksheet.addRow([
       'Department',
       'Actual',
@@ -485,12 +528,12 @@ export class Dashboard {
     ]);
 
     /* ================= HEADER STYLE ================= */
-    [1, 2].forEach(r => {
+    [headerStartRow, headerStartRow + 1].forEach(r => {
       worksheet.getRow(r).eachCell(cell => {
         cell.fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: r === 1 ? '0554EF' : '4584FF' }
+          fgColor: { argb: r === headerStartRow ? '0554EF' : '4584FF' }
         };
         cell.font = {
           bold: true,
@@ -510,81 +553,48 @@ export class Dashboard {
     /* ================= FORMAT FUNCTION ================= */
     const formatRow = (
       row: any,
-      level = 0,
       valueTypes: any[] = [],
       isSpecial = false,
       isTitleRow = false,
       isHeaderRow = false
     ) => {
-
       row.eachCell((cell: any, colNumber: number) => {
 
-        /* ===== FIRST COLUMN INDENT ===== */
         if (colNumber === 1) {
-          let indentLevel = 3; // default normal
-          if (isTitleRow) indentLevel = 2;
-          else if (isHeaderRow) indentLevel = 1;
-
-          cell.alignment = {
-            horizontal: 'left',
-            vertical: 'middle',
-            indent: indentLevel
-          };
-          cell.font = {
-            name: 'Calibri',
-            bold: isTitleRow || isSpecial
-          };
+          cell.alignment = { horizontal: 'left', vertical: 'middle', indent: isTitleRow ? 2 : 3 };
+          cell.font = { name: 'Calibri', bold: isTitleRow || isSpecial };
           return;
         }
 
         const valueType = valueTypes[colNumber - 2];
 
-        /* ===== HYPHENS / EMPTY CENTER ===== */
-        if (cell.value === '-' || cell.value === '' || cell.value === null) {
+        if (!cell.value || cell.value === '-') {
           cell.alignment = { horizontal: 'center', vertical: 'middle' };
-          cell.font = { name: 'Calibri', bold: isTitleRow };
           return;
         }
 
-        let numericValue = Number(cell.value); // ensure numeric for checking negative
+        let num = Number(cell.value);
 
-        if (!isNaN(numericValue)) {
+        if (!isNaN(num)) {
+          if (valueType === '$') cell.numFmt = '"$" * #,##0; "$" * -#,##0';
+          if (valueType === '#') cell.numFmt = '#,##0';
+          if (valueType === '%') {
+            cell.numFmt = '0.0%';
 
-          /* ===== FORMATS ===== */
-          if (valueType === '$') {
-            cell.numFmt = '"$" * #,##0; "$" * -#,##0';
-          } else if (valueType === '#') {
-            cell.numFmt = '#,##0';
-          } else if (valueType === '%') {
-            cell.numFmt = '0.00%';
-            cell.value = numericValue / 100;
           }
 
-          /* ===== 🔴 NEGATIVE VARIANCE ONLY SPECIAL ===== */
-          if (isSpecial && colNumber === 4 && numericValue < 0) {
-            cell.font = {
-              name: 'Calibri',
-              bold: isTitleRow,
-              color: { argb: 'FF0000' }
-            };
-          } else {
-            cell.font = { name: 'Calibri', bold: isTitleRow };
+          if (isSpecial && colNumber === 4 && num < 0) {
+            cell.font = { color: { argb: 'FF0000' }, bold: true };
           }
-
-        } else {
-          cell.font = { name: 'Calibri', bold: isTitleRow };
         }
 
-        /* ===== ALIGNMENT ===== */
-        if (valueType === '%') {
-          cell.alignment = { horizontal: 'center', vertical: 'middle' };
-        } else {
-          cell.alignment = { horizontal: 'right', vertical: 'middle' };
-        }
+        cell.alignment = valueType === '%'
+          ? { horizontal: 'center', vertical: 'middle' }
+          : { horizontal: 'right', vertical: 'middle' };
       });
     };
 
-    /* ================= DATA ROWS ================= */
+    /* ================= DATA ================= */
     this.FSData.forEach((data: any, i: number) => {
 
       const isHeaderRow = data.IsHeader === 'Y';
@@ -601,63 +611,24 @@ export class Dashboard {
         isHeaderRow ? '' : this.formatExcelValue(data.LM3, data.ValueType)
       ]);
 
-      /* ===== HEADER ROW ===== */
       if (isHeaderRow) {
-        row.eachCell((cell: any, colNumber: number) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'D9E7FF' }
-          };
-          if (colNumber !== 1) cell.value = '';
-          cell.font = { bold: true, name: 'Calibri' };
-          cell.alignment = {
-            horizontal: colNumber === 1 ? 'left' : 'center',
-            vertical: 'middle'
-          };
+        row.eachCell(cell => {
+          cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'D9E7FF' } };
+          cell.font = { bold: true };
         });
       }
 
-      /* ===== TITLE ROW ===== */
       if (isTitleRow) {
-        row.eachCell(cell => {
-          cell.font = { bold: true, name: 'Calibri' };
-        });
-        formatRow(row, 0, Array(6).fill(data.ValueType), isSpecial, true, false);
+        row.eachCell(cell => cell.font = { bold: true });
       }
 
-      /* ===== SPECIAL ROW ===== */
-      if (isSpecial) {
-        row.eachCell(cell => {
-          cell.font = { bold: true, name: 'Calibri' };
-          cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
-        });
+      if (!isHeaderRow) {
+        formatRow(row, Array(6).fill(data.ValueType), isSpecial, isTitleRow, false);
       }
 
-      /* ===== ZEBRA ===== */
-      if (i % 2 === 0 && !isHeaderRow && !isTitleRow) {
-        row.eachCell(cell => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'F9FBFF' }
-          };
-        });
-      }
-
-      row.outlineLevel = 0;
-
-      /* ===== NORMAL ROW ===== */
-      if (!isHeaderRow && !isTitleRow) {
-        formatRow(row, 0, Array(6).fill(data.ValueType), isSpecial, false, false);
-      }
-
-      /* ===== LEVEL 2 SUBROWS ===== */
+      /* ===== SUB ROWS ===== */
       if (Array.isArray(data.SubData)) {
         data.SubData.forEach((sub: any) => {
-
-          const isSubSpecial = this.isSpecialRow(sub.DisplayName);
-
           const row2 = worksheet.addRow([
             sub['SUBTYPE DETAIL'] || '',
             this.formatExcelValue(sub.Actual, sub.ValueType),
@@ -667,38 +638,15 @@ export class Dashboard {
             this.formatExcelValue(sub.LM2, sub.ValueType),
             this.formatExcelValue(sub.LM3, sub.ValueType)
           ]);
-
           row2.outlineLevel = 1;
-
-          row2.eachCell(cell => {
-            cell.fill = {
-              type: 'pattern',
-              pattern: 'solid',
-              fgColor: { argb: 'FFFFFF' }
-            };
-          });
-
-          formatRow(row2, 1, Array(6).fill(sub.ValueType), isSubSpecial, false, false);
+          formatRow(row2, Array(6).fill(sub.ValueType));
         });
       }
     });
 
-    /* ================= BORDERS ================= */
-    worksheet.eachRow(row => {
-      row.eachCell(cell => {
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
-        };
-      });
-    });
+    /* ================= FINAL SETTINGS ================= */
+    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: headerStartRow + 1 }];
 
-    /* ================= FREEZE ================= */
-    worksheet.views = [{ state: 'frozen', xSplit: 1, ySplit: 2 }];
-
-    /* ================= WIDTH ================= */
     worksheet.columns = [
       { width: 40 },
       { width: 18 },
@@ -709,13 +657,9 @@ export class Dashboard {
       { width: 18 }
     ];
 
-    worksheet.properties.outlineLevelRow = 1;
-
-    /* ================= DOWNLOAD ================= */
     workbook.xlsx.writeBuffer().then(data => {
       FileSaver.saveAs(new Blob([data]), 'FinancialStatement.xlsx');
     });
   }
-
 
 }

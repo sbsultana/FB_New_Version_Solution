@@ -130,6 +130,7 @@ export const routes: Routes = [
   { path: 'PartsOpenRO', loadComponent: () => import('./Reports/Parts/PartsOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsGrossProfitPerformanceScoreCard', loadComponent: () => import('./Reports/Parts/PartsGrossProfitPerformanceScoreCard/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsTrendingReport', loadComponent: () => import('./Reports/Parts/PartsTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SearchParts', loadComponent: () => import('./Reports/Parts/SearchParts/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsGross', loadComponent: () => import('./Reports/Parts/PartsGross/dashboard/dashboard').then(m => m.Dashboard) },
 
   //Carstar BLOCK

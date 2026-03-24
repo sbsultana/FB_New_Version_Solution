@@ -1016,124 +1016,156 @@ export class Dashboard implements OnInit {
       this.modalInstance = new bootstrap.Modal(modalEl);
     }
   }
-  exportToExcelAccountingMapping() {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Accounting Mapping');
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Account Mapping',
+      filters: [
+        {
+          label: 'Type',
+          value:
+            this.statusFilter[0] === 'M'
+              ? 'Mapped'
+              : this.statusFilter[0] === 'U'
+                ? 'Unmapped'
+                : 'All'
+        },
+        {
+          label: 'Account Type',
+          value: this.selectedCategory || 'All'
+        },
+        {
+          label: 'Month',
+          value: this.datepipe.transform(this.frommonth, 'MMMM yyyy')
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
 
-    /* ================= HEADER ================= */
-    worksheet.addRow([
-      'Store',
-      'Acct Desc',
-      'Acct #',
-      'Acct Type',
-      'Acct Type Detail',
-      'Opera Area',
-      'Dept',
-      'Sub Type',
-      'Sub Type Detail',
-      'Fin Category',
-      'MTD',
-      'YTD'
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
+  exportToExcelAccountingMapping() {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Accounting Mapping');
+
+  /* ================= FILTER SECTION ================= */
+  let rowCount = this.addExcelFiltersSection(worksheet);
+
+  /* ================= HEADER ================= */
+  const headerRowIndex = rowCount + 1;
+
+  const headerRow = worksheet.addRow([
+    'Store',
+    'Acct Desc',
+    'Acct #',
+    'Acct Type',
+    'Acct Type Detail',
+    'Opera Area',
+    'Dept',
+    'Sub Type',
+    'Sub Type Detail',
+    'Fin Category',
+    'MTD',
+    'YTD'
+  ]);
+
+  /* ================= HEADER STYLE ================= */
+  headerRow.eachCell(cell => {
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'D9E7FF' }
+    };
+    cell.font = { bold: true };
+    cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    cell.border = {
+      top: { style: 'thin' },
+      bottom: { style: 'thin' },
+      left: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+  });
+
+  /* ================= FORMAT FUNCTION ================= */
+  const formatRow = (row: any) => {
+    row.eachCell((cell: any, colNumber: number) => {
+
+      cell.font = {
+        name: 'Calibri',
+        size: 11,
+        ...(cell.value < 0 ? { color: { argb: 'FF0000' } } : {})
+      };
+
+      if ([1, 2, 8, 9, 10].includes(colNumber)) {
+        cell.alignment = { horizontal: 'left', vertical: 'middle', indent: 1 };
+      } else if ([3, 4, 5, 6, 7].includes(colNumber)) {
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      } else {
+        cell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
+      }
+
+      if (typeof cell.value === 'number') {
+        if (colNumber === 11 || colNumber === 12) {
+          cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+        }
+      }
+    });
+  };
+
+  /* ================= DATA ================= */
+  this.AccountingMapping.forEach((am: any, i: number) => {
+
+    const row = worksheet.addRow([
+      am.as_companyName || '-',
+      am.accountDescription || '-',
+      am.accountNumber || '-',
+      am.accountType || '-',
+      ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
+      am.operationalArea || '-',
+      am.department || '-',
+      am.subType || '-',
+      am.subTypeDetail || '-',
+      ['S', 'C', 'I', 'X', 'E'].includes(this.selectedheadertab[0]) ? (am.Fin_Summary || '-') : '',
+      am.MTD || 0,
+      am.YTD || 0
     ]);
 
-    /* ================= HEADER STYLE ================= */
-    const headerRow = worksheet.getRow(1);
-    headerRow.eachCell(cell => {
+    /* ZEBRA ROWS */
+    row.eachCell(cell => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'D9E7FF' }
-      };
-      cell.font = { bold: true, color: { argb: '000000' } };
-      cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      cell.border = {
-        top: { style: 'thin' },
-        bottom: { style: 'thin' },
-        left: { style: 'thin' },
-        right: { style: 'thin' }
+        fgColor: { argb: i % 2 === 0 ? 'FFFFFF' : 'F9FBFF' }
       };
     });
 
-    /* ================= FORMAT FUNCTION ================= */
-    const formatRow = (row: any) => {
-      row.eachCell((cell: any, colNumber: number) => {
+    formatRow(row);
+  });
 
-        /* ===== FORCE FONT (IMPORTANT) ===== */
-        cell.font = {
-          name: 'Calibri',
-          size: 11,
-          ...(cell.value < 0 ? { color: { argb: 'FF0000' } } : {})
-        };
-
-        // LEFT TEXT
-        if ([1, 2, 8, 9, 10].includes(colNumber)) {
-          cell.alignment = {
-            horizontal: 'left',
-            vertical: 'middle',
-            indent: 1
-          };
-        }
-
-        // CENTER
-        else if ([3, 4, 5, 6, 7].includes(colNumber)) {
-          cell.alignment = {
-            horizontal: 'center',
-            vertical: 'middle'
-          };
-        }
-
-        // RIGHT NUMBERS
-        else {
-          cell.alignment = {
-            horizontal: 'right',
-            vertical: 'middle',
-            indent: 1
-          };
-        }
-
-        /* ===== NUMBER FORMATS ===== */
-        if (typeof cell.value === 'number') {
-
-          // Currency
-          if (colNumber === 11 || colNumber === 12) {
-            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
-          }
-        }
-      });
-    };
-
-    /* ================= DATA ================= */
-    this.AccountingMapping.forEach((am: any, i: number) => {
-
-      const row = worksheet.addRow([
-        am.as_companyName || '-',
-        am.accountDescription || '-',
-        am.accountNumber || '-',
-        am.accountType || '-',
-        ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
-        am.operationalArea || '-',
-        am.department || '-',
-        am.subType || '-',
-        am.subTypeDetail || '-',
-        ['S', 'C', 'I', 'X', 'E'].includes(this.selectedheadertab[0]) ? (am.Fin_Summary || '-') : '',
-        am.MTD || 0,
-        am.YTD || 0
-      ]);
-
-      /* ===== ZEBRA ROWS ===== */
-      row.eachCell(cell => {
-        cell.fill = {
-          type: 'pattern',
-          pattern: 'solid',
-          fgColor: { argb: i % 2 === 0 ? 'FFFFFF' : 'F9FBFF' }
-        };
-      });
-
-      formatRow(row);
-    });
-
-    /* ================= BORDERS ================= */
-    worksheet.eachRow(row => {
+  /* ================= BORDERS ================= */
+  worksheet.eachRow((row, rowNumber) => {
+    if (rowNumber >= headerRowIndex) { // ✅ only apply after header
       row.eachCell(cell => {
         cell.border = {
           top: { style: 'thin' },
@@ -1142,36 +1174,37 @@ export class Dashboard implements OnInit {
           right: { style: 'thin' }
         };
       });
-    });
+    }
+  });
 
-    /* ================= FREEZE (Sticky First Column + Header) ================= */
-    worksheet.views = [
-      {
-        state: 'frozen',
-        xSplit: 1, // 👈 first column sticky
-        ySplit: 1  // 👈 header sticky
-      }
-    ];
+  /* ================= FREEZE ================= */
+  worksheet.views = [
+    {
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: headerRowIndex // ✅ FIXED
+    }
+  ];
 
-    /* ================= COLUMN WIDTH ================= */
-    worksheet.columns = [
-      { width: 35 }, // Store
-      { width: 35 }, // Desc
-      { width: 15 },
-      { width: 15 },
-      { width: 20 },
-      { width: 18 },
-      { width: 15 },
-      { width: 20 },
-      { width: 25 },
-      { width: 20 },
-      { width: 18 },
-      { width: 18 }
-    ];
+  /* ================= COLUMN WIDTH ================= */
+  worksheet.columns = [
+    { width: 35 },
+    { width: 35 },
+    { width: 15 },
+    { width: 35 },
+    { width: 20 },
+    { width: 18 },
+    { width: 15 },
+    { width: 20 },
+    { width: 25 },
+    { width: 20 },
+    { width: 18 },
+    { width: 18 }
+  ];
 
-    /* ================= DOWNLOAD ================= */
-    workbook.xlsx.writeBuffer().then(data => {
-      FileSaver.saveAs(new Blob([data]), 'AccountingMapping.xlsx');
-    });
-  }
+  /* ================= DOWNLOAD ================= */
+  workbook.xlsx.writeBuffer().then(data => {
+    FileSaver.saveAs(new Blob([data]), 'AccountingMapping.xlsx');
+  });
+}
 }

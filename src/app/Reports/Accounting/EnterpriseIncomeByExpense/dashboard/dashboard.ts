@@ -879,6 +879,76 @@ export class Dashboard {
       indexval: i,
     };
   }
+
+  getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
+
+    const ids = this.storeIds.toString().split(',');
+
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: this.SetTitle, // dynamic title from route
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Department',
+          value: this.selectedFilters && this.selectedFilters.length
+            ? this.selectedFilters.join(', ')
+            : 'All'
+        },
+        {
+          label: 'Month',
+          value: this.datepipe.transform(this.selectDate, 'MMMM yyyy')
+        },
+        {
+          label: '% of GP',
+          value: this.ShowHideGP === 'Show' ? 'Yes' : 'No'
+        },
+        {
+          label: 'Budget',
+          value: this.ShowHideBudget === 'Show' ? 'Yes' : 'No'
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
     const workbook = new Workbook();

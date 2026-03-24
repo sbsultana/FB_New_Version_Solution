@@ -207,8 +207,8 @@ export class Dashboard {
               this.NoData = false;
               let path2 = this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '';
               let path3 = this.selectedDataGrouping.length == 3 ? this.selectedDataGrouping[2]?.columnname : '';
-              console.log(path3,'Path 3');
-              
+              console.log(path3, 'Path 3');
+
               this.IndividualServiceGross.some(function (x: any) {
                 if (x.Details != undefined) {
                   x.Data2 = JSON.parse(x.Details);
@@ -252,7 +252,7 @@ export class Dashboard {
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.NoData = true;
       }
@@ -299,23 +299,23 @@ export class Dashboard {
               });
               this.combineIndividualandTotal();
             } else {
-          
+
               this.shared.spinner.hide();
               // this.NoData = true;
             }
           } else {
-           
+
             this.shared.spinner.hide();
             // this.NoData = true;
           }
         } else {
-    
+
           this.shared.spinner.hide();
           // this.NoData = true;
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         // this.NoData = true;
       }
@@ -350,12 +350,12 @@ export class Dashboard {
     }
     return true;
   }
-  expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any,tmp:any) {
+  expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any, tmp: any) {
     let id = (e.target as Element).id;
     if (id == 'D_' + ind) {
       if ((this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '') == '') {
-        
-        this.openDetails(Item, parentData, '1', '',tmp);
+
+        this.openDetails(Item, parentData, '1', '', tmp);
       } else {
         if (ref == '-') {
           Item.Dealer = '+';
@@ -368,7 +368,7 @@ export class Dashboard {
     // //console.log(ind,id,Item.data2sign);
     if (id == 'DVN_' + ind) {
       if ((this.selectedDataGrouping.length == 3 ? this.selectedDataGrouping[2]?.columnname : '') == '') {
-        this.openDetails(Item, parentData, '2', '',tmp);
+        this.openDetails(Item, parentData, '2', '', tmp);
       } else {
         if (ref == '-') {
           Item.data2sign = '+';
@@ -409,11 +409,11 @@ export class Dashboard {
       this.popupReference.close();
     }
   }
-  Servicedetails:any=[];
+  Servicedetails: any = [];
   popupReference!: NgbModalRef;
 
-  openDetails(Item: any, ParentItem: any, ref: any, subparent: any,temp:any) {
-  
+  openDetails(Item: any, ParentItem: any, ref: any, subparent: any, temp: any) {
+
     if (ref == '1') {
       if (Item.data1 != undefined && Item.data1 != 'REPORTS TOTAL') {
         this.popupReference = this.shared.ngbmodal.open(
@@ -515,7 +515,7 @@ export class Dashboard {
             layer: 2,
             db1value: this.selectedDataGrouping[0]?.columnname == 'Store_Name' && ParentItem.data1 != 'REPORTS TOTAL' ? ParentItem.StoreID :
               (this.selectedDataGrouping[0]?.columnname == 'Store_Name' && ParentItem.data1 == 'REPORTS TOTAL' ? this.storeIds : ParentItem.data1),
-            db2value:(this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '') == 'Store_Name' ? Item.StoreID : Item.data2,
+            db2value: (this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '') == 'Store_Name' ? Item.StoreID : Item.data2,
             details: this.Department.indexOf('Details') >= 0 ? 'D' : '',
             screen: 'Service Gross GL',
             saletype: ''
@@ -563,11 +563,11 @@ export class Dashboard {
         ];
       }
     }
-    this.ServicePersonDetails=[]
+    this.ServicePersonDetails = []
     this.GetDetails()
   }
 
-    viewRO(roData: any) {
+  viewRO(roData: any) {
     // const modalRef = this.ngbmodel.open(RepairOrderComponent, { size: 'md', windowClass: 'compModal' });
     // modalRef.componentInstance.data = { ro: roData.ASG_Ronumber, storeid: roData.storeid, vin: roData.vin, vehicleid: roData.vehicleid,custno: roData?.customernumber }; // Pass data to the modal component    
     // modalRef.result.then((result) => {
@@ -580,9 +580,9 @@ export class Dashboard {
   details: any = [];
   NoDataDetails!: boolean;
   spinnerLoader: boolean = true;
-  spinnerLoadersec: boolean = false;
+  spinnerLoadersec: boolean = true;
   pageNumber: any = 0;
-   GetDetails() {
+  GetDetails() {
     // this.shared.spinner.show()
     const obj = {
 
@@ -606,12 +606,14 @@ export class Dashboard {
       "type": "",
       "PageNumber": this.pageNumber,
       "PageSize": "100",
-      "Details": this.Servicedetails[0].details,    
-      "saletype" : this.Servicedetails[0].saletype
+      "Details": this.Servicedetails[0].details,
+      "saletype": this.Servicedetails[0].saletype
     };
-   this.shared.api
+    this.shared.api
       .postmethod(this.comm.routeEndpoint + 'GetServicesGrossSummaryDetailsGLV1', obj)
       .subscribe((res) => {
+        this.spinnerLoader = false;
+        this.spinnerLoadersec = false;
         if (res.status == 200) {
           this.details = res.response;
           this.ServicePersonDetails = [
@@ -620,14 +622,17 @@ export class Dashboard {
           ];
           // //console.log(this.ServicePersonDetails);
           // this.shared.spinner.hide()
-          this.spinnerLoader = false;
-          this.spinnerLoadersec = false;
           if (this.ServicePersonDetails.length > 0) {
             this.NoDataDetails = false;
+            this.spinnerLoadersec = false;
           } else {
             this.NoDataDetails = true;
+            this.spinnerLoader = false;
+            this.spinnerLoadersec = false;
           }
-          this.scrollState = true
+          this.scrollState = true;
+          this.spinnerLoader = false;
+          this.spinnerLoadersec = false;
         }
       });
   }
@@ -643,6 +648,7 @@ export class Dashboard {
       if (this.details.length == 100 && this.scrollState == true) {
         this.scrollState = false
         this.spinnerLoadersec = true;
+        this.spinnerLoader = true;
         this.pageNumber++;
         this.GetDetails();
       }
@@ -779,7 +785,7 @@ export class Dashboard {
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning','Warning');
+          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -788,7 +794,7 @@ export class Dashboard {
 
     if (block == 'TB') {
       this.TotalReport = e;
-   
+
     }
 
   }
@@ -813,12 +819,12 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning','Warning');
+      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
-        this.toast.show('Please select atleast one Store','warning','Warning');
+        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       } else if (this.Department.length == 0) {
-        this.toast.show('Please select atleast one Department Type', 'warning','Warning');
+        this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
       }
 
       else {
@@ -1297,12 +1303,12 @@ export class Dashboard {
       const blob = new Blob([data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-       this.shared.exportToExcel(workbook, 'Service Gross GL')
+      this.shared.exportToExcel(workbook, 'Service Gross GL')
     });
     // });
   }
 
-    exportAsXLSX() {
+  exportAsXLSX() {
     const obj = {
       "startdate": this.Servicedetails[0].StartDate,
       "enddate": this.Servicedetails[0].EndDate,
@@ -1325,8 +1331,8 @@ export class Dashboard {
       "type": "",
       "PageNumber": 0,
       "PageSize": "1000000",
-      "Details" : this.Servicedetails[0].details,
-      "saletype" : this.Servicedetails[0].saletype
+      "Details": this.Servicedetails[0].details,
+      "saletype": this.Servicedetails[0].saletype
     };
     this.shared.spinner.show()
     this.shared.api
