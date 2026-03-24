@@ -1,0 +1,63 @@
+.inventoryopendetails-tbl{
+    .table {
+
+        thead,
+        tbody {
+
+            .box-shadow {
+                box-shadow:
+                    inset 0 0.4px 0 0 #e0edff,
+                    inset -3px 0 0 0 #e0edff,
+                    inset 0 -0.4px 0 0 #e0edff,
+                    inset 0.4px 0 0 0 #e0edff;
+            }
+
+            th:nth-child(9),
+            th:nth-child(16),
+            th:nth-child(21),
+            th:nth-child(26),
+
+            td:nth-child(9),
+            td:nth-child(16),
+            td:nth-child(21),
+            td:nth-child(26) {
+                box-shadow:
+                    inset 0 0.4px 0 0 #e0edff,
+                    inset -3px 0 0 0 #e0edff,
+                    inset 0 -0.4px 0 0 #e0edff,
+                    inset 0.4px 0 0 0 #e0edff;
+            }
+
+
+        }
+    }
+}
+
+.search input {
+    min-height: 2rem;
+    width: 15rem;
+    padding: 0.275rem 0.75rem 0.275rem 2.75rem;
+    border-radius: 12px;
+    background: #fff;
+    border: 0.5px solid #D9E7FF;
+    font-size: 0.875rem;
+    font-family: "Roboto";
+    font-weight: 400;
+    color: #18181b;
+}
+
+
+.lightblue-bg {
+    background-color: #d9e7ff !important;
+    color: #000;
+    font-family: "Roboto";
+}
+
+.second-header {
+    background-color: #4584ff !important;
+    color: #fff !important;
+    font-family: "Roboto";
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: .875rem;
+}

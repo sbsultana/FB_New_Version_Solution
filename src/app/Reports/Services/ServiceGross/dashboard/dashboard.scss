@@ -1,40 +1,203 @@
-.report-container {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+.pointercursor {
+  cursor: pointer;
 }
 
-h2,
-h3 {
-  color: #004080;
-  margin-bottom: 10px;
+.pointernone {
+  pointer-events: none;
 }
 
-.report-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  font-size: 14px;
+//////////////////////////////////// REPORT BAR ////////////////////////////////////////
+.divBold {
+  position: sticky;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  font-family: 'Roboto' !important;
+
+  td {
+    img {
+      display: none;
+    }
+  }
 }
 
-.report-table th,
-.report-table td {
-  border: 1px solid #000;
-  padding: 8px;
-  text-align: center;
-}
-
-.report-table th {
-  background-color: #004080;
+.backgrossbtn {
+  float: right;
+  background-color: #000;
+  text-transform: capitalize;
   color: #fff;
+  padding: 2px 16px;
+  font-family: "Roboto";
+  font-weight: 700;
+  font-size: .875rem;
+  line-height: 1.25rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-radius: 50px;
+    background-color: #000;
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: none;
+  }
 }
+
+.servicegross-tbl {
+  height: calc(100vh - 145px);
+
+  .servicegrossdetails-tbl {
+
+    thead,
+    tbody {
+      .boxshadow-none {
+        box-shadow: none !important;
+      }
+
+      th:nth-child(1),
+      th:nth-child(2),
+      th:nth-child(7),
+      th:nth-child(11),
+      th:nth-child(15),
+
+      td:nth-child(1),
+      td:nth-child(2),
+      td:nth-child(7),
+      td:nth-child(11),
+      td:nth-child(15) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+    }
+  }
+
+  .paytypedetails-tbl {
+
+    thead,
+    tbody {
+      .boxshadow-none {
+        box-shadow: none !important;
+      }
+
+      th:nth-child(1),
+      th:nth-child(5),
+      th:nth-child(9),
+      th:nth-child(13),
+      th:nth-child(17),
+
+      td:nth-child(1),
+      td:nth-child(5),
+      td:nth-child(9),
+      td:nth-child(13),
+      td:nth-child(17) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+    }
+  }
+
+  .hourdetails-tbl {
+
+    thead,
+    tbody {
+      .boxshadow-none {
+        box-shadow: none !important;
+      }
+
+      th:nth-child(1),
+      th:nth-child(5),
+      th:nth-child(9),
+      th:nth-child(13),
+      th:nth-child(17),
+
+      td:nth-child(1),
+      td:nth-child(5),
+      td:nth-child(9),
+      td:nth-child(13),
+      td:nth-child(17) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+    }
+  }
+
+  .rodetails-tbl {
+
+    thead,
+    tbody {
+      .boxshadow-none {
+        box-shadow: none !important;
+      }
+
+      th:nth-child(1),
+      th:nth-child(5),
+      th:nth-child(9),
+      th:nth-child(13),
+      th:nth-child(17),
+
+      td:nth-child(1),
+      td:nth-child(5),
+      td:nth-child(9),
+      td:nth-child(13),
+      td:nth-child(17) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+    }
+  }
+}
+
+
+/////////////////////////////////////SALES KPI GRID////////////////////////////////////
+
 
 .negative {
   color: red;
 }
 
-.actions {
-  margin-top: 20px;
+
+.Up-arrow-circle {
+  background-color: #28a745;
+  color: white;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
 }
+
+.Down-arrow-circle {
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
 
 @media print {
   @page {
@@ -81,7 +244,42 @@ h3 {
     padding: 4px;
     border: 1px solid #000;
     text-align: center;
-    white-space: nowrap; // word-break: break-word;
+    text-transform: capitalize;
+    white-space: nowrap;
+  }
+
+  thead {
+    tr:nth-child(1) {
+      background-color: #0554ef !important;
+      color: #fff;
+
+      th {
+        background-color: #004080 !important;
+        color: #fff !important;
+      }
+    }
+
+    tr:nth-child(2) {
+      background-color: #dbe7ff !important;
+      color: #000;
+
+      th {
+        background-color: #dbe7ff !important;
+        color: #000;
+      }
+    }
+  }
+
+  tbody {
+    tr td {
+      background-color: #fff;
+      color: #000;
+    }
+  }
+
+
+  .backgrossbtn {
+    display: none;
   }
 
   .report-table th {
@@ -90,3 +288,7 @@ h3 {
     -webkit-print-color-adjust: exact;
   }
 }
+
+
+
+/////////////////////////////////////DATE PICKER SCSS////////////////////////////////////

@@ -109,10 +109,10 @@
                                         <th style="text-align: left;">Op Code Desc</th>
                                         <th>Gross</th>
 
-                                        <th style=" border-left: 2px solid grey ;">Labor</th>
+                                        <th>Labor</th>
                                         <th>Parts</th>
                                         <th> Tires</th>
-                                        <th style=" border-right: 2px solid grey ;">Lube</th>
+                                        <th>Lube</th>
 
                                         <th>Cost</th>
                                         <th>Sale</th>
@@ -153,7 +153,7 @@
                                             '-' :
                                             det.ronumber ) }}
                                         </td>
-                                        <td [id]="'SD_'+i">
+                                        <td [id]="'SD_'+i" class="text-center">
                                             {{ (det.closedate == 0 || det.closedate == null || det.closedate ==
                                             undefined ? '-'
                                             : det.closedate |
@@ -165,14 +165,14 @@
                                             det.CName == null || det.CName == '' ? '-' : (
                                             (det.CName.toString() | slice:0:20) +
                                             (det.CName.toString().length > 20 ? '...' : '') ))}}</td>
-                                        <td [id]="'SD_'+i" title="{{det.vehicle}}">
+                                        <td [id]="'SD_'+i" title="{{det.vehicle}}" class="text-start">
                                             {{(det.vehicle == undefined ||
                                             det.vehicle == null || det.vehicle == '' ? '-' : (
                                             (det.vehicle.toString() | slice:0:20) +
                                             (det.vehicle.toString().length > 20 ? '...' : '') ))}}
 
                                         </td>
-                                        <td [id]="'SD_'+i">
+                                        <td [id]="'SD_'+i" class="text-start">
                                             {{ (det.vin == 0 || det.vin == null || det.vin == undefined ? '-' : det.vin
                                             ) }}
                                         </td>
@@ -200,7 +200,7 @@
                                             det.Totalgross == undefined ? '-' :
                                             det.Totalgross | currency:'USD':'symbol':'1.2-2' )}}</td>
                                         <!-- [ngStyle]="{'border-bottom': ServicePersonDetails.length-1 == i ? '1px solid grey' : 'none'  }" -->
-                                        <td style="min-width: 50px !important ;border-left: 2px solid grey;"
+                                        <td style="min-width: 50px !important ;"
                                             [id]="'SP_'+i"> {{
                                             (det.Totallabour == 0 ||
                                             det.Totallabour ==
@@ -219,7 +219,7 @@
                                             null ||
                                             det.TotalTires == undefined ? '-' :
                                             det.TotalTires | currency:'USD':'symbol':'1.0-0' )}}</td>
-                                        <td style="min-width: 50px !important; border-right: 2px solid grey ;"
+                                        <td style="min-width: 50px !important;"
                                             [id]="'SP_'+i">
                                             {{ (det.TotalBulkOil == 0 ||
                                             det.TotalBulkOil ==

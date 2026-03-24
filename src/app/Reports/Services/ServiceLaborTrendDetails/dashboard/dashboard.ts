@@ -56,6 +56,13 @@ export class Dashboard {
     dateInputFormat: 'MMMM/YYYY',
     minMode: 'month'
   };
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
   constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService,) {
     let today = new Date();
     let enddate = new Date(today.setDate(today.getDate() - 1));
@@ -238,18 +245,18 @@ export class Dashboard {
             }
           }
           else {
-            this.toast.show(x.status, 'danger','Error');
+            this.toast.show(x.status, 'danger', 'Error');
             this.shared.spinner.hide();
             this.NoData = true;
           }
         } else {
-          this.toast.show(x.status, 'danger','Error');
+          this.toast.show(x.status, 'danger', 'Error');
           this.shared.spinner.hide();
           this.NoData = true;
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.NoData = true;
       }
@@ -336,29 +343,30 @@ export class Dashboard {
       }
     }
   }
-  ValueFormat: any;
+  ValueFormat: string = '';
+
   openGraph(monthname: any, dates: any, Obj: any, SummaryType: any) {
     console.log(monthname, dates, Obj, SummaryType);
+
     const STRgraph = this.shared.ngbmodal.open(ServiceLaborTrendGraph, {
       size: 'xl',
       backdrop: 'static',
     });
-    if (
-      Obj.variable == 'GP'
-    ) {
+
+    const variable = (Obj?.variable || '').toUpperCase();
+
+    if (variable === 'GP') {
       this.ValueFormat = 'Percentage';
-    } if (
-      Obj.variable == 'GROSS' || Obj.variable == 'SALE' || Obj.variable == 'ELR'
-    ) {
-      this.ValueFormat = 'Currancy';
-    }
-    else {
+    } else if (['GROSS', 'SALE', 'ELR'].includes(variable)) {
+      this.ValueFormat = 'Currency'; 
+    } else {
       this.ValueFormat = 'Number';
     }
+
     STRgraph.componentInstance.STRgraphdetails = {
       Object: Obj,
       DATES: dates,
-      NAME: Obj.AST_DEALERNAME,
+      NAME: Obj?.AST_DEALERNAME || '',
       ValueFormat: this.ValueFormat,
       STORES: this.storeIds,
       SUMMARYTYPE: SummaryType,
@@ -418,10 +426,10 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
-      this.toast.show('Please select atleast one Store', 'warning','Warning');
+      this.toast.show('Please select atleast one Store', 'warning', 'Warning');
     } else {
-  this.setHeaderData();
-  this.DataSelection(this.Filter)
+      this.setHeaderData();
+      this.DataSelection(this.Filter)
     }
   }
   exportAsXLSX(): void {
@@ -649,6 +657,6 @@ export class Dashboard {
     worksheet.getColumn(14).width = 15;
     worksheet.getColumn(15).width = 15;
     worksheet.addRow([]);
-      this.shared.exportToExcel(workbook, 'Service Labor Trend Details' );
+    this.shared.exportToExcel(workbook, 'Service Labor Trend Details');
   }
 }

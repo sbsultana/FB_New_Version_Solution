@@ -5,7 +5,7 @@
     <div>
         <div class="container-fluid">
             <div class="reports-bar">
-                <div class="filter-dropdowns">
+                <div class="filter-dropdowns" (scroll)="getScrollPosition($event)">
 
                     <!-- Store Dropdown -->
                     <div class="dropdown">
@@ -27,7 +27,8 @@
                             </span>
 
                             <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" *ngIf="activePopover ===4">
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===4"
+                            [style.margin-left.px]="scrollPosition*-1">
                             <div class="row h-100">
                                 <div class="stores d-flex flex-column border-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
@@ -58,18 +59,17 @@
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
                             Time Frame <span class="light-font"> {{displaytime}}</span>
                             <span class="arrow"></span></button>
-                        <div class="timeframe" *ngIf="activePopover === 1">
+                        <div class="timeframe" *ngIf="activePopover === 1" [style.margin-left.px]="scrollPosition*-1">
                             <app-date-range-picker [Dates]="Dates"
                                 (updatedDates)="updatedDates($event)"></app-date-range-picker>
-                        </div>
-                        <div class="dropdown cavender-dd" *ngIf="DateType == 'Overall'">
-                            <!-- <h3 class="m-0 mt-1 p-0 pop">Age</h3> -->
-                            <ngx-slider [(value)]="AgeFrom" [(highValue)]="AgeTo" [options]="optionProx"></ngx-slider>
-                            <h2 style="text-align: center;font-size: .9rem; font-family: 'Roboto';">Age range
-                                between minimum to maximum</h2>
 
+                            <div class="age-range" *ngIf="DateType == 'Overall'">
+                                <ngx-slider [(value)]="AgeFrom" [(highValue)]="AgeTo"
+                                    [options]="optionProx"></ngx-slider>
+                                <h2 style="text-align: center;font-size: .9rem; font-family: 'Roboto';">Age range
+                                    between minimum to maximum</h2>
+                            </div>
                         </div>
-
                     </div>
 
                     <div class="dropdown">
@@ -83,7 +83,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 3">
+                        <div class="timeframe" *ngIf="activePopover === 3" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
                                     [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
@@ -103,7 +103,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 6">
+                        <div class="timeframe" *ngIf="activePopover === 6" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
 
 
@@ -130,7 +130,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 5">
+                        <div class="timeframe" *ngIf="activePopover === 5" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('I','All')"
                                     [ngClass]="{'active':inventory.indexOf('All')>=0, 'inactive':inventory.indexOf('All')<0}">All</button>
@@ -148,7 +148,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 2">
+                        <div class="timeframe" *ngIf="activePopover === 2" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('TB','T')"
                                     [class.active]="TotalReport=='T'">
@@ -162,23 +162,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex " style="white-space: nowrap;margin-top: 1.1rem;">
-                        <h1 class="m-0 ps-2">Top 5 RO's: </h1>
-                        <input type="checkbox" [(ngModel)]="topfive" style="margin-bottom: .4rem;">
+                    <div class="dropdown">
+                        <label class="form-check-label d-flex align-items-center text-nowrap" for="topFiveCheck">
+                            <label class="form-check-label check-label font-blue" for="checkIndeterminate">Top 5 RO's :
+                            </label>
+                            <input class="form-check-input mx-2 me-3 mb-2" type="checkbox" id="topFiveCheck"
+                                [(ngModel)]="topfive">
+                        </label>
+
                     </div>
 
                     <!-- Apply Button -->
                     <div class="dropdown">
-                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                        <button class="apply-button me-2" (click)="viewreport()"><span>Apply</span></button>
                     </div>
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-triple-header serviceopen-tbl">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th class="text-center bg-white"><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
+                            <th class="text-center"><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
                                     |date:'MMMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                         {{ToDate
                                         |date:'MMMM'}} </span>
@@ -187,13 +192,9 @@
                                     All Open RO's
                                 </span>
                             </th>
-                            <th class="spacer"></th>
                             <th colspan="3" class="bdr-rt"> Open RO </th>
-                            <th class="spacer"></th>
                             <th colspan="4" class="bdr-rt"> Labor </th>
-                            <th class="spacer"></th>
                             <th colspan="4" class="bdr-rt"> Parts </th>
-                            <th class="spacer"></th>
                             <th colspan="4"></th>
                         </tr>
                         <tr class="bdr-btm">
@@ -209,7 +210,6 @@
                                 </span>
                                 <span *ngIf="FromDate == '' && ToDate == ''">&nbsp;</span>
                             </th>
-                            <th class="spacer"></th>
                             <!-- <th></th> -->
                             <!-- <th (click)="openComments()" style="cursor: pointer;">
                                 <i alt="" class="fa fa-eye" *ngIf="!commentsVisibility" aria-hidden="true"></i>
@@ -221,7 +221,7 @@
                                 class="bdr-rt">Guide</th>
                             <th (click)="sort('Total_Hours',ServiceData)" style="cursor: pointer;" class="bdr-rt">Hours
                             </th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('laborsale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
                                 Sales</th>
                             <th (click)="sort('laborcost',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
@@ -230,7 +230,7 @@
                                 Discount</th>
                             <th (click)="sort('laborgross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
                                 Gross</th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('PartsSale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
                                 Sales</th>
                             <th (click)="sort('PartsCost',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
@@ -239,7 +239,7 @@
                                 Discount</th>
                             <th (click)="sort('partsgross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
                                 Gross</th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('TotalSale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Total
                                 Sales</th>
                             <th (click)="sort('Total_Gross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Total
@@ -253,20 +253,20 @@
                     </thead>
                     <tbody [ngClass]="{'hidden': NoData == true }">
                         <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
-                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': (ServiceInfo.Dealer === '-' && selectedDataGrouping.length >= 2 )  , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
-                                [id]="'DV_'+i">
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'lightblue-bg': (ServiceInfo.Dealer === '-' && selectedDataGrouping.length >= 2 )  , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
+                                [id]="'DV_'+i" >
                                 <td
-                                    [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL'? 'none':'visible' , 'background-color':ServiceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL'? 'none':'visible'}">
                                     <span [id]="'D_'+i"
                                         title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
                                         (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')"
-                                        class="layer1">
+                                        class="layer1 cursor-pointer">
                                         {{(ServiceInfo.data1 == undefined || ServiceInfo.data1 == '' ? '-' : (
                                         (ServiceInfo.data1.toString() |
                                         slice:0:22) +
                                         (ServiceInfo.data1.toString().length > 22 ? '...' : '') ))}} </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody2" [id]="'D_'+i"
                                     [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL'? 'none':'visible' }"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders), pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL'}"
@@ -279,7 +279,7 @@
                                 <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Hours)}">{{
                                     ServiceInfo.Total_Hours == 0 || ServiceInfo.Total_Hours == null ? '-' :
                                     ServiceInfo.Total_Hours |number:'1.2-2' }}</td>
-                                <th class="spacer"></th>
+
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.laborsale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.laborsale == 0 || ServiceInfo.laborsale == null ? '' :
@@ -323,7 +323,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(ServiceInfo.PartsSale)}"><span
                                         class="d-flex justify-content-between">
                                         {{
@@ -356,7 +356,7 @@
                                             (ServiceInfo.partsgross == 0 || ServiceInfo.partsgross == null ? '-' :
                                             ServiceInfo.partsgross |number:'1.0-0') }}</span></span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody19" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalSale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.TotalSale == 0 || ServiceInfo.TotalSale == null ? '' :
@@ -396,26 +396,28 @@
                                     <td>
                                         &nbsp;
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td colspan="18"
-                                        style="padding: 2px 1px !important;border: 2px solid #6fa1cb  !important;">
-                                        <app-service-open-rodetails [RODetailsObjectMain]="RODetailsObjectMain"></app-service-open-rodetails>
+                                        style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+                                        <app-service-open-rodetails
+                                            [RODetailsObjectMain]="RODetailsObjectMain"></app-service-open-rodetails>
                                     </td>
                                 </tr>
                             </ng-container>
                             <ng-container *ngFor="let dt2 of ServiceInfo.Data2,let k=index">
-                                <tr [id]="'DVN_'+i" class="sub-title"
+                                <tr [id]="'DVN_'+i"
                                     [ngClass]="{'hidden': ServiceInfo.Dealer === '+', 'title-l3' : k % 2 == 0 , 'titleOdd-l3' : k % 2 != 0}">
                                     <td (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo)">
                                         <!-- <span style="margin-right: 1.5rem;"></span> -->
-                                        <span title="{{dt2.data2}}" [id]="'DN_'+k" class="layer2"> {{(dt2.data2
+                                        <span title="{{dt2.data2}}" [id]="'DN_'+k" class="layer2 cursor-pointer">
+                                            {{(dt2.data2
                                             ==
                                             undefined || dt2.data2
                                             ==
                                             '' ? '--' : ( (dt2.data2.toString() | slice:0:15) +
                                             (dt2.data2.toString().length > 15 ? '...' : '') ))}} </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.Repair_Orders)}"
                                         class="pointer" [id]="'DN_'+k"
                                         (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo)">{{
@@ -427,7 +429,7 @@
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.Total_Hours)}">{{
                                         dt2.Total_Hours == 0 || dt2.Total_Hours == null ? '-' :
                                         dt2.Total_Hours }}</td>
-                                    <td class="spacer"></td>
+
                                     <td [ngClass]="{ negative: !inTheGreen(dt2.laborsale)}"><span
                                             class="d-flex justify-content-between"> {{
                                             (dt2.laborsale == 0 || dt2.laborsale == null ? '' :
@@ -471,7 +473,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(dt2.PartsSale)}"><span
                                             class="d-flex justify-content-between">
                                             {{
@@ -504,7 +506,7 @@
                                                 (dt2.partsgross == 0 || dt2.partsgross == null ? '-' :
                                                 dt2.partsgross |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody19" [ngClass]="{ negative: !inTheGreen(dt2.TotalSale)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt2.TotalSale == 0 || dt2.TotalSale == null ? '' :
@@ -543,9 +545,9 @@
                                         <td>
                                             &nbsp;
                                         </td>
-                                        <td class="spacer"></td>
+
                                         <td colspan="18"
-                                            style="padding: 2px 1px !important;border: 2px solid #6fa1cb  !important;">
+                                            style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                             <app-service-open-rodetails
                                                 [RODetailsObjectMain]="RODetailsObjectMain"></app-service-open-rodetails>
                                         </td>
@@ -557,7 +559,7 @@
                     <tbody *ngIf="NoData" style="pointer-events:none">
                         <tr>
                             <td></td>
-                            <td class="spacer"></td>
+
                             <td colspan="18" style="color: black;text-align: center !important;">No Records Found</td>
                         </tr>
                     </tbody>
@@ -565,6 +567,6 @@
             </div>
         </div>
 
-      
+
     </div>
 </main>

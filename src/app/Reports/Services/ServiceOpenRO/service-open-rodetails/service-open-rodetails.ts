@@ -18,7 +18,7 @@ import { Notes } from '../../../../Layout/notes/notes';
 export class ServiceOpenRODetails {
   @Input() RODetailsObjectMain: any = [];
   NoData!: boolean;
-  spinnerLoader: boolean = false;
+  spinnerLoader: boolean = true;
   spinnerLoadersec: boolean = false;
   pageNumber: any = 0;
   ServiceData: any = [];
