@@ -1,76 +1,91 @@
 <!--  -->
 <div *ngIf="RODetailsObject[0] != undefined" class="gross-tbl-scroll" id="ServiceOpenRODetails"
-    (scroll)="updateVerticalScroll($event)" #scrollcent id="scrollcent"
-    [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
-    <div class="scorecard-single-header">
-        <table class="table mb-0 w-100">
+    (scroll)="updateVerticalScroll($event)" #scrollcent id="scrollcent">
+
+    <div class="scorecard-single-header serviceopendetails-tbl"
+        [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
+        <div *ngIf="spinnerLoader" class="d-flex align-items-center justify-content-center m-auto">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <table class="table mb-0 w-100" *ngIf="!spinnerLoader">
             <thead>
                 <tr>
-                    <th colspan="11">
-
-
+                    <th colspan="11" class="box-shadow">
                         <div class=" d-flex align-items-center pagination">
-                            <img src="images/Excel_Export.png" class="img-fluid  me-2" alt=""
-                                style="cursor: pointer;" (click)="exportAsXLSX()">&nbsp;&nbsp;&nbsp;&nbsp;
-                            <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
-                                placeholder="Search" type="text" (ngModelChange)="filterData()">
-                            <!-- <i class="fa-solid fa-magnifying-glass m-auto" ></i> -->
-                            <button (click)="goToFirstPage()" [class.clicked-button]="currentPage === 1"
-                                [class.disabled-button]="currentPage === 1"
-                                [disabled]="currentPage === 1">First</button>
-                            <button (click)="prevPage()" [class.clicked-button]="currentPage !== 1"
-                                [class.disabled-button]="currentPage === 1"
-                                [disabled]="currentPage === 1">Previous</button>
-                            <!-- <ng-container *ngFor="let pageNumber of getPageNumbers()">
-                <button class="mx-1" (click)="goToPage(pageNumber)" [class.clicked-button]="clickedPage === pageNumber"
-                    [class.disabled-button]="currentPage === pageNumber"
-                    [disabled]="currentPage === pageNumber">{{ pageNumber }}</button>
-            </ng-container> -->
-                            <div *ngIf="total > 0" class="mx-2 ">
-                                {{ getStartRecordIndex() + 1 }} - {{ getEndRecordIndex() }} &nbsp; of &nbsp;{{ total }}
-                                ;&nbsp; Page {{
-                                currentPage }}&nbsp; of &nbsp;{{ getMaxPageNumber() }}
+                            <img src="images/Download.svg" class="img-fluid mx-3" alt="" style="cursor: pointer;"
+                                (click)="exportAsXLSX()">
+                            <!-- <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
+                                placeholder="Search" type="text" (ngModelChange)="filterData()"> -->
+                            <div class="search pe-3">
+                                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="QISearchName"
+                                    (ngModelChange)="filterData()">
+                                <img src="images/Magnifer.svg" alt="">
                             </div>
-                            <button (click)="nextPage()" [class.clicked-button]="currentPage !== getMaxPageNumber()"
-                                [class.disabled-button]="currentPage === getMaxPageNumber()"
-                                [disabled]="currentPage === getMaxPageNumber()">Next</button>
-                            <button (click)="goToLastPage()" [class.clicked-button]="currentPage === getMaxPageNumber()"
-                                [class.disabled-button]="currentPage === getMaxPageNumber()"
-                                [disabled]="currentPage === getMaxPageNumber()">Last</button>
+                            <!-- <i class="fa-solid fa-magnifying-glass m-auto" ></i> -->
+                            <div class="pagination-container d-flex align-items-center justify-content-end text-black">
+                                <div class="pagination-buttons d-flex align-items-center gap-1">
+                                    <button (click)="goToFirstPage()" [class.clicked-button]="currentPage === 1"
+                                        [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1"><img
+                                            src="images/Arrow_End_Left_Blk.svg" alt="First" /></button>
+                                    <button (click)="prevPage()" [class.clicked-button]="currentPage !== 1"
+                                        [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1"> <img
+                                            src="images/Alt_Arrow_Left_Blk.svg" alt="Previous" /></button>
+                                    <div *ngIf="total > 0" class="mx-2 ">
+                                        {{ getStartRecordIndex() + 1 }} - {{ getEndRecordIndex() }} &nbsp; of &nbsp;{{
+                                        total
+                                        }}
+                                        ;&nbsp; Page {{
+                                        currentPage }}&nbsp; of &nbsp;{{ getMaxPageNumber() }}
+                                    </div>
+                                    <button (click)="nextPage()"
+                                        [class.clicked-button]="currentPage !== getMaxPageNumber()"
+                                        [class.disabled-button]="currentPage === getMaxPageNumber()"
+                                        [disabled]="currentPage === getMaxPageNumber()"> <img
+                                            src="images/Alt_Arrow_Right_Blk.svg" alt="Next" /></button>
+                                    <button (click)="goToLastPage()"
+                                        [class.clicked-button]="currentPage === getMaxPageNumber()"
+                                        [class.disabled-button]="currentPage === getMaxPageNumber()"
+                                        [disabled]="currentPage === getMaxPageNumber()"> <img
+                                            src="images/Arrow_End_Right_Blk.svg" alt="Last" /></button>
+                                </div>
+                            </div>
                         </div>
                     </th>
-                    <th colspan="7" class="align-cntr">Total </th>
-                    <th colspan="5" class="align-cntr">Customer Pay </th>
-                    <th colspan="5" class="align-cntr">Warranty </th>
-                    <!-- <th colspan="5" class="align-cntr">Extended Warranty </th> -->
+                    <th colspan="7" class="align-middle lightblue-bg box-shadow">Total </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Customer Pay </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Warranty </th>
+                    <!-- <th colspan="5" class="align-middle lightblue-bg box-shadow">Extended Warranty </th> -->
 
-                    <th colspan="5" class="align-cntr">Internal </th>
-                    <th colspan="5" style="display: none;">Service Contract </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Internal </th>
+                    <th colspan="5" class="align-middle lightblue-bg" style="display: none;">Service Contract </th>
                 </tr>
-                <tr>
-                    <th>Notes&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
-                            (click)="notesView()"></i>
+                <tr class="second-header">
+                    <th style="background-color: #4584ff !important;color: #fff !important;">Notes&nbsp; <i alt=""
+                            class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true" (click)="notesView()"></i>
                         <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState" (click)="notesView()"></i>
                     </th>
-                    <th class="align-left" (click)="sort('ronumber',filteredServiceOpenROData)"
+                    <th style="background-color: #4584ff !important;color: #fff !important;"
+                        class="text-start second-header" (click)="sort('ronumber',filteredServiceOpenROData)"
                         style="cursor: pointer;">RO #</th>
-                    <th class="align-left" (click)="sort('opendate',filteredServiceOpenROData)"
+                    <th class="text-start" (click)="sort('opendate',filteredServiceOpenROData)"
                         style="cursor: pointer;">Date</th>
-                    <th class="align-left" (click)="sort('age',filteredServiceOpenROData)" style="cursor: pointer;">Age
+                    <th class="text-start" (click)="sort('age',filteredServiceOpenROData)" style="cursor: pointer;">Age
                     </th>
-                    <th class="align-left" (click)="sort('RoStatus',filteredServiceOpenROData)"
+                    <th class="text-start" (click)="sort('RoStatus',filteredServiceOpenROData)"
                         style="cursor: pointer;">RO Status</th>
 
-                    <th class="align-left" (click)="sort('CName',filteredServiceOpenROData)" style="cursor: pointer;">
+                    <th class="text-start" (click)="sort('CName',filteredServiceOpenROData)" style="cursor: pointer;">
                         Customer</th>
-                    <th class="align-left" (click)="sort('ServiceAdvisor_Name',filteredServiceOpenROData)"
+                    <th class="text-start" (click)="sort('ServiceAdvisor_Name',filteredServiceOpenROData)"
                         style="cursor: pointer;">Advisor</th>
 
-                    <th class="align-left" (click)="sort('vehicle',filteredServiceOpenROData)" style="cursor: pointer;">
+                    <th class="text-start" (click)="sort('vehicle',filteredServiceOpenROData)" style="cursor: pointer;">
                         Vehicle</th>
-                    <th class="align-left" (click)="sort('vinno',filteredServiceOpenROData)" style="cursor: pointer;">
+                    <th class="text-start" (click)="sort('vinno',filteredServiceOpenROData)" style="cursor: pointer;">
                         Vin</th>
-                    <th class="align-left" (click)="sort('stock',filteredServiceOpenROData)" style="cursor: pointer;">
+                    <th class="text-start" (click)="sort('stock',filteredServiceOpenROData)" style="cursor: pointer;">
                         Stock #</th>
 
                     <th (click)="sort('Totalgross',filteredServiceOpenROData)" style="cursor: pointer;">Gross</th>
@@ -106,15 +121,15 @@
                     <th (click)="sort('DiscountIP',filteredServiceOpenROData)" style="cursor: pointer;">Discount</th>
 
                 </tr>
-                <div class="loader" style="margin-top: 0%;margin-left: 30%;" *ngIf="spinnerLoader"></div>
 
             </thead>
 
             <tbody>
+
                 <ng-container *ngIf="paginatedItems.length > 0; else NoQIdata">
                     <ng-container *ngFor="let det of paginatedItems; let i=index">
                         <tr>
-                            <td>
+                            <td class="text-center">
                                 <img *ngIf="det.NotesStatus=='N'" src="images/Actionblack.png"
                                     (click)="addNotes(det,notes)" style="cursor: pointer;">
 
@@ -123,36 +138,36 @@
 
                             </td>
                             <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
-                            <td class="align-left" (click)="viewRO(det)"
+                            <td class="text-start" (click)="viewRO(det)"
                                 [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
                                 {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber ==
                                 undefined ? '-' :
                                 det.ronumber ) }}
                             </td>
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ (det.opendate == 0 || det.opendate == null || det.opendate ==
                                 undefined ? '-'
                                 : det.opendate ) }}
                             </td>
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ (det.age == 0 || det.age == null || det.age == undefined ?
                                 '-' :
                                 det.age ) }}
 
                             </td>
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ (det.RoStatus == 0 || det.RoStatus == null || det.RoStatus == undefined ?
                                 '-' :
                                 det.RoStatus ) }}
 
                             </td>
 
-                            <td title="{{det.CName}}" style="cursor: default;" class="align-left"> {{(det.CName ==
+                            <td title="{{det.CName}}" style="cursor: default;" class="text-start"> {{(det.CName ==
                                 undefined ||
                                 det.CName == null || det.CName == ''? '--' : (
                                 (det.CName.toString() | slice:0:13) +
                                 (det.CName.toString().length > 13 ? '...' : '') ))}}</td>
-                            <td title="{{det.ServiceAdvisor_Name}}" style="cursor: default;" class="align-left">
+                            <td title="{{det.ServiceAdvisor_Name}}" style="cursor: default;" class="text-start">
                                 {{(det.ServiceAdvisor_Name ==
                                 undefined ||
                                 det.ServiceAdvisor_Name == null || det.ServiceAdvisor_Name == ''? '--' : (
@@ -160,18 +175,18 @@
                                 (det.ServiceAdvisor_Name.toString().length > 13 ? '...' : '') ))}}</td>
 
 
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ ( det.vehicle == null || det.vehicle == undefined ? '-' :
                                 det.vehicle ) }}
                             </td>
 
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ (det.vinno == 0 || det.vinno == null || det.vinno == undefined ?
                                 '-' :
                                 det.vinno ) }}
 
                             </td>
-                            <td class="align-left">
+                            <td class="text-start">
                                 {{ (det.stock == 0 || det.stock == null || det.stock == undefined ?
                                 '-' :
                                 det.stock ) }}
@@ -386,46 +401,30 @@
                             </div>
 
                         </tr>
-                        <ng-container
-                            *ngIf="det.Notes != null && det.Notes != undefined && notesViewState && det.NotesStatus == 'Y'">
+                        <ng-container *ngIf="det?.Notes?.length && notesViewState && det?.NotesStatus === 'Y'">
+
                             <tr>
+                                <!-- <td></td> -->
 
-                                <td colspan="39" style="border-bottom: 1px solid white !important;">
-                                    <div *ngIf="det.Notes != null && notesViewState">
-                                        <div>
-                                            <div class="title">Notes</div>
-                                            <div *ngIf="det.notesView == '+' && det.Notes.length>0 ">
+                                <td colspan="39" class="text-start ps-3">
 
-                                                <div class="notes" *ngFor="let notes of det.Notes.slice(0,2)">
-                                                    {{(notes.GN_Text == '' || notes.GN_Text
-                                                    ==
-                                                    null
-                                                    || notes.GN_Text == undefined ? '--' : ( (notes.GN_Text.toString()
-                                                    )))}}
-                                                </div>
-                                            </div>
+                                    <h6 class="fw-bold font-blue small">Notes</h6>
 
-                                            <div *ngIf="det.notesView == '-'  ">
-                                                <div class="notes" *ngFor="let notes of det.Notes">
-                                                    {{(notes.GN_Text == '' || notes.GN_Text ==
-                                                    null
-                                                    ? '--' : ( (notes.GN_Text.toString() )))}}
-                                                </div>
-                                            </div>
 
-                                        </div>
+                                    <div class="ps-4"
+                                        *ngFor="let notes of (det.notesView === '+' ? det.Notes.slice(0,3) : det.Notes)">
+                                        {{ notes?.GN_Text?.trim() || '-' }}
+                                    </div>
+
+                                    <div *ngIf="det?.Notes?.length > 3" class="ps-4">
+                                        <a class="font-blue cursor-pointer" (click)="toggleView(det)">
+                                            {{ det.notesView === '+' ? 'View More' : 'View Less' }}
+                                        </a>
                                     </div>
 
                                 </td>
                             </tr>
-                            <tr *ngIf="det.Notes.length>2">
-                                <td colspan="39"
-                                    style="text-align: left;padding-left: 9rem;cursor: pointer;color: #2b91f0;text-decoration: underline ;">
-                                    <span *ngIf="det.notesView == '+'" (click)="toggleView(det)">View More</span>
-                                    <span *ngIf="det.notesView == '-'" (click)="toggleView(det)"> View Less</span>
-                                </td>
 
-                            </tr>
                         </ng-container>
 
 
@@ -434,7 +433,7 @@
                 <ng-template #NoQIdata>
                     <tr *ngIf="!spinnerLoader">
                         <td colspan="39"
-                            style="text-align: center;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                            style="text-align: center;font-size: 1rem;background: #fff !important;color: black; display: revert;">
                             <label>No Data Found</label>
                         </td>
                     </tr>
