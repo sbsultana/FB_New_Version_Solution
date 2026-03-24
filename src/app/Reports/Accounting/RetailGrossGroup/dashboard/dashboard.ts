@@ -19,7 +19,7 @@ import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 
 @Component({
   selector: 'app-dashboard',
-   imports: [SharedModule, BsDatepickerModule, Stores],
+  imports: [SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -93,7 +93,7 @@ export class Dashboard {
     this.shared.setTitle(this.shared.common.titleName + '-Retail Gross Group')
 
     this.setHeaderData()
-        this.GetReconAnalysis('', 0, '', '');
+    this.GetReconAnalysis('', 0, '', '');
     // this.GetReconAnalysis()
   }
 
@@ -279,15 +279,15 @@ export class Dashboard {
     return (reportTotal[0][colname] / this.ReconAnalysisData.length - 1).toFixed(2)
   }
 
- viewreport() {
+  viewreport() {
     this.activePopover = -1
     if (this.storeIds.length == 0 || this.Department == '') {
-    if (this.storeIds.length == 0) {
-      this.toast.show('Please select atleast one store','warning','Warning');
-    }
-    if(this.Department == ''){
-      this.toast.show('Please select atleast one Department','warning','Warning');
-    }
+      if (this.storeIds.length == 0) {
+        this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      }
+      if (this.Department == '') {
+        this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+      }
     }
 
     else {
@@ -314,11 +314,11 @@ export class Dashboard {
     if (block == 'TB') {
       this.reporttotals = e;
     }
-       if (block == 'NU') {
-      if(this.Department == 'All' && e== 'All'){
+    if (block == 'NU') {
+      if (this.Department == 'All' && e == 'All') {
         this.Department = ''
-      }else{
-      this.Department = e
+      } else {
+        this.Department = e
       }
     }
   }
@@ -383,7 +383,7 @@ export class Dashboard {
     });
   }
 
-    ngOnDestroy() {
+  ngOnDestroy() {
     if (this.excel != undefined) {
       this.excel.unsubscribe()
     }
@@ -403,11 +403,76 @@ export class Dashboard {
     }
     return false;
   }
-  
-   togglePopover(popoverIndex: number) {
+
+  togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
+  getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
 
+    const ids = this.storeIds.toString().split(',');
+
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+
+    const formattedMonth = this.month
+      ? this.shared.datePipe.transform(this.month, 'MMMM yyyy')
+      : '';
+
+    return {
+      title: 'Retail Gross Group',
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Month',
+          value: formattedMonth || ''
+        },
+        {
+          label: 'Department',
+          value: this.Department && this.Department !== ''
+            ? this.Department
+            : 'All'
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
 
   ExcelStoreNames: any = []
   exportToExcel() {
@@ -599,11 +664,11 @@ export class Dashboard {
     const Avg = [
       'Average',
       this.getAvg('Units') ? this.getAvg('Units') : "-",
-      this.getAvg('Gross') ? '$'+this.getAvg('Gross') : "-",
-      this.getAvg('PVR') ? '$'+this.getAvg('PVR') : "-",
-      this.getAvg('YTDUnits') ? this.getAvg('YTDUnits')  : "-",
-      this.getAvg('YTDGross') ? '$'+this.getAvg('YTDGross')  : "-",
-      this.getAvg('YTDPVR') ? '$'+this.getAvg('YTDPVR') : "-"
+      this.getAvg('Gross') ? '$' + this.getAvg('Gross') : "-",
+      this.getAvg('PVR') ? '$' + this.getAvg('PVR') : "-",
+      this.getAvg('YTDUnits') ? this.getAvg('YTDUnits') : "-",
+      this.getAvg('YTDGross') ? '$' + this.getAvg('YTDGross') : "-",
+      this.getAvg('YTDPVR') ? '$' + this.getAvg('YTDPVR') : "-"
     ];
 
     const avgRow = worksheet.addRow(Avg);

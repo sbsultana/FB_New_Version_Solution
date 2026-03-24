@@ -88,7 +88,7 @@ export class Dashboard {
   }
 
 
-  storeIds: any =[8];
+  storeIds: any = [8];
   dateType: any = 'MTD';
   groups: any = 0;
 
@@ -110,12 +110,12 @@ export class Dashboard {
     this.solutionurl = this.shared.api;
     this.shared.setTitle('Used Car Wholesale');
     if (typeof window !== 'undefined') {
-   
-        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-          this.storeIds = 8
-        }
-      
+
+      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.storeIds = 8
+      }
+
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
         this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
@@ -143,7 +143,7 @@ export class Dashboard {
       // if (localStorage.getItem('Fav') != 'Y') {
       this.setHeaderData();
       this.setDates(this.DateType);
-       this.GetLenders('', 0)
+      this.GetLenders('', 0)
       // }
     }
   }
@@ -186,7 +186,7 @@ export class Dashboard {
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
     console.log(this.storeIds);
-    
+
   }
 
   isDesc: boolean = false;
@@ -438,8 +438,8 @@ export class Dashboard {
       storedisplayname: this.storedisplayname,
       'type': 'S', 'others': 'N'
     };
-    console.log(this.storesFilterData,'Store Filtered Data');
-    
+    console.log(this.storesFilterData, 'Store Filtered Data');
+
   }
 
 
@@ -641,5 +641,68 @@ export class Dashboard {
       this.close();
       this.GetLenders('', 0)
     }
+  }
+  getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
+
+    const ids = this.storeIds.toString().split(',');
+
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Used Car Wholesale',
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Timeframe',
+          value: this.DateType === 'C'
+            ? `${this.FromDate} to ${this.ToDate}`   // Custom range
+            : `${this.displaytime} (${this.FromDate} to ${this.ToDate})` // MTD/YTD etc
+        },
+        {
+          label: 'Deal Status',
+          value: this.dealstatus && this.dealstatus.length > 0
+            ? this.dealstatus.join(', ')
+            : 'All'
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
   }
 }

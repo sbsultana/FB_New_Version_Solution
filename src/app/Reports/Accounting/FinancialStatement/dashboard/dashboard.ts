@@ -457,7 +457,7 @@ export class Dashboard {
 
   getReportFilters(): { title: string; filters: any[] } {
     return {
-      title: this.dynamicTitle,
+      title: 'Financial Statement',
       filters: [
         {
           label: 'Store',
@@ -483,7 +483,7 @@ export class Dashboard {
     const titleRow = worksheet.addRow([report.title]);
     titleRow.font = { bold: true, size: 14 };
     worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
-    titleRow.alignment = { horizontal: 'left', vertical: 'middle' }; 
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
     rowCount++;
 
     /* FILTERS */
@@ -579,8 +579,8 @@ export class Dashboard {
           if (valueType === '$') cell.numFmt = '"$" * #,##0; "$" * -#,##0';
           if (valueType === '#') cell.numFmt = '#,##0';
           if (valueType === '%') {
-            cell.numFmt = '0.00%';
-            cell.value = num / 100;
+            cell.numFmt = '0.0%';
+
           }
 
           if (isSpecial && colNumber === 4 && num < 0) {

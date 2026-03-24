@@ -32,7 +32,6 @@ import { Sharedservice } from '../../../../Core/Providers/Shared/sharedservice';
 })
 export class Dashboard {
   Report: any = '';
-  dynamicTitle = 'Financial Summary';
   FromDate: any;
   ToDate: any;
 
@@ -126,7 +125,6 @@ export class Dashboard {
       this.getStoresandGroupsValues()
     }
     this.title.setTitle(this.comm.titleName + '-Financial Summary');
-    const data = { title: this.dynamicTitle, stores: '2' };
     const lastMonth = new Date();
     let today = new Date();
     if (today.getDate() < 5) {
@@ -711,7 +709,7 @@ export class Dashboard {
   }
   getReportFilters(): { title: string; filters: any[] } {
     return {
-      title: this.dynamicTitle,
+      title: 'Financial Summary',
       filters: [
         {
           label: 'Store',

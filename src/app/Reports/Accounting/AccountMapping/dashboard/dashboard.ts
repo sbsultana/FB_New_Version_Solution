@@ -41,7 +41,6 @@ export class Dashboard implements OnInit {
       this.activePopover = -1;
     }
   }
-  dynamicTitle = 'Account Mapping';
 
   DateType: any;
   maxToMonth!: Date;
@@ -147,7 +146,6 @@ export class Dashboard implements OnInit {
     if (typeof window !== 'undefined') {
 
       this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
-      const data = { title: this.dynamicTitle, stores: '2' };
       if (localStorage.getItem('Fav') != 'Y') {
         const data = {
           title: 'Account Mapping',
@@ -1020,7 +1018,7 @@ export class Dashboard implements OnInit {
   }
   getReportFilters(): { title: string; filters: any[] } {
     return {
-      title: this.dynamicTitle,
+      title: 'Account Mapping',
       filters: [
         {
           label: 'Type',
