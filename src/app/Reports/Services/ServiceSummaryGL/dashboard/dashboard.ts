@@ -10,9 +10,10 @@ import { environment } from '../../../../../environments/environment';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { CurrencyPipe } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,NgbModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -153,6 +154,7 @@ export class Dashboard {
     this.lastyearDate.setFullYear(this.lastyearDate.getFullYear() - 1);
     this.setDates(this.DateType)
   }
+  
   GetData() {
     this.shared.spinner.show()
     this.IndividualServiceGross = [];
@@ -160,7 +162,7 @@ export class Dashboard {
       "Startdate": this.FromDate.replaceAll('/', '-'),
       "Enddate": this.ToDate.replaceAll('/', '-'),
       "AS_IDS": this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds,
+        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
       "DEPTTYPE": this.Department.indexOf('Service') >= 0 && this.Department.indexOf('Parts') >= 0 ? 'Service,Parts' : (this.Department.indexOf('Service') >= 0 ? 'Service' : (this.Department.indexOf('Parts') >= 0) ? 'Parts' : ''),
       "SUBTYPE": this.selectedSubType.toString(),
       "Details": this.Department.indexOf('Details') >= 0 ? 'Details' : ''
