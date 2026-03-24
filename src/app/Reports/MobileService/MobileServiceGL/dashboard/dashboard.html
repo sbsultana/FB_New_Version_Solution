@@ -1,0 +1,193 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storeIds.length == stores.length ? 'All Stores':
+                                (storeIds.length==1 ? storename : (storeIds.length == 0 ? 'Select
+                                Stores' : 'Selected') )}}
+                             {{storeIds.length == stores.length ? '':
+                                    (storeIds.length==1 || storeIds.length==0 ? '' :
+                                    storeIds.length )}} )</span>
+                                <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}">
+                            <div class="row h-100">
+                                <!-- <div class="groups pe-2 d-flex flex-column">
+                                    <div class="groups-wrapper flex-grow-1">
+                                        <div class="group-columns">
+                                            <ng-container *ngFor="let g of groupsArray">
+                                                <button class="btn group-button w-100 text-start"
+                                                    [ngClass]="{'active':groupId==g.sg_id,'inactive':groupId != g.sg_id}"
+                                                    (click)="individualgroups(g)">
+                                                    <span ngbTooltip="{{g.sg_name}}"> {{g.sg_name}}</span>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="stores d-flex flex-column ps-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="allstores text-start" >
+                                            <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                                (click)="allstores('Y')">Select
+                                                All</a> |
+                                            <a class="text-primary text-decoration-none cursor-pointer ms-2"
+                                                (click)="allstores('N')">Clear
+                                                All</a>
+                                        </div>
+                                        <div class="store-columns flex-grow-1">
+                                            <ng-container *ngFor="let s of stores">
+                                                <button class="btn btn-outline-primary store-button"
+                                                    (click)="individualStores(s)"
+                                                    [ngClass]="{'active':storeIds.indexOf(s.ac_as_id)>=0,'inactive':storeIds.indexOf(s.ac_as_id)<0}">
+                                                    <span ngbTooltip="{{s.storename}}"> {{s.storename}}</span>
+                                                </button>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(1)">
+                            Time Frame<span class="light-font"> {{ displaytime }}</span>
+                            <span class="arrow"></span></button>
+                        <div class="timeframe" *ngIf="activePopover === 1">
+                            <app-date-range-picker [Dates]="Dates"
+                                (updatedDates)="updatedDates($event)"></app-date-range-picker>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-multi-header lendersummary-tbl">
+                <table class="table mb-0 w-100">
+                     <thead>
+                        <tr>
+                            <th colspan="2" style="text-align: justify;">{{FromDate |date:'MMMM'}} <label
+                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                    {{ToDate
+                                    |date:'MMMM'}} </label> <label>{{FromDate |date:'dd'}} <label
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                        |date:'yyyy'}}</label>
+                                    - {{ToDate |date:'dd'}}<label
+                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                        |date:'yyyy'}}</label><label
+                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
+                                        {{FromDate |
+                                        date:'yyyy'}}</label></label></th>
+                            <th colspan="4" style="text-align: justify;">Mobile Service Profit and Loss</th>
+                        </tr>
+                        <tr class="bdr-btm">
+                            <td colspan="6" class="text-center "></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <ng-container *ngIf="ExpensesBlock && ExpensesBlock.length > 0;else NoExpense">
+                            <ng-container *ngFor="let income of ExpensesBlock; let i=index">
+                                <!-- <tr>
+                                    <th colspan="6">{{income.ASG_TYPE}}</th>
+                                </tr> -->
+                                <tr class="lightblue-bg" *ngIf="i<2">
+                                    <td class="store-text">{{income.ASG_TYPE}} </td>
+                                    <td class="store-text">Acct # </td>
+                                    <td class="store-text"> Name/Desc</td>
+                                    <td class="store-text">Sales</td>
+                                    <td class="store-text">Gross</td>
+                                    <td class="store-text">GP% </td>
+                                </tr>
+                                <ng-container *ngFor="let dept of income.subdata;let j=index">
+                                    <tr
+                                        [ngStyle]="{'font-family':dept.ASG_Department!='Total' ? 'FaktPro-Normal':'FaktPro-Bold'}">
+                                        <!-- <td colspan="4" class="text-bold">{{dept.dept}} </td> -->
+
+                                        <td *ngIf="dept.ASG_Department!='Total'"> {{dept.ASG_Department}} </td>
+                                        <td *ngIf="dept.ASG_Department!='Total'"> {{ dept.act ? dept.act : '-'}} </td>
+                                        <td [attr.colspan]="dept.ASG_Department!='Total' ? 1 : 3"
+                                            [ngStyle]="{'text-align':dept.ASG_Department!='Total' ? 'left':'center'}">
+                                            {{dept.ASG_NAME ? dept.ASG_NAME : '-'}} </td>
+                                        <td style="padding-left: 0.2rem !important;">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                ( dept.saleamt == null || dept.saleamt == 0 || dept.saleamt == undefined
+                                                ?
+                                                '&nbsp;' :
+                                                '$' )}}
+                                                <span> {{
+                                                    ( dept.saleamt == null || dept.saleamt == 0 || dept.saleamt ==
+                                                    undefined ? '-' :
+                                                    dept.saleamt | number:'1.0-0' )}} </span>
+                                            </span>
+                                        </td>
+                                        <td style="padding-left: 0.2rem !important;">
+                                            <span class="d-flex " [ngClass]="{'setPerens justify-content-end' : dept.Gross < 0 && income.ASG_TYPE == 'Selling Expenses' , 'justify-content-between' : dept.Gross == 0 || dept.Gross == null || income.ASG_TYPE != 'Selling Expenses' }">
+                                                {{
+                                                ( dept.Gross == null || dept.Gross == 0 || dept.Gross == undefined ?
+                                                '&nbsp;' :
+                                                '$' )}}
+                                                <span > {{
+                                                    ( dept.Gross == null || dept.Gross == 0 || dept.Gross == undefined ?
+                                                    '-' :
+                                                    (income.ASG_TYPE == 'Selling Expenses' ? (dept.Gross*-1) : dept.Gross ) | number:'1.0-0' )}} </span>
+                                            </span>
+                                        </td>
+                                        <td style="padding-left: 0.2rem !important;">
+                                            <span class="d-flex justify-content-between"
+                                                *ngIf="income.ASG_TYPE == 'Income'">
+                                                {{
+                                                ( dept.GP == null || dept.GP == 0 || dept.GP ==
+                                                undefined ? '&nbsp;' :
+                                                '&nbsp;' )}}
+                                                <span> {{
+                                                    ( dept.GP == null || dept.GP == 0 || dept.GP ==
+                                                    undefined ? '-' :
+                                                    (dept.GP | number:'1.1-1') + '%' ) }}</span>
+                                            </span>
+
+                                            <span class="d-flex justify-content-between"
+                                                *ngIf="income.ASG_TYPE != 'Income'">
+                                                {{getGP(dept.Gross) ? '&nbsp;' : '-'}}
+                                                <span> {{getGP(dept.Gross) ? (getGP(dept.Gross) | number:'1.1-1')+'%' : '-'}} </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+
+                                </ng-container>
+                            </ng-container>
+
+                        </ng-container>
+                        <ng-template #NoExpense>
+                            <tr>
+                                <td colspan="6" *ngIf="ExpensesBlockNoData== ''">
+                                 <div 
+                                            class="graph-loader d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                </td>
+                                <td colspan="6" *ngIf="ExpensesBlockNoData != ''"
+                                    style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
+                                    <label>{{ExpensesBlockNoData}}</label>
+                                </td>
+                            </tr>
+                        </ng-template>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+   
+    </div>
+</main>

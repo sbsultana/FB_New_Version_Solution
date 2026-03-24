@@ -808,6 +808,7 @@ export class Dashboard {
       }
     }
   }
+
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
     let storeNames: any = [];
@@ -1549,10 +1550,10 @@ export class Dashboard {
             (res: any) => {
               console.log('Response:', res);
               if (res.status === 200) {
-               
+
                 this.toast.success(res.response);
               } else {
-                
+
                 this.toast.show('Invalid Details.', 'danger', 'Error');
               }
             },
@@ -1575,7 +1576,67 @@ export class Dashboard {
       type: theBlob.type,
     });
   };
+ getSelectedStoreNames(): string {
+    if (!this.storeIds || this.storeIds.length === 0) return '';
 
+    const ids = this.storeIds.toString().split(',');
+
+    const selectedStores = this.stores.filter((s: any) =>
+      ids.includes(s.ID.toString())
+    );
+
+    return selectedStores.map((s: any) => s.storename).join(', ');
+  }
+  getReportFilters(): { title: string; filters: any[] } {
+    return {
+      title: 'Expense Trend',
+      filters: [
+        {
+          label: 'Store',
+          value: this.getSelectedStoreNames() || 'All Stores'
+        },
+        {
+          label: 'Group',
+          value: this.groupName || ''
+        },
+        {
+          label: 'Department',
+          value: this.Filter && this.Filter.length
+            ? this.Filter.join(', ')
+            : 'All'
+        },
+        {
+          label: 'Month',
+          value: this.datepipe.transform(this.currentMonth, 'MMMM yyyy')
+        }
+      ]
+    };
+  }
+  addExcelFiltersSection(worksheet: any): number {
+    let rowCount = 0;
+
+    const report = this.getReportFilters();
+
+    /*  TITLE (LEFT ALIGNED) */
+    const titleRow = worksheet.addRow([report.title]);
+    titleRow.font = { bold: true, size: 14 };
+    worksheet.mergeCells(`A${rowCount + 1}:G${rowCount + 1}`);
+    titleRow.alignment = { horizontal: 'left', vertical: 'middle' };
+    rowCount++;
+
+    /* FILTERS */
+    report.filters.forEach((filter: any) => {
+      const row = worksheet.addRow([`${filter.label}:`, filter.value]);
+      row.getCell(1).font = { bold: true };
+      rowCount++;
+    });
+
+    /* SPACE */
+    worksheet.addRow([]);
+    rowCount++;
+
+    return rowCount;
+  }
   exportToExcel() {
     const FSDetailsData = [...this.filteredETdetailsData];
     const FSSubDetailsMap = this.FSSubDetailsMap;
@@ -2311,10 +2372,10 @@ export class Dashboard {
             (res: any) => {
               console.log('Response:', res);
               if (res.status === 200) {
-              
+
                 this.toast.success(res.response);
               } else {
-               
+
                 this.toast.show('Invalid Details.', 'danger', 'Error');
               }
             },

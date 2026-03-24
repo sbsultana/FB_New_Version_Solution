@@ -125,6 +125,13 @@ export class Dashboard {
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
     }
+        if (this.shared.common.groupsandstores.length > 0) {
+      this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+      this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+      this.getStoresandGroupsValues()
+    }
     if (localStorage.getItem('stime') != null) {
       let stime = localStorage.getItem('stime');
       if (stime != null && stime != '') {
