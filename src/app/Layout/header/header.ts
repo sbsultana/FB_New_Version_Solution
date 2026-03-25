@@ -137,6 +137,7 @@ export class Header {
       this.afterUserLoad();
       this.getGruopsandStores();
       this.getGruopsandStoresAll();
+      this.getMobileStores();
       this.ready.emit();
 
       return;
@@ -436,6 +437,37 @@ export class Header {
 
         }
       })
+  }
+
+    getMobileStores() {
+    const obj = {
+      "userid": JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
+    };
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresListMobileServiceGL', obj)
+      .subscribe((res: any) => {
+        //console.log(res.response);
+        if (res.status == 200) {
+          let data = res.response
+          let withoutreduce = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          this.shared.common.MobileServiceGL = res.response
+          const obj = {
+            storesData: this.shared.common.MobileServiceGL
+          };
+          this.shared.api.setMobileService({ obj: obj });
+          console.log(this.shared.common.MobileServiceGL, obj);
+
+        }
+      });
   }
 
   @Input() title!: string;

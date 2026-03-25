@@ -54,6 +54,13 @@ export class Api {
     obj: '',
   });
 
+  private ReconServiceLaborStores = new BehaviorSubject<any>({
+    obj: '',
+  });
+  private mobileservicestrs = new BehaviorSubject<any>({
+    obj: '',
+  });
+
   constructor(public http: HttpClient) { }
 
   postmethod(endpoint: string, obj: object): Observable<any> {
@@ -279,7 +286,19 @@ export class Api {
   getAccountingAllStores() {
     return this.accouningreconstores.asObservable();
   }
+  setReconServiceLaborStores(data: any) {
+    this.ReconServiceLaborStores.next(data);
+  }
+  getReconServiceLaborStores() {
+    return this.ReconServiceLaborStores.asObservable();
+  }
 
+  setMobileService(data: any) {
+    this.mobileservicestrs.next(data);
+  }
+  getMobileService() {
+    return this.mobileservicestrs.asObservable();
+  }
 
   headermenu(roleId: any) {
     var httpOptions = {

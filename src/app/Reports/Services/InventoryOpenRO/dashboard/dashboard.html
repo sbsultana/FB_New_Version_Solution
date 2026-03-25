@@ -61,15 +61,14 @@
                         <div class="timeframe" *ngIf="activePopover === 1">
                             <app-date-range-picker [Dates]="Dates"
                                 (updatedDates)="updatedDates($event)"></app-date-range-picker>
-                        </div>
-                        <div class="dropdown cavender-dd" *ngIf="DateType == 'Overall'">
-                            <!-- <h3 class="m-0 mt-1 p-0 pop">Age</h3> -->
-                            <ngx-slider [(value)]="AgeFrom" [(highValue)]="AgeTo" [options]="optionProx"></ngx-slider>
-                            <h2 style="text-align: center;font-size: .9rem; font-family: 'Roboto';">Age range
-                                between minimum to maximum</h2>
 
+                            <div class="age-range" *ngIf="DateType == 'Overall'">
+                                <ngx-slider [(value)]="AgeFrom" [(highValue)]="AgeTo"
+                                    [options]="optionProx"></ngx-slider>
+                                <h2 style="text-align: center;font-size: .9rem; font-family: 'Roboto';">Age range
+                                    between minimum to maximum</h2>
+                            </div>
                         </div>
-
                     </div>
 
                     <div class="dropdown">
@@ -93,20 +92,21 @@
                             </div>
                         </div>
                     </div>
-                   
+
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(5)">
-                            Inventory Type <span class="light-font">( {{inventory=='N' ? 'New' : (inventory =='U' ? 'Used' : inventory) }}
+                            Inventory Type <span class="light-font">( {{inventory=='N' ? 'New' : (inventory =='U' ?
+                                'Used' : inventory) }}
                                 )</span>
                             <span class="arrow"></span>
                         </button>
 
                         <div class="timeframe" *ngIf="activePopover === 5">
                             <div class="date-filter-card mt-2">
-                               <button class="outline-button" (click)="multipleorsingle('I','All')"
+                                <button class="outline-button" (click)="multipleorsingle('I','All')"
                                     [ngClass]="{'active':inventory.indexOf('All')>=0, 'inactive':inventory.indexOf('All')<0}">All
-                                    </button>
+                                </button>
                                 <button class="outline-button" (click)="multipleorsingle('I','N')"
                                     [ngClass]="{'active':inventory.indexOf('All')>=0 || inventory.indexOf('N')>=0, 'inactive':inventory.indexOf('N')<0 && inventory.indexOf('All')<0 }">New</button>
                                 <button class="outline-button" (click)="multipleorsingle('I','U')"
@@ -137,7 +137,7 @@
                             </div>
                         </div>
                     </div>
-                
+
 
                     <!-- Apply Button -->
                     <div class="dropdown">
@@ -146,11 +146,11 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-triple-header inventoryopenro-tbl">
                 <table class="table mb-0 w-100">
-                   <thead>
+                    <thead>
                         <tr>
-                            <th class="text-center bg-white"><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
+                            <th class="text-center"><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
                                     |date:'MMMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                         {{ToDate
                                         |date:'MMMM'}} </span>
@@ -159,13 +159,9 @@
                                     All Open RO's
                                 </span>
                             </th>
-                            <th class="spacer"></th>
                             <th colspan="2" class="bdr-rt"> Open RO </th>
-                            <th class="spacer"></th>
                             <th colspan="4" class="bdr-rt"> Labor </th>
-                            <th class="spacer"></th>
                             <th colspan="4" class="bdr-rt"> Parts </th>
-                            <th class="spacer"></th>
                             <th colspan="2"></th>
                         </tr>
                         <tr class="bdr-btm">
@@ -181,13 +177,13 @@
                                 </span>
                                 <span *ngIf="FromDate == '' && ToDate == ''">&nbsp;</span>
                             </th>
-                            <th class="spacer"></th>
+
                             <!-- <th></th> -->
                             <th (click)="sort('Repair_Orders',ServiceData)" style="cursor: pointer;" class="bdr-rt"
                                 class="bdr-rt">Qty</th>
                             <th (click)="sort('Total_Hours',ServiceData)" style="cursor: pointer;" class="bdr-rt">Hours
                             </th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('laborsale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
                                 Sales</th>
                             <th (click)="sort('laborcost',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
@@ -196,7 +192,7 @@
                                 Discount</th>
                             <th (click)="sort('laborgross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Labor
                                 Gross</th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('PartsSale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
                                 Sales</th>
                             <th (click)="sort('PartsCost',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
@@ -205,7 +201,7 @@
                                 Discount</th>
                             <th (click)="sort('partsgross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Parts
                                 Gross</th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('TotalSale',ServiceData)" style="cursor: pointer;" class="bdr-rt">Total
                                 Sales</th>
                             <th (click)="sort('Total_Gross',ServiceData)" style="cursor: pointer;" class="bdr-rt">Total
@@ -214,20 +210,20 @@
                     </thead>
                     <tbody [ngClass]="{'hidden': NoData == true }">
                         <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
-                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': (ServiceInfo.Dealer === '-' && selectedDataGrouping.length >= 2) , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'lightblue-bg': (ServiceInfo.Dealer === '-' && selectedDataGrouping.length >= 2) , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
                                 [id]="'DV_'+i">
                                 <td
-                                    [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL' ? 'none':'visible' , 'background-color':ServiceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL' ? 'none':'visible'}">
                                     <span [id]="'D_'+i"
                                         title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
                                         (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')"
-                                        class="layer1">
+                                        class="layer1 cursor-pointer">
                                         {{(ServiceInfo.data1 == undefined || ServiceInfo.data1 == '' ? '-' : (
                                         (ServiceInfo.data1.toString() |
                                         slice:0:22) +
                                         (ServiceInfo.data1.toString().length > 22 ? '...' : '') ))}} </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody2"
                                     [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL' ? 'none':'visible'}"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders),pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL'}"
@@ -238,7 +234,7 @@
                                 <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Hours)}">{{
                                     ServiceInfo.Total_Hours == 0 || ServiceInfo.Total_Hours == null ? '-' :
                                     ServiceInfo.Total_Hours |number:'1.2-2' }}</td>
-                                <th class="spacer"></th>
+
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.laborsale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.laborsale == 0 || ServiceInfo.laborsale == null ? '' :
@@ -282,7 +278,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(ServiceInfo.PartsSale)}"><span
                                         class="d-flex justify-content-between">
                                         {{
@@ -315,7 +311,7 @@
                                             (ServiceInfo.partsgross == 0 || ServiceInfo.partsgross == null ? '-' :
                                             ServiceInfo.partsgross |number:'1.0-0') }}</span></span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody19" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalSale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.TotalSale == 0 || ServiceInfo.TotalSale == null ? '' :
@@ -336,8 +332,8 @@
                                 <td>
                                     &nbsp;
                                 </td>
-                                <td class="spacer"></td>
-                                <td colspan="15" style="padding: 2px 1px !important;">
+
+                                <td colspan="15"  style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                     <app-inventory-open-rodetails
                                         [RODetailsObjectMain]="RODetailsObjectMain"></app-inventory-open-rodetails>
                                 </td>
@@ -354,7 +350,7 @@
                                             '' ? '--' : ( (dt2.data2.toString() | slice:0:15) +
                                             (dt2.data2.toString().length > 15 ? '...' : '') ))}} </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.Repair_Orders)}"
                                         class="pointer" [id]="'DN_'+k"
                                         (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo)">{{
@@ -363,7 +359,7 @@
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.Total_Hours)}">{{
                                         dt2.Total_Hours == 0 || dt2.Total_Hours == null ? '-' :
                                         dt2.Total_Hours }}</td>
-                                    <td class="spacer"></td>
+
                                     <td [ngClass]="{ negative: !inTheGreen(dt2.laborsale)}"><span
                                             class="d-flex justify-content-between"> {{
                                             (dt2.laborsale == 0 || dt2.laborsale == null ? '' :
@@ -407,7 +403,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody6" [ngClass]="{ negative: !inTheGreen(dt2.PartsSale)}"><span
                                             class="d-flex justify-content-between">
                                             {{
@@ -440,7 +436,7 @@
                                                 (dt2.partsgross == 0 || dt2.partsgross == null ? '-' :
                                                 dt2.partsgross |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody19" [ngClass]="{ negative: !inTheGreen(dt2.TotalSale)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt2.TotalSale == 0 || dt2.TotalSale == null ? '' :
@@ -461,8 +457,8 @@
                                     <td>
                                         &nbsp;
                                     </td>
-                                    <td class="spacer"></td>
-                                    <td colspan="15" style="padding: 2px 1px !important;">
+
+                                    <td colspan="15"  style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                         <app-inventory-open-rodetails
                                             [RODetailsObjectMain]="RODetailsObjectMain"></app-inventory-open-rodetails>
                                     </td>
@@ -473,7 +469,7 @@
                     <tbody *ngIf="NoData" style="pointer-events:none">
                         <tr>
                             <td></td>
-                            <td class="spacer"></td>
+
                             <td colspan="15" style="color: black;text-align: center !important;">No Records Found</td>
                         </tr>
                     </tbody>
@@ -481,6 +477,6 @@
             </div>
         </div>
 
-      
+
     </div>
 </main>

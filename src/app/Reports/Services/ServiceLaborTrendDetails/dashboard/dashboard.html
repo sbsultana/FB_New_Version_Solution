@@ -71,20 +71,23 @@
                 </div>
             </div>
         </div>
-        <div class="scorecard-single-header WholesaleGrossGroup-tbl w-75">
+        <div class="scorecard-multi-header servicelabourtrend-tbl">
             <table class="table mb-0 w-100">
-                <thead style="text-transform: uppercase;">
-                    <tr></tr>
+                <thead>
                     <tr>
-                        <th class="lightblue-bg">{{ServiceTrendingKeys[1]}}<span> -
+                        <th>{{ServiceTrendingKeys[1]}}<span> -
                             </span>{{ServiceTrendingKeys[ServiceTrendingKeys.length - 1]}}
                         </th>
-                        <th class="spacer"></th>
+                        <th class="bdr-rt"></th>
+                        <th colspan="16"></th>
+                    </tr>
+                    <tr>
+                        <th>Store
+                        </th>
                         <th class="bdr-rt">Graph</th>
-                        <th class="spacer"></th>
                         <th *ngFor="let date of ServiceTrendingKeys;let i=index">
-                            <span *ngIf="date=='PACE'">{{Month | date:'MMM' }}</span>
-                            <span>{{ date}}</span>
+                            <span *ngIf="date=='PACE'">{{ Month | date:' MMM ' }}</span>
+                            <span>{{ date }}</span>
                         </th>
                     </tr>
                 </thead>
@@ -93,23 +96,20 @@
                         <ng-container *ngIf="ServiceLaborTrendData.length > 0; else NoServiceLaborTrendData">
                             <ng-container *ngFor="let STR of ServiceLaborTrendData; let j=index">
                                 <tr class="lightblue-bg">
-                                    <td><span class="dlrship" style="text-transform: uppercase;"> {{(STR?.AST_DEALERNAME
+                                    <td><span class="dlrship"> {{(STR?.AST_DEALERNAME
                                             == "" ||
                                             STR?.AST_DEALERNAME == null ? '' : STR?.AST_DEALERNAME)}}
                                         </span></td>
-                                    <td class="spacer"></td>
                                     <td></td>
-                                    <td class="spacer"></td>
                                     <td colspan="14"></td>
                                 </tr>
                                 <ng-container *ngFor="let subdata of STR?.sub; let x = index">
                                     <ng-container *ngFor="let subcat of subdata.subcategory;let i=index">
                                         <tr *ngIf="i==0"
-                                            [style.fontFamily]="STR.AST_DEALERNAME === 'Report Totals' ? 'FaktPro-Bold' : 'FaktPro-Normal'"
-                                            [ngClass]="{'total-ast_paytype': subdata.ast_paytype === 'Totals'}"
-                                            class="sub-title">
-                                            <td>
-                                                <span class="dlrship px-3" title="{{subcat.ast_paytype}}"
+                                            [style.fontWeight]="STR.AST_DEALERNAME === 'Report Totals' ? '700' : '700'"
+                                            [ngClass]="{'total-ast_paytype': subdata.ast_paytype === 'Totals'}">
+                                            <td class="font-blue text-bold">
+                                                <span class="dlrship px-2" title="{{subcat.ast_paytype}}"
                                                     style="cursor: pointer;">
                                                     {{
                                                     subcat.ast_paytype === 'Totals' ? 'TOTAL' :
@@ -123,9 +123,7 @@
                                                     }}
                                                 </span>
                                             </td>
-                                            <td class="spacer"></td>
                                             <td></td>
-                                            <td class="spacer"></td>
                                             <td colspan="14"></td>
                                         </tr>
                                         <tr>
@@ -136,13 +134,11 @@
                                                     'GP%' : subcat.variable) }}
                                                 </span>
                                             </td>
-                                            <td class="spacer"></td>
-                                            <td style="text-align: center !important; cursor: pointer;">
-                                                <img width="17px" src="images/LineChart_Icon2.png"
-                                                    class="ms-2 HideItems" style="cursor: pointer;" title="Show Graph"
+                                            <td class="text-center">
+                                                <img width="17px" src="images/LineChart_Icon2.png" class="HideItems"
+                                                    style="cursor: pointer;" title="Show Graph"
                                                     (click)="openGraph(Month,ServiceTrendingKeys,subcat,'MonthSummary')">
                                             </td>
-                                            <td class="spacer"></td>
                                             <ng-container *ngFor="let key of ServiceTrendingKeys">
                                                 <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }" *ngIf="subcat.variable === 'RO COUNT' || subcat.variable === 'HOURS' || subcat.variable === 'HOURS / RO'
                                      || subcat.variable === 'GP' || subcat.variable === 'VIN COUNT'">
@@ -171,11 +167,6 @@
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <th class="spacer"></th>
-                                <td colspan="16">&nbsp;</td>
-                            </tr>
                         </ng-container>
                     </ng-container>
                     <ng-template #NoServiceLaborTrendData>

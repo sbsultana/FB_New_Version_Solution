@@ -58,25 +58,33 @@
                                 selectedSubType.length }} )</span>
                             <span class="arrow"></span>
                         </button>
-                        <div class="timeframe" *ngIf="activePopover === 4">
-                            <div class="loading" *ngIf="spinnerLoader">
-                                <div class="loader" style="margin-top: -2rem;margin-left: -5rem;"></div>
-                            </div>
-                            <div class="date-filter-card mt-2" *ngFor="let s of subTypeDetails;let i=index">
-                                <div class="btn-grid">
-                                    <button class="outline-button" style="pointer-events: none;cursor: default;"
-                                        title="{{s.Dept}}">{{s.Dept}}</button>
+                        <div class="timeframe my-2" *ngIf="activePopover === 4"
+                            style="max-height: 80vh;overflow-y: auto;">
+
+                            <div *ngFor="let s of subTypeDetails; let i = index">
+                                <div class="date-filter-card btn-subtype">
+
+                                    <span class="dept-heading" title="{{s.Dept}}">
+                                        {{ s.Dept }}
+                                    </span>
+
+                                    <button class="outline-button" (click)="AllSubType(s)" [ngClass]="{
+              'active': mainSubType.indexOf(s.Dept) >= 0,
+              'inactive': mainSubType.indexOf(s.Dept) < 0
+            }">
+                                        All Sub Type
+                                    </button>
+
+                                    <button class="outline-button" *ngFor="let sub of s.SubData" [ngClass]="{
+              'active': selectedSubType.indexOf(sub.SubtypeParam) >= 0,
+              'inactive': selectedSubType.indexOf(sub.SubtypeParam) < 0
+            }" (click)="multipleorsingle('ST', sub.SubtypeParam, s)" title="{{ sub.Details }}">
+                                        <span ngbTooltip="{{sub.Details}}">{{ sub.Details }}</span>
+                                    </button>
+
                                 </div>
-                                <button class="outline-button" (click)="AllSubType(s)"
-                                    [ngClass]="{          'active': mainSubType?.indexOf(s.Dept) >= 0,          'inactive': mainSubType?.indexOf(s.Dept) < 0        }">
-                                    All Sub Type
-                                </button>
-                                <button class="outline-button" *ngFor="let sub of s.SubData"
-                                    [ngClass]="{          'active': selectedSubType?.indexOf(sub.SubtypeParam) >= 0,          'inactive': selectedSubType?.indexOf(sub.SubtypeParam) < 0        }"
-                                    (click)="multipleorsingle('ST', sub.SubtypeParam, s)" [title]="sub.Details">
-                                    {{ sub.Details }}
-                                </button>
                             </div>
+
                         </div>
                     </div>
                     <div class="dropdown">
@@ -118,29 +126,30 @@
                     </div>
                 </div>
             </div>
-            <div class="scorecard-multi-header lendersummary-tbl">
-                <table class="table mb-0 w-100" *ngIf="DummyReportType === 'T'">
+            <div class="scorecard-multi-header grossprofitperhour-tbl">
+                <table class="table mb-0 w-100 transactional-tbl" *ngIf="DummyReportType === 'T'">
                     <thead>
                         <tr>
-                            <th colspan="5" class="bdr-rt"> Store Totals</th>
+                            <th class="bdr-rt"></th>
+                            <th colspan="4" class="bdr-rt">Store Totals</th>
                             <!-- <ng-container *ngFor="let heads of PayType;let i=index">
-                                            <th class="spacer"></th>
+                                            
                                             <th colspan="4" class="bdr-rt">{{heads}}</th>
                                         </ng-container> -->
                             <ng-container *ngIf="duplicatePaytype.indexOf('C')>=0">
-                                <th class="spacer"></th>
+
                                 <th colspan="4" class="bdr-rt">Customer Pay</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('W')>=0">
-                                <th class="spacer"></th>
+
                                 <th colspan="4" class="bdr-rt">Warranty</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('EW')>=0">
-                                <th class="spacer"></th>
+
                                 <th colspan="4" class="bdr-rt">Extended Warranty</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('I')>=0">
-                                <th class="spacer"></th>
+
                                 <th colspan="4" class="bdr-rt">Internal</th>
                             </ng-container>
                         </tr>
@@ -152,35 +161,35 @@
                             <!-- <th>Actual Time</th> -->
                             <th class="bdr-rt"> Gp per Hour</th>
                             <!-- <ng-container *ngFor="let heads of PayType;let i=index">
-                                            <th class="spacer"></th>
+                                            
                                             <th class="bdr-rt">Hours</th>
                                             <th class="bdr-rt">Gross Profit</th>
                                             <th class="bdr-rt">Discount</th>
                                             <th class="bdr-rt">Gp per Hour</th>
                                         </ng-container> -->
                             <ng-container *ngIf="duplicatePaytype.indexOf('C')>=0">
-                                <th class="spacer"></th>
+
                                 <th class="bdr-rt">Hours</th>
                                 <th class="bdr-rt">Gross Profit</th>
                                 <th class="bdr-rt">Discount</th>
                                 <th class="bdr-rt">Gp per Hour</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('W')>=0">
-                                <th class="spacer"></th>
+
                                 <th class="bdr-rt">Hours</th>
                                 <th class="bdr-rt">Gross Profit</th>
                                 <th class="bdr-rt">Discount</th>
                                 <th class="bdr-rt">Gp per Hour</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('EW')>=0">
-                                <th class="spacer"></th>
+
                                 <th class="bdr-rt">Hours</th>
                                 <th class="bdr-rt">Gross Profit</th>
                                 <th class="bdr-rt">Discount</th>
                                 <th class="bdr-rt">Gp per Hour</th>
                             </ng-container>
                             <ng-container *ngIf="duplicatePaytype.indexOf('I')>=0">
-                                <th class="spacer"></th>
+
                                 <th class="bdr-rt">Hours</th>
                                 <th class="bdr-rt">Gross Profit</th>
                                 <th class="bdr-rt">Discount</th>
@@ -192,125 +201,121 @@
                         <tbody>
                             <tr *ngFor="let sgp of ServiceData ; let i=index"
                                 [ngClass]="{'divBold':sgp.Store_Name === 'REPORTS TOTAL'  }">
-                                <td class="alignleft">{{sgp.Store_Name == 0 || sgp.Store_Name == null ? '-'
+                                <td class="text-start">{{sgp.Store_Name == 0 || sgp.Store_Name == null ? '-'
                                     :sgp.Store_Name }}</td>
-                                <td class="alignleft">{{sgp.Hours == 0 || sgp.Hours == null ? '-' :sgp.Hours
+                                <td class="text-end">{{sgp.Hours == 0 || sgp.Hours == null ? '-' :sgp.Hours
                                     |number:'1.2-2'}}</td>
-                                <td class="alignleft">
+                                <td class="text-end">
                                     <!-- {{sgp.GrossProfit == 0 || sgp.GrossProfit == null ? '-' :sgp.GrossProfit | currency:'USD':'symbol':'1.0-0'}} -->
-                                    <span class="d-flex justify-content-between"> <span> {{
-                                            (sgp.GrossProfit == 0 || sgp.GrossProfit == null ?
-                                            '-' :
-                                            sgp.GrossProfit | currency:'USD':'symbol':'1.0-0')
-                                            }}</span></span>
+                                    {{
+                                    (sgp.GrossProfit == 0 || sgp.GrossProfit == null ?
+                                    '-' :
+                                    sgp.GrossProfit | currency:'USD':'symbol':'1.0-0')
+                                    }}
                                 </td>
-                                <td class="alignleft" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
                                     <!-- {{sgp.Discount == 0 || sgp.Discount == null ? '-' :sgp.Discount | currency:'USD':'symbol':'1.0-0' }} -->
-                                    <span class="d-flex justify-content-between">
-                                        <span> {{
-                                            (sgp.Discount == 0 || sgp.Discount == null ?
-                                            '-' :
-                                            sgp.Discount | currency:'USD':'symbol':'1.0-0') }}</span></span>
+                                    {{
+                                    (sgp.Discount == 0 || sgp.Discount == null ?
+                                    '-' :
+                                    sgp.Discount | currency:'USD':'symbol':'1.0-0') }}
                                 </td>
-                                <!-- <td class="alignleft">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
+                                <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
                                                 :sgp.actualtime |number:'1.2-2'}}</td> -->
-                                <td class="alignleft">{{sgp.GP_Hour == 0 || sgp.GP_Hour == null ? '-'
+                                <td class="text-end">{{sgp.GP_Hour == 0 || sgp.GP_Hour == null ? '-'
                                     :sgp.GP_Hour |number:'1.2-2'}}</td>
                                 <ng-container>
                                     <ng-container *ngIf="duplicatePaytype.indexOf('C')>=0">
-                                        <td class="spacer"></td>
-                                        <td class="alignleft">{{sgp.CP[0].HoursCP == 0 || sgp.CP[0].HoursCP
+
+                                        <td class="text-end">{{sgp.CP[0].HoursCP == 0 || sgp.CP[0].HoursCP
                                             == null
                                             ? '-'
                                             :sgp.CP[0].HoursCP
                                             |number:'1.2-2'}}</td>
-                                        <td class="alignleft">
-                                            <span class="d-flex justify-content-between"> <span> {{
-                                                    (sgp.CP[0].GrossProfitCP == 0 || sgp.CP[0].GrossProfitCP
-                                                    ==
-                                                    null
-                                                    ?
-                                                    '-' :
-                                                    sgp.CP[0].GrossProfitCP |
-                                                    currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end">
+                                            {{
+                                            (sgp.CP[0].GrossProfitCP == 0 || sgp.CP[0].GrossProfitCP
+                                            ==
+                                            null
+                                            ?
+                                            '-' :
+                                            sgp.CP[0].GrossProfitCP |
+                                            currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <td class="alignleft" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
-                                            <span class="d-flex justify-content-between">
-                                                <span> {{
-                                                    (sgp.CP[0].DiscountCP == 0 || sgp.CP[0].DiscountCP ==
-                                                    null ?
-                                                    '-' :
-                                                    sgp.CP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                            {{
+                                            (sgp.CP[0].DiscountCP == 0 || sgp.CP[0].DiscountCP ==
+                                            null ?
+                                            '-' :
+                                            sgp.CP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <!-- <td class="alignleft">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
+                                        <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
                                                     :sgp.actualtime |number:'1.2-2'}}</td> -->
-                                        <td class="alignleft">{{sgp.CP[0].GP_Hourcp == 0 ||
+                                        <td class="text-end">{{sgp.CP[0].GP_Hourcp == 0 ||
                                             sgp.CP[0].GP_Hourcp ==
                                             null ? '-'
                                             :sgp.CP[0].GP_Hourcp |number:'1.2-2'}}</td>
                                     </ng-container>
                                     <ng-container *ngIf="duplicatePaytype.indexOf('W')>=0">
-                                        <td class="spacer"></td>
-                                        <td class="alignleft">{{sgp.WP[0].HoursCP == 0 || sgp.WP[0].HoursCP
+
+                                        <td class="text-end">{{sgp.WP[0].HoursCP == 0 || sgp.WP[0].HoursCP
                                             ==
                                             null
                                             ? '-'
                                             :sgp.WP[0].HoursCP
                                             |number:'1.2-2'}}</td>
-                                        <td class="alignleft">
-                                            <span class="d-flex justify-content-between"> <span> {{
-                                                    (sgp.WP[0].GrossProfitCP == 0 || sgp.WP[0].GrossProfitCP
-                                                    ==
-                                                    null
-                                                    ?
-                                                    '-' :
-                                                    sgp.WP[0].GrossProfitCP |
-                                                    currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end">
+                                            {{
+                                            (sgp.WP[0].GrossProfitCP == 0 || sgp.WP[0].GrossProfitCP
+                                            ==
+                                            null
+                                            ?
+                                            '-' :
+                                            sgp.WP[0].GrossProfitCP |
+                                            currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <td class="alignleft" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
-                                            <span class="d-flex justify-content-between">
-                                                <span> {{
-                                                    (sgp.WP[0].DiscountCP == 0 || sgp.WP[0].DiscountCP ==
-                                                    null ?
-                                                    '-' :
-                                                    sgp.WP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                            {{
+                                            (sgp.WP[0].DiscountCP == 0 || sgp.WP[0].DiscountCP ==
+                                            null ?
+                                            '-' :
+                                            sgp.WP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <!-- <td class="alignleft">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
+                                        <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
     :sgp.actualtime |number:'1.2-2'}}</td> -->
-                                        <td class="alignleft">{{sgp.WP[0].GP_Hourcp == 0 ||
+                                        <td class="text-end">{{sgp.WP[0].GP_Hourcp == 0 ||
                                             sgp.WP[0].GP_Hourcp ==
                                             null ? '-'
                                             :sgp.WP[0].GP_Hourcp |number:'1.2-2'}}</td>
                                     </ng-container>
                                     <ng-container *ngIf="duplicatePaytype.indexOf('EW')>=0">
-                                        <td class="spacer"></td>
-                                        <td class="alignleft">{{sgp.EWP[0].HoursCP == 0 ||
+
+                                        <td class="text-end">{{sgp.EWP[0].HoursCP == 0 ||
                                             sgp.EWP[0].HoursCP
                                             ==
                                             null ? '-'
                                             :sgp.EWP[0].HoursCP |number:'1.2-2'}}</td>
-                                        <td class="alignleft">{{sgp.EWP[0].GrossProfitCP == 0 ||
+                                        <td class="text-end">{{sgp.EWP[0].GrossProfitCP == 0 ||
                                             sgp.EWP[0].GrossProfitCP
                                             ==
                                             null ? '-'
                                             :sgp.EWP[0].GrossProfitCP |number:'1.2-2'}}</td>
-                                        <td class="alignleft"
+                                        <td class="text-end"
                                             [ngClass]="{ negative: !inTheGreen(sgp.EWP[0].DiscountCP)}">
-                                            <span class="d-flex justify-content-between">
-                                                <span> {{
-                                                    (sgp.EWP[0].DiscountCP == 0 || sgp.EWP[0].DiscountCP ==
-                                                    null ?
-                                                    '-' :
-                                                    sgp.EWP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                            {{
+                                            (sgp.EWP[0].DiscountCP == 0 || sgp.EWP[0].DiscountCP ==
+                                            null ?
+                                            '-' :
+                                            sgp.EWP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <!-- <td class="alignleft">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
+                                        <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
 :sgp.actualtime |number:'1.2-2'}}</td> -->
-                                        <td class="alignleft">{{sgp.EWP[0].GP_Hourcp == 0 ||
+                                        <td class="text-end">{{sgp.EWP[0].GP_Hourcp == 0 ||
                                             sgp.EWP[0].GP_Hourcp ==
                                             null
                                             ? '-'
@@ -319,32 +324,31 @@
                                         </td>
                                     </ng-container>
                                     <ng-container *ngIf="duplicatePaytype.indexOf('I')>=0">
-                                        <td class="spacer"></td>
-                                        <td class="alignleft">{{sgp.IP[0].HoursCP == 0 || sgp.IP[0].HoursCP
+
+                                        <td class="text-end">{{sgp.IP[0].HoursCP == 0 || sgp.IP[0].HoursCP
                                             ==
                                             null ? '-'
                                             :sgp.IP[0].HoursCP |number:'1.2-2'}}</td>
-                                        <td class="alignleft">
-                                            <span class="d-flex justify-content-between"> <span> {{
-                                                    (sgp.IP[0].GrossProfitCP == 0 || sgp.IP[0].GrossProfitCP
-                                                    ==
-                                                    null
-                                                    ?
-                                                    '-' :
-                                                    sgp.IP[0].GrossProfitCP |
-                                                    currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end">
+                                            {{
+                                            (sgp.IP[0].GrossProfitCP == 0 || sgp.IP[0].GrossProfitCP
+                                            ==
+                                            null
+                                            ?
+                                            '-' :
+                                            sgp.IP[0].GrossProfitCP |
+                                            currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <td class="alignleft" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
-                                            <span class="d-flex justify-content-between">
-                                                <span> {{
-                                                    (sgp.IP[0].DiscountCP == 0 || sgp.IP[0].DiscountCP ==
-                                                    null ?
-                                                    '-' :
-                                                    sgp.IP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
-                                                    }}</span></span>
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                            {{
+                                            (sgp.IP[0].DiscountCP == 0 || sgp.IP[0].DiscountCP ==
+                                            null ?
+                                            '-' :
+                                            sgp.IP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
+                                            }}
                                         </td>
-                                        <td class="alignleft">{{sgp.IP[0].GP_Hourcp == 0 ||
+                                        <td class="text-end">{{sgp.IP[0].GP_Hourcp == 0 ||
                                             sgp.IP[0].GP_Hourcp ==
                                             null
                                             ? '-'
@@ -355,32 +359,32 @@
                             </tr>
                         </tbody>
                         <tbody *ngIf="NoData==true">
-                            <!-- ||result.length === 0" -->
                             <tr>
                                 <!-- <td colspan="2" style="border-right: none !important;"></td> -->
-                                <td colspan="5" style="border-right: none !important; text-align: center;">
-                                    No Records Found!!</td>
+                                <td colspan="25" style="border-right: none !important; text-align: center;">
+                                    No Records Found</td>
                             </tr>
                         </tbody>
                     </ng-container>
                 </table>
 
-                <table class="table mb-0 w-100" *ngIf="DummyReportType === 'G'">
+                <table class="table mb-0 w-100 gl-tbl" *ngIf="DummyReportType === 'G'">
                     <thead>
 
                         <tr>
-                            <th colspan="5" class="text-center">
+                            <th class="text-center"></th>
+                            <th colspan="4" class="text-center">
                                 Store Totals
                             </th>
                             <ng-container *ngIf="detailHeaders != undefined">
-                            <ng-container *ngIf="detailHeaders?.length > 0">
-                                <ng-container *ngFor="let header of detailHeaders">
-                                    <th class="spacer"></th>
-                                    <th colspan="2" class="text-center">
-                                        {{ header.ASg_Paytype }}
-                                    </th>
+                                <ng-container *ngIf="detailHeaders?.length > 0">
+                                    <ng-container *ngFor="let header of detailHeaders">
+
+                                        <th colspan="2" class="text-center">
+                                            {{ header.ASg_Paytype }}
+                                        </th>
+                                    </ng-container>
                                 </ng-container>
-                            </ng-container>
                             </ng-container>
 
                         </tr>
@@ -396,7 +400,7 @@
                             <ng-container *ngIf="detailHeaders != undefined">
                                 <ng-container *ngIf="detailHeaders?.length > 0">
                                     <ng-container *ngFor="let header of detailHeaders">
-                                        <th class="spacer"></th>
+
                                         <th>Hours</th>
                                         <th>Gross Profit</th>
 
@@ -412,7 +416,7 @@
                     <tbody *ngIf="ServiceData?.length > 0; else noDataBlock">
 
                         <tr *ngFor="let sgp of ServiceData"
-                            [ngClass]="{'fw-bold': sgp?.Store_Name === 'REPORTS TOTAL'}">
+                            [ngClass]="{'divBold': sgp?.Store_Name === 'REPORTS TOTAL'}">
                             <td>{{ sgp?.Store_Name ? sgp.Store_Name : '-' }}</td>
 
                             <td>
@@ -448,7 +452,7 @@
                             </td>
 
                             <ng-container *ngFor="let header of detailHeaders; let i = index">
-                                <td class="spacer"></td>
+
                                 <td>
                                     {{
                                     sgp?.Details?.[i]?.hourscp

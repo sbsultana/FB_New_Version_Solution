@@ -1,0 +1,157 @@
+.menu-popup {
+  width: 60%;
+  .header {
+    background: #ffffff;
+    border-radius: 20px 20px 0px 0px;
+    border-bottom: 2px solid #edf1f4;
+    position: relative;
+    padding: 0.7rem 2rem 0.7rem 4rem;
+    .close-btn {
+      color: #d4d4d4;
+      font-size: 1.2vw;
+      position: absolute;
+      right: 20px;
+    }
+    .title {
+      font-family: 'RobotoBold';
+      font-size: 1vw;
+      color: #444649;
+      line-height: 2rem;
+      .slash {
+        color: #33b3f3;
+        padding-right: 5px;
+      }
+    }
+  }
+  .footer {
+    border-top: 2px solid #e4e4e4;
+    // background-color: #eff3f6;
+    border-radius: 0px 0px 20px 20px;
+  }
+  button {
+    border-radius: 25px;
+    background-color: #ef5f23;
+    color: white;
+    font-family: 'Roboto';
+    font-size: 0.7rem;
+    border: none;
+    width: 100%;
+    text-transform: capitalize;
+  }
+  .btn-sm-save {
+    background-color: black;
+    width: 100px;
+  }
+  .btn-view {
+    background-color: black;
+    padding: .25rem;
+  }
+  .btn-save {
+    background-color: #ef5f23;
+    padding: .25rem
+  }
+  .cancel-txt {
+    text-align: center;
+    cursor: pointer;
+    color: #000 !important;
+    a {
+      text-decoration: none;
+      font-family: 'Roboto';
+      font-size: 0.6rem;
+      cursor: pointer;
+      color: #00000075;
+    }
+  }
+  .body {
+    background: #f5f9f9;
+    border-radius: 0px 0px 20px 20px;
+    background-color: #f5f9f7;
+    padding: 2rem 4rem 3rem 4rem;
+    .box {
+      height: 70vh;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      //    width: fit-content;
+    }
+    .data {
+      max-height: 50vh;
+      overflow: auto;
+    }
+    // .box>* {
+    // //    flex: 1 1 100px;
+    // }
+    .Enable {
+      color: black !important;
+      cursor: pointer;
+    }
+    .No_Display {
+      color: #f5f9f7;
+      pointer-events: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
+    .menu-list {
+      .list-group {
+        // border-left: 2px solid #33b3f3;
+        .list-group-item.active {
+          font-family: 'RobotoBold';
+          font-size: 0.8vw;
+          color: black;
+          background-color: transparent;
+          position: relative;
+          top: -7px;
+        }
+        .list-group-item {
+          font-family: 'Roboto';
+          font-size: 0.8vw;
+          color: #000;
+          background-color: transparent;
+          border: none;
+          padding: 0.2rem 0.6rem;
+        }
+        .list-group-item:last-child {
+          margin-bottom: 0rem !important;
+          margin-right: -2.5rem;
+          position: relative;
+          padding-bottom: 0rem !important;
+        }
+      }
+    }
+  }
+}
+select{
+  min-height: 2rem;
+  width: 16rem;
+  padding: 0.475rem;
+  border-radius: 12px;
+  background: #fff;
+  border: .5px solid #D9E7FF;
+  font-size: 0.875rem;
+  font-family: 'Roboto';
+  font-weight: 400;
+  color: #18181b;
+}
+.warrantyreceivables-tbl{
+    .table {
+
+        thead,
+        tbody {
+
+            th:nth-child(1),
+
+            td:nth-child(1) {
+                box-shadow:
+                    inset 0 0.4px 0 0 #e0edff,
+                    inset -3px 0 0 0 #e0edff,
+                    inset 0 -0.4px 0 0 #e0edff,
+                    inset 0.4px 0 0 0 #e0edff;
+            }
+
+        }
+    }
+}

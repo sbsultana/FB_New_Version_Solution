@@ -1,0 +1,55 @@
+.griddashboard {
+  margin-top: 100px;
+  text-align: center;
+  font-size: larger;
+  color: #000;
+}
+.divBold {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    font-family: 'Roboto' !important;
+
+    td {
+        img {
+            display: none;
+        }
+    }
+}
+
+.check-label {
+  font-size: .875rem;
+  color: #0554ef !important;
+  font-weight: 700;
+  font-family: 'Roboto';
+  line-height: 1.5rem;
+}
+
+.opcoddetracker-tbl {
+  .table {
+
+    thead,
+    tbody {
+
+      th:nth-child(1),
+      th:nth-child(2),
+      th:nth-child(4),
+      th:nth-child(11),
+
+      td:nth-child(1),
+      td:nth-child(2),
+      td:nth-child(4),
+      td:nth-child(11) {
+        box-shadow:
+          inset 0 0.4px 0 0 #e0edff,
+          inset -3px 0 0 0 #e0edff,
+          inset 0 -0.4px 0 0 #e0edff,
+          inset 0.4px 0 0 0 #e0edff;
+      }
+
+    }
+  }
+}

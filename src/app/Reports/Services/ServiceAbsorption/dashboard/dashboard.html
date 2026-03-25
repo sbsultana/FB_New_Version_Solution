@@ -31,15 +31,24 @@
 
                 </div>
             </div>
-            <div class="scorecard-multi-header lendersummary-tbl">
+            <div class="scorecard-triple-header serviceabsorption-tbl">
                 <table class="table mb-0 w-100">
-                      <thead>
+                    <thead>
                         <tr>
                             <th>
                                 <span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
-                                        |date:'MMMM'}} </span> </span><br>
+                                        |date:'MMMM'}} </span> </span>
+
+                            </th>
+                            <th colspan="4" style="cursor: pointer;" class="bdr-rt">Gross Profit</th>
+                            <th colspan="5" style="cursor: pointer;" class="bdr-rt">Selling Expenses</th>
+                            <th style="cursor: pointer;" class="bdr-rt"> Fixed <br> Absorption</th>
+
+                        </tr>
+                        <tr>
+                            <th class="bdr-rt">
                                 <span>{{DupFromDate |date:'dd'}} <span
                                         *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
@@ -50,18 +59,6 @@
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span>
                             </th>
-                            <th class="spacer"></th>
-                            <th colspan="4" style="cursor: pointer;" class="bdr-rt">Gross Profit</th>
-                            <th class="spacer"></th>
-                            <th colspan="5" style="cursor: pointer;" class="bdr-rt">Selling Expenses</th>
-                            <th class="spacer"></th>
-                            <th style="cursor: pointer;" class="bdr-rt"> Fixed <br> Absorption</th>
-
-                        </tr>
-                        <tr>
-                            <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">Location
-                            </th>
-                            <td class="spacer"></td>
                             <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Service
                                 Gross
                             </th>
@@ -71,7 +68,6 @@
                                 Body Gross</th>
                             <th class="bdr-rt" (click)="sort('Total_Gross')" style="cursor: pointer;">Total Gross
                             </th>
-                            <td class="spacer"></td>
 
                             <th class="bdr-rt" (click)="sort('Svc Exp')" style="cursor: pointer;">Service
                                 Exp
@@ -84,10 +80,9 @@
                                 Fixed Exp</th>
                             <th class="bdr-rt" (click)="sort('Total_EXP')" style="cursor: pointer;">Total Exp
                             </th>
-                            <td class="spacer"></td>
 
                             <th class="bdr-rt" (click)="sort('FixedAbsorptionPercent')" style="cursor: pointer;">
-                                
+
                             </th>
 
                         </tr>
@@ -96,7 +91,7 @@
                     <!-- [ngStyle]="{'pointer-events':path2 =='' && path3==''? 'visible':'none'}" -->
                     <tbody [ngClass]="{'hidden': NoData == true }">
                         <ng-container *ngFor="let SalesInfo of ServiceAbsorption; let i=index">
-                            <tr [ngClass]="{  'divBold': SalesInfo.dealername.toLowerCase() == 'report total'  }">
+                            <tr [ngClass]="{  'divBold text-uppercase': SalesInfo.dealername.toLowerCase() == 'report total'  }">
                                 <td style="pointer-events: none;">
                                     <span [id]="'D_'+i" title="{{SalesInfo.dealername}}">
                                         {{(SalesInfo.dealername == undefined ? '--' : ( (SalesInfo.dealername.toString()
@@ -104,7 +99,7 @@
                                         slice:0:22) +
                                         (SalesInfo.dealername.toString().length > 22 ? '...' : '') ))}} </span>
                                 </td>
-                                <td class="spacer"></td>
+
 
 
                                 <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Svc Gross'])}">
@@ -151,7 +146,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
+
 
                                 <td [ngClass]="{ negative: !inTheGreen(SalesInfo['Svc Exp'])}">
                                     <span class="d-flex justify-content-between">
@@ -206,9 +201,10 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
 
-                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(SalesInfo.FixedAbsorptionPercent)}">
+
+                                <td class="text-end"
+                                    [ngClass]="{ negative: !inTheGreen(SalesInfo.FixedAbsorptionPercent)}">
                                     {{ (SalesInfo.FixedAbsorptionPercent == 0 ||
                                     SalesInfo.FixedAbsorptionPercent == null ? '-' : SalesInfo.FixedAbsorptionPercent |
                                     number : '1.1-1'
@@ -224,6 +220,6 @@
                 </table>
             </div>
         </div>
-    
+
     </div>
 </main>

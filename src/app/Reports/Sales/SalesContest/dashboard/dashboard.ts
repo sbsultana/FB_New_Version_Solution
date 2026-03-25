@@ -57,7 +57,7 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+  DupDateType: any = 'MTD'
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -72,12 +72,12 @@ export class Dashboard {
     ]
   }
 
-    filterData: any = [
+  filterData: any = [
     { 'name': 'Units', 'id': 1 },
     { 'name': 'Gross', 'id': 2 },
   ]
 
-  filtertype:any=['Units']
+  filtertype: any = ['Units']
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -156,13 +156,13 @@ export class Dashboard {
   }
 
   datetype() {
-    if (this.DateType == 'PM') {
+    if (this.DupDateType == 'PM') {
       return 'SP';
     }
-    else if (this.DateType == 'C') {
+    else if (this.DupDateType == 'C') {
       return 'C'
     }
-    return this.DateType;
+    return this.DupDateType;
   }
   isDesc: boolean = false;
   column: string = '';
@@ -173,7 +173,8 @@ export class Dashboard {
     this.SalesContest = [];
     this.NoData = false;
     this.shared.spinner.show();
-
+    this.dupFiltertype = this.filtertype
+    this.DupDateType = this.DateType
     const obj = {
       "Stores": this.storeIds,
       "StartDate": this.FromDate,
@@ -209,13 +210,13 @@ export class Dashboard {
             this.NoData = true;
           }
         } else {
-          this.toast.show(res.status, 'danger','Error');
+          this.toast.show(res.status, 'danger', 'Error');
           this.shared.spinner.hide();
           this.NoData = true;
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.NoData = true;
       }
@@ -329,29 +330,31 @@ export class Dashboard {
     this.Dates.DisplayTime = this.displaytime;
   }
 
-    filterselection(e: any){
+  filterselection(e: any) {
     const index = this.filtertype.findIndex((i: any) => i == e.name);
     if (index >= 0) {
-      this.filtertype.splice(index, 1);     
+      this.filtertype.splice(index, 1);
     } else {
       this.filtertype = []
-      this.filtertype.push(e.name);    
+      this.filtertype.push(e.name);
     }
-   
-  }
 
-   viewreport() {
+  }
+  dupFiltertype: any = ['Units']
+
+  viewreport() {
     this.activePopover = -1
 
-    if (this.storeIds.length == 0 || this.filtertype.length==0) {
-      if(this.storeIds.length == 0 ){
-        this.toast.show('Please select atleast one store','warning','Warning');
+    if (this.storeIds.length == 0 || this.filtertype.length == 0) {
+      if (this.storeIds.length == 0) {
+        this.toast.show('Please select atleast one store', 'warning', 'Warning');
       }
-      if( this.filtertype.length==0){
-        this.toast.show('Please select atleast one Type','warning','Warning');
+      if (this.filtertype.length == 0) {
+        this.toast.show('Please select atleast one Type', 'warning', 'Warning');
       }
     } else {
-     this.setHeaderData()
+      this.setHeaderData()
+      this.GetSalesContest()
     }
     // }
 
@@ -607,7 +610,7 @@ export class Dashboard {
     // worksheet.getColumn(10).width = 10;
     // worksheet.getColumn(11).width = 30;
     worksheet.addRow([]);
-     workbook.xlsx.writeBuffer().then(buffer => {
+    workbook.xlsx.writeBuffer().then(buffer => {
       this.shared.exportToExcel(workbook, 'Sales Contest')
     });
   }

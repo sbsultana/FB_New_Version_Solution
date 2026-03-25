@@ -1,0 +1,780 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+    <p style="color: white"> Loading.. </p>
+</ngx-spinner>
+<main>
+    <div>
+        <div class="container-fluid">
+            <div class="reports-bar" *ngIf="MainGrid == 'Y'">
+                <div class="filter-dropdowns">
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                                {{storecount}}
+                                {{storedisplayname}} )</span>
+                            <span class="arrow"></span></button>
+                        <app-stores
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                            [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(8)">Warranty Type <span
+                                class="light-font">
+                                ( {{warrantytype}} {{warrantytype == 'All' ? '': ''}} )
+                            </span>
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover === 8">
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="store-columns flex-grow-1"
+                                            style="grid-template-rows: repeat(3, auto);">
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('WT','All')"
+                                                [ngClass]="{'active':warrantytype.indexOf('All')>=0, 'inactive':warrantytype.indexOf('All')<0}">All
+                                            </button>
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('WT','FactoryWarranty')"
+                                                [ngClass]="{'active': warrantytype.indexOf('All')>=0 || warrantytype.indexOf('FactoryWarranty')>=0 , 'inactive':warrantytype.indexOf('FactoryWarranty')<0 && warrantytype.indexOf('All')<0}">Factory
+                                                Warranty</button>
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('WT','ExtendedWarranty')"
+                                                [ngClass]="{'active': warrantytype.indexOf('All')>=0  || warrantytype.indexOf('ExtendedWarranty')>=0 , 'inactive':warrantytype.indexOf('ExtendedWarranty')<0 && warrantytype.indexOf('All')<0 }">Extended
+                                                Warranty</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" (click)="togglePopover(9)">Older Than <span class="light-font">
+                                ( {{AgeFrom}} - {{AgeTo}} )
+                            </span>
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover === 9">
+                            <div class="row h-100">
+                                <div class="stores d-flex flex-column border-0">
+                                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+                                        <div class="flex-grow-1">
+                                            <ng-container>
+                                                <div class="btn-grid">
+                                                    <h6>Factory&nbsp;:</h6> <input type="text" [(ngModel)]="AgeFrom"
+                                                        class="input-field" (keypress)="keyPressNumbers($event)">
+                                                </div>
+                                                <div class="btn-grid pt-2">
+                                                    <h6>Extended:</h6> <input type="text" [(ngModel)]="AgeTo"
+                                                        class="input-field" (keypress)="keyPressNumbers($event)">
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown">
+                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="scorecard-multi-header warrantyreceivables-tbl" *ngIf="MainGrid == 'Y'">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr></tr>
+                        <tr class="bdr-btm">
+                            <th (click)="sort('STORENAME')" style="cursor: pointer;">&nbsp;</th>
+
+                            <th class="bdr-rt" (click)="sort('AGED BALANCE')" style="cursor: pointer;">Aged Balance</th>
+                            <th class="bdr-rt" (click)="sort('TOTAL')" style="cursor: pointer;">Total Balance</th>
+                            <th class="bdr-rt" style="cursor: pointer;"><span (click)="sort('GUIDE')"> Guide</span>
+                                &nbsp;&nbsp;<img src="images/edit_icon.png" class="ms-auto"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                    (click)="getNewdetails(tmp)">
+                            </th>
+                            <th class="bdr-rt" (click)="sort('DIFF BALANCE')"
+                                style="cursor: pointer;text-align: center;">Difference</th>
+                            <th class="bdr-rt" (click)="sort('0-30 DAYS')" style="cursor: pointer;">0-30 Days</th>
+                            <th class="bdr-rt" (click)="sort('31-60 DAYS')" style="cursor: pointer;">31-60 Days</th>
+                            <th class="bdr-rt" (click)="sort('61-90 DAYS')" style="cursor: pointer;">61-90 Days</th>
+                            <th class="bdr-rt" (click)="sort('90+ DAYS')" style="cursor: pointer;">90+ Days</th>
+                        </tr>
+                    </thead>
+                    <tbody [ngClass]="{'hidden': NoData == true }">
+                        <ng-container *ngFor="let data1 of InventorySummaryData; let i=index">
+                            <tr *ngIf="!NoData" [id]="'DV_'+i"
+                                [ngClass]="{  'divBold text-uppercase': data1.STORENAME.toLowerCase() == 'report total','lightblue-bg text-uppercase': data1.STORENAME.toLowerCase() !== 'report total'  }">
+                                <td style="text-align: left;" class="text-uppercase">
+                                    <span *ngIf="data1.WARRANTY_TYPE == null">
+                                        {{data1.STORENAME=='' || data1.STORENAME==undefined ? '-' :
+                                        data1.STORENAME}}
+                                    </span>
+                                    <span *ngIf="data1.WARRANTY_TYPE != null" (click)="openDetails(data1)"
+                                        style="text-align: center !important;cursor: pointer;padding-left: 1rem !important;">
+                                        {{data1.WARRANTY_TYPE=='' || data1.WARRANTY_TYPE==undefined ? '-' :
+                                        data1.WARRANTY_TYPE}}
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['AGED BALANCE'])}">
+                                    <span class="d-flex "
+                                        [ngClass]="{'justify-content-center' : data1['AGED BALANCE'] == 0 || data1['AGED BALANCE'] == null,'justify-content-between': data1['AGED BALANCE'] != 0 && data1['AGED BALANCE'] != null }">
+                                        {{
+                                        (data1['AGED BALANCE'] == 0 || data1['AGED BALANCE'] == null ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (data1['AGED BALANCE'] == 0 || data1['AGED BALANCE'] == null ? '-' :
+                                            data1['AGED BALANCE'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['TOTAL'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['TOTAL'] == 0 || data1['TOTAL'] == null
+                                        ? '' :
+                                        '$') }}
+                                        <span>
+                                            {{
+                                            (data1['TOTAL'] == 0 || data1['TOTAL'] == null
+                                            ? '-' :
+                                            data1['TOTAL'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['GUIDE'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['GUIDE'] == 0 || data1['GUIDE'] ==
+                                        null ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (data1['GUIDE'] == 0 || data1['GUIDE'] ==
+                                            null ? '-' :
+                                            data1['GUIDE'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody10"
+                                    [ngClass]="{ positive: !inTheGreen(data1['DIFF BALANCE']) ,negative: inTheGreen(data1['DIFF BALANCE'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{data1['DIFF BALANCE'] == 0 || data1['DIFF BALANCE'] == null ? '' : '$' }}
+                                        <span>
+                                            {{data1['DIFF BALANCE'] == 0 || data1['DIFF BALANCE'] == null ? '-' :
+                                            data1['DIFF BALANCE'] | number:'1.0-0' }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['0-30 DAYS'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['0-30 DAYS'] == 0 || data1['0-30 DAYS'] == null ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (data1['0-30 DAYS'] == 0 || data1['0-30 DAYS'] == null ? '-' :
+                                            data1['0-30 DAYS'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['31-60 DAYS'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['31-60 DAYS'] == 0 || data1['31-60 DAYS'] == null ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (data1['31-60 DAYS'] == 0 || data1['31-60 DAYS'] == null ? '-' :
+                                            data1['31-60 DAYS'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(data1['61-90 DAYS'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['61-90 DAYS'] == 0 || data1['61-90 DAYS'] == null ? '' : '$' ) }}
+                                        <span>
+                                            {{
+                                            (data1['61-90 DAYS'] == 0 || data1['61-90 DAYS'] == null ? '-' :
+                                            data1['61-90 DAYS'] | number:'1.0-0' ) }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['90+ DAYS'])}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (data1['90+ DAYS'] == 0 || data1['90+ DAYS'] == null
+                                        ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (data1['90+ DAYS'] == 0 || data1['90+ DAYS'] == null ? '-' :
+                                            data1['90+ DAYS'] | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <ng-container *ngFor="let data2 of data1.warranty; let j=index">
+                                <tr *ngIf="j != 0">
+                                    <td style="text-align: left;">
+                                        <span (click)="openDetails(data2)"
+                                            style="text-align: center !important;cursor: pointer;padding-left: 1rem !important;">
+                                            {{data2.WARRANTY_TYPE=='' || data2.WARRANTY_TYPE==undefined ?
+                                            '-' :
+                                            data2.WARRANTY_TYPE}}
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['AGED BALANCE'])}">
+                                        <span class="d-flex "
+                                            [ngClass]="{'justify-content-center' : data2['AGED BALANCE'] == 0 || data2['AGED BALANCE'] == null , 'justify-content-between': data2['AGED BALANCE'] != 0 && data2['AGED BALANCE'] != null }">
+                                            {{
+                                            (data2['AGED BALANCE'] == 0 || data2['AGED BALANCE'] == null ? '' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2['AGED BALANCE'] == 0 || data2['AGED BALANCE'] == null ? '-' :
+                                                data2['AGED BALANCE'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['TOTAL'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['TOTAL'] == 0 || data2['TOTAL'] == null
+                                            ? '' :
+                                            '$') }}
+                                            <span>
+                                                {{
+                                                (data2['TOTAL'] == 0 || data2['TOTAL'] == null
+                                                ? '-' :
+                                                data2['TOTAL'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['GUIDE'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['GUIDE'] == 0 || data2['GUIDE'] ==
+                                            null ? '' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2['GUIDE'] == 0 || data2['GUIDE'] ==
+                                                null ? '-' :
+                                                data2['GUIDE'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody10"
+                                        [ngClass]="{ positive: !inTheGreen(data2['DIFF BALANCE']), negative: inTheGreen(data2['DIFF BALANCE'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{data2['DIFF BALANCE'] == 0 || data2['DIFF BALANCE'] == null ? '' : '$' }}
+                                            <span>
+                                                {{data2['DIFF BALANCE'] == 0 || data2['DIFF BALANCE'] == null ? '-' :
+                                                data2['DIFF BALANCE'] | number:'1.0-0' }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['0-30 DAYS'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['0-30 DAYS'] == 0 || data2['0-30 DAYS'] == null ? '' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2['0-30 DAYS'] == 0 || data2['0-30 DAYS'] == null? '-' :
+                                                data2['0-30 DAYS'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['31-60 DAYS'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['31-60 DAYS'] == 0 || data2['31-60 DAYS'] == null ? '' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2['31-60 DAYS'] == 0 || data2['31-60 DAYS'] == null ? '-' :
+                                                data2['31-60 DAYS'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(data2['61-90 DAYS'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['61-90 DAYS'] == 0 || data2['61-90 DAYS'] == null ? '' : '$' ) }}
+                                            <span>
+                                                {{
+                                                (data2['61-90 DAYS'] == 0 || data2['61-90 DAYS'] == null ? '-' :
+                                                data2['61-90 DAYS'] | number:'1.0-0' ) }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['90+ DAYS'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2['90+ DAYS'] == 0 || data2['90+ DAYS'] == null ? '' : '$') }}
+                                            <span>
+                                                {{
+                                                (data2['90+ DAYS'] == 0 || data2['90+ DAYS'] == null ? '-' :
+                                                data2['90+ DAYS'] | number:'1.0-0') }}
+                                            </span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                    </tbody>
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="10" style="color: black;pointer-events:none ; text-align: center !important;">
+                                No
+                                Records Found</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="totals-block mb-2 col-12" *ngIf="MainGrid == 'N'">
+                <div class="row">
+                    <div class="col-12 d-flex align-items-center">
+
+                        <!-- LEFT SECTION -->
+                        <div class="d-flex align-items-center gap-3">
+
+                            <!-- BACK -->
+                            <span (click)="backtoWR()" class="fw-bold cursor-pointer">
+                                <i class="fa fa-long-arrow-left me-1"></i> Back
+                            </span>
+
+                            <!-- TITLE -->
+                            <h5 class="divBold m-0 d-flex align-items-center">
+                                <span class="slash font-blue fw-bold">
+                                    <span class="divNormal">// </span>
+                                    {{ warrantyData?.[0]?.storename }}
+                                </span>
+
+                                <i class="fa fa-long-arrow-right mx-2"></i>
+
+                                <span>
+                                    {{ warrantyData?.[0]?.displaywarrantytype }}
+                                </span>
+                            </h5>
+
+                        </div>
+
+                        <!-- RIGHT SECTION -->
+                        <div class="d-flex align-items-center gap-3 ms-auto printHide">
+
+                            <!-- COUNT -->
+                            <h6 class="m-0 font-blue" *ngIf="WarrantyReceivablesDetailsData?.length">
+                                Count : <strong>{{ WarrantyReceivablesDetailsData.length }}</strong>
+                            </h6>
+
+                            <!-- AGE FILTER -->
+                            <div class="d-flex align-items-center">
+                                <label for="age90" class="me-2 mb-0 font-blue">
+                                    Age 90 days or greater :
+                                </label>
+                                <input class="form-check-input" type="checkbox" id="age90"
+                                    [(ngModel)]="greaterthanvalue" (change)="agegreaterthan($event)">
+                            </div>
+
+                            <!-- DROPDOWN -->
+                            <select class="form-select input-field" style="width: 180px;"
+                                [(ngModel)]="notesStageValueGrid"
+                                (change)="GetWarrantyReceivablesDetails(warrantyData[0])">
+
+                                <option value="">All Stages</option>
+
+                                <option *ngFor="let s of notesstage" [value]="s.NS_ID">
+                                    {{ s.NS_Text }}
+                                </option>
+
+                            </select>
+
+                            <!-- SEARCH -->
+                            <div class="search position-relative pe-2">
+                                <input type="text" class="form-control" [(ngModel)]="SGDSearchName" placeholder="Search"
+                                    (input)="filterData()" style="width: 200px; padding-right: 30px;">
+
+                                <img src="images/Magnifer.svg" alt=""
+                                    style="position:absolute; right:8px; top:50%; transform:translateY(-50%); width:16px;">
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="scorecard-double-header inventory-book-tbl-details" id="scrollcent" #scrollcent
+                *ngIf="MainGrid =='N'">
+                <table class="table mb-0 w-100">
+                    <thead>
+                        <tr>
+                            <th *ngIf="Role == 100">
+                                <span *ngIf="hideVisibility">
+                                    <input class="form-check-input" type="checkbox" id="symbol"
+                                        (change)="collectHidevalues($event,'',confirm,'multi')"> Hide
+                                </span>
+                                <span *ngIf="!hideVisibility">
+                                    Hide
+                                </span>
+                                <!-- <i alt="" *ngIf="!hideVisibility" aria-hidden="true">Hide</i>               -->
+                            </th>
+                            <th>Notes&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
+                                    (click)="notesView()"></i>
+                                <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState"
+                                    (click)="notesView()"></i>
+                            </th>
+                            <th (click)="sortDetails('AGE')" style="cursor: pointer;" class="bdr-rt">Age</th>
+                            <th (click)="sortDetails('DATE')" style="cursor: pointer;" class="bdr-rt">Date</th>
+                            <th (click)="sortDetails('ACCOUNT')" style="cursor: pointer;" class="bdr-rt">Account #</th>
+                            <th (click)="sortDetails('STAGE')" style="cursor: pointer;" class="bdr-rt">Stage</th>
+                            <th (click)="sortDetails('CONTROL')" style="cursor: pointer;" class="bdr-rt">Control</th>
+                            <th (click)="sortDetails('BALANCE')" style="cursor: pointer;" class="bdr-rt">Balance</th>
+                        </tr>
+                        <ng-container *ngIf="WarrantyReceivablesDetailsData != undefined">
+                            <ng-container *ngIf="WarrantyReceivablesDetailsData[0] != undefined">
+                                <tr *ngIf="WarrantyReceivablesDetailsData[0].TOTALS != undefined && WarrantyReceivablesDetailsData[0].TOTALS != '' && WarrantyReceivablesDetailsData[0].TOTALS != null"
+                                    style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;">
+                                    <td colspan="4" style="font-size: 1rem;">Total Balance:
+                                        <!-- {{ WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == 0 ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == null ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == undefined ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == '' ? '-' :
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE |
+                                        currency:'USD':'symbol':'1.2-2'}}  -->
+
+                                        {{ getTotal('BALANCE','T') | currency:'USD':'symbol':'1.2-2' }}
+                                    </td>
+                                    <td colspan="4" style="font-size: 1rem;">Aged Balance:
+                                        <!-- {{ WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == 0 ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == null ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == undefined ||
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == '' ? '-' :
+                                        WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE |
+                                        currency:'USD':'symbol':'1.2-2'}} -->
+
+                                        {{ getTotal('BALANCE','A') | currency:'USD':'symbol':'1.2-2' }}
+
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngIf="(WarrantyReceivablesDetailsData).length >0; else NoQIdata">
+                            <ng-container *ngFor="let data1 of WarrantyReceivablesDetailsData;let k=index">
+                                <tr>
+                                    <td class="text-center" *ngIf="Role == 100">
+                                        <input class="form-check-input" type="checkbox" id="symbols"
+                                            [checked]="data1.check"
+                                            (change)="collectHidevalues($event,data1,confirm,'single')">
+                                    </td>
+                                    <td class="text-center">
+                                        <img *ngIf="data1.NotesStatus == 'N'" src="images/Actionblack.png "
+                                            title="Add Notes" data-bs-toggle="modal" data-bs-target="#payplan"
+                                            (click)="addNotes(data1)" style="cursor: pointer;">
+                                        <img *ngIf="data1.NotesStatus == 'Y'" src="images/notes_unread.png "
+                                            title="Add Notes" data-bs-toggle="modal" data-bs-target="#payplan"
+                                            (click)="addNotes(data1)" style="cursor: pointer;">
+                                    </td>
+                                    <td [style.background-color]="data1.COLOR_CODE">
+                                        {{data1.AGE=='' ||
+                                        data1.AGE==undefined ? '-' :
+                                        data1.AGE}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{data1.DATE=='' ||
+                                        data1.DATE==undefined ? '-' :
+                                        data1.DATE | date:'MM.dd.yyyy'}}
+                                    </td>
+                                    <td class="text-center"> {{data1['ACCOUNT']=='' || data1['ACCOUNT']==undefined ? '-'
+                                        :
+                                        data1['ACCOUNT'] }}
+                                    </td>
+                                    <td class="text-start">
+                                        {{data1['STAGE']=='' || data1['STAGE']==undefined ? '-'
+                                        : data1['STAGE'] }}
+                                    </td>
+                                    <td class="text-center"
+                                        style="color: blue;text-decoration: underline;cursor: pointer;"
+                                        (click)="controlData(data1,data1.controlState)"
+                                        [ngClass]="{ negative: !inTheGreen(data1['CONTROL'])}">
+                                        {{data1['CONTROL']=='' || data1['CONTROL']==undefined ? '-'
+                                        : data1['CONTROL'] }}
+                                    </td>
+                                    <td [ngClass]="{ positive: !inTheGreen(data1['BALANCE'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{data1['BALANCE']==''
+                                            || data1['BALANCE']=='0' ||
+                                            data1['BALANCE']==undefined ? '' :'$'}}
+                                            <span>
+                                                {{data1['BALANCE']==''
+                                                || data1['BALANCE']=='0' ||
+                                                data1['BALANCE']==undefined ? '-' : data1['BALANCE']
+                                                |number:'1.2-2'}}
+                                            </span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <ng-container
+                                    *ngIf="data1?.NOTES?.length && notesViewState && data1?.NotesStatus === 'Y'">
+
+                                    <tr>
+                                        <td colspan="8" class="text-start ps-3">
+
+                                            <!-- TITLE -->
+                                            <h6 class="fw-bold font-blue small">Notes</h6>
+
+                                            <!-- NOTES LIST -->
+                                            <div *ngFor="let note of (data1.notesView === '+' ? (data1.NOTES | slice:0:2) : data1.NOTES)"
+                                                class="ps-4">
+
+                                                {{ note?.STAGE_NOTES ? note.STAGE_NOTES : '-' }}
+
+                                            </div>
+
+                                            <!-- VIEW MORE / LESS -->
+                                            <div *ngIf="data1.NOTES.length > 2" class="ps-4">
+                                                <a class="font-blue cursor-pointer" (click)="toggleView(data1)">
+                                                    {{ data1.notesView === '+' ? 'View More' : 'View Less' }}
+                                                </a>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+
+                                </ng-container>
+                                <tr *ngIf="data1.controlState == '-'">
+                                    <td colspan="8" style="padding: 10px 30px !important;">
+                                        <div class="scorecard-single-header" style="max-height: 35vh;height: auto !important;">
+                                            <table style="width: 100%;" class="table mb-0 w-100">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="bdr-rt">Date</th>
+                                                        <th class="bdr-rt">Description</th>
+                                                        <th class="bdr-rt">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <ng-container *ngFor="let ctrl of data1.controlList; let i=index">
+                                                        <tr>
+                                                            <td style="text-align: center;">
+                                                                {{ctrl.DATE |date :'MM.dd.yyyy'}}
+                                                            </td>
+                                                            <td style="text-align: left;" title="{{ctrl.DESCRIPTION}}">
+                                                                {{(ctrl.DESCRIPTION == undefined ? '--' : (
+                                                                (ctrl.DESCRIPTION.toString() |
+                                                                slice:0:100) +
+                                                                (ctrl.DESCRIPTION.toString().length > 100 ? '...' : '')
+                                                                ))}}
+                                                            </td>
+                                                            <td style="text-align: right;"
+                                                                [ngClass]="{ negative: !inTheGreen(ctrl.AMOUNT)}">
+                                                                <span class="d-flex justify-content-between">
+                                                                    {{ctrl.AMOUNT == 0 || ctrl.AMOUNT == null ? ''
+                                                                    :'$'}}
+                                                                    <span>
+                                                                        {{ctrl.AMOUNT == 0 || ctrl.AMOUNT == null ? '-'
+                                                                        :
+                                                                        ctrl.AMOUNT | number:'1.2-2'}}
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    </ng-container>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
+                        <ng-template #NoQIdata>
+                            <tr>
+                                <td colspan="9"
+                                    style="text-align: center !important;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                                    <label>{{NoDataDetails}}</label>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <ng-template #tmp>
+            <div class="modal-content">
+                <div class="recap position-relative">
+
+                    <div class="row d-flex w-100 m-0">
+                        <div class="col-lg-12">
+
+                            <div class="row">
+                                <div class="col-lg-12 col-12">
+                                    <div class="m-2 p-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 p-0 d-flex align-items-center">
+
+                                                <h2 class="m-0 p-0">
+                                                    <span>
+                                                        <span class="font-blue">
+                                                            // Guide
+                                                        </span>
+
+
+                                                    </span>
+                                                </h2>
+
+                                                <a type="button" class="ms-auto px-3" style="cursor:pointer;"
+                                                    (click)="closepopup()">
+                                                    <button type="button" class="btn-close" aria-label="Close"></button>
+                                                </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container-fluid data">
+                                        <div class="col-12 menu-list ">
+                                            <div class="row align-items-center justify-content-center">
+                                                <div class="col-12 ">
+                                                    <div class="col-2"></div>
+                                                    <div *ngFor="let data1 of newValuesToEdit; let i=index"
+                                                        class="col-lg-10 mb-4"
+                                                        [ngStyle]="{'display':data1.STORENAME=='Report Total'? 'none': 'block'}">
+                                                        <div class="divBold mb-2 text-uppercase"
+                                                            style="font-size:1rem !important ;"> {{data1.STORENAME==''
+                                                            || data1.STORENAME==undefined ?
+                                                            '-' : data1.STORENAME}}</div>
+                                                        <div class="list-group list-group-flush "
+                                                            *ngFor="let dt2 of data1.warranty; let i=index">
+                                                            <div class="list-group-item d-flex" *ngIf="i !=0">
+                                                                <div class="col-6">
+                                                                    {{dt2.WARRANTY_TYPE=='' ||
+                                                                    dt2.WARRANTY_TYPE==undefined ?
+                                                                    '-' : dt2.WARRANTY_TYPE}}
+                                                                </div>
+                                                                <div class="d-flex">
+                                                                    <!-- <span class="dollar" *ngIf="dt2.TargetValue != '' && dt2.TargetValue != 0">$</span>                                                  -->
+                                                                    <input type="text" [(ngModel)]="dt2.TargetValue"
+                                                                        class="target-txt"
+                                                                        (keypress)="keyPressNumbers($event, dt2.TargetValue)"
+                                                                        (blur)="dt2.TargetValue = addPercentageSymbol(dt2.TargetValue)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="footer">
+                                        <div class="row mt-3 align-items-center justify-content-center">
+                                            <div class="text-center d-flex align-items-center col-4">
+                                                <button type="button" class="btn btn-view mx-1"
+                                                    (click)="save()">Save</button>
+                                                <div class="cancel-txt col-4" (click)="closepopup()" id="close">
+                                                    <a>Cancel</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</main>
+
+
+<div class="modal fade" id="payplan" tabindex="-1" role="dialog" aria-labelledby="logoutLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 55% !important;">
+        <div class="modal-content" style="background-color: white !important;">
+            <div class="modal-header" style="padding: 0.5rem 1rem;">
+                <h5 class="modal-title" id="myModalLabel"> <span class="slash">//</span>Notes &nbsp;&nbsp; <span
+                        class="slash">//</span> {{selecteddata.ACCOUNT}} </h5>
+                <span class="close" data-bs-dismiss="modal" aria-hidden="true"
+                    style="font-size: x-large;cursor: pointer;" id="close">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height: 69vh;    min-height: 35vh;        overflow: auto;">
+                <div class="row mt-2">
+                    <div class="col-8">
+                        <textarea class="form-control" rows="3" cols="10" [(ngModel)]="notesStageText"
+                            placeholder="Add Note"></textarea>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-4">
+                        Stage:
+                        <div class="acc-select">
+                            <select class="form-select _dropdwn" [(ngModel)]="notesStageValue">
+                                <option selected disabled value="">Select Stage </option>
+                                <option *ngFor="let s of notesstageAction" [value]="s.NS_ID">{{s.NS_Text}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-1">
+                    <div style="font-size: 1rem;font-family: 'RobotoMedium';">
+                        Control: {{selecteddata.CONTROL}}
+                    </div>
+                </div>
+                <div class="row mt-1">
+                    <div style="font-size: 1rem;font-family: 'Roboto';">
+                        Post Date: {{selecteddata.DATE | date:'MM.dd.yyyy'}}
+                    </div>
+                </div>
+                <div class="row mt-1" *ngIf="selecteddata.NOTES != null">
+                    <div class="col-10" style="max-height: 20vh;    overflow: auto;"
+                        *ngIf="selecteddata.NOTES.length >0 ">
+                        <div *ngFor="let notes of selecteddata.NOTES">
+                            {{notes.STAGE_NOTES=='' ||
+                            notes.STAGE_NOTES==undefined ? '-' :
+                            notes.STAGE_NOTES}}
+                        </div>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="row mt-3 align-items-center justify-content-center">
+                        <div class="text-center d-flex align-items-center col-4">
+                            <button type="button" class="btn btn-view mx-1" (click)="saveNotes()">Save</button>
+                            <div class="cancel-txt col-4" data-bs-dismiss="modal" aria-hidden="true" id="close">
+                                <a>Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #confirm let-modal>
+
+    <div class="row " id="Account Mapping" style="width: 43%;margin-left: 28%;
+        padding-top: 20%;">
+        <div class="col-12">
+            <div class="acct-tbl bg-white" style="border-radius: 15px;border:1px solid  #2b91f0">
+                <div class="mt-4 ps-4">
+                    <div>
+                        <p>Are You Sure Do You Want To Hide the Selected ?</p>
+                    </div>
+                    <div>
+                        <div class="col-12 d-flex justify-content-center mb-4">
+                            <button type="submit" class="btn btn-view-save ms-1" (click)="hideAdd()">Save</button>
+                            &nbsp;
+                            <div class="cancel-txt col-4" (click)="onclose()" id="closeadd" data-bs-dismiss="modal"
+                                aria-hidden="true">
+                                <a>Cancel</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

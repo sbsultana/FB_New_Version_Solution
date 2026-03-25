@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path: 'Receivables', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'BookedDeals', loadComponent: () => import('./Reports/Others/BookedDeals/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'CIT', loadComponent: () => import('./Reports/Others/CITFloorplan/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'WarrantyReceivables', loadComponent: () => import('./Reports/Others/WarrantyReceivables/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'WarrantyReceivables', loadComponent: () => import('./Reports/Accounting/WarrantyReceivables/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'VehicleReceivables', loadComponent: () => import('./Reports/Others/VehicleReceivables/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FactoryIncentiveReceivables', loadComponent: () => import('./Reports/Others/FactoryIncentiveReceivables/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'Wholesale', loadComponent: () => import('./Reports/Others/Receivables/dashboard/dashboard').then(m => m.Dashboard) },
@@ -97,6 +97,9 @@ export const routes: Routes = [
   { path: 'ROTraffic', loadComponent: () => import('./Reports/Services/ROTraffic/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAbsorption', loadComponent: () => import('./Reports/Services/ServiceAbsorption/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceTrendingReport', loadComponent: () => import('./Reports/Services/ServiceTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'OPCodeTracker', loadComponent: () => import('./Reports/Services/OPCodeTracker/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'TechRateException', loadComponent: () => import('./Reports/Services/TechRateException/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ServiceTechEfficiency', loadComponent: () => import('./Reports/Services/ServiceTechEfficiency/dashboard/dashboard').then(m => m.Dashboard) },
 
 
   //PARTS BLOCK
@@ -107,7 +110,7 @@ export const routes: Routes = [
   { path: 'PartsAging', loadComponent: () => import('./Reports/Parts/PartsAging/dashboard/dashboard').then(m => m.Dashboard) },
 
   { path: 'PartsGrossProfitPerformanceScoreCard', loadComponent: () => import('./Reports/Parts/PartsGrossProfitPerformanceScoreCard/dashboard/dashboard').then(m => m.Dashboard) },
-  
+
   // OTHERS
 
   { path: 'FinanceReserveRecon', loadComponent: () => import('./Reports/Others/FinaceReserveReconReport/dashboard/dashboard').then(m => m.Dashboard) },
@@ -129,6 +132,13 @@ export const routes: Routes = [
   { path: 'PartsTrendingReport', loadComponent: () => import('./Reports/Parts/PartsTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SearchParts', loadComponent: () => import('./Reports/Parts/SearchParts/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsGross', loadComponent: () => import('./Reports/Parts/PartsGross/dashboard/dashboard').then(m => m.Dashboard) },
+
+  //Carstar BLOCK
+
+  { path: 'InsuranceCarrierAnalysis', loadComponent: () => import('./Reports/Carstar/InsuranceCarrierAnalysis/dashboard/dashboard').then(m => m.Dashboard) },
+
+  //MobileService Block
+  { path: 'MobileServiceGL', loadComponent: () => import('./Reports/MobileService/MobileServiceGL/dashboard/dashboard').then(m => m.Dashboard) },
 
 
 ];

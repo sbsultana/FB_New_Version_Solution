@@ -122,7 +122,11 @@ export class Dashboard {
 
     ]
   }
-
+  scrollPosition = 0;
+ 
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');

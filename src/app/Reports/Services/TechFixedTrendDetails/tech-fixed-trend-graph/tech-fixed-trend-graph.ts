@@ -1,4 +1,4 @@
-import { Component ,OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
 import { Chart } from 'chart.js';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { getRelativePosition } from 'chart.js/helpers';
@@ -12,7 +12,7 @@ import numeral from 'numeral';
   templateUrl: './tech-fixed-trend-graph.html',
   styleUrl: './tech-fixed-trend-graph.scss',
 })
-export class TechFixedTrendGraph  {
+export class TechFixedTrendGraph {
   @Input() STRgraphdetails: any;
   canvas: any;
   ctx: any;
@@ -35,13 +35,13 @@ export class TechFixedTrendGraph  {
   ngOnInit(): void {
     console.log(this.STRgraphdetails.Object);
     this.itemdata = { ...this.STRgraphdetails.Object };
-    const Val = 'AST_DEALERNAME';
-    const Val1 = 'AST_AS_ID';
+    const Val = 'Store_Name';
+    const Val1 = 'ASD_AS_ID';
     const Val2 = 'ast_ltype';
     const Val3 = 'ast_paytype';
     const Val4 = 'variable';
-    const Val5 = 'ast_seq';
-    
+    const Val5 = 'seq';
+
     if (this.itemdata.hasOwnProperty(Val)) {
       delete this.itemdata[Val];
     }
@@ -64,8 +64,8 @@ export class TechFixedTrendGraph  {
 
     this.monthvalues = Object.values(this.itemdata);
     this.monthkeys = this.STRgraphdetails.DATES;
-    console.log(this.monthkeys,"monthkeys");
-    console.log(this.monthvalues,'monthvalues');
+    console.log(this.monthkeys, "monthkeys");
+    console.log(this.monthvalues, 'monthvalues');
     const formattedDates = this.monthkeys.map((date: any) =>
       this.formatDate(date)
     );
@@ -109,12 +109,14 @@ export class TechFixedTrendGraph  {
         datasets: [
           {
             label: this.STRgraphdetails.NAME,
-            backgroundColor: '#449df8',
-            borderColor: '#449df8',
-            fill: false,
+            borderColor: '#00c2ff',
+            backgroundColor: 'rgba(0, 194, 255, 0.15)',
+            fill: true,
             data: this.monthvalues,
-            tension: 0,
-            pointBackgroundColor: '#234e7b',
+            tension: 0.35,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#00c2ff',
+            pointRadius: 4,
             borderWidth: 2,
           },
           {
@@ -122,37 +124,36 @@ export class TechFixedTrendGraph  {
             label: 'Pace',
             type: 'line',
             fill: false,
-            backgroundColor: '#2df1b0',
-            borderColor: '#2df1b0',
-            pointBackgroundColor: '#167b5a',
-            pointRadius: 0,
+            borderColor: '#ffab00',
             borderWidth: 2,
+            borderDash: [6, 6],
+            pointRadius: 0,
           },
         ],
-      },      
-    options: {
-  responsive: true,
+      },
+      options: {
+        responsive: true,
 
-  plugins: {
-    legend: {
-      display: true,
-      position: 'bottom',
-      labels: {
-        usePointStyle: true,
-        color: 'white'
-      }
-    },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              color: 'white'
+            }
+          },
 
-    tooltip: {
-      callbacks: {
-        label: (context: any) => {
-          const value = context.raw;
-          return this.ValueFormat(value);
+          tooltip: {
+            callbacks: {
+              label: (context: any) => {
+                const value = context.raw;
+                return this.ValueFormat(value);
+              }
+            }
+          }
         }
       }
-    }
-  }
-}
     });
   }
   // private ValueFormat(value: number) {
@@ -167,22 +168,22 @@ export class TechFixedTrendGraph  {
   //   }
   // }
   private ValueFormat(value: number) {
-  if (this.STRgraphdetails.ValueFormat == 'Number') {
-    return numeral(value).format('0,0');
-  } 
-  else if (this.STRgraphdetails.ValueFormat == 'Percentage') {
-    return numeral(value).format('0') + '%';
-  } 
-  else if (this.STRgraphdetails.ValueFormat == 'Currancy') {
-    return numeral(value)
-      .format('($0,0)')
-      .replace('(', '-')
-      .replace(')', '');
-  }
+    if (this.STRgraphdetails.ValueFormat == 'Number') {
+      return numeral(value).format('0,0');
+    }
+    else if (this.STRgraphdetails.ValueFormat == 'Percentage') {
+      return numeral(value).format('0') + '%';
+    }
+    else if (this.STRgraphdetails.ValueFormat == 'Currancy') {
+      return numeral(value)
+        .format('($0,0)')
+        .replace('(', '-')
+        .replace(')', '');
+    }
 
-  // ✅ Default return (important)
-  return value?.toString() ?? '';
-}
+    // ✅ Default return (important)
+    return value?.toString() ?? '';
+  }
   private formatPercentage(value: number): string {
     const formattedValue = numeral(value * 1).format('0') + '%';
     return formattedValue;

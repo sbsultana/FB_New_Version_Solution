@@ -6,55 +6,55 @@ import { environment } from '../environments/environment';
   providedIn: 'root'
 })
 export class common {
-    public groupsandstores: any = [];
-    public groupsandstoresAll: any = [];
+  public groupsandstores: any = [];
+  public groupsandstoresAll: any = [];
 
-    public userId: any = 0;
-    public pageName: any = '';
-    public titleName: any = 'FredBeans';
-    public excelName: any = 'Fred Beans';
-    public solutionurl: any = 'https://fredbeans.axelautomotive.com/'
-    public axelonedashboard: any = 'https://fredbeans.axelautomotive.com/dashboard'
-    public logo: any = '../../../assets/images/Logo.png'
-    public firststore: any = [{ "storename": "FORD OF DOYLESTOWN", "ID": 1, "storecode": "FB-A", "sg_id": 1, "sg_name": "Fred Beans " }]
-    public menuUrl: any = 'https://fbxtract.axelautomotive.com/';
-    public redirectionFrom: any = '';
-    public menuData: any = [];
-    public routeEndpoint: any = 'fredbeans/'
-    public reconID: any = 7;
-    public allstores: any = [];
-    public OtherStoresData: any = []
-    public otherstoreids: any = '';
-    public DefaultOtherstoresSelection: any = ''
-    public modules: any = '';
-    public currentRoute:any=''
-    public localUserData: any = {
-        "userid": 1,
-        "UserName": "Prasad Chavali",
-        "fname": "Prasad",
-        "lname": "Chavali",
-        "mailid": "prasad.chavali@axelautomotive.com",
-        "phno": "9999999999",
-        "roleid": 100,
-        "profilepic": "",
-        "userstores": "1000,8,7,4,35,1,32,40,50,18,31,3,2,17,41,42,51,12,25,15,9,60,63,62,61,64,65,67,66,5,14,30,11",
-        "Store_Ids": "71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11",
-        "status": "Y",
-        "title": "Super Admin",
-        "uid": 1,
-        "Xtract": 1,
-        "Touch": 1,
-        "Xperience": 1,
-        "Xchange": 3,
-        "Xiom": 1,
-        "Tracs": 1,
-        "EmpID": ''
-    }
-    public ReconStores:any = []
-    public AccountingReconStores:any = []
-    public ReconServiceLaborStores:any = []
-    public MobileServiceGL:any = [];
-      public completeUserDetails: any = {}
+  public userId: any = 0;
+  public pageName: any = '';
+  public titleName: any = 'FredBeans';
+  public excelName: any = 'Fred Beans';
+  public solutionurl: any = 'https://fredbeans.axelautomotive.com/'
+  public axelonedashboard: any = 'https://fredbeans.axelautomotive.com/dashboard'
+  public logo: any = '../../../assets/images/Logo.png'
+  public firststore: any = [{ "storename": "FORD OF DOYLESTOWN", "ID": 1, "storecode": "FB-A", "sg_id": 1, "sg_name": "Fred Beans " }]
+  public menuUrl: any = 'https://fbxtract.axelautomotive.com/';
+  public redirectionFrom: any = '';
+  public menuData: any = [];
+  public routeEndpoint: any = 'fredbeans/'
+  public reconID: any = 7;
+  public allstores: any = [];
+  public OtherStoresData: any = []
+  public otherstoreids: any = '';
+  public DefaultOtherstoresSelection: any = ''
+  public modules: any = '';
+  public currentRoute: any = ''
+  public localUserData: any = {
+    "userid": 1,
+    "UserName": "Prasad Chavali",
+    "fname": "Prasad",
+    "lname": "Chavali",
+    "mailid": "prasad.chavali@axelautomotive.com",
+    "phno": "9999999999",
+    "roleid": 100,
+    "profilepic": "",
+    "userstores": "1000,8,7,4,35,1,32,40,50,18,31,3,2,17,41,42,51,12,25,15,9,60,63,62,61,64,65,67,66,5,14,30,11",
+    "Store_Ids": "71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11",
+    "status": "Y",
+    "title": "Super Admin",
+    "uid": 1,
+    "Xtract": 1,
+    "Touch": 1,
+    "Xperience": 1,
+    "Xchange": 3,
+    "Xiom": 1,
+    "Tracs": 1,
+    "EmpID": ''
+  }
+  public ReconStores: any = []
+  public AccountingReconStores: any = []
+  public ReconServiceLaborStores: any = []
+  public MobileServiceGL: any = [];
+  public completeUserDetails: any = {}
 
 
 

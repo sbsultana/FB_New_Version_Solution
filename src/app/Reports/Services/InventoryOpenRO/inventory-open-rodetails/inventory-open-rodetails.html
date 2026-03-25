@@ -2,366 +2,373 @@
 <div *ngIf="RODetailsObject[0] != undefined" class="gross-tbl-scroll" id="ServiceOpenRODetails"
     (scroll)="updateVerticalScroll($event)" #scrollcent id="scrollcent"
     [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
-    <div class="scorecard-single-header">
-        <table class="table mb-0 w-100">
+    <div class="scorecard-single-header inventoryopendetails-tbl"
+        [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
+        <div *ngIf="spinnerLoader" class="d-flex align-items-center justify-content-center m-auto">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <table class="table mb-0 w-100" *ngIf="!spinnerLoader">
             <thead>
-            <tr>
-                <th colspan="9"> 
-                     <div class=" d-flex align-items-center pagination">
-                    <img src="/images/Excel_Export.png" class="img-fluid  me-2" alt=""
-                    style="cursor: pointer;" (click)="exportAsXLSX()" >&nbsp;&nbsp;&nbsp;&nbsp;
-                    <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
-                    placeholder="Search" type="text" (ngModelChange)="filterData()">
-                <!-- <i class="fa-solid fa-magnifying-glass m-auto" ></i> -->
-                <button (click)="goToFirstPage()" [class.clicked-button]="currentPage === 1"
-                [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1">First</button>
-            <button (click)="prevPage()" [class.clicked-button]="currentPage !== 1"
-                [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1">Previous</button>
-                <!-- <ng-container *ngFor="let pageNumber of getPageNumbers()">
-            <button class="mx-1" (click)="goToPage(pageNumber)" [class.clicked-button]="clickedPage === pageNumber"
-                [class.disabled-button]="currentPage === pageNumber"
-                [disabled]="currentPage === pageNumber">{{ pageNumber }}</button>
-        </ng-container> -->
-                <div *ngIf="total > 0" class="mx-2 ">
-                    {{ getStartRecordIndex() + 1 }} - {{ getEndRecordIndex() }} &nbsp; of &nbsp;{{ total }} ;&nbsp; Page {{
-                        currentPage }}&nbsp; of &nbsp;{{ getMaxPageNumber() }}
-                </div>
-                <button (click)="nextPage()" [class.clicked-button]="currentPage !== getMaxPageNumber()"
-                    [class.disabled-button]="currentPage === getMaxPageNumber()"
-                    [disabled]="currentPage === getMaxPageNumber()">Next</button>
-                <button (click)="goToLastPage()" [class.clicked-button]="currentPage === getMaxPageNumber()"
-                    [class.disabled-button]="currentPage === getMaxPageNumber()"
-                    [disabled]="currentPage === getMaxPageNumber()">Last</button>
-            </div></th>
-                <th colspan="7" class="align-cntr">Total </th>
-                <th colspan="5" class="align-cntr">Customer Pay </th>
-                <th colspan="5" class="align-cntr">Warranty </th>
-                <th colspan="5" class="align-cntr">Internal </th>
-                <th colspan="5" style="display: none;">Service Contract </th>
-            </tr>
-            <tr>
-                <th>Notes&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
-                    (click)="notesView()"></i>
-                <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState" (click)="notesView()"></i>
-            </th>
-                <th class="align-left"  (click)="sort('ronumber',ServiceData)" style="cursor: pointer;">RO #</th>
-                <th class="align-left"  (click)="sort('opendate',ServiceData)" style="cursor: pointer;">Date</th>
-                <th class="align-left"  (click)="sort('age',ServiceData)" style="cursor: pointer;">Age</th>
-                <th class="align-left"  (click)="sort('CName',ServiceData)" style="cursor: pointer;">Customer</th>
-                <th class="align-left"  (click)="sort('StockType',ServiceData)" style="cursor: pointer;">Type</th>
-
-                <th class="align-left"  (click)="sort('vehicle',ServiceData)" style="cursor: pointer;">Vehicle</th>
-                <th class="align-left"  (click)="sort('vin',ServiceData)" style="cursor: pointer;">Vin</th>
-                <th class="align-left"  (click)="sort('stock',ServiceData)" style="cursor: pointer;">Stock #</th>
-                <!-- <th>VIN</th> -->
-                <td  (click)="sort('Totalgross',ServiceData)" style="cursor: pointer;">Gross</td>
-                <td  (click)="sort('Totalcost',ServiceData)" style="cursor: pointer;">Cost</td>
-                <td  (click)="sort('TotalSale',ServiceData)" style="cursor: pointer;">Sale </td>
-                <td  (click)="sort('Retention',ServiceData)" style="cursor: pointer;">GP%</td>
-                <td  (click)="sort('TotalELR',ServiceData)" style="cursor: pointer;">ELR</td>
-                <td  (click)="sort('Totalhours',ServiceData)" style="cursor: pointer;">Hours</td>
-                <td  (click)="sort('Discount',ServiceData)" style="cursor: pointer;">Discount</td>
-
-                <td  (click)="sort('CustomerPayGross',ServiceData)" style="cursor: pointer;">Gross</td>
-                <td  (click)="sort('Retention',ServiceData)" style="cursor: pointer;">GP%</td>
-                <td  (click)="sort('CustomerPayELR',ServiceData)" style="cursor: pointer;">ELR</td>
-                <td  (click)="sort('CustomerPayhours',ServiceData)" style="cursor: pointer;">Hours</td>
-                <td  (click)="sort('DiscountCP',ServiceData)" style="cursor: pointer;">Discount</td>
-
-                <td  (click)="sort('WarrantyGross',ServiceData)" style="cursor: pointer;">Gross</td>
-                <td  (click)="sort('WarrantyRetention',ServiceData)" style="cursor: pointer;">GP%</td>
-                <td  (click)="sort('WarrantyELR',ServiceData)" style="cursor: pointer;">ELR</td>
-                <td  (click)="sort('Warrantyhours',ServiceData)" style="cursor: pointer;">Hours</td>
-                <td  (click)="sort('DiscountWP',ServiceData)" style="cursor: pointer;">Discount</td>
-
-                <td  (click)="sort('InternalGross',ServiceData)" style="cursor: pointer;">Gross</td>
-                <td  (click)="sort('InternalRetention',ServiceData)" style="cursor: pointer;">GP%</td>
-                <td  (click)="sort('InternalELR',ServiceData)" style="cursor: pointer;">ELR</td>
-                <td  (click)="sort('Internalhours',ServiceData)" style="cursor: pointer;">Hours</td>
-                <td  (click)="sort('DiscountIP',ServiceData)" style="cursor: pointer;">Discount</td>
-
-            </tr>
-            <div class="loader" style="margin-top: 0%;margin-left: 30%;" *ngIf="spinnerLoader"></div>
-        </thead>
-
-        <tbody>
-            <ng-container *ngIf="paginatedItems.length > 0; else NoQIdata">
-            <ng-container *ngFor="let det of paginatedItems; let i=index">
                 <tr>
-                    <td>
-                        <img *ngIf="det.NotesStatus=='N'" src="/images/Actionblack.png"
-                            (click)="addNotes(det,notes)" style="cursor: pointer;">
-
-                        <img *ngIf="det.NotesStatus=='Y'" src="/images/notes_unread.png "
-                            (click)="addNotes(det,notes)" style="cursor: pointer;">
-
-                    </td>
-                    <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
-                    <td class="align-left" (click)="viewRO(det)" 
-                    [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']"   >
-                        {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber ==
-                        undefined ? '-' :
-                        det.ronumber ) }}
-                    </td>
-                    <td class="align-left">
-                        {{ (det.opendate == 0 || det.opendate == null || det.opendate ==
-                        undefined ? '-'
-                        : det.opendate |
-                        date:'MM.dd.yyyy' ) }}
-                    </td>
-                    <td class="align-left">
-                        {{ (det.age == 0 || det.age == null || det.age == undefined ?
-                        '-' :
-                        det.age ) }}
-
-                    </td>
-                    <td title="{{det.CName}}" style="cursor: default;" class="align-left"> {{(det.CName ==
-                        undefined ||
-                        det.CName == null || det.CName == ''? '--' : (
-                        (det.CName.toString() | slice:0:13) +
-                        (det.CName.toString().length > 13 ? '...' : '') ))}}</td>
-                        <td class="align-left">
-                            {{ ( det.StockType == null || det.StockType == undefined ? '-' :
-                            (det.StockType=='U' ? 'Used': 'New' )) }}
-                        </td>
-
-
-
-                    <td class="align-left">
-                        {{ ( det.vehicle == null || det.vehicle == undefined ? '-' :
-                        det.vehicle ) }}
-                    </td>
-                    <td class="align-left">
-                        {{ (det.vin == 0 || det.vin == null || det.vin == undefined ?
-                        '-' :
-                        det.vin ) }}
-
-                    </td>
-                    <td class="align-left">
-                        {{ (det.stock == 0 || det.stock == null || det.stock == undefined ?
-                        '-' :
-                        det.stock ) }}
-
-                    </td>
-
-                    <td style="min-width: 50px !important;"> {{ (det.Totalgross == 0 ||
-                        det.Totalgross ==
-                        null ||
-                        det.Totalgross == undefined ? '-' :
-                        det.Totalgross | currency:'USD':'symbol':'1.0-0' )}}</td>
-                    <td style="min-width: 50px !important;"> {{ (det.Totalcost == 0 ||
-                        det.Totalcost ==
-                        null ||
-                        det.Totalcost == undefined ? '-' :
-                        det.Totalcost | currency:'USD':'symbol':'1.0-0' )}}</td>
-                    <td style="min-width: 50px !important;"> {{ (det.TotalSale == 0 ||
-                        det.TotalSale ==
-                        null ||
-                        det.TotalSale == undefined ? '-' :
-                        det.TotalSale | currency:'USD':'symbol':'1.0-0' )}}</td>
-                    <td
-                        style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
-                        {{
-                        (det.Retention == 0 ||
-                        det.Retention == null ||
-                        det.Retention == undefined || det.Retention == ''
-                        ? '-' : det.Retention | number:'1.1-1')}}{{ (det.Retention == 0
-                        || det.Retention ==
-                        null ||
-                        det.Retention == undefined || det.Retention == ''
-                        ? '' :'%')}} </td>
-                    <td style="min-width: 50px !important;"> {{ (det.TotalELR == 0 ||
-                        det.TotalELR == null
-                        || det.TotalELR
-                        == undefined
-                        ? '-' : det.TotalELR | currency:'USD':'symbol':'1.2-2' ) }}</td>
-                    <td style="min-width: 50px !important;"> {{ (det.Totalhours == 0 ||
-                        det.Totalhours ==
-                        null ||
-                        det.Totalhours == undefined ? '-' :
-                        det.Totalhours | number : '1.2-2' ) }}</td>
-                    <td style="min-width: 50px !important;"> {{ (det.Discount == 0 ||
-                        det.Discount == null
-                        ||
-                        det.Discount == undefined
-                        ? '-' : det.Discount | currency:'USD':'symbol':'1.0-0' ) }}</td>
-                    <td style="min-width: 50px !important;"> {{ (det.CustomerPayGross ==
-                        0 ||
-                        det.CustomerPayGross == null
-                        || det.CustomerPayGross == undefined ? '-' :
-                        det.CustomerPayGross |
-                        currency:'USD':'symbol':'1.0-0' ) }}</td>
-
-                    <td
-                        style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
-                        {{
-                        (det.CustomerRetention == 0 ||
-                        det.CustomerRetention == null ||
-                        det.CustomerRetention == undefined || det.CustomerRetention ==
-                        ''
-                        ? '-' : det.CustomerRetention | number:'1.1-1')}}{{
-                        (det.CustomerRetention == 0 ||
-                        det.CustomerRetention == null ||
-                        det.CustomerRetention == undefined || det.CustomerRetention ==
-                        ''
-                        ? '' :'%')}} </td>
-
-                    <td> {{ (det.CustomerPayELR == 0 || det.CustomerPayELR == null ||
-                        det.CustomerPayELR ==
-                        undefined ? '-'
-                        : det.CustomerPayELR |
-                        currency:'USD':'symbol':'1.2-2' ) }}</td>
-                    <td> {{ (det.CustomerPayhours == 0 || det.CustomerPayhours == null
-                        ||
-                        det.CustomerPayhours == undefined
-                        ? '-' : det.CustomerPayhours | number : '1.2-2') }}</td>
-                    <td> {{ (det.DiscountCP == 0 || det.DiscountCP == null ||
-                        det.DiscountCP ==
-                        undefined ? '-' : det.DiscountCP |
-                        currency:'USD':'symbol':'1.0-0' ) }}</td>
-
-                    <td>
-                        {{ (det.WarrantyGross == 0 || det.WarrantyGross == null ||
-                        det.WarrantyGross ==
-                        undefined ? '-' :
-                        det.WarrantyGross |
-                        currency:'USD':'symbol':'1.0-0' ) }}
-                    </td>
-
-                    <td
-                        style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
-                        {{
-                        (det.WarrantyRetention == 0 ||
-                        det.WarrantyRetention == null ||
-                        det.WarrantyRetention == undefined || det.WarrantyRetention ==
-                        ''
-                        ? '-' : det.WarrantyRetention | number:'1.1-1')}}{{
-                        (det.WarrantyRetention == 0 ||
-                        det.WarrantyRetention == null ||
-                        det.WarrantyRetention == undefined || det.WarrantyRetention ==
-                        ''
-                        ? '' :'%')}} </td>
-
-                    <td>
-                        {{ (det.WarrantyELR == 0 || det.WarrantyELR == null ||
-                        det.WarrantyELR == undefined
-                        ? '-' :
-                        det.WarrantyELR |
-                        currency:'USD':'symbol':'1.2-2') }}
-                    </td>
-                    <td>
-                        {{ (det.Warrantyhours == 0 || det.Warrantyhours == null ||
-                        det.Warrantyhours ==
-                        undefined ? '-' :
-                        det.Warrantyhours | number : '1.2-2') }}
-                    </td>
-                    <td>
-                        {{ (det.DiscountWP == 0 || det.DiscountWP == null ||
-                        det.DiscountWP == undefined ?
-                        '-' : det.DiscountWP |
-                        currency:'USD':'symbol':'1.0-0' ) }}
-                    </td>
-
-                    <td>
-                        {{ (det.InternalGross == 0 || det.InternalGross == null ||
-                        det.InternalGross ==
-                        undefined ? '-' :
-                        det.InternalGross |
-                        currency:'USD':'symbol':'1.0-0' ) }}
-                    </td>
-                    <td
-                        style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
-                        {{
-                        (det.InternalRetention == 0 ||
-                        det.InternalRetention == null ||
-                        det.InternalRetention == undefined || det.InternalRetention ==
-                        ''
-                        ? '-' : det.InternalRetention | number:'1.1-1')}}{{
-                        (det.InternalRetention == 0 ||
-                        det.InternalRetention == null ||
-                        det.InternalRetention == undefined || det.InternalRetention ==
-                        ''
-                        ? '' :'%')}} </td>
-                    <td>
-                        {{ (det.InternalELR == 0 || det.InternalELR == null ||
-                        det.InternalELR == undefined
-                        ? '-' :
-                        det.InternalELR |
-                        currency:'USD':'symbol':'1.2-2' ) }}
-                    </td>
-                    <td>
-                        {{ (det.Internalhours == 0 || det.Internalhours == null ||
-                        det.Internalhours ==
-                        undefined ? '-' :
-                        det.Internalhours | number : '1.2-2') }}
-                    </td>
-                    <td>
-                        {{ (det.DiscountIP == 0 || det.DiscountIP == null ||
-                        det.DiscountIP == undefined ?
-                        '-' : det.DiscountIP |
-                        currency:'USD':'symbol':'1.0-0' ) }}
-                    </td>
-
-                    <div class="loader" style="margin-top: 30%;margin-left: 30%;" *ngIf="spinnerLoadersec">
-                    </div>
-
-                </tr>
-                <ng-container *ngIf="det.Notes != null && det.Notes != undefined && notesViewState && det.NotesStatus == 'Y'">
-                    <tr >
-
-                        <td colspan="31" style="border-bottom: 1px solid white !important;">
-                            <div *ngIf="det.Notes != null && notesViewState">
-                                <div>
-                                    <div class="title">Notes</div>
-                                    <div *ngIf="det.notesView == '+' && det.Notes.length>0 ">
-                                        
-                                        <div class="notes" *ngFor="let notes of det.Notes.slice(0,2)">
-                                            {{(notes.GN_Text == '' || notes.GN_Text
-                                            ==
-                                            null
-                                            || notes.GN_Text == undefined ? '--' : ( (notes.GN_Text.toString() )))}}
-                                        </div>
+                    <th colspan="9" class="box-shadow">
+                        <div class=" d-flex align-items-center pagination">
+                            <img src="images/Download.svg" class="img-fluid mx-3" alt="" style="cursor: pointer;"
+                                (click)="exportAsXLSX()">
+                            <!-- <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
+                                placeholder="Search" type="text" (ngModelChange)="filterData()"> -->
+                            <div class="search pe-3">
+                                <input type="text" class="form-control" placeholder="Search" [(ngModel)]="QISearchName"
+                                    (ngModelChange)="filterData()">
+                                <img src="images/Magnifer.svg" alt="">
+                            </div>
+                            <!-- <i class="fa-solid fa-magnifying-glass m-auto" ></i> -->
+                            <div class="pagination-container d-flex align-items-center justify-content-end text-black">
+                                <div class="pagination-buttons d-flex align-items-center gap-1">
+                                    <button (click)="goToFirstPage()" [class.clicked-button]="currentPage === 1"
+                                        [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1"><img
+                                            src="images/Arrow_End_Left_Blk.svg" alt="First" /></button>
+                                    <button (click)="prevPage()" [class.clicked-button]="currentPage !== 1"
+                                        [class.disabled-button]="currentPage === 1" [disabled]="currentPage === 1"> <img
+                                            src="images/Alt_Arrow_Left_Blk.svg" alt="Previous" /></button>
+                                    <div *ngIf="total > 0" class="mx-2 ">
+                                        {{ getStartRecordIndex() + 1 }} - {{ getEndRecordIndex() }} &nbsp; of &nbsp;{{
+                                        total
+                                        }}
+                                        ;&nbsp; Page {{
+                                        currentPage }}&nbsp; of &nbsp;{{ getMaxPageNumber() }}
                                     </div>
-
-                                    <div *ngIf="det.notesView == '-'  ">
-                                        <div class="notes" *ngFor="let notes of det.Notes">
-                                            {{(notes.GN_Text == '' || notes.GN_Text ==
-                                            null
-                                          ? '--' : ( (notes.GN_Text.toString()  )))}}
-                                        </div>
-                                    </div>
-
+                                    <button (click)="nextPage()"
+                                        [class.clicked-button]="currentPage !== getMaxPageNumber()"
+                                        [class.disabled-button]="currentPage === getMaxPageNumber()"
+                                        [disabled]="currentPage === getMaxPageNumber()"> <img
+                                            src="images/Alt_Arrow_Right_Blk.svg" alt="Next" /></button>
+                                    <button (click)="goToLastPage()"
+                                        [class.clicked-button]="currentPage === getMaxPageNumber()"
+                                        [class.disabled-button]="currentPage === getMaxPageNumber()"
+                                        [disabled]="currentPage === getMaxPageNumber()"> <img
+                                            src="images/Arrow_End_Right_Blk.svg" alt="Last" /></button>
                                 </div>
                             </div>
-
-                        </td>
-                    </tr>
-                    <tr *ngIf="det.Notes.length>2">
-                        <td colspan="31"
-                            style="text-align: left;padding-left: 9rem;cursor: pointer;color: #2b91f0;text-decoration: underline ;">
-                            <span *ngIf="det.notesView == '+'" (click)="toggleView(det)">View More</span>
-                            <span *ngIf="det.notesView == '-'" (click)="toggleView(det)"> View Less</span>
-                        </td>
-
-                    </tr>
-                </ng-container>             
-            </ng-container>
-            </ng-container>
-            <ng-template #NoQIdata>
-                <tr *ngIf="!spinnerLoader" >
-                    <td colspan="31"
-                        style="text-align: center;font-size: .9vw;background: #fff !important;color: black; display: revert;">
-                        <label>No Data Found</label>
-                    </td>
+                        </div>
+                    </th>
+                    <th colspan="7" class="align-middle lightblue-bg box-shadow">Total </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Customer Pay </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Warranty </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Internal </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow" style="display: none;">Service Contract
+                    </th>
                 </tr>
-            </ng-template>
-            <tr *ngIf="NoData==true">
-                <td colspan="19" style="text-align: center !important;">No Data Found!!!</td>
-                <td colspan="12"></td>
+                <tr class="second-header">
+                    <th style="background-color: #4584ff !important;color: #fff !important;">Notes&nbsp; <i alt="" class="fa fa-eye" *ngIf="!notesViewState" aria-hidden="true"
+                            (click)="notesView()"></i>
+                        <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState" (click)="notesView()"></i>
+                    </th>
+                    <th style="background-color: #4584ff !important;color: #fff !important;" class="text-start second-header" (click)="sort('ronumber',ServiceData)" style="cursor: pointer;">RO #</th>
+                    <th class="text-start" (click)="sort('opendate',ServiceData)" style="cursor: pointer;">Date</th>
+                    <th class="text-start" (click)="sort('age',ServiceData)" style="cursor: pointer;">Age</th>
+                    <th class="text-start" (click)="sort('CName',ServiceData)" style="cursor: pointer;">Customer</th>
+                    <th class="text-start" (click)="sort('StockType',ServiceData)" style="cursor: pointer;">Type</th>
 
-            </tr>
+                    <th class="text-start" (click)="sort('vehicle',ServiceData)" style="cursor: pointer;">Vehicle</th>
+                    <th class="text-start" (click)="sort('vin',ServiceData)" style="cursor: pointer;">Vin</th>
+                    <th class="text-start" (click)="sort('stock',ServiceData)" style="cursor: pointer;">Stock #</th>
+                    <!-- <th>VIN</th> -->
+                    <td (click)="sort('Totalgross',ServiceData)" style="cursor: pointer;">Gross</td>
+                    <td (click)="sort('Totalcost',ServiceData)" style="cursor: pointer;">Cost</td>
+                    <td (click)="sort('TotalSale',ServiceData)" style="cursor: pointer;">Sale </td>
+                    <td (click)="sort('Retention',ServiceData)" style="cursor: pointer;">GP%</td>
+                    <td (click)="sort('TotalELR',ServiceData)" style="cursor: pointer;">ELR</td>
+                    <td (click)="sort('Totalhours',ServiceData)" style="cursor: pointer;">Hours</td>
+                    <td (click)="sort('Discount',ServiceData)" style="cursor: pointer;">Discount</td>
 
-        </tbody>
+                    <td (click)="sort('CustomerPayGross',ServiceData)" style="cursor: pointer;">Gross</td>
+                    <td (click)="sort('Retention',ServiceData)" style="cursor: pointer;">GP%</td>
+                    <td (click)="sort('CustomerPayELR',ServiceData)" style="cursor: pointer;">ELR</td>
+                    <td (click)="sort('CustomerPayhours',ServiceData)" style="cursor: pointer;">Hours</td>
+                    <td (click)="sort('DiscountCP',ServiceData)" style="cursor: pointer;">Discount</td>
+
+                    <td (click)="sort('WarrantyGross',ServiceData)" style="cursor: pointer;">Gross</td>
+                    <td (click)="sort('WarrantyRetention',ServiceData)" style="cursor: pointer;">GP%</td>
+                    <td (click)="sort('WarrantyELR',ServiceData)" style="cursor: pointer;">ELR</td>
+                    <td (click)="sort('Warrantyhours',ServiceData)" style="cursor: pointer;">Hours</td>
+                    <td (click)="sort('DiscountWP',ServiceData)" style="cursor: pointer;">Discount</td>
+
+                    <td (click)="sort('InternalGross',ServiceData)" style="cursor: pointer;">Gross</td>
+                    <td (click)="sort('InternalRetention',ServiceData)" style="cursor: pointer;">GP%</td>
+                    <td (click)="sort('InternalELR',ServiceData)" style="cursor: pointer;">ELR</td>
+                    <td (click)="sort('Internalhours',ServiceData)" style="cursor: pointer;">Hours</td>
+                    <td (click)="sort('DiscountIP',ServiceData)" style="cursor: pointer;">Discount</td>
+
+                </tr>
+                <div class="loader" style="margin-top: 0%;margin-left: 30%;" *ngIf="spinnerLoader"></div>
+            </thead>
+
+            <tbody>
+                <ng-container *ngIf="paginatedItems.length > 0; else NoQIdata">
+                    <ng-container *ngFor="let det of paginatedItems; let i=index">
+                        <tr>
+                            <td>
+                                <img *ngIf="det.NotesStatus=='N'" src="/images/Actionblack.png"
+                                    (click)="addNotes(det,notes)" style="cursor: pointer;">
+
+                                <img *ngIf="det.NotesStatus=='Y'" src="/images/notes_unread.png "
+                                    (click)="addNotes(det,notes)" style="cursor: pointer;">
+
+                            </td>
+                            <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
+                            <td class="text-start" (click)="viewRO(det)"
+                                [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
+                                {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber ==
+                                undefined ? '-' :
+                                det.ronumber ) }}
+                            </td>
+                            <td class="text-start">
+                                {{ (det.opendate == 0 || det.opendate == null || det.opendate ==
+                                undefined ? '-'
+                                : det.opendate |
+                                date:'MM.dd.yyyy' ) }}
+                            </td>
+                            <td class="text-start">
+                                {{ (det.age == 0 || det.age == null || det.age == undefined ?
+                                '-' :
+                                det.age ) }}
+
+                            </td>
+                            <td title="{{det.CName}}" style="cursor: default;" class="text-start"> {{(det.CName ==
+                                undefined ||
+                                det.CName == null || det.CName == ''? '--' : (
+                                (det.CName.toString() | slice:0:13) +
+                                (det.CName.toString().length > 13 ? '...' : '') ))}}</td>
+                            <td class="text-start">
+                                {{ ( det.StockType == null || det.StockType == undefined ? '-' :
+                                (det.StockType=='U' ? 'Used': 'New' )) }}
+                            </td>
+
+
+
+                            <td class="text-start">
+                                {{ ( det.vehicle == null || det.vehicle == undefined ? '-' :
+                                det.vehicle ) }}
+                            </td>
+                            <td class="text-start">
+                                {{ (det.vin == 0 || det.vin == null || det.vin == undefined ?
+                                '-' :
+                                det.vin ) }}
+
+                            </td>
+                            <td class="text-start">
+                                {{ (det.stock == 0 || det.stock == null || det.stock == undefined ?
+                                '-' :
+                                det.stock ) }}
+
+                            </td>
+
+                            <td style="min-width: 50px !important;"> {{ (det.Totalgross == 0 ||
+                                det.Totalgross ==
+                                null ||
+                                det.Totalgross == undefined ? '-' :
+                                det.Totalgross | currency:'USD':'symbol':'1.0-0' )}}</td>
+                            <td style="min-width: 50px !important;"> {{ (det.Totalcost == 0 ||
+                                det.Totalcost ==
+                                null ||
+                                det.Totalcost == undefined ? '-' :
+                                det.Totalcost | currency:'USD':'symbol':'1.0-0' )}}</td>
+                            <td style="min-width: 50px !important;"> {{ (det.TotalSale == 0 ||
+                                det.TotalSale ==
+                                null ||
+                                det.TotalSale == undefined ? '-' :
+                                det.TotalSale | currency:'USD':'symbol':'1.0-0' )}}</td>
+                            <td
+                                style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                {{
+                                (det.Retention == 0 ||
+                                det.Retention == null ||
+                                det.Retention == undefined || det.Retention == ''
+                                ? '-' : det.Retention | number:'1.1-1')}}{{ (det.Retention == 0
+                                || det.Retention ==
+                                null ||
+                                det.Retention == undefined || det.Retention == ''
+                                ? '' :'%')}} </td>
+                            <td style="min-width: 50px !important;"> {{ (det.TotalELR == 0 ||
+                                det.TotalELR == null
+                                || det.TotalELR
+                                == undefined
+                                ? '-' : det.TotalELR | currency:'USD':'symbol':'1.2-2' ) }}</td>
+                            <td style="min-width: 50px !important;"> {{ (det.Totalhours == 0 ||
+                                det.Totalhours ==
+                                null ||
+                                det.Totalhours == undefined ? '-' :
+                                det.Totalhours | number : '1.2-2' ) }}</td>
+                            <td style="min-width: 50px !important;"> {{ (det.Discount == 0 ||
+                                det.Discount == null
+                                ||
+                                det.Discount == undefined
+                                ? '-' : det.Discount | currency:'USD':'symbol':'1.0-0' ) }}</td>
+                            <td style="min-width: 50px !important;"> {{ (det.CustomerPayGross ==
+                                0 ||
+                                det.CustomerPayGross == null
+                                || det.CustomerPayGross == undefined ? '-' :
+                                det.CustomerPayGross |
+                                currency:'USD':'symbol':'1.0-0' ) }}</td>
+
+                            <td
+                                style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                {{
+                                (det.CustomerRetention == 0 ||
+                                det.CustomerRetention == null ||
+                                det.CustomerRetention == undefined || det.CustomerRetention ==
+                                ''
+                                ? '-' : det.CustomerRetention | number:'1.1-1')}}{{
+                                (det.CustomerRetention == 0 ||
+                                det.CustomerRetention == null ||
+                                det.CustomerRetention == undefined || det.CustomerRetention ==
+                                ''
+                                ? '' :'%')}} </td>
+
+                            <td> {{ (det.CustomerPayELR == 0 || det.CustomerPayELR == null ||
+                                det.CustomerPayELR ==
+                                undefined ? '-'
+                                : det.CustomerPayELR |
+                                currency:'USD':'symbol':'1.2-2' ) }}</td>
+                            <td> {{ (det.CustomerPayhours == 0 || det.CustomerPayhours == null
+                                ||
+                                det.CustomerPayhours == undefined
+                                ? '-' : det.CustomerPayhours | number : '1.2-2') }}</td>
+                            <td> {{ (det.DiscountCP == 0 || det.DiscountCP == null ||
+                                det.DiscountCP ==
+                                undefined ? '-' : det.DiscountCP |
+                                currency:'USD':'symbol':'1.0-0' ) }}</td>
+
+                            <td>
+                                {{ (det.WarrantyGross == 0 || det.WarrantyGross == null ||
+                                det.WarrantyGross ==
+                                undefined ? '-' :
+                                det.WarrantyGross |
+                                currency:'USD':'symbol':'1.0-0' ) }}
+                            </td>
+
+                            <td
+                                style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                {{
+                                (det.WarrantyRetention == 0 ||
+                                det.WarrantyRetention == null ||
+                                det.WarrantyRetention == undefined || det.WarrantyRetention ==
+                                ''
+                                ? '-' : det.WarrantyRetention | number:'1.1-1')}}{{
+                                (det.WarrantyRetention == 0 ||
+                                det.WarrantyRetention == null ||
+                                det.WarrantyRetention == undefined || det.WarrantyRetention ==
+                                ''
+                                ? '' :'%')}} </td>
+
+                            <td>
+                                {{ (det.WarrantyELR == 0 || det.WarrantyELR == null ||
+                                det.WarrantyELR == undefined
+                                ? '-' :
+                                det.WarrantyELR |
+                                currency:'USD':'symbol':'1.2-2') }}
+                            </td>
+                            <td>
+                                {{ (det.Warrantyhours == 0 || det.Warrantyhours == null ||
+                                det.Warrantyhours ==
+                                undefined ? '-' :
+                                det.Warrantyhours | number : '1.2-2') }}
+                            </td>
+                            <td>
+                                {{ (det.DiscountWP == 0 || det.DiscountWP == null ||
+                                det.DiscountWP == undefined ?
+                                '-' : det.DiscountWP |
+                                currency:'USD':'symbol':'1.0-0' ) }}
+                            </td>
+
+                            <td>
+                                {{ (det.InternalGross == 0 || det.InternalGross == null ||
+                                det.InternalGross ==
+                                undefined ? '-' :
+                                det.InternalGross |
+                                currency:'USD':'symbol':'1.0-0' ) }}
+                            </td>
+                            <td
+                                style="min-width: 50px !important;white-space: nowrap !important; text-align: right !important;">
+                                {{
+                                (det.InternalRetention == 0 ||
+                                det.InternalRetention == null ||
+                                det.InternalRetention == undefined || det.InternalRetention ==
+                                ''
+                                ? '-' : det.InternalRetention | number:'1.1-1')}}{{
+                                (det.InternalRetention == 0 ||
+                                det.InternalRetention == null ||
+                                det.InternalRetention == undefined || det.InternalRetention ==
+                                ''
+                                ? '' :'%')}} </td>
+                            <td>
+                                {{ (det.InternalELR == 0 || det.InternalELR == null ||
+                                det.InternalELR == undefined
+                                ? '-' :
+                                det.InternalELR |
+                                currency:'USD':'symbol':'1.2-2' ) }}
+                            </td>
+                            <td>
+                                {{ (det.Internalhours == 0 || det.Internalhours == null ||
+                                det.Internalhours ==
+                                undefined ? '-' :
+                                det.Internalhours | number : '1.2-2') }}
+                            </td>
+                            <td>
+                                {{ (det.DiscountIP == 0 || det.DiscountIP == null ||
+                                det.DiscountIP == undefined ?
+                                '-' : det.DiscountIP |
+                                currency:'USD':'symbol':'1.0-0' ) }}
+                            </td>
+
+                            <div class="loader" style="margin-top: 30%;margin-left: 30%;" *ngIf="spinnerLoadersec">
+                            </div>
+
+                        </tr>
+                        <ng-container *ngIf="det?.Notes?.length && notesViewState && det?.NotesStatus === 'Y'">
+
+                            <tr>
+                                <!-- <td></td> -->
+
+                                <td colspan="39" class="text-start ps-3">
+
+                                    <h6 class="fw-bold font-blue small">Notes</h6>
+
+
+                                    <div class="ps-4"
+                                        *ngFor="let notes of (det.notesView === '+' ? det.Notes.slice(0,3) : det.Notes)">
+                                        {{ notes?.GN_Text?.trim() || '-' }}
+                                    </div>
+
+                                    <div *ngIf="det?.Notes?.length > 3" class="ps-4">
+                                        <a class="font-blue cursor-pointer" (click)="toggleView(det)">
+                                            {{ det.notesView === '+' ? 'View More' : 'View Less' }}
+                                        </a>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+                <ng-template #NoQIdata>
+                    <tr *ngIf="!spinnerLoader">
+                        <td colspan="31"
+                            style="text-align: center;font-size: .9vw;background: #fff !important;color: black; display: revert;">
+                            <label>No Data Found</label>
+                        </td>
+                    </tr>
+                </ng-template>
+                <tr *ngIf="NoData==true">
+                    <td colspan="19" style="text-align: center !important;">No Data Found!!!</td>
+                    <td colspan="12"></td>
+
+                </tr>
+
+            </tbody>
         </table>
     </div>
 </div>

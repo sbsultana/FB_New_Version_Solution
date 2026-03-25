@@ -275,23 +275,23 @@
               </ng-container>
               <tr>
                 <td>
-              
+
                 </td>
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
                 <td>{{ calculatestock(store) | number:'1.2-2' }}% </td>
-              
+
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
                 <td>{{ calculatenonstock(store) | number:'1.2-2' }}%</td>
-              
+
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
                 <td>{{ calculatetotal(store) | number:'1.2-2' }}% </td>
-              
+
               </tr>
 
             </ng-container>
@@ -342,42 +342,42 @@
             </tr>
           </thead>
 
-      <tbody>
-  <ng-container *ngFor="let grp of groupedParts | keyvalue">
-  <tr>
-    <td colspan="19" style="background-color:#363b4f !important;
+          <tbody>
+            <ng-container *ngFor="let grp of groupedParts | keyvalue">
+              <tr>
+                <td colspan="19" style="background-color:#363b4f !important;
                             color:white !important; padding-left:3rem;text-align: left !important">
-      {{ grp.key }}
-    </td>
-  </tr>
+                  {{ grp.key }}
+                </td>
+              </tr>
 
-  <tr *ngFor="let part of (grp.value || [])">
-    <td></td>
-    <td>{{ part['Part#'] || '-' }}</td>
-    <td class="text-start ps-2">{{ part.Description || '-' }}</td>
+              <tr *ngFor="let part of (grp.value || [])">
+                <td></td>
+                <td>{{ part['Part#'] || '-' }}</td>
+                <td class="text-start ps-2">{{ part.Description || '-' }}</td>
 
-    <td>{{ part.Stock_Qty || 0 }}</td>
-    <td>${{ part.Stock_Cost || 0 }}</td>
-    <td>{{ part.Stock_Idle || 0 }}</td>
+                <td>{{ part.Stock_Qty || 0 }}</td>
+                <td>${{ part.Stock_Cost || 0 }}</td>
+                <td>{{ part.Stock_Idle || 0 }}</td>
 
-    <td>{{ part.NonStock_Qty || 0 }}</td>
-    <td>${{ part.NonStock_Cost || 0 }}</td>
-    <td>{{ part.NonStock_Idle || 0 }}</td>
+                <td>{{ part.NonStock_Qty || 0 }}</td>
+                <td>${{ part.NonStock_Cost || 0 }}</td>
+                <td>{{ part.NonStock_Idle || 0 }}</td>
 
-    <td>{{ part.Total_Qty || 0 }}</td>
-    <td>${{ part.Total_Cost || 0 }}</td>
-    <td>{{ part.Total_Idle_Cost || 0 }}</td>
+                <td>{{ part.Total_Qty || 0 }}</td>
+                <td>${{ part.Total_Cost || 0 }}</td>
+                <td>{{ part.Total_Idle_Cost || 0 }}</td>
 
-    <td>{{ part.LastReceiptDate || '-' }}</td>
-    <td>{{ part.LastSaleDate || '-' }}</td>
-    <td>{{ part.ReturnDate || '-' }}</td>
-    <td>{{ part.StockGroup || '-' }}</td>
-    <td>{{ part.Bin || '-' }}</td>
-    <td>{{ part.PartStatus || '-' }}</td>
-  </tr>
-</ng-container>
+                <td>{{ part.LastReceiptDate || '-' }}</td>
+                <td>{{ part.LastSaleDate || '-' }}</td>
+                <td>{{ part.ReturnDate || '-' }}</td>
+                <td>{{ part.StockGroup || '-' }}</td>
+                <td>{{ part.Bin || '-' }}</td>
+                <td>{{ part.PartStatus || '-' }}</td>
+              </tr>
+            </ng-container>
 
-</tbody>
+          </tbody>
 
         </table>
       </div>
