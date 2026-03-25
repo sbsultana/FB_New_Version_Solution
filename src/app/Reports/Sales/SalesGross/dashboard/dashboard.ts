@@ -50,6 +50,7 @@ export class Dashboard {
   pack: any = [];
 
   actionType: any = ''
+  DefaultLoad: any = 'E'
 
   path3id: any = '';
   CurrentDate = new Date();
@@ -87,7 +88,7 @@ export class Dashboard {
       sm: this.salesManagerId,
       fm: this.financeManagerId,
       as: this.acquisition,
-      gridview: this.GridView, otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids, ProductDeals: this.ProductDeals
+      gridview: this.GridView, otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids, ProductDeals: this.ProductDeals, 'DefaultLoad': this.DefaultLoad
     },
   ];
 
@@ -115,11 +116,19 @@ export class Dashboard {
       JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+      this.actionType = 'Y';
+      this.DefaultLoad = ''
+
+      this.getSalesData();
+
       localStorage.setItem('flag', 'M')
     } else {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        //this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.storeIds = []
+        this.DefaultLoad = 'E'
+        this.actionType = 'N'
       }
     }
     if (localStorage.getItem('stime') != null) {
@@ -134,7 +143,6 @@ export class Dashboard {
     }
     localStorage.setItem('stime', 'MTD')
     this.getPeopleList()
-    this.getSalesData();
 
   }
 
@@ -181,6 +189,7 @@ export class Dashboard {
       groups: this.groups,
       as: this.acquisition,
       datevaluetype: this.DateType,
+      'DefaultLoad': this.DefaultLoad
 
     };
     this.shared.api.SetHeaderData({ obj: data });
@@ -206,7 +215,8 @@ export class Dashboard {
         groups: this.groups,
         as: this.acquisition,
         datevaluetype: this.DateType,
-        ProductDeals: this.ProductDeals
+        ProductDeals: this.ProductDeals,
+        'DefaultLoad': this.DefaultLoad
       },
     ];
     // this.getSalesData()
@@ -227,7 +237,7 @@ export class Dashboard {
       this.shared.spinner.show();
       this.NoData = false;
       this.actionType = 'Y';
-
+      this.DefaultLoad = ''
       if (this.ProductDeals == 'No') {
         this.GetData();
       } else {
@@ -310,8 +320,8 @@ export class Dashboard {
                 // this.responcestatus = 'I';
                 this.NoData = false;
                 let length = this.IndividualSalesGross.length;
-                let path2 = this.selectedDataGrouping[1]?.columnname;
-                let path3 = this.selectedDataGrouping[2]?.columnname;
+                let path2 = this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '';
+                let path3 = this.selectedDataGrouping.length >= 3 ? this.selectedDataGrouping[2]?.columnname : '';
                 if (this.TotalReport == 'B') {
                   this.IndividualSalesGross.push(this.TotalSalesGross[0]);
                 } else {
@@ -489,8 +499,8 @@ export class Dashboard {
                 // this.responcestatus = 'I';
                 this.NoData = false;
                 let length = this.IndividualSalesGross.length;
-                let path2 = this.selectedDataGrouping[1]?.columnname;
-                let path3 = this.selectedDataGrouping[2]?.columnname;
+                let path2 = this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '';
+                let path3 = this.selectedDataGrouping.length >= 3 ? this.selectedDataGrouping[2]?.columnname : '';
                 if (this.TotalReport == 'B') {
                   this.IndividualSalesGross.push(this.TotalSalesGross[0]);
                 } else {
@@ -1039,8 +1049,8 @@ export class Dashboard {
 
                 this.responcestatus = this.responcestatus + 'I';
                 let length = this.IndividualSalesGrossBackGross.length;
-                let path2 = this.selectedDataGrouping[1]?.columnname;
-                let path3 = this.selectedDataGrouping[2]?.columnname
+                let path2 = this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '';
+                let path3 = this.selectedDataGrouping.length >= 3 ? this.selectedDataGrouping[2]?.columnname : '';
 
                 if (this.TotalReport == 'B') {
                   this.IndividualSalesGrossBackGross.push(this.TotalSalesGrossBackGross[0]);

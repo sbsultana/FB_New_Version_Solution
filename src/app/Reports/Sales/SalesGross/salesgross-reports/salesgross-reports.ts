@@ -27,10 +27,12 @@ export class SalesgrossReports {
   storename: any = ''
   storecount: any = null;
   storedisplayname: any = '';
+  DefaultLoad: any = ''
+
   groupName: any = '';
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': this.storeIds, 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,'DefaultLoad':this.DefaultLoad
   };
   Performance: string = 'Load';
 
@@ -50,7 +52,6 @@ export class SalesgrossReports {
       { 'code': 'PM', 'name': 'Same Month PY' },
     ]
   }
-
 
   selectedDataGrouping: any = [];
   dataGrouping: any = [
@@ -125,6 +126,7 @@ export class SalesgrossReports {
     this.reporttotal = this.ngChanges.toporbottom
     this.selectedDataGrouping = [...this.ngChanges.dataGroupings]
     this.ProductDeals = this.ngChanges.ProductDeals
+    this.DefaultLoad = this.ngChanges.DefaultLoad
 
   }
   constructor(private shared: Sharedservice, private datesSrvc: Setdates, private toast: ToastService) { }
@@ -384,7 +386,7 @@ export class SalesgrossReports {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'N', 'DefaultLoad':this.DefaultLoad
     };
     console.log(this.storesFilterData, 'Store FIlter Data');
     let allstrids = [];
