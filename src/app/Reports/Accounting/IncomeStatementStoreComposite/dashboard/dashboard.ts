@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import FileSaver from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -226,11 +226,11 @@ export class Dashboard {
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
-  storesWidth: string = '60%';
+  storesWidth: string = '100%';
 
   applyDateChange() {
     if (!this.storeIds || this.storeIds.length === 0) {
-     
+
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -464,7 +464,7 @@ export class Dashboard {
     // DetailsSF.result.then(
     //   (data) => {},
     //   (reason) => {
-    
+
     //     // // on dismiss
     //     // const Data = {
     //     //   state: true,
@@ -473,7 +473,7 @@ export class Dashboard {
     //     this.GetData();
     //   }
     // );
-   
+
   }
   index = '';
   commentobj: any = {};
@@ -719,7 +719,7 @@ export class Dashboard {
     return key.startsWith('BDGT_') || key.startsWith('VAR') || key === 'Report Total';
   }
 
-getSelectedStoreNames(): string {
+  getSelectedStoreNames(): string {
     if (!this.storeIds || this.storeIds.length === 0) return '';
 
     const ids = this.storeIds.toString().split(',');
@@ -774,296 +774,223 @@ getSelectedStoreNames(): string {
 
     return rowCount;
   }
+  isSpecialRow(name: string): boolean {
+    return [
+      'Total Selling Gross (New)',
+      'Total Selling Gross (Used)',
+      'Net Income Before Taxes',
+      'Total Operating Department Profit'
+    ].includes(name);
+  }
   exportAsXLSX(): void {
 
-    let storeValue = '';
-    const selectedStoreIds: string[] =
-      this.storeIds && this.storeIds.length
-        ? this.storeIds.map((id: any) => id.toString())
-        : [];
-    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
-    storeValue = allStores
-      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
-      .map((s: any) => s.storename.trim())
-      .filter(Boolean)
-      .join(', ');
-    if (!storeValue && selectedStoreIds.length) {
-      storeValue = selectedStoreIds.join(', ');
-    }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Income Statement');
 
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet(
-      'Income Statement Store'
-    );
-    worksheet.views = [
-      {
-        state: 'frozen',
-        ySplit: 13, // Number of rows to freeze (2 means the first two rows are frozen)
-        topLeftCell: 'A14', // Specify the cell to start freezing from (in this case, the third row)
-        showGridLines: false,
-      },
-    ];
-    worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Income Statement Store']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = { indent: 1, vertical: 'top', horizontal: 'left' };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
-    worksheet.addRow('');
-    const DateToday = this.datepipe.transform(
-      new Date(),
-      'MM.dd.yyyy h:mm:ss a'
-    );
-    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    worksheet.addRow([DateToday]).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-    };
-    // ,ExpenseTrendByStore
-    let ISstoresByData = this.ExpenseTrendByStore.map(
-      (_arrayElement: any) => Object.assign({}, _arrayElement)
-    );
-    const MonthDate = this.datepipe.transform(this.Month, 'MMM-yy');
+    /* ================= 1. FILTERS ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    // Create a copy and reorder keys: BDGT_TOTAL and VARBDGT should follow Report Total
+    /* ================= 2. HEADER ================= */
+    const headerStartRow = filterRowCount + 1;
+    const monthDate = this.datepipe.transform(this.Month, 'MMMM yyyy');
+
     let storeHeadings = [...this.StoreNamesHeadings];
 
-    storeHeadings = storeHeadings.filter((x) => {
-      if (this.ShowHideBudget === 'Show') return true;
+    // ✅ SINGLE HEADER ROW (No Category row)
+    const headerRow = worksheet.addRow([
+      monthDate,
+      ...storeHeadings.map((h: any) => this.excelformatKey(h))
+    ]);
 
-      // Hide all budget/variance keys
-      const isDynamicBudget = /^BDGT_\d+$/.test(x);
-      const isDynamicVariance = /^VAR\d+$/.test(x);
-      const isBudgetTotal = x === 'BDGT_TOTAL';
-      const isBudgetVariance = x === 'VARBDGT';
+    // Merge first cell for title spacing
+    worksheet.mergeCells(`A${headerStartRow}:A${headerStartRow}`);
 
-      return !isDynamicBudget && !isDynamicVariance && !isBudgetTotal && !isBudgetVariance;
-    });
-
-    if (this.ShowHideBudget === 'Show') {
-      const reportTotalIndex = storeHeadings.indexOf('Report Total');
-      if (reportTotalIndex >= 0) {
-        // Ensure not duplicated
-        storeHeadings = storeHeadings.filter(
-          (k) => k !== 'BDGT_TOTAL' && k !== 'VARBDGT'
-        );
-        storeHeadings.splice(reportTotalIndex + 1, 0, 'BDGT_TOTAL', 'VARBDGT');
-      }
-    }
-    const Header = [MonthDate];
-    for (let i = 0; i < storeHeadings.length; i++) {
-      Header.push(this.excelformatKey(storeHeadings[i]));
-    }
-    const ReportFilter = worksheet.addRow(['Report Filters :']);
-    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
-    const SummaryType = worksheet.addRow(['Summary Type :']);
-    const summarytype = worksheet.getCell('B6');
-    summarytype.value = 'Store Summary';
-    summarytype.font = { name: 'Arial', family: 4, size: 9 };
-    summarytype.alignment = { vertical: 'top', horizontal: 'left' };
-    SummaryType.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    const DateMonth = worksheet.addRow(['Month :']);
-    const datemonth = worksheet.getCell('B7');
-    datemonth.value = this.Month;
-    datemonth.font = { name: 'Arial', family: 4, size: 9 };
-    datemonth.alignment = { vertical: 'top', horizontal: 'left' };
-    DateMonth.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    const Groups = worksheet.getCell('A8');
-    Groups.value = 'Group :';
-    Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
-    const groups = worksheet.getCell('B8');
-    groups.value =
-      'Silvertip';
-    groups.font = { name: 'Arial', family: 4, size: 9 };
-    groups.alignment = {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-    };
-    worksheet.mergeCells('B9', 'K11');
-    const Stores = worksheet.getCell('A9');
-    Stores.value = 'Store :';
-    const stores = worksheet.getCell('B9');
-    stores.value = storeValue;
-    stores.font = { name: 'Arial', family: 4, size: 9 };
-    stores.alignment = {
-      vertical: 'top',
-      horizontal: 'left',
-      wrapText: true,
-    };
-    Stores.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    worksheet.addRow('');
-    const headerRow = worksheet.addRow(Header);
-    // //console.log(headerRow);
-    headerRow.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    headerRow.alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'center',
-    };
-    headerRow.eachCell((cell, number) => {
+    /* ================= HEADER STYLE ================= */
+    worksheet.getRow(headerStartRow).eachCell(cell => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '2a91f0' },
-        bgColor: { argb: 'FF0000FF' },
+        fgColor: { argb: '0554EF' }
       };
-      cell.border = { right: { style: 'thin' } };
-      cell.alignment = {
-        vertical: 'top',
-        horizontal: 'center',
-        wrapText: true,
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        name: 'Calibri'
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
       };
     });
-    ISstoresByData.forEach((d: any) => {
-      var Obj = [d.LABLE];
-      storeHeadings.forEach((e: any) => {
-        Obj = [
-          ...Obj,
-          d[e] == '' ? '-' : d[e] == null ? '-' : parseInt(d[e]),
-        ];
-      });
-      // //console.log(Obj);
-      const row = worksheet.addRow(Obj);
-      row.getCell(1).alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-      row.font = { name: 'Arial', family: 4, size: 8 };
-      if (this.isBoldRow(d.LABLE)) {
-        row.eachCell((cell) => {
-          cell.font = { bold: true, name: 'Arial', family: 4, size: 8 };
-        });
-      }
-      const lastRow = worksheet.lastRow?.number ?? 0;
-      row.eachCell((cell) => {
+
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (
+      row: any,
+      valueTypes: any[] = [],
+      isSpecial = false,
+      isTitleRow = false
+    ) => {
+
+      row.eachCell((cell: any, colNumber: number) => {
+
+        const isBold = isTitleRow || isSpecial;
+
+        // ✅ ADD BORDER TO ALL CELLS
         cell.border = {
-          right: { style: 'thin' },
-          bottom: row.number === lastRow ? { style: 'thin' } : undefined
+          top: { style: 'thin', color: { argb: 'D3D3D3' } },
+          bottom: { style: 'thin', color: { argb: 'D3D3D3' } },
+          left: { style: 'thin', color: { argb: 'D3D3D3' } },
+          right: { style: 'thin', color: { argb: 'D3D3D3' } }
         };
 
-        cell.alignment = {
-          vertical: 'top',
-          horizontal: 'right',
-          indent: 1
-        };
+        // First column
+        if (colNumber === 1) {
+          cell.alignment = {
+            horizontal: 'left',
+            vertical: 'middle',
+            indent: isTitleRow ? 2 : 3
+          };
+          cell.font = {
+            bold: isBold,
+            name: 'Calibri'
+          };
+          return;
+        }
+
+        const valueType = valueTypes[colNumber - 2];
+
+        if (!cell.value || cell.value === '-') {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          return;
+        }
+
+        let num = parseFloat(cell.value);
+
+        if (!isNaN(num)) {
+
+          if (valueType === '$') {
+            cell.numFmt = '"$" * #,##0; "$" * -#,##0';
+            cell.value = num;
+          }
+
+          if (valueType === '#') {
+            cell.numFmt = '#,##0';
+            cell.value = num;
+          }
+
+          if (valueType === '%') {
+            cell.numFmt = '0.0%';
+            // cell.value = num / 100;
+          }
+
+          if (isSpecial && num < 0) {
+            cell.font = {
+              color: { argb: 'FF0000' },
+              bold: true
+            };
+          } else {
+            cell.font = {
+              bold: isBold,
+              name: 'Calibri'
+            };
+          }
+        }
+
+        cell.alignment = valueType === '%'
+          ? { horizontal: 'center', vertical: 'middle' }
+          : { horizontal: 'right', vertical: 'middle' };
       });
-      if (row.number % 2) {
-        row.eachCell((cell, number) => {
+    };
+    /* ================= DATA ================= */
+    const data = this.ExpenseTrendByStore.map((x: any) => ({ ...x }));
+
+    data.forEach((d: any) => {
+
+      const isTitleRow = this.isBoldRow(d.LABLE);
+      const isSpecial = this.isSpecialRow ? this.isSpecialRow(d.LABLE) : false;
+
+      let rowData: any[] = [d.LABLE];
+
+      storeHeadings.forEach((key: any) => {
+        let val = d[key];
+        rowData.push(val === '' || val == null ? '-' : val);
+      });
+
+      const row = worksheet.addRow(rowData);
+
+      const valueType = d.LABLE.includes('%')
+        ? '%'
+        : d.LABLE.includes('Units')
+          ? '#'
+          : '$';
+
+      formatRow(
+        row,
+        Array(storeHeadings.length).fill(valueType),
+        isSpecial,
+        isTitleRow
+      );
+
+      /* ===== OPTIONAL SUB ROW SUPPORT ===== */
+      if (Array.isArray(d.SubData)) {
+        d.SubData.forEach((sub: any) => {
+
+          let subRowData: any[] = [sub.LABLE || ''];
+
+          storeHeadings.forEach((key: any) => {
+            let val = sub[key];
+            subRowData.push(val === '' || val == null ? '-' : val);
+          });
+
+          const subRow = worksheet.addRow(subRowData);
+          subRow.outlineLevel = 1;
+
+          formatRow(
+            subRow,
+            Array(storeHeadings.length).fill(valueType)
+          );
+        });
+      }
+
+      /* ===== ALT ROW COLOR ===== */
+      if (row.number % 2 === 0) {
+        row.eachCell(cell => {
           cell.fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-            bgColor: { argb: 'FF0000FF' },
+            fgColor: { argb: 'F5F7FA' }
           };
         });
       }
-      if (
-        d.LABLE == 'New Units' ||
-        d.LABLE == 'Pre-Owned Units' ||
-        d.LABLE == 'Unit Retail Sales' ||
-        d.LABLE == 'Wholesale Units' ||
-        d.LABLE == 'Fleet Units'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
-            cell.numFmt = '#,##0';
-          }
-        });
-      } else if (
-        d.LABLE == 'Variable Expenses%' ||
-        d.LABLE == 'Personnel Expenses%' ||
-        d.LABLE == 'Semi-Fixed Expenses%' ||
-        d.LABLE == 'Fixed Expenses%' ||
-        d.LABLE == 'Other Expenses%'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            if (typeof cell.value === 'number') {
-              cell.value = cell.value / 100;
-            }
-            cell.numFmt = '0%';
-          }
-        });
-      } else {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
-            cell.numFmt = '$#,##0';
-          }
-        });
-      }
     });
-    worksheet.getColumn(1).width = 30;
-    worksheet.getColumn(1).alignment = {
-      indent: 1,
-      vertical: 'top',
-      horizontal: 'left',
-    };
-    worksheet.getColumn(2).width = 15;
-    worksheet.getColumn(3).width = 15;
-    worksheet.getColumn(4).width = 15;
-    worksheet.getColumn(5).width = 15;
-    worksheet.getColumn(6).width = 15;
-    worksheet.getColumn(7).width = 15;
-    worksheet.getColumn(8).width = 15;
-    worksheet.getColumn(9).width = 15;
-    worksheet.getColumn(10).width = 15;
-    worksheet.getColumn(11).width = 15;
-    worksheet.getColumn(12).width = 15;
-    worksheet.getColumn(13).width = 15;
-    worksheet.getColumn(14).width = 15;
-    worksheet.getColumn(15).width = 15;
-    worksheet.getColumn(16).width = 15;
-    worksheet.getColumn(17).width = 15;
-    worksheet.getColumn(18).width = 15;
-    worksheet.getColumn(19).width = 15;
-    worksheet.getColumn(20).width = 15;
-    worksheet.getColumn(21).width = 15;
-    worksheet.getColumn(22).width = 15;
-    worksheet.getColumn(23).width = 15;
-    worksheet.getColumn(24).width = 15;
-    worksheet.getColumn(25).width = 15;
-    worksheet.getColumn(26).width = 15;
-    worksheet.getColumn(27).width = 25;
-    worksheet.addRow([]);
-    workbook.xlsx.writeBuffer().then((data: any) => {
-      const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
+
+    /* ================= FINAL SETTINGS ================= */
+
+    worksheet.views = [
+      {
+        state: 'frozen',
+        xSplit: 1,
+        ySplit: headerStartRow
+      }
+    ];
+
+    worksheet.columns = [
+      { width: 40 },
+      ...storeHeadings.map(() => ({ width: 28 }))
+    ];
+
+    /* ================= EXPORT ================= */
+    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
+
+    workbook.xlsx.writeBuffer().then((data: BlobPart) => {
       FileSaver.saveAs(
-        blob,
-        'Income Statement Store Composite_' +
-        DATE_EXTENSION +
-        EXCEL_EXTENSION
+        new Blob([data]),
+        'IncomeStatement_' + DATE_EXTENSION + '.xlsx'
       );
     });
-    // });
   }
 
   generatePDF() {
@@ -1585,10 +1512,10 @@ getSelectedStoreNames(): string {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-           
+
               this.toast.success(res.response)
             } else {
-           
+
               this.toast.show('Invalid Details.', 'danger', 'Error');
             }
           },

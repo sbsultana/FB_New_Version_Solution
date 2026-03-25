@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import FileSaver from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -799,249 +799,178 @@ export class Dashboard {
 
   ExcelStoreNames: any = [];
   exportAsXLSX(): void {
-    let ISmonthByData = this.ExpenseTrendByStoreMonth.map(
-      (_arrayElement: any) => Object.assign({}, _arrayElement)
-    );
-    const workbook = new Workbook();
+
+    const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Income Statement Trend');
-    worksheet.views = [
-      {
-        state: 'frozen',
-        ySplit: 13, // Number of rows to freeze (2 means the first two rows are frozen)
-        topLeftCell: 'A14', // Specify the cell to start freezing from (in this case, the third row)
-        showGridLines: false,
-      },
-    ];
-    worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Income Statement Trend']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = { indent: 1, vertical: 'top', horizontal: 'left' };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
 
-    worksheet.addRow('');
-    const DateToday = this.datepipe.transform(
-      new Date(),
-      'MM.dd.yyyy h:mm:ss a'
-    );
-    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
+    /* ================= FILTER SECTION ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    const StartDate: any = this.datepipe.transform(this.StartDate, 'MMM-yy');
-    const EndDate: any = this.datepipe.transform(this.EndDate, 'MMM-yy');
-    const Header = [EndDate + ' to ' + StartDate];
-    for (let i = 0; i < this.MonthsHeadings.length; i++) {
-      Header.push(this.MonthsHeadings[i]);
-    }
-    const ReportFilter = worksheet.addRow(['Report Filters :']);
-    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+    /* ================= HEADER ================= */
+    const StartDate = this.datepipe.transform(this.StartDate, 'MMM-yy');
+    const EndDate = this.datepipe.transform(this.EndDate, 'MMM-yy');
 
-    const SummaryType = worksheet.addRow(['Summary Type :']);
-    const summarytype = worksheet.getCell('B6');
-    summarytype.value = 'Month Summary';
-    summarytype.font = { name: 'Arial', family: 4, size: 9 };
-    summarytype.alignment = { vertical: 'top', horizontal: 'left' };
-    SummaryType.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    const DateMonth = worksheet.addRow(['Time Frame :']);
-    const datemonth = worksheet.getCell('B7');
-    datemonth.value = EndDate + ' to ' + StartDate;
-    datemonth.font = { name: 'Arial', family: 4, size: 9 };
-    datemonth.alignment = { vertical: 'top', horizontal: 'left' };
-    DateMonth.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    // const Groups = worksheet.getCell('A8');
-    // Groups.value = 'Group :';
-    // Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
-    // const groups = worksheet.getCell('B8');
-    // groups.value =
-    //   this.groups = 'WesternAuto';
-    // groups.font = { name: 'Arial', family: 4, size: 9 };
-    // groups.alignment = {
-    //   vertical: 'middle',
-    //   horizontal: 'left',
-    //   wrapText: true,
-    // };
-    // ===== STORE VALUE FOR EXCEL (FROM UI SELECTION) =====
+    const Header = [`${EndDate} to ${StartDate}`, ...this.MonthsHeadings];
 
-    let storeValue = '';
-
-    const selectedStoreIds: string[] =
-      this.storeIds && this.storeIds.length
-        ? this.storeIds.map((id: any) => id.toString())
-        : [];
-
-    const allStores: any[] = Array.isArray(this.stores) ? this.stores : [];
-
-    // ✅ Bind ONLY selected store names
-    storeValue = allStores
-      .filter((s: any) => selectedStoreIds.includes(s.ID.toString()))
-      .map((s: any) => s.storename.trim())
-      .filter(Boolean)
-      .join(', ');
-
-    // ✅ Final fallback (safety)
-    if (!storeValue && selectedStoreIds.length) {
-      storeValue = selectedStoreIds.join(', ');
-    }
-    worksheet.mergeCells('B9', 'K11');
-    const Stores = worksheet.getCell('A9');
-    Stores.value = 'Store :';
-    const stores = worksheet.getCell('B9');
-    stores.value = storeValue;
-    stores.font = { name: 'Arial', family: 4, size: 9 };
-    stores.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
-    Stores.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    worksheet.addRow('');
     const headerRow = worksheet.addRow(Header);
-    // //console.log(headerRow);
-    headerRow.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    headerRow.alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'center',
-    };
-    headerRow.eachCell((cell, number) => {
+
+    headerRow.eachCell(cell => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '2a91f0' },
-        bgColor: { argb: 'FF0000FF' },
+        fgColor: { argb: '4584FF' }
       };
-      cell.border = { right: { style: 'thin' } };
-      cell.alignment = { vertical: 'top', horizontal: 'center' };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        name: 'Calibri'
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
     });
-    ISmonthByData.forEach((d: any) => {
-      var Obj = [d.LABLE];
-      this.MonthsHeadings.forEach((e: any) => {
-        Obj = [...Obj, d[e] == '' ? '-' : d[e] == null ? '-' : parseInt(d[e])];
+
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any, type: string, label: string) => {
+      const isSpecial = this.isSpecialRow(label);
+
+      row.eachCell((cell: any, colNumber: number) => {
+        // ✅ ADD BORDER TO ALL CELLS
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'D3D3D3' } },
+          bottom: { style: 'thin', color: { argb: 'D3D3D3' } },
+          left: { style: 'thin', color: { argb: 'D3D3D3' } },
+          right: { style: 'thin', color: { argb: 'D3D3D3' } }
+        };
+        if (colNumber === 1) {
+          cell.alignment = { horizontal: 'left', vertical: 'middle', indent: 2 };
+          cell.font = { name: 'Calibri' };
+          return;
+        }
+
+        if (!cell.value || cell.value === '-') {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          return;
+        }
+
+        let num = Number(cell.value);
+
+        if (!isNaN(num)) {
+          if (type === 'currency') {
+            cell.numFmt = '_("$"* #,##0_);_("$"* (#,##0);_("$"* "-"_);_(@_)';
+          }
+          if (type === 'number') cell.numFmt = '#,##0';
+          if (type === 'percent') {
+            cell.value = num / 100;
+            cell.numFmt = '0.0%';
+          }
+          // ✅ APPLY RED COLOR ONLY FOR SPECIAL ROWS & NEGATIVE VALUES
+          if (isSpecial && num < 0) {
+            cell.font = {
+              ...cell.font,
+              color: { argb: 'FFFF0000' }
+            };
+          }
+        }
+
+        cell.alignment = type === 'percent'
+          ? { horizontal: 'center', vertical: 'middle' }
+          : { horizontal: 'right', vertical: 'middle' };
       });
-      // //console.log(Obj);
-      const row = worksheet.addRow(Obj);
-      row.getCell(1).alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-      if (row.number % 2) {
-        row.eachCell((cell, number) => {
+    };
+
+    /* ================= DATA ================= */
+    const data = this.ExpenseTrendByStoreMonth.map((x: any) => ({ ...x }));
+
+    data.forEach((d: any) => {
+
+      let rowData = [d.LABLE];
+
+      this.MonthsHeadings.forEach((m: any) => {
+        let val = d[m];
+        let num = Number(val);
+
+        if (val === '' || val == null || num === 0) {
+          rowData.push('-');
+        } else {
+          rowData.push(num);
+        }
+      });
+      const row = worksheet.addRow(rowData);
+
+      /* ===== TYPE DETECTION ===== */
+      let type = 'currency';
+
+      if (
+        d.LABLE.includes('Units')
+      ) type = 'number';
+
+      if (
+        d.LABLE.includes('%')
+      ) type = 'percent';
+
+      /* ===== APPLY FORMAT ===== */
+      formatRow(row, type, d.LABLE);
+      /* ===== ALT ROW COLOR ===== */
+      if (row.number % 2 === 0) {
+        row.eachCell(cell => {
           cell.fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-            bgColor: { argb: 'FF0000FF' },
+            fgColor: { argb: 'F5F5F5' }
           };
         });
       }
-      row.font = { name: 'Arial', family: 4, size: 8 };
+
+      /* ===== BOLD ROWS ===== */
       if (this.isBoldRow(d.LABLE)) {
-        row.eachCell((cell) => {
-          cell.font = { bold: true, name: 'Arial', family: 4, size: 8 };
+        row.eachCell((cell: any) => {
+          cell.font = {
+            ...cell.font,
+            bold: true
+          };
         });
       }
-      const lastRow = worksheet.lastRow?.number ?? 0;
-      row.eachCell((cell) => {
-        cell.border = {
-          right: { style: 'thin' },
-          bottom: row.number === lastRow ? { style: 'thin' } : undefined
-        };
-        cell.alignment = {
-          vertical: 'top',
-          horizontal: 'right',
-          indent: 1
-        };
-      });
-      if (
-        d.LABLE == 'New Units' ||
-        d.LABLE == 'Pre-Owned Units' ||
-        d.LABLE == 'Unit Retail Sales' ||
-        d.LABLE == 'Wholesale Units' ||
-        d.LABLE == 'Fleet Units'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
-            cell.numFmt = '#,##0';
-          }
-        });
-      } else if (
-        d.LABLE == 'Variable Expenses%' ||
-        d.LABLE == 'Personnel Expenses%' ||
-        d.LABLE == 'Semi-Fixed Expenses%' ||
-        d.LABLE == 'Fixed Expenses%' ||
-        d.LABLE == 'Other Expenses%'
-      ) {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            if (typeof cell.value === 'number') {
-              cell.value = cell.value / 100;
-            }
-            cell.numFmt = '0%';
-          }
-        });
-      } else {
-        row.eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber > 1) {
-            // Skip the header row
-            cell.numFmt = '$#,##0';
-          }
-        });
-      }
+
+
     });
-    worksheet.getColumn(1).width = 30;
-    worksheet.getColumn(1).alignment = {
-      indent: 1,
-      vertical: 'top',
-      horizontal: 'left',
-    };
-    worksheet.getColumn(2).width = 13;
-    worksheet.getColumn(3).width = 13;
-    worksheet.getColumn(4).width = 13;
-    worksheet.getColumn(5).width = 13;
-    worksheet.getColumn(6).width = 13;
-    worksheet.getColumn(7).width = 13;
-    worksheet.getColumn(8).width = 13;
-    worksheet.getColumn(9).width = 13;
-    worksheet.getColumn(10).width = 13;
-    worksheet.getColumn(11).width = 13;
-    worksheet.getColumn(12).width = 13;
-    worksheet.getColumn(13).width = 13;
-    worksheet.getColumn(14).width = 13;
-    worksheet.getColumn(15).width = 13;
-    worksheet.getColumn(16).width = 13;
-    worksheet.addRow([]);
+
+    /* ================= FREEZE ================= */
+    worksheet.views = [
+      { state: 'frozen', xSplit: 1, ySplit: filterRowCount }
+    ];
+
+    /* ================= COLUMN WIDTH ================= */
+    worksheet.columns = [
+      { width: 35 },
+      ...this.MonthsHeadings.map(() => ({ width: 15 }))
+    ];
+
+    /* ================= EXPORT ================= */
+    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
+
     workbook.xlsx.writeBuffer().then((data: any) => {
       const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
       });
+
       FileSaver.saveAs(
         blob,
-        'Income Statement Trend_' + DATE_EXTENSION + EXCEL_EXTENSION
+        `Income Statement Trend_${DATE_EXTENSION}.xlsx`
       );
     });
-    // });
   }
-
+  //Special rows
+  isSpecialRow(name: string): boolean {
+    return [
+      'Operating Profit',
+      'Net Profit'
+    ].includes(name?.trim());
+  }
   GetPrintData() {
     window.print();
   }
