@@ -139,7 +139,7 @@ export class Dashboard {
   spinnerLoader: boolean = true;
   Role: any = [];
   userid: any;
-
+  DefaultLoad: any = 'E'
   index: string = '';
   groups: any = 1;
   financeManagerId: any = '0';
@@ -174,7 +174,7 @@ export class Dashboard {
   reportgetting!: Subscription;
 
   popup: any = [{ type: 'Popup' }];
-  // actionType: any = 'N';
+  actionType: any = 'N';
 
   notesStageValue: any = '';
   notesStageText: any = '';
@@ -205,7 +205,7 @@ export class Dashboard {
     groupName: this.groupName,
     storename: this.storename,
     storecount: null,
-    storedisplayname: this.storedisplayname,
+    storedisplayname: this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
   // solutionurl: any = environment.apiUrl;
   @HostListener('document:click', ['$event'])
@@ -241,7 +241,9 @@ export class Dashboard {
     } else {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.storeIds = ''
+        this.StoreVal = ""
+        this.actionType = 'N';
       }
     }
     this.commentsVisibility = true;
@@ -356,7 +358,8 @@ export class Dashboard {
     this.reportgetting = this.shared.api.GetReports().subscribe((data) => {
       if (data.obj.Reference === 'Liabilities') {
         this.FloorPlanData = [];
-        // this.actionType = 'Y';
+        this.actionType = 'Y';
+        this.DefaultLoad = ''
         this.NoData = false;
 
         /* Update filters */
@@ -717,6 +720,7 @@ export class Dashboard {
       this.AgeTo = 0;
       this.previousReportPath = path.path;
     }
+    this.actionType= 'Y'
     this.selectedreceviabe = path;
     this.NoData = false;
     this.FloorPlanData = [];
@@ -966,7 +970,7 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
     };
 
     // this.setHeaderData();
@@ -974,12 +978,15 @@ export class Dashboard {
 
   }
   StoresData(data: any) {
+
     this.storeIds = data.storeids;
+    this.StoreVal = data.storeids
     this.groupId = data.groupId;
     this.storename = data.storename;
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.getEmployees()
   }
   AllorDebit(e: any) {
     this.allordebit = []

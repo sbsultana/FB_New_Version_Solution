@@ -78,7 +78,7 @@ export class Dashboard {
   reportgetting!: Subscription;
 
   popup: any = [{ type: 'Popup' }];
-  // actionType: any = 'N';
+  actionType: any = 'N';
 
   notesStageValue: any = '';
   notesStageText: any = '';
@@ -98,7 +98,7 @@ export class Dashboard {
   groupId: any = 8;
   storeIds: any = '';
   stores: any = [];
-
+  DefaultLoad: any = 'E'
   storesFilterData: any = {
     groupsArray: this.groupsArray,
     groupId: this.groupId,
@@ -109,7 +109,7 @@ export class Dashboard {
     groupName: this.groupName,
     storename: this.storename,
     storecount: null,
-    storedisplayname: this.storedisplayname,
+    storedisplayname: this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
   // solutionurl: any = environment.apiUrl;
   @HostListener('document:click', ['$event'])
@@ -141,11 +141,14 @@ export class Dashboard {
       JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+      this.actionType = 'Y';
       localStorage.setItem('flag', 'M')
     } else {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.storeIds = ''
+        this.StoreVal = ""
+        this.actionType = 'N';
       }
     }
     this.commentsVisibility = true;
@@ -551,6 +554,8 @@ export class Dashboard {
   /* ------------------------------- MAIN API CALL ------------------------------- */
   previousReportPath: string | null = null;
   Getfloorplansdata(path: any) {
+
+    this.DefaultLoad = ''
     if (this.previousReportPath !== path.path) {
       this.AgeFrom = 0;
       this.AgeTo = 0;
@@ -803,8 +808,9 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
     };
+
 
     // this.setHeaderData();
     // this.GetData();
@@ -812,11 +818,13 @@ export class Dashboard {
   }
   StoresData(data: any) {
     this.storeIds = data.storeids;
+    this.StoreVal = data.storeids;
     this.groupId = data.groupId;
     this.storename = data.storename;
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.getEmployees()
   }
   AllorDebit(e: any) {
     this.allordebit = []
@@ -1082,19 +1090,19 @@ export class Dashboard {
     this.activePopover = -1;
     let missing = false;
     if (!this.dealStatus || this.dealStatus.length === 0) {
-      this.toast.show('Please Select Atleast One Deal Status.', 'warning','Warning');
+      this.toast.show('Please Select Atleast One Deal Status.', 'warning', 'Warning');
       missing = true;
     }
     if (!this.dealType || this.dealType.length === 0) {
-      this.toast.show('Please Select Atleast One Deal Type.', 'warning','Warning');
+      this.toast.show('Please Select Atleast One Deal Type.', 'warning', 'Warning');
       missing = true;
     }
     if (!this.storeIds || this.storeIds.length === 0) {
-      this.toast.show('Please Select Atleast One Store.', 'warning','Warning');
+      this.toast.show('Please Select Atleast One Store.', 'warning', 'Warning');
       missing = true;
     }
     if (!this.selectedFiManagersvalues || this.selectedFiManagersvalues.length === 0) {
-      this.toast.show('Please Select Atleast One People.', 'warning','Warning');
+      this.toast.show('Please Select Atleast One People.', 'warning', 'Warning');
       missing = true;
     }
     if (missing) {
@@ -1112,6 +1120,7 @@ export class Dashboard {
       StoreIds: this.storeIds.toString(),
       FinanceManagerId: this.financeManagerId,
     };
+    this.actionType = 'Y'
     this.Getfloorplansdata(this.selectedreceviabe);
   }
 

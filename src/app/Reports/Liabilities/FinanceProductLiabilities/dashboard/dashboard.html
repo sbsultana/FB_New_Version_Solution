@@ -120,7 +120,7 @@
       </div>
     </div>
     <!-- Store Summary Tabs – C Style -->
-    <div id="StoreSummary">
+    <div id="StoreSummary" *ngIf="actionType == 'Y'">
       <div class="tabs-wrapper">
         <ul class="c-tabs">
           <li *ngFor="let ESTtype of LiabilitiesData; let i = index" class="filter-button" [ngClass]="{
@@ -138,7 +138,7 @@
 
 
 
-    <div class="d-flex justify-content-between" *ngIf="FloorPlanData?.length > 0">
+    <div class="d-flex justify-content-between" *ngIf="FloorPlanData?.length > 0 && actionType == 'Y'">
       <div class="scorecard-aging-header mt-2">
         <table class="table mb-0">
           <thead style="text-transform: uppercase;">
@@ -258,7 +258,7 @@
     </div>
 
 
-    <div class="scorecard-triple-header receivables-tbl mt-2">
+    <div class="scorecard-triple-header receivables-tbl mt-2" *ngIf="actionType == 'Y'">
       <table class="table mb-0 w-100">
         <thead>
           <tr>
@@ -432,6 +432,10 @@
         </tbody>
       </table>
     </div>
+
+    <div *ngIf="actionType == 'N'" class="griddashboard text-black">
+    Please select Store to Fetch data..!
+  </div>
   </div>
 </main>
 
