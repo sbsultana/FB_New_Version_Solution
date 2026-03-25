@@ -69,7 +69,6 @@ export const routes: Routes = [
   { path: 'UsedVehicleStocking', loadComponent: () => import('./Reports/Sales/UsedVehicleStocking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'TradeWinPercentage', loadComponent: () => import('./Reports/Sales/TradeWinPercentage/dashboard/dashboard').then(m => m.Dashboard) },
 
-  { path: 'SalesTax', loadComponent: () => import('./Reports/Sales/SalesTax/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
   // { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
   //{ path: 'InventoryBookV1', loadComponent: () => import('./Reports/Sales/InventoryBook/dashboard/dashboard').then(m => m.Dashboard) },
