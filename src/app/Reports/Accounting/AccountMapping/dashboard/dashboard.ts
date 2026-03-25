@@ -20,11 +20,12 @@ import * as ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { Subscription } from 'rxjs';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
+import { Stores } from '../../../../CommonFilters/stores/stores';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, SharedModule, BsDatepickerModule],
+  imports: [CommonModule, SharedModule, BsDatepickerModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -42,16 +43,30 @@ export class Dashboard implements OnInit {
     }
   }
 
+  stores: any = []
+  groupsArray: any = [];
+  storename: any = ''
+  storecount: any = null;
+  storedisplayname: any = '';
+  groupName: any = '';
+  groupId: any = 0;
+  storeIds: any = 0;
+
+  storesFilterData: any = {
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+  };
+
+
   DateType: any;
   maxToMonth!: Date;
   minToMonth!: Date;
-  storeIds: any[] = [];
-  stores: any[] = [];
-  groupsArray: any[] = [];
-  groups: any[] = [];
-  groupName = '';
+
+
   storeName = '';
   storesList: any[] = [];
+
+
   allStoresData: any[] = [];
   selectedVars: any = { var1: 'All' };
   isPopoverOpen = false;
@@ -130,7 +145,13 @@ export class Dashboard implements OnInit {
   @ViewChild('Alert') Alert!: TemplateRef<any>;
 
   excel!: Subscription;
-
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
   constructor(
     public shared: Sharedservice,
     public setdates: Setdates,
@@ -146,6 +167,18 @@ export class Dashboard implements OnInit {
     if (typeof window !== 'undefined') {
 
       this.shared.setTitle(this.shared.common.titleName + '-AccountMapping');
+      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      }
+      if (this.shared.common.groupsandstores.length > 0) {
+        this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+        this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+        this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+        this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+        this.getStoresandGroupsValues()
+      }
+
       if (localStorage.getItem('Fav') != 'Y') {
         const data = {
           title: 'Account Mapping',
@@ -176,7 +209,6 @@ export class Dashboard implements OnInit {
   }
   ngOnInit(): void {
     this.shared.setTitle('Account Mapping');
-    this.getStoresList();
 
     const today = new Date();
     const fromMonth = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -192,28 +224,7 @@ export class Dashboard implements OnInit {
   onApply(): void {
     this.getGLAccountsInfo(this.searchTerm);
   }
-  getStoresList(): void {
-    // this.shared.spinner.show();
-    const obj = {
-      userid: 1,
-    };
-    this.shared.api.postmethod('SilverTip/GetStoresList', obj).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        if (res) {
-          this.stores = res.response;
-          this.storeIds = this.stores.map((s) => s.ID);
 
-          // this.onApply();
-          // this.shared.spinner.hide();
-        }
-      },
-      error: (err: any) => {
-        // this.shared.spinner.hide();
-        console.error('Error fetching stores:', err);
-      },
-    });
-  }
 
   headerselection(type: string) {
     this.selectedheadertab = [type];
@@ -249,55 +260,7 @@ export class Dashboard implements OnInit {
     // Refresh data using your original API
     this.getGLAccountsInfo();
   }
-  toggleSelectAll() {
-    if (this.storeIds.length === this.stores.length) {
-      this.storeIds = [];
-    } else {
-      this.storeIds = this.stores.map((s) => s.ID);
-    }
-    this.updateStoreSelection();
-  }
-  onStoreToggle(storeId: number) {
-    const idx = this.storeIds.indexOf(storeId);
-    if (idx >= 0) this.storeIds.splice(idx, 1);
-    else this.storeIds.push(storeId);
 
-    this.updateStoreSelection();
-  }
-  selectAllStores(): void {
-    this.storeIds = this.stores.map((s) => s.ID);
-    this.updateStoreButtonLabel();
-  }
-  updateStoreButtonLabel(): void {
-    if (this.storeIds.length === this.stores.length) {
-      this.storeButtonLabel = 'All';
-    } else if (this.storeIds.length === 1) {
-      const selected = this.stores.find((s) => s.ID === this.storeIds[0]);
-      this.storeButtonLabel = selected?.storename || '';
-    } else {
-      this.storeButtonLabel = this.storeIds.length.toString();
-    }
-  }
-  allstores(state: 'Y' | 'N') {
-    this.storeIds = state === 'Y' ? this.stores.map((s) => s.ID) : [];
-    this.updateStoreSelection();
-  }
-  updateStoreSelection() {
-    if (this.storeIds.length === this.stores.length) {
-      this.storeButtonLabel = 'All';
-      this.selectedVars.var1 = 'All';
-    } else if (this.storeIds.length === 1) {
-      const selected = this.stores.find((s) => s.ID === this.storeIds[0]);
-      this.storeButtonLabel = selected?.storename || '';
-      this.selectedVars.var1 = selected?.storename || '';
-    } else {
-      this.storeButtonLabel = this.storeIds.length.toString();
-      this.selectedVars.var1 = this.storeIds.join(',');
-    }
-  }
-  individualStores(store: any) {
-    this.onStoreToggle(store.ID);
-  }
 
   frommonth: Date | null = null;
   Dupfrommonth: Date | null = null;
@@ -340,7 +303,7 @@ export class Dashboard implements OnInit {
     this.NoData = false;
     const body = {
       map_type: this.statusFilter[0],
-      store_Id: this.storeIds.length ? this.storeIds.join(',') : '0',
+      store_Id: this.storeIds.length ? this.storeIds.toString() : '0',
       account_Type: this.mapCategoryToType(this.selectedCategory),
       accountnumber: accountNumber,
       UserID: 1,
@@ -1006,6 +969,19 @@ export class Dashboard implements OnInit {
   }
 
   ngAfterViewInit(): void {
+
+      this.shared.api.getStores().subscribe((res: any) => {
+      if (this.comm.pageName == 'Account Mapping') {
+        if (res.obj.storesData != undefined) {
+          this.groupsArray = res.obj.storesData;
+          this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
+          this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+          this.getStoresandGroupsValues()
+        }
+      }
+    })
+
     this.excel = this.shared.api.getExportToExcelAllReports().subscribe((res: any) => {
       if (res && res.obj && res.obj.title == 'Account Mapping' && res.obj.state == true) {
         this.exportToExcelAccountingMapping(); // merged export will create both sheets
@@ -1040,6 +1016,39 @@ export class Dashboard implements OnInit {
       ]
     };
   }
+
+   StoresData(data: any) {
+    this.storeIds = data.storeids;
+    this.groupId = data.groupId;
+    this.storename = data.storename;
+    this.groupName = data.groupName;
+    this.storecount = data.storecount;
+    this.storedisplayname = data.storedisplayname;
+  }
+
+  getStoresandGroupsValues() {
+    this.storesFilterData.groupsArray = this.groupsArray;
+    this.storesFilterData.groupId = this.groupId;
+    this.storesFilterData.storesArray = this.stores;
+    this.storesFilterData.storeids = this.storeIds;
+    this.storesFilterData.groupName = this.groupName;
+    this.storesFilterData.storename = this.storename;
+    this.storesFilterData.storecount = this.storecount;
+    this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData = {
+      groupsArray: this.groupsArray,
+      groupId: this.groupId,
+      storesArray: this.stores,
+      storeids: this.storeIds,
+      groupName: this.groupName,
+      storename: this.storename,
+      storecount: this.storecount,
+      storedisplayname: this.storedisplayname,
+      'type': 'M', 'others': 'N'
+    };
+  }
+
+
   addExcelFiltersSection(worksheet: any): number {
     let rowCount = 0;
 
@@ -1066,145 +1075,145 @@ export class Dashboard implements OnInit {
     return rowCount;
   }
   exportToExcelAccountingMapping() {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet('Accounting Mapping');
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Accounting Mapping');
 
-  /* ================= FILTER SECTION ================= */
-  let rowCount = this.addExcelFiltersSection(worksheet);
+    /* ================= FILTER SECTION ================= */
+    let rowCount = this.addExcelFiltersSection(worksheet);
 
-  /* ================= HEADER ================= */
-  const headerRowIndex = rowCount + 1;
+    /* ================= HEADER ================= */
+    const headerRowIndex = rowCount + 1;
 
-  const headerRow = worksheet.addRow([
-    'Store',
-    'Acct Desc',
-    'Acct #',
-    'Acct Type',
-    'Acct Type Detail',
-    'Opera Area',
-    'Dept',
-    'Sub Type',
-    'Sub Type Detail',
-    'Fin Category',
-    'MTD',
-    'YTD'
-  ]);
-
-  /* ================= HEADER STYLE ================= */
-  headerRow.eachCell(cell => {
-    cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'D9E7FF' }
-    };
-    cell.font = { bold: true };
-    cell.alignment = { horizontal: 'center', vertical: 'middle' };
-    cell.border = {
-      top: { style: 'thin' },
-      bottom: { style: 'thin' },
-      left: { style: 'thin' },
-      right: { style: 'thin' }
-    };
-  });
-
-  /* ================= FORMAT FUNCTION ================= */
-  const formatRow = (row: any) => {
-    row.eachCell((cell: any, colNumber: number) => {
-
-      cell.font = {
-        name: 'Calibri',
-        size: 11,
-        ...(cell.value < 0 ? { color: { argb: 'FF0000' } } : {})
-      };
-
-      if ([1, 2, 8, 9, 10].includes(colNumber)) {
-        cell.alignment = { horizontal: 'left', vertical: 'middle', indent: 1 };
-      } else if ([3, 4, 5, 6, 7].includes(colNumber)) {
-        cell.alignment = { horizontal: 'center', vertical: 'middle' };
-      } else {
-        cell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
-      }
-
-      if (typeof cell.value === 'number') {
-        if (colNumber === 11 || colNumber === 12) {
-          cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
-        }
-      }
-    });
-  };
-
-  /* ================= DATA ================= */
-  this.AccountingMapping.forEach((am: any, i: number) => {
-
-    const row = worksheet.addRow([
-      am.as_companyName || '-',
-      am.accountDescription || '-',
-      am.accountNumber || '-',
-      am.accountType || '-',
-      ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
-      am.operationalArea || '-',
-      am.department || '-',
-      am.subType || '-',
-      am.subTypeDetail || '-',
-      ['S', 'C', 'I', 'X', 'E'].includes(this.selectedheadertab[0]) ? (am.Fin_Summary || '-') : '',
-      am.MTD || 0,
-      am.YTD || 0
+    const headerRow = worksheet.addRow([
+      'Store',
+      'Acct Desc',
+      'Acct #',
+      'Acct Type',
+      'Acct Type Detail',
+      'Opera Area',
+      'Dept',
+      'Sub Type',
+      'Sub Type Detail',
+      'Fin Category',
+      'MTD',
+      'YTD'
     ]);
 
-    /* ZEBRA ROWS */
-    row.eachCell(cell => {
+    /* ================= HEADER STYLE ================= */
+    headerRow.eachCell(cell => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: i % 2 === 0 ? 'FFFFFF' : 'F9FBFF' }
+        fgColor: { argb: 'D9E7FF' }
+      };
+      cell.font = { bold: true };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
       };
     });
 
-    formatRow(row);
-  });
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any) => {
+      row.eachCell((cell: any, colNumber: number) => {
 
-  /* ================= BORDERS ================= */
-  worksheet.eachRow((row, rowNumber) => {
-    if (rowNumber >= headerRowIndex) { // ✅ only apply after header
+        cell.font = {
+          name: 'Calibri',
+          size: 11,
+          ...(cell.value < 0 ? { color: { argb: 'FF0000' } } : {})
+        };
+
+        if ([1, 2, 8, 9, 10].includes(colNumber)) {
+          cell.alignment = { horizontal: 'left', vertical: 'middle', indent: 1 };
+        } else if ([3, 4, 5, 6, 7].includes(colNumber)) {
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'right', vertical: 'middle', indent: 1 };
+        }
+
+        if (typeof cell.value === 'number') {
+          if (colNumber === 11 || colNumber === 12) {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+        }
+      });
+    };
+
+    /* ================= DATA ================= */
+    this.AccountingMapping.forEach((am: any, i: number) => {
+
+      const row = worksheet.addRow([
+        am.as_companyName || '-',
+        am.accountDescription || '-',
+        am.accountNumber || '-',
+        am.accountType || '-',
+        ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
+        am.operationalArea || '-',
+        am.department || '-',
+        am.subType || '-',
+        am.subTypeDetail || '-',
+        ['S', 'C', 'I', 'X', 'E'].includes(this.selectedheadertab[0]) ? (am.Fin_Summary || '-') : '',
+        am.MTD || 0,
+        am.YTD || 0
+      ]);
+
+      /* ZEBRA ROWS */
       row.eachCell(cell => {
-        cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
-          bottom: { style: 'thin' },
-          right: { style: 'thin' }
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: i % 2 === 0 ? 'FFFFFF' : 'F9FBFF' }
         };
       });
-    }
-  });
 
-  /* ================= FREEZE ================= */
-  worksheet.views = [
-    {
-      state: 'frozen',
-      xSplit: 1,
-      ySplit: headerRowIndex // ✅ FIXED
-    }
-  ];
+      formatRow(row);
+    });
 
-  /* ================= COLUMN WIDTH ================= */
-  worksheet.columns = [
-    { width: 35 },
-    { width: 35 },
-    { width: 15 },
-    { width: 35 },
-    { width: 20 },
-    { width: 18 },
-    { width: 15 },
-    { width: 20 },
-    { width: 25 },
-    { width: 20 },
-    { width: 18 },
-    { width: 18 }
-  ];
+    /* ================= BORDERS ================= */
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber >= headerRowIndex) { // ✅ only apply after header
+        row.eachCell(cell => {
+          cell.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+        });
+      }
+    });
 
-  /* ================= DOWNLOAD ================= */
-  workbook.xlsx.writeBuffer().then(data => {
-    FileSaver.saveAs(new Blob([data]), 'AccountingMapping.xlsx');
-  });
-}
+    /* ================= FREEZE ================= */
+    worksheet.views = [
+      {
+        state: 'frozen',
+        xSplit: 1,
+        ySplit: headerRowIndex // ✅ FIXED
+      }
+    ];
+
+    /* ================= COLUMN WIDTH ================= */
+    worksheet.columns = [
+      { width: 35 },
+      { width: 35 },
+      { width: 15 },
+      { width: 35 },
+      { width: 20 },
+      { width: 18 },
+      { width: 15 },
+      { width: 20 },
+      { width: 25 },
+      { width: 20 },
+      { width: 18 },
+      { width: 18 }
+    ];
+
+    /* ================= DOWNLOAD ================= */
+    workbook.xlsx.writeBuffer().then(data => {
+      FileSaver.saveAs(new Blob([data]), 'AccountingMapping.xlsx');
+    });
+  }
 }

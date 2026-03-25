@@ -10,42 +10,15 @@
       <div class="col-12">
         <div class="reports-bar">
           <div class="filter-dropdowns">
-            <!-- <div class="dropdown d-none">
-              <button class="dropdown-toggle" (click)="togglePopover(0)">
-                <span *ngIf="storeIds.length !== 1">Stores ({{storeButtonLabel}})</span>
-                <span *ngIf="storeIds.length === 1">{{storeButtonLabel}}</span>
-                <span class="arrow"></span>
-              </button>
-
-              <div class="dropdown-menu" *ngIf="isPopoverOpen">
-                <label *ngFor="let store of stores">
-                  <input type="checkbox" [checked]="storeIds.includes(store.ID)" (change)="onStoreToggle(store.ID)" />
-                  {{ store.storename }}
-                </label>
-              </div>
-
-              <div class="reportstores-card my-3" *ngIf="activePopover === 0">
-                <div class="row h-100">
-                  <div class="stores d-flex flex-column ps-0">
-                    <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                      <div class="allstores text-start">
-                        <a class="text-primary cursor-pointer me-2" (click)="allstores('Y')">Select All</a> |
-                        <a class="text-primary cursor-pointer ms-2" (click)="allstores('N')">Clear All</a>
-                      </div>
-                      <div class="store-columns flex-grow-1">
-                        <ng-container *ngFor="let s of stores">
-                          <button class="btn btn-outline-primary store-button" (click)="individualStores(s)"
-                            [ngClass]="{'active':storeIds.indexOf(s.ID)>=0,'inactive':storeIds.indexOf(s.ID)<0}">
-                            {{ s.storename }}
-                          </button>
-                        </ng-container>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div> -->
+            <div class="dropdown">
+              <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                  {{storecount}}
+                  {{storedisplayname}} )</span>
+                <span class="arrow"></span></button>
+              <app-stores
+                [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+                [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+            </div>
             <div class="dropdown">
               <button class="dropdown-toggle" (click)="fromDp.show()">
                 Month
