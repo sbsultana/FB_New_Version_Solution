@@ -38,17 +38,17 @@ export class Dashboard {
   selectedotherstoreids: any = ''
 
   selectedDataGrouping: any = [];
-  dataGrouping: any = [    
-      { "ARG_ID": 48, "ARG_LABEL": "Store", "ARG_SEQ": 0, "id": 48, "columnname": "DealerName", "Active": "Y" },
-      { "ARG_ID": 41, "ARG_LABEL": "Counterperson", "ARG_SEQ": 1, "id": 41, "columnname": "AP_CounterPerson", "Active": "Y" },
-      { "ARG_ID": 42, "ARG_LABEL": "Sale Type", "ARG_SEQ": 2, "id": 42, "columnname": "AP_LP_Type", "Active": "Y" },
-      { "ARG_ID": 43, "ARG_LABEL": "Customer Name", "ARG_SEQ": 3, "id": 43, "columnname": "Customername", "Active": "Y" },
-      { "ARG_ID": 44, "ARG_LABEL": "Customer ZIP", "ARG_SEQ": 4, "id": 44, "columnname": "CustomerZip", "Active": "Y" },
-      { "ARG_ID": 45, "ARG_LABEL": "Customer State", "ARG_SEQ": 5, "id": 45, "columnname": "CustomerState", "Active": "Y" },
-      { "ARG_ID": 46, "ARG_LABEL": "RO Close Date", "ARG_SEQ": 6, "id": 46, "columnname": "cdate", "Active": "Y" },
-      // { "ARG_ID": 47, "ARG_LABEL": "No Grouping", "ARG_SEQ": 7, "id": 47, "columnname": "", "Active": "N" },
-      { "ARG_ID": 53, "ARG_LABEL": "Source", "ARG_SEQ": 8, "id": 53, "columnname": "AP_source", "Active": "Y" }
-      ];
+  dataGrouping: any = [
+    { "ARG_ID": 48, "ARG_LABEL": "Store", "ARG_SEQ": 0, "id": 48, "columnname": "DealerName", "Active": "Y" },
+    { "ARG_ID": 41, "ARG_LABEL": "Counterperson", "ARG_SEQ": 1, "id": 41, "columnname": "AP_CounterPerson", "Active": "Y" },
+    { "ARG_ID": 42, "ARG_LABEL": "Sale Type", "ARG_SEQ": 2, "id": 42, "columnname": "AP_LP_Type", "Active": "Y" },
+    { "ARG_ID": 43, "ARG_LABEL": "Customer Name", "ARG_SEQ": 3, "id": 43, "columnname": "Customername", "Active": "Y" },
+    { "ARG_ID": 44, "ARG_LABEL": "Customer ZIP", "ARG_SEQ": 4, "id": 44, "columnname": "CustomerZip", "Active": "Y" },
+    { "ARG_ID": 45, "ARG_LABEL": "Customer State", "ARG_SEQ": 5, "id": 45, "columnname": "CustomerState", "Active": "Y" },
+    { "ARG_ID": 46, "ARG_LABEL": "RO Close Date", "ARG_SEQ": 6, "id": 46, "columnname": "cdate", "Active": "Y" },
+    // { "ARG_ID": 47, "ARG_LABEL": "No Grouping", "ARG_SEQ": 7, "id": 47, "columnname": "", "Active": "N" },
+    { "ARG_ID": 53, "ARG_LABEL": "Source", "ARG_SEQ": 8, "id": 53, "columnname": "AP_source", "Active": "Y" }
+  ];
 
 
   stores: any = []
@@ -108,24 +108,24 @@ export class Dashboard {
     public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService,
   ) {
     this.selectedDataGrouping.push(this.dataGrouping[0])
-    console.log(this.selectedDataGrouping,'.........');
-    
+    console.log(this.selectedDataGrouping, '.........');
+
     this.shared.setTitle(this.comm.titleName + '-Parts Gross');
-    if (localStorage.getItem('flag') == 'V') {
-      this.storeIds = [];
-      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      localStorage.setItem('flag', 'M')
-    } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
+      } else {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
     }
-        if (this.shared.common.groupsandstores.length > 0) {
+    if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -262,7 +262,7 @@ export class Dashboard {
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         // this.spinnerLoader=false;
         this.combineIndividualandTotal()
@@ -445,7 +445,7 @@ export class Dashboard {
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.combineIndividualandTotalService()
       }
@@ -617,7 +617,7 @@ export class Dashboard {
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.combineIndividualandTotalPartsDrill()
       }
@@ -751,7 +751,7 @@ export class Dashboard {
             type: Item.type,
             Labortype: this.Department.indexOf('Service') >= 0 ? this.servicetype.toString() : '',
             Saletype: this.Department.indexOf('Parts') >= 0 ? this.Paytype.toString() : '',
-            Store: this.selectedDataGrouping[0].columnname  == 'DealerName' ? ParentItem.DealerID : Item.DealerID,
+            Store: this.selectedDataGrouping[0].columnname == 'DealerName' ? ParentItem.DealerID : Item.DealerID,
             PartsSource: this.partsSource == 'All' ? '' : this.partsSource,
           },
         ];
@@ -777,7 +777,7 @@ export class Dashboard {
             type: Item.type,
             Labortype: this.Department.indexOf('Service') >= 0 ? this.servicetype.toString() : '',
             Saletype: this.Department.indexOf('Parts') >= 0 ? this.Paytype.toString() : '',
-            Store: this.selectedDataGrouping[0].columnname  == 'DealerName' ? Item.DealerID : '',
+            Store: this.selectedDataGrouping[0].columnname == 'DealerName' ? Item.DealerID : '',
             PartsSource: this.partsSource == 'All' ? '' : this.partsSource,
           },
         ];
@@ -1103,8 +1103,8 @@ export class Dashboard {
       }
 
     } else {
-      console.log(this.selectedDataGrouping,'........... Values');
-      
+      console.log(this.selectedDataGrouping, '........... Values');
+
       this.setHeaderData();
       if (this.GridView == 'Global') {
         this.getPartsData();
@@ -1442,7 +1442,7 @@ export class Dashboard {
       if (d.Data2 != undefined) {
         for (const d1 of d.Data2) {
           const Data2 = worksheet.addRow([
-            d1.data2 == '' ? '-' : d1.data2 == null ? '-' : this.selectedDataGrouping.length==2 && this.selectedDataGrouping[0]?.columnname == 'cdate' ? this.shared.datePipe.transform(d1.data2, 'MM/dd/YYYY') : d1.data2,
+            d1.data2 == '' ? '-' : d1.data2 == null ? '-' : this.selectedDataGrouping.length == 2 && this.selectedDataGrouping[0]?.columnname == 'cdate' ? this.shared.datePipe.transform(d1.data2, 'MM/dd/YYYY') : d1.data2,
             d1.Total_PartsSale == '' ? '-' : d1.Total_PartsSale == null ? '-' : d1.Total_PartsSale,
             d1.Total_PartsGross == '' ? '-' : d1.Total_PartsGross == null ? '-' : d1.Total_PartsGross,
             d1.Total_PartsGross_Pace == '' ? '-' : d1.Total_PartsGross_Pace == null ? '-' : d1.Total_PartsGross_Pace,

@@ -134,8 +134,18 @@ export class Dashboard {
     this.selectedDataGrouping.push(this.dataGrouping[0])
     this.initializeDates('Overall')
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groups = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
+      } else {
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      }
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
@@ -389,7 +399,7 @@ export class Dashboard {
         this.IndividualServiceGross.unshift(this.TotalServiceGross[0]);
         this.ServiceData = this.IndividualServiceGross;
         //console.log(this.ServiceData, this.IndividualServiceGross.len);
-        if (this.selectedDataGrouping.length > 2  && this.ServiceData.length == 2) {
+        if (this.selectedDataGrouping.length > 2 && this.ServiceData.length == 2) {
           setTimeout(() => {
             (<HTMLInputElement>document.getElementById('D_1')).click();
           }, 300);
@@ -803,7 +813,7 @@ export class Dashboard {
         ? '-'
         : this.Department.toString().replaceAll(',', ', ');;
     department.font = { name: 'Arial', family: 4, size: 9 };
-   
+
     const SelectTarget = worksheet.getCell('B14');
     SelectTarget.value = "Inventory RO's :";
     const selecttarget = worksheet.getCell('D14');
@@ -811,7 +821,7 @@ export class Dashboard {
       ? 'All'
       : 'Inventory'
     selecttarget.font = { name: 'Arial', family: 4, size: 9 };
-  
+
     // const GrossType = worksheet.getCell('B15');
     // GrossType.value = 'Gross Type :';
     // const grosstype = worksheet.getCell('D15');
