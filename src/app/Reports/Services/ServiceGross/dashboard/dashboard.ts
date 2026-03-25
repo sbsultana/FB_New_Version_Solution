@@ -59,7 +59,7 @@ export class Dashboard {
   Misc: any = false;
   Lube: any = false
   actionType: any = ''
-
+  DefaultLoad: any = 'E'
 
   reportOpenSub!: Subscription;
   reportGetting!: Subscription;
@@ -82,7 +82,7 @@ export class Dashboard {
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
 
   FromDate: any = '';
@@ -151,14 +151,16 @@ export class Dashboard {
       JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+      this.actionType = 'Y'
       localStorage.setItem('flag', 'M')
     } else {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.storeIds = ''
+        this.actionType = 'N'
       }
     }
-        if (this.shared.common.groupsandstores.length > 0) {
+    if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -184,23 +186,22 @@ export class Dashboard {
     if (this.storeIds != '') {
       this.spinnerLoaderlabor = true;
       this.responcestatus = '';
-      this.actionType = 'Y'
-     // this.shared.spinner.show();    
-        const obj = {
-          StoreID: this.storeIds.toString(),
-          type: type == 'N' ? 'A' : type
-        };
-        this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
-          this.spinnerLoaderlabor = false;
-          this.labortypes = res.response;
-          this.LaborTypeVal = res.response.map(function (a: any) {
-            return a.ASD_labortype;
-          });
-          if (block == 'FL') {
-            this.getServiceData()
-          }
-        })   
-      
+
+      // this.shared.spinner.show();    
+      const obj = {
+        StoreID: this.storeIds.toString(),
+        type: type == 'N' ? 'A' : type
+      };
+      this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
+        this.spinnerLoaderlabor = false;
+        this.labortypes = res.response;
+        this.LaborTypeVal = res.response.map(function (a: any) {
+          return a.ASD_labortype;
+        });
+        if (block == 'FL') {
+          this.getServiceData()
+        }
+      })
     } else {
       // this.NoData = true
     }
@@ -240,6 +241,8 @@ export class Dashboard {
   }
   getServiceData() {
     if (this.storeIds != '' || this.selectedotherstoreids != '') {
+      this.actionType = 'Y'
+      this.DefaultLoad = ''
       if (this.getState.indexOf('S') < 0) {
         this.responcestatus = '';
         this.shared.spinner.show();
@@ -1465,7 +1468,7 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-      this.getlabourTypesData('FR', this.labourType)
+    this.getlabourTypesData('FR', this.labourType)
 
   }
 
@@ -1487,7 +1490,7 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
     };
   }
   updatedDates(data: any) {
@@ -1511,7 +1514,7 @@ export class Dashboard {
     this.Dates.DateType = this.DateType;
     this.Dates.DisplayTime = this.displaytime;
   }
-  paytypeDisplay: any =['Customerpay_0', 'Warranty_1', 'Internal_2', 'Extended_3'];
+  paytypeDisplay: any = ['Customerpay_0', 'Warranty_1', 'Internal_2', 'Extended_3'];
   SelectedData(val: any) {
     const index = this.selectedDataGrouping.findIndex((i: any) => i == val);
     if (index >= 0) {
@@ -1589,7 +1592,7 @@ export class Dashboard {
   //   }
   // }
 
-  alllabortypes(type: any) {  
+  alllabortypes(type: any) {
     if (type == 'Y') {
       this.LaborTypeVal = this.labortypes.map(function (a: any) {
         return a.ASD_labortype;
@@ -1644,7 +1647,7 @@ export class Dashboard {
             this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
           }
         } else {
-             this.getState = ''
+          this.getState = ''
           this.headervalues();
           if (this.GridView == 'Global') {
             this.getServiceData();
