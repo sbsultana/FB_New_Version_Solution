@@ -11,11 +11,12 @@ import { Stores } from '../../../../CommonFilters/stores/stores';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { CurrencyPipe } from '@angular/common';
 import { OPCodeTrackerDetails } from '../opcode-tracker-details/opcode-tracker-details';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,NgbModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

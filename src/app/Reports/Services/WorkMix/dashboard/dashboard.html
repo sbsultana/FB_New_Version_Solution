@@ -75,9 +75,9 @@
     <div id="scrollcent" class="scorecard-double-header workfix-tbl">
       <table class="table mb-0 w-100">
 
-        <thead style="text-transform: uppercase;">
+        <thead>
           <tr>
-            <th class="lightblue-bg"></th>
+            <th class="w-25"></th>
             <th>Hours</th>
             <th>Hours %</th>
             <th>Sales</th>
@@ -96,7 +96,7 @@
               <!-- STORE HEADER -->
               <tr class="lightblue-bg">
                 <td>
-                  <span class="dlrship text-uppercase">
+                  <span class="dlrship text-bold">
                     {{ STR?.Store_Name || '' }}
                   </span>
                 </td>
@@ -106,11 +106,10 @@
               <!-- SUB DATA -->
               <ng-container *ngFor="let subdata of STR?.sub">
 
-                <tr class="sub-title" [ngClass]="{ 'total-Paytype': subdata?.Paytype === 'Totals' }"
-                  [style.fontFamily]="STR?.Store_Name === 'Report Totals' ? 'FaktPro-Bold' : 'FaktPro-Normal'">
+                <tr [ngClass]="{ 'text-bold': subdata?.Paytype === 'Totals', 'divBold': STR?.Store_Name === 'Report Totals'}">
 
-                  <!-- PAYTYPE -->
-                  <td>
+                  <!-- PAYTYPE (LEFT ALIGN) -->
+                  <td class="text-start">
                     <span class="dlrship px-3">
                       {{
                       subdata?.Paytype === 'Totals'
@@ -122,47 +121,34 @@
                     </span>
                   </td>
 
-
                   <!-- HOURS -->
-                  <td>
-                    <span class="d-flex justify-content-between">
-                      <span>{{ subdata?.Hours ? (subdata.Hours | number:'1.2-2') : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.Hours ? (subdata.Hours | number:'1.2-2') : '-' }}
                   </td>
 
                   <!-- HOURS % -->
-                  <td>
-                    <span class="d-flex justify-content-between pe-3">
-                      <span>{{ subdata?.HoursPer ? (subdata.HoursPer | number:'1.2-2') + '%' : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.HoursPer ? (subdata.HoursPer | number:'1.2-2') + '%' : '-' }}
                   </td>
 
                   <!-- SALES -->
-                  <td>
-                    <span class="d-flex justify-content-between">
-                      <span>{{ subdata?.Sale ? ('$' + (subdata.Sale | number:'1.0-0')) : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.Sale ? ('$' + (subdata.Sale | number:'1.0-0')) : '-' }}
                   </td>
 
                   <!-- SALES % -->
-                  <td>
-                    <span class="d-flex justify-content-between pe-3">
-                      <span>{{ subdata?.SalePer ? (subdata.SalePer | number:'1.2-2') + '%' : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.SalePer ? (subdata.SalePer | number:'1.2-2') + '%' : '-' }}
                   </td>
 
                   <!-- AVG SALES -->
-                  <td>
-                    <span class="d-flex justify-content-between">
-                      <span>{{ subdata?.SaleAvg ? (subdata.SaleAvg | number:'1.0-0') : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.SaleAvg ? (subdata.SaleAvg | number:'1.0-0') : '-' }}
                   </td>
 
                   <!-- ELR -->
-                  <td>
-                    <span class="d-flex justify-content-between">
-                      <span>{{ subdata?.ELR ? ('$' + (subdata.ELR | number:'1.2-2')) : '-' }}</span>
-                    </span>
+                  <td class="text-end">
+                    {{ subdata?.ELR ? ('$' + (subdata.ELR | number:'1.2-2')) : '-' }}
                   </td>
 
                 </tr>
@@ -176,8 +162,7 @@
           <!-- NO DATA -->
           <ng-template #NoWorkMix>
             <tr *ngIf="NoData">
-              <td></td>
-              <td colspan="6" class="text-center">
+              <td colspan="7" class="text-center">
                 <label>No Data Found</label>
               </td>
             </tr>

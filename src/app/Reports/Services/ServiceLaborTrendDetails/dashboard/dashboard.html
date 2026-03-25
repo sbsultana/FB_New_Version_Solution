@@ -75,17 +75,14 @@
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <th>{{ PreviousMonths === '3' ?
-                            'Last 3 Months' : PreviousMonths === '6' ? 'Last 6 Months' : PreviousMonths === '9' ?
-                            'Last 9 Months' :
-                            PreviousMonths === '13' ? 'Last 13 Months' : 'Select' }}
+                        <th>{{ServiceTrendingKeys[1]}}<span> -
+                            </span>{{ServiceTrendingKeys[ServiceTrendingKeys.length - 1]}}
                         </th>
                         <th class="bdr-rt"></th>
                         <th colspan="16"></th>
                     </tr>
                     <tr>
-                        <th>{{ServiceTrendingKeys[ServiceTrendingKeys.length - 1]}}<span> -
-                            </span>{{ServiceTrendingKeys[1]}}
+                        <th>Store
                         </th>
                         <th class="bdr-rt">Graph</th>
                         <th *ngFor="let date of ServiceTrendingKeys;let i=index">
@@ -111,7 +108,7 @@
                                         <tr *ngIf="i==0"
                                             [style.fontWeight]="STR.AST_DEALERNAME === 'Report Totals' ? '700' : '700'"
                                             [ngClass]="{'total-ast_paytype': subdata.ast_paytype === 'Totals'}">
-                                            <td>
+                                            <td class="font-blue text-bold">
                                                 <span class="dlrship px-2" title="{{subcat.ast_paytype}}"
                                                     style="cursor: pointer;">
                                                     {{

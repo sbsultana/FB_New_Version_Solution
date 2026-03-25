@@ -1,0 +1,54 @@
+.servicetechefficiency-tbl {
+    .table {
+
+        thead,
+        tbody {
+
+            th:nth-child(1),
+            th:nth-child(4),
+            th:nth-child(7),
+            th:nth-child(10),
+
+            td:nth-child(1),
+            td:nth-child(4),
+            td:nth-child(7),
+            td:nth-child(10) {
+                box-shadow: inset 0 0.4px 0 0 #e0edff,
+                    inset -3px 0 0 0 #e0edff,
+                    inset 0 -0.4px 0 0 #e0edff,
+                    inset 0.4px 0 0 0 #e0edff;
+            }
+
+        }
+    }
+}
+
+.servicetechefficiencydetails-tbl{
+    .table {
+
+        thead,
+        tbody {
+
+            th:nth-child(6),
+            th:nth-child(9),
+            th:nth-child(11),
+
+            td:nth-child(6),
+            td:nth-child(9),
+            td:nth-child(11) {
+                box-shadow: inset 0 0.4px 0 0 #e0edff,
+                    inset -3px 0 0 0 #e0edff,
+                    inset 0 -0.4px 0 0 #e0edff,
+                    inset 0.4px 0 0 0 #e0edff;
+            }
+
+        }
+    }
+}
+
+::ng-deep .modal-dialog {
+    max-width: 80%;
+    /* adjust width */
+    left: 20px;
+    z-index: 9999;
+}

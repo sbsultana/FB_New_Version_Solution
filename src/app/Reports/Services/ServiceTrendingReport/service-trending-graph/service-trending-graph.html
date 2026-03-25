@@ -1,45 +1,68 @@
-<div class="container-fluid d-flex justify-content-center align-items-center" style="padding-top: 10vh;">
-    <div class="gross-popup">
+<div class="container-fluid d-flex justify-content-center align-items-center popup-container m-0 p-0">
+
+    <div class="gross-popup rounded">
+
+        <!-- HEADER -->
         <div class="header d-flex align-items-center">
             <h5 class="title m-0 ms-2">
-                <img src="" alt=""> <span class="slash"><span style="color: #2d91f1;">//</span>
-                    {{STRgraphdetails.NAME}}</span>
+                <span class="slash text-white">
+                    // {{ STRgraphdetails.NAME }}
+                </span>
             </h5>
-            <a type="button" class="close-btn ms-auto me-0" (click)="close()"><i class="fa-solid fa-xmark"></i> </a>
+
+            <a type="button" class="close-btn ms-auto me-2" (click)="close()">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
         </div>
-        <div class="content">
-            <h6 class="slash text-center py-2">
-                <span style="color: #2d91f1;">
+
+        <!-- CONTENT -->
+        <div class="content m-5 mt-0 rounded">
+
+            <!-- SUB HEADER -->
+            <h6 class="text-center py-2 mb-3">
+
+                <!-- PAYTYPE -->
+                <span style="color: #2d91f1; font-weight: 600;">
                     {{
-                        STRgraphdetails.Object.ast_paytype === 'Totals' ? 'TOTAL' :
-                        ( STRgraphdetails.Object.ast_paytype === undefined || STRgraphdetails.Object.ast_paytype === '' ? '--' :
-                        ( STRgraphdetails.Object.ast_paytype === 'C' ? 'CUSTOMER PAY' :
-                        ( STRgraphdetails.Object.ast_paytype === 'W' ? 'WARRANTY' :
-                        ( STRgraphdetails.Object.ast_paytype === 'I' ? 'INTERNAL' :
-                        ( STRgraphdetails.Object.ast_paytype === 'R' ? 'RETAIL' :
-                        ( (STRgraphdetails.Object.ast_paytype.toString() | slice:0:30) +
-                        (STRgraphdetails.Object.ast_paytype.toString().length > 30 ? '...' :
-                        '') )
-                        )
-                        )
-                        )
-                        )
-                        )
-                        }}
+                    STRgraphdetails.Object.paytype === 'Totals' ? 'TOTAL' :
+                    (STRgraphdetails.Object.paytype === undefined || STRgraphdetails.Object.paytype === '' ? '--' :
+                    (STRgraphdetails.Object.paytype === 'C' ? 'CUSTOMER PAY' :
+                    (STRgraphdetails.Object.paytype === 'W' ? 'WARRANTY' :
+                    (STRgraphdetails.Object.paytype === 'I' ? 'INTERNAL' :
+                    (STRgraphdetails.Object.paytype === 'R' ? 'RETAIL' :
+                    (STRgraphdetails.Object.paytype === 'E' ? 'EXTERNAL' :
+                    ((STRgraphdetails.Object.paytype.toString() | slice:0:30) +
+                    (STRgraphdetails.Object.paytype.toString().length > 30 ? '...' : ''))
+                    ))))))
+                    }}
                 </span>
-                -
-                <span>
-                    {{ (STRgraphdetails.Object.variable === '' || STRgraphdetails.Object.variable === null) ? '-' : (STRgraphdetails.Object.variable === 'GP' ?
-                          'GP%' : STRgraphdetails.Object.variable) }}
+
+                <span class="mx-2" style="color: #D9E7FF; font-weight: 500;">-</span>
+
+                <!-- VARIABLE -->
+                <span style="color: #D9E7FF; font-weight: 500;">
+                    {{
+                    (STRgraphdetails.Object.variable === '' || STRgraphdetails.Object.variable === null)
+                    ? '-'
+                    : (STRgraphdetails.Object.variable === 'GP'
+                    ? 'GP%'
+                    : STRgraphdetails.Object.variable)
+                    }}
                 </span>
+
             </h6>
-            <div class="d-flex justify-content-center">
+
+            <!-- CHART -->
+            <div class="chart-wrapper">
+                <canvas id="myChart" #mychart style="display: block;
+                 width: 1050px;
+                 height: 381px;
+                 padding: 0.5rem 3rem;">
+                </canvas>
             </div>
-            <div class="p-3 pt-2" style="width:100%;">
-                <canvas id="myChart" width="700" height="250" #mychart></canvas>
-            </div>
+
         </div>
-        <div class="header ">
-        </div>
+
     </div>
+
 </div>

@@ -76,7 +76,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="scorecard-double-header mb-3"
+                        <div class="scorecard-single-header mb-3"
                             style="overflow: auto;max-height: calc(100vh - 200px);"
                             (scroll)="updateVerticalScroll($event)" #scrollOne>
                             <div *ngIf="spinnerLoader"
@@ -114,150 +114,155 @@
                                         <th>Total Hours</th>
                                         <th>GP%</th>
                                     </tr>
-                                                                </thead>
+                                </thead>
 
                                 <!-- data-bs-toggle="modal" data-bs-target="#warningmessage" | filter : SGDSearchName -->
                                 <tbody>
-                                 <tr *ngFor="let det of ServicePersonDetails;let i=index" [id]="'SD_'+i"
-                                (mouseover)="hoverclass($event,i)">
+                                    <tr *ngFor="let det of ServicePersonDetails;let i=index" [id]="'SD_'+i"
+                                        (mouseover)="hoverclass($event,i)">
 
-                                <td [id]="'SD_'+i" (click)="viewRO(det)"
-                                    [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
-                                    {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber == undefined ? '-' :
-                                    det.ronumber ) }}
-                                </td>
-                                <td [id]="'SD_'+i">
-                                    {{ (det.count == 0 || det.count == null || det.count ==
-                                    undefined ? '-'
-                                    : det.count ) }}
-                                </td>
-                                <td [id]="'SD_'+i">
-                                    {{ (det.cdate == 0 || det.cdate == null || det.cdate == undefined ? '-'
-                                    : det.cdate |
-                                    date:'MM.dd.yyyy' ) }}
-                                </td>
-                                <td [id]="'SD_'+i">
-                                    {{ (det.brand == 0 || det.brand == null || det.brand ==
-                                    undefined ? '-'
-                                    : det.brand ) }}
-                                </td>
-                                <td [id]="'SD_'+i">
-                                    {{ (det.mileage == 0 || det.mileage == null || det.mileage ==
-                                    undefined ? '-'
-                                    : det.mileage ) }}
-                                </td>
-                                <ng-container
-                                    *ngIf="Servicedetails[0].var1 != 'ServiceAdvisor_Name' && Servicedetails[0].var2 != 'ServiceAdvisor_Name' && Servicedetails[0].var3 != 'ServiceAdvisor_Name' 
+                                        <td [id]="'SD_'+i" (click)="viewRO(det)"
+                                            [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
+                                            {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber == undefined ?
+                                            '-' :
+                                            det.ronumber ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.count == 0 || det.count == null || det.count ==
+                                            undefined ? '-'
+                                            : det.count ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.cdate == 0 || det.cdate == null || det.cdate == undefined ? '-'
+                                            : det.cdate |
+                                            date:'MM.dd.yyyy' ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.brand == 0 || det.brand == null || det.brand ==
+                                            undefined ? '-'
+                                            : det.brand ) }}
+                                        </td>
+                                        <td [id]="'SD_'+i">
+                                            {{ (det.mileage == 0 || det.mileage == null || det.mileage ==
+                                            undefined ? '-'
+                                            : det.mileage ) }}
+                                        </td>
+                                        <ng-container
+                                            *ngIf="Servicedetails[0].var1 != 'ServiceAdvisor_Name' && Servicedetails[0].var2 != 'ServiceAdvisor_Name' && Servicedetails[0].var3 != 'ServiceAdvisor_Name' 
                                 && Servicedetails[0].var1 != 'ServiceAdvisor' && Servicedetails[0].var2 != 'ServiceAdvisor' && Servicedetails[0].var3 != 'ServiceAdvisor'">
-                                    <td [id]="'SD_'+i">
-                                        {{ (det.serviceadvisor == 0 || det.serviceadvisor == null || det.serviceadvisor
-                                        ==
-                                        undefined ? '-'
-                                        : det.serviceadvisor ) }}
-                                    </td>
-                                    <td title="{{det.ServiceAdvisor_Name}}"
-                                        style="cursor: default;text-align: left!important;" [id]="'SD_'+i">
-                                        {{(det.ServiceAdvisor_Name == undefined ||
-                                        det.ServiceAdvisor_Name == null || det.ServiceAdvisor_Name == '' ? '-' : (
-                                        (det.ServiceAdvisor_Name.toString() | slice:0:40) +
-                                        (det.ServiceAdvisor_Name.toString().length > 40 ? '...' : '') ))}}</td>
-                                </ng-container>
-                                <ng-container
-                                    *ngIf="Servicedetails[0].var1 != 'techname' && Servicedetails[0].var2 != 'techname' && Servicedetails[0].var3 != 'techname' 
+                                            <td [id]="'SD_'+i">
+                                                {{ (det.serviceadvisor == 0 || det.serviceadvisor == null ||
+                                                det.serviceadvisor
+                                                ==
+                                                undefined ? '-'
+                                                : det.serviceadvisor ) }}
+                                            </td>
+                                            <td title="{{det.ServiceAdvisor_Name}}"
+                                                style="cursor: default;text-align: left!important;" [id]="'SD_'+i">
+                                                {{(det.ServiceAdvisor_Name == undefined ||
+                                                det.ServiceAdvisor_Name == null || det.ServiceAdvisor_Name == '' ? '-' :
+                                                (
+                                                (det.ServiceAdvisor_Name.toString() | slice:0:40) +
+                                                (det.ServiceAdvisor_Name.toString().length > 40 ? '...' : '') ))}}</td>
+                                        </ng-container>
+                                        <ng-container
+                                            *ngIf="Servicedetails[0].var1 != 'techname' && Servicedetails[0].var2 != 'techname' && Servicedetails[0].var3 != 'techname' 
                                 && Servicedetails[0].var1 != 'techno' && Servicedetails[0].var2 != 'techno' && Servicedetails[0].var3 != 'techno'">
-                                    <td [id]="'SD_'+i">
-                                        {{ (det.techno == 0 || det.techno == null || det.techno ==
-                                        undefined ? '-'
-                                        : det.techno ) }}
-                                    </td>
-                                    <td title="{{det.techname}}" style="cursor: default;text-align: left!important;"
-                                        [id]="'SD_'+i">
-                                        {{(det.techname == undefined ||
-                                        det.techname == null || det.techname == '' ? '-' : (
-                                        (det.techname.toString() | slice:0:40) +
-                                        (det.techname.toString().length > 40 ? '...' : '') ))}}</td>
-                                </ng-container>
-                                <td style="min-width: 50px !important;text-align: left;" [id]="'SP_'+i"> {{ (det.opcode
-                                    == 0 ||
-                                    det.opcode ==
-                                    null ||
-                                    det.opcode == undefined ? '-' :
-                                    det.opcode )}}</td>
+                                            <td [id]="'SD_'+i">
+                                                {{ (det.techno == 0 || det.techno == null || det.techno ==
+                                                undefined ? '-'
+                                                : det.techno ) }}
+                                            </td>
+                                            <td title="{{det.techname}}"
+                                                style="cursor: default;text-align: left!important;" [id]="'SD_'+i">
+                                                {{(det.techname == undefined ||
+                                                det.techname == null || det.techname == '' ? '-' : (
+                                                (det.techname.toString() | slice:0:40) +
+                                                (det.techname.toString().length > 40 ? '...' : '') ))}}</td>
+                                        </ng-container>
+                                        <td style="min-width: 50px !important;text-align: left;" [id]="'SP_'+i"> {{
+                                            (det.opcode
+                                            == 0 ||
+                                            det.opcode ==
+                                            null ||
+                                            det.opcode == undefined ? '-' :
+                                            det.opcode )}}</td>
 
-                                <td style="min-width: 50px !important;text-align: left;white-space: nowrap;"
-                                    [id]="'SP_'+i" title="{{det.opcodeDescription}}">
-                                    {{(det.opcodeDescription == undefined ||
-                                    det.opcodeDescription == null || det.opcodeDescription == '' ? '-' : (
-                                    (det.opcodeDescription.toString() | slice:0:40) +
-                                    (det.opcodeDescription.toString().length > 40 ? '...' : '') ))}}
+                                        <td style="min-width: 50px !important;text-align: left;white-space: nowrap;"
+                                            [id]="'SP_'+i" title="{{det.opcodeDescription}}">
+                                            {{(det.opcodeDescription == undefined ||
+                                            det.opcodeDescription == null || det.opcodeDescription == '' ? '-' : (
+                                            (det.opcodeDescription.toString() | slice:0:40) +
+                                            (det.opcodeDescription.toString().length > 40 ? '...' : '') ))}}
 
-                                </td>
-                                <td style="min-width: 50px !important;" [id]="'SP_'+i">
+                                        </td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i">
 
-                                    <span class="d-flex justify-content-between">
-                                        {{
-                                        det.TotalGross == 0 || det.TotalGross == null ? '' :
-                                        '$'}}
-                                        <span>
-                                            {{(det.TotalGross == 0 ||
-                                            det.TotalGross == null ? '-' :det.TotalGross |
-                                            number:'1.0-0' )}}
-                                        </span>
-                                    </span>
-                                </td>
-                                <!-- [ngStyle]="{'border-bottom': ServicePersonDetails.length-1 == i ? '1px solid grey' : 'none'  }" -->
-                                <td style="min-width: 50px !important ;" [id]="'SP_'+i">
-                                    <span class="d-flex justify-content-between">
-                                        {{
-                                        det.TotalSale == 0 || det.TotalSale == null ? '' :
-                                        '$'}}
-                                        <span>
-                                            {{(det.TotalSale == 0 ||
-                                            det.TotalSale == null ? '-' :det.TotalSale |
-                                            number:'1.0-0' )}}
-                                        </span>
-                                    </span>
-                                </td>
-                                <td style="min-width: 50px !important;" [id]="'SP_'+i">
-                                    <span class="d-flex justify-content-between">
-                                        {{
-                                        det.TotalELR == 0 || det.TotalELR == null ? '' :
-                                        '$'}}
-                                        <span>
-                                            {{(det.TotalELR == 0 ||
-                                            det.TotalELR == null ? '-' :det.TotalELR |
-                                            number:'1.2-2' )}}
-                                        </span>
-                                    </span>
-                                </td>
-                                <td style="min-width: 50px !important;" [id]="'SP_'+i">
-                                    {{(det.Totalhours == 0 ||
-                                    det.Totalhours == null ? '-' :det.Totalhours |
-                                    number:'1.1-1' )}}
-                                </td>
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                det.TotalGross == 0 || det.TotalGross == null ? '' :
+                                                '$'}}
+                                                <span>
+                                                    {{(det.TotalGross == 0 ||
+                                                    det.TotalGross == null ? '-' :det.TotalGross |
+                                                    number:'1.0-0' )}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <!-- [ngStyle]="{'border-bottom': ServicePersonDetails.length-1 == i ? '1px solid grey' : 'none'  }" -->
+                                        <td style="min-width: 50px !important ;" [id]="'SP_'+i">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                det.TotalSale == 0 || det.TotalSale == null ? '' :
+                                                '$'}}
+                                                <span>
+                                                    {{(det.TotalSale == 0 ||
+                                                    det.TotalSale == null ? '-' :det.TotalSale |
+                                                    number:'1.0-0' )}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i">
+                                            <span class="d-flex justify-content-between">
+                                                {{
+                                                det.TotalELR == 0 || det.TotalELR == null ? '' :
+                                                '$'}}
+                                                <span>
+                                                    {{(det.TotalELR == 0 ||
+                                                    det.TotalELR == null ? '-' :det.TotalELR |
+                                                    number:'1.2-2' )}}
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td style="min-width: 50px !important;" [id]="'SP_'+i">
+                                            {{(det.Totalhours == 0 ||
+                                            det.Totalhours == null ? '-' :det.Totalhours |
+                                            number:'1.1-1' )}}
+                                        </td>
 
-                                <td [id]="'SP_'+i"
-                                    style="min-width: 50px !important;white-space: nowrap !important; text-align: center !important;">
-                                    {{ (det.GP == 0 || det.GP == null || det.GP == undefined || det.GP == ''
-                                    ? '-' : (det.GP | number:'1.1-1')+ '%')}} </td>
+                                        <td [id]="'SP_'+i"
+                                            style="min-width: 50px !important;white-space: nowrap !important; text-align: center !important;">
+                                            {{ (det.GP == 0 || det.GP == null || det.GP == undefined || det.GP == ''
+                                            ? '-' : (det.GP | number:'1.1-1')+ '%')}} </td>
 
-                                <div class="loader" style="margin-top: 30%;margin-left: 30%;" *ngIf="spinnerLoadersec">
-                                </div>
-                            </tr>
+                                        <div class="loader" style="margin-top: 30%;margin-left: 30%;"
+                                            *ngIf="spinnerLoadersec">
+                                        </div>
+                                    </tr>
 
-                            <tr *ngIf="NoData">
-                                <ng-container
-                                    *ngIf="Servicedetails[0].var1 != 'ServiceAdvisor_Name' && Servicedetails[0].var2 != 'ServiceAdvisor_Name' && Servicedetails[0].var3 != 'ServiceAdvisor_Name' 
+                                    <tr *ngIf="NoData">
+                                        <ng-container
+                                            *ngIf="Servicedetails[0].var1 != 'ServiceAdvisor_Name' && Servicedetails[0].var2 != 'ServiceAdvisor_Name' && Servicedetails[0].var3 != 'ServiceAdvisor_Name' 
     && Servicedetails[0].var1 != 'ServiceAdvisor' && Servicedetails[0].var2 != 'ServiceAdvisor' && Servicedetails[0].var3 != 'ServiceAdvisor'">
-                                    <td colspan="2"></td>
-                                </ng-container>
-                                <td colspan="12" style="text-align: center !important;" >No Data Found!!</td>
-                                <ng-container *ngIf="Servicedetails[0].var1 != 'techname' && Servicedetails[0].var2 != 'techname' && Servicedetails[0].var3 != 'techname' 
+                                            <td colspan="2"></td>
+                                        </ng-container>
+                                        <td colspan="12" style="text-align: center !important;">No Data Found!!</td>
+                                        <ng-container *ngIf="Servicedetails[0].var1 != 'techname' && Servicedetails[0].var2 != 'techname' && Servicedetails[0].var3 != 'techname' 
     && Servicedetails[0].var1 != 'techno' && Servicedetails[0].var2 != 'techno' && Servicedetails[0].var3 != 'techno'">
-                                    <td colspan="2"></td>
+                                            <td colspan="2"></td>
 
-                                </ng-container>
-                            </tr>
+                                        </ng-container>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

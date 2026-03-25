@@ -128,27 +128,27 @@
                     </div>
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-multi-header servicetechefficiency-tbl">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr class="bdr-btm">
-                            <th class="text-center bg-white"><span>{{FromDate |date:'MMMM'}} <span
+                            <th class="text-center"><span>{{FromDate |date:'MMMM'}} <span
                                         *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                         {{ToDate
                                         |date:'MMMM'}} </span> </span> </th>
-                            <th class="spacer"></th>
+
                             <th colspan="3" class="text-center bdr-rt">&nbsp;</th>
-                            <!-- <th class="spacer"></th>
+                            <!-- 
                             <th colspan="2" class="text-center bdr-rt">Sales</th> -->
-                            <th class="spacer"></th>
+
                             <th colspan="3" class="text-center bdr-rt">Productivity</th>
-                            <th class="spacer"></th>
+
                             <th colspan="3" class="text-center bdr-rt">Efficiency</th>
-                            <!-- <th class="spacer"></th>
+                            <!-- 
                             <th colspan="2" class="text-center bdr-rt"> Proficiency </th> -->
-                            <!-- <th class="spacer"></th>
+                            <!-- 
                             <th colspan="2" class="text-center bdr-rt">&nbsp;</th> -->
-                            <th class="spacer"></th>
+
                             <th colspan="1" class="text-center bdr-rt">&nbsp;</th>
                         </tr>
                         <tr>
@@ -161,52 +161,52 @@
                                         *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
                                         {{FromDate |
                                         date:'yyyy'}}</span></span> </th>
-                            <th class="spacer"></th>
+
                             <th (click)="sort('RoCount',ServiceData)" class=" bdr-rt" style="cursor: pointer">
-                                &nbsp;<br>RO Count</th>
+                                RO Count</th>
                             <th (click)="sort('Linecount',ServiceData)" class=" bdr-rt" style="cursor: pointer;">
-                                &nbsp;<br>Line Count</th>
+                                Line Count</th>
                             <th (click)="sort('unappliedcost',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                Unapplied<br>Time Cost</th>
-                            <!-- <th class="spacer"></th>
+                                Unapplied Time Cost</th>
+                            <!-- 
                             <th (click)="sort('Bill',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                &nbsp;<br>Bill Amt</th>
+                                Bill Amt</th>
                             <th (click)="sort('Jobcost',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                &nbsp;<br>Job Cost</th> -->
-                            <th class="spacer"></th>
-                            <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt">&nbsp;<br>Flag
+                                Job Cost</th> -->
+
+                            <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt">Flag
                                 Hrs</th>
                             <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt"> Time
-                                Card<br>Hrs</th>
+                                Card Hrs</th>
                             <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                %<br>Flag /<br>Time Card</th>
-                            <th class="spacer"></th>
+                                % Flag / Time Card</th>
+
                             <th (click)="sort('flaghours',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                &nbsp;<br>Flag Hrs </th>
+                                Flag Hrs </th>
                             <th (click)="sort('Actualhours',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                Actual Hrs<br>on Jobs</th>
+                                Actual Hrs on Jobs</th>
                             <th (click)="sort('efficiency',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                %<br>Flag /<br>Actual </th>
-                            <!-- <th class="spacer"></th>
+                                % Flag / Actual </th>
+                            <!-- 
                             <th (click)="sort('Total_Gross',ServiceData)" style="cursor: pointer;" class=" bdr-rt">Time
-                                Card<br>Hours </th>
-                            <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt"> %<br>Time Card
-                                /<br>Actual</th> -->
-                            <!-- <th class="spacer"></th>
+                                Card Hours </th>
+                            <th (click)="sort('',ServiceData)" style="cursor: pointer;" class=" bdr-rt"> % Time Card
+                                / Actual</th> -->
+                            <!-- 
                             <th (click)="sort('TotalSale',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                Idle<br>Hours</th>
+                                Idle Hours</th>
                             <th (click)="sort('Total_Gross',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
-                                &nbsp;<br>%</th> -->
-                            <th class="spacer"></th>
+                                %</th> -->
+
                             <th (click)="sort('ELR',ServiceData)" style="cursor: pointer;" class=" bdr-rt">
                                 ELR</th>
                         </tr>
                     </thead>
                     <tbody [ngClass]="{'hidden': NoData == true }">
                         <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
-                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 ,  'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 ,'lightblue-bg': ServiceInfo.Dealer === '-',  'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
                                 [id]="'DV_'+i">
-                                <td [ngStyle]="{'background-color':ServiceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                <td>
                                     <span [id]="'D_'+i"
                                         title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
                                         (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,ServiceInfo,tmp)"
@@ -219,7 +219,7 @@
                                         (ServiceInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RoCount)}"
                                     style="border-right: none !important;">{{
                                     ServiceInfo.RoCount == 0 || ServiceInfo.RoCount == null ? '-' :
@@ -235,7 +235,7 @@
                                             (ServiceInfo.unappliedcost == 0 || ServiceInfo.unappliedcost == null ? '-' :
                                             ServiceInfo.unappliedcost |number:'1.0-0') }}</span></span>
                                 </td>
-                                <!-- <th class="spacer"></th>
+                                <!-- 
                                 <td [ngClass]="{ negative: !inTheGreen(ServiceInfo.Bill)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.Bill == 0 || ServiceInfo.Bill == null ? '' :
@@ -250,7 +250,7 @@
                                             (ServiceInfo.Jobcost == 0 || ServiceInfo.Jobcost == null ? '-' :
                                             ServiceInfo.Jobcost |number:'1.0-0') }}</span></span>
                                 </td> -->
-                                <th class="spacer"></th>
+
                                 <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(ServiceInfo.flaghours)}">{{
                                     ServiceInfo.flaghours == 0 || ServiceInfo.flaghours == null ? '-' :
                                     ServiceInfo.flaghours | number:'1.2-2' }}
@@ -267,7 +267,7 @@
                                     ServiceInfo.proficiency == 0 || ServiceInfo.proficiency == null ? '' :
                                     '%' }}
                                 </td>
-                                <th class="spacer"></th>
+
                                 <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(ServiceInfo.flaghours)}">{{
                                     ServiceInfo.flaghours == 0 || ServiceInfo.flaghours == null ? '-' :
                                     ServiceInfo.flaghours | number:'1.2-2' }}
@@ -281,7 +281,7 @@
                                     ServiceInfo.efficiency | number:'1.1-1' }}{{
                                     ServiceInfo.efficiency == 0 || ServiceInfo.efficiency == null ? '' :
                                     '%' }}</td>
-                                <!-- <th class="spacer"></th>
+                                <!-- 
                                 <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ASD_timecardhours)}">
                                     {{
                                     ServiceInfo.ASD_timecardhours == 0 || ServiceInfo.ASD_timecardhours == null ? '-' :
@@ -293,11 +293,11 @@
                                     ServiceInfo.productivity | number:'1.1-1' }}{{
                                     ServiceInfo.productivity == 0 || ServiceInfo.productivity == null ? '' :
                                     '%' }}</td> -->
-                                <!-- <th class="spacer"></th>
+                                <!-- 
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalSale)}">-</td>
                                 <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Gross)}">
                                 </td> -->
-                                <th class="spacer"></th>
+
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ELR)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (ServiceInfo.ELR == 0 || ServiceInfo.ELR == null ? '' :
@@ -307,7 +307,7 @@
                                 </td>
                             </tr>
                             <ng-container *ngFor="let dt2 of ServiceInfo.Data2,let k=index">
-                                <tr class="sub-title" [id]="'DVN_'+i"
+                                <tr [id]="'DVN_'+i"
                                     [ngClass]="{'hidden': ServiceInfo.Dealer === '+', 'title-l3' : k % 2 == 0 , 'titleOdd-l3' : k % 2 != 0}">
                                     <td style="cursor: pointer;"
                                         (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo,tmp)">
@@ -321,7 +321,7 @@
                                             (dt2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.RoCount)}"
                                         style="border-right: none !important;">{{
                                         dt2.RoCount == 0 || dt2.RoCount == null ? '-' :
@@ -337,7 +337,7 @@
                                                 (dt2.unappliedcost == 0 || dt2.unappliedcost == null ? '-' :
                                                 dt2.unappliedcost |number:'1.0-0') }}</span></span>
                                     </td>
-                                    <!-- <th class="spacer"></th>
+                                    <!-- 
                                     <td [ngClass]="{ negative: !inTheGreen(dt2.Bill)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt2.Bill == 0 || dt2.Bill == null ? '' :
@@ -352,7 +352,7 @@
                                                 (dt2.Jobcost == 0 || dt2.Jobcost == null ? '-' :
                                                 dt2.Jobcost |number:'1.0-0') }}</span></span>
                                     </td> -->
-                                    <th class="spacer"></th>
+
                                     <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(dt2.flaghours)}">{{
                                         dt2.flaghours == 0 || dt2.flaghours == null ? '-' :
                                         dt2.flaghours | number:'1.2-2' }}
@@ -369,7 +369,7 @@
                                         dt2.proficiency == 0 || dt2.proficiency == null ? '' :
                                         '%' }}
                                     </td>
-                                    <th class="spacer"></th>
+
                                     <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(dt2.flaghours)}">{{
                                         dt2.flaghours == 0 || dt2.flaghours == null ? '-' :
                                         dt2.flaghours | number:'1.2-2' }}
@@ -382,7 +382,7 @@
                                         dt2.efficiency | number:'1.1-1' }}{{
                                         dt2.efficiency == 0 || dt2.efficiency == null ? '' :
                                         '%' }}</td>
-                                    <!-- <th class="spacer"></th>
+                                    <!-- 
                                     <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt2.ASD_timecardhours)}">
                                         {{
                                         dt2.ASD_timecardhours == 0 || dt2.ASD_timecardhours == null ? '-' :
@@ -394,11 +394,11 @@
                                         dt2.productivity | number:'1.1-1' }}{{
                                         dt2.productivity == 0 || dt2.productivity == null ? '' :
                                         '%' }}</td> -->
-                                    <!-- <th class="spacer"></th>
+                                    <!-- 
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.TotalSale)}">-</td>
                                     <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt2.Total_Gross)}">
                                     </td> -->
-                                    <th class="spacer"></th>
+
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.ELR)}">
                                         <span class="d-flex justify-content-between"> {{
                                             (dt2.ELR == 0 || dt2.ELR == null ? '' :
@@ -421,7 +421,7 @@
                                                 (dt3.data3.toString().length > 26 ? '...' : '') ) ))))))}}
                                             </span>
                                         </td>
-                                        <td class="spacer"></td>
+
                                         <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt3.RoCount)}"
                                             style="border-right: none !important;">{{
                                             dt3.RoCount == 0 || dt3.RoCount == null ? '-' :
@@ -437,7 +437,7 @@
                                                     (dt3.unappliedcost == 0 || dt3.unappliedcost == null ? '-' :
                                                     dt3.unappliedcost |number:'1.0-0') }}</span></span>
                                         </td>
-                                        <!-- <td class="spacer"></td>
+                                        <!-- 
                                         <td [ngClass]="{ negative: !inTheGreen(dt3.Bill)}">
                                             <span class="d-flex justify-content-between"> {{
                                                 (dt3.Bill == 0 || dt3.Bill == null ? '' :
@@ -452,7 +452,7 @@
                                                     (dt3.Jobcost == 0 || dt3.Jobcost == null ? '-' :
                                                     dt3.Jobcost |number:'1.0-0') }}</span></span>
                                         </td> -->
-                                        <th class="spacer"></th>
+
                                         <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(dt3.flaghours)}">{{
                                             dt3.flaghours == 0 || dt3.flaghours == null ? '-' :
                                             dt3.flaghours | number:'1.2-2' }}
@@ -469,7 +469,7 @@
                                             dt3.proficiency == 0 || dt3.proficiency == null ? '' :
                                             '%' }}
                                         </td>
-                                        <th class="spacer"></th>
+
                                         <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(dt3.flaghours)}">{{
                                             dt3.flaghours == 0 || dt3.flaghours == null ? '-' :
                                             dt3.flaghours | number:'1.2-2' }}
@@ -482,7 +482,7 @@
                                             dt3.efficiency | number:'1.1-1' }}{{
                                             dt3.efficiency == 0 || dt3.efficiency == null ? '' :
                                             '%' }}</td>
-                                        <!-- <th class="spacer"></th>
+                                        <!-- 
                                         <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt3.ASD_timecardhours)}">
                                             {{
                                             dt3.ASD_timecardhours == 0 || dt3.ASD_timecardhours == null ? '-' :
@@ -494,11 +494,11 @@
                                             dt3.productivity | number:'1.1-1' }}{{
                                             dt3.productivity == 0 || dt3.productivity == null ? '' :
                                             '%' }}</td> -->
-                                        <!-- <th class="spacer"></th>
+                                        <!-- 
                                         <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.TotalSale)}">-</td>
                                         <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt3.Total_Gross)}">
                                         </td> -->
-                                        <th class="spacer"></th>
+
                                         <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.ELR)}">
                                             <span class="d-flex justify-content-between"> {{
                                                 (dt3.ELR == 0 || dt3.ELR == null ? '' :
@@ -559,7 +559,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="scorecard-double-header mb-3"
+                                    <div class="scorecard-triple-header servicetechefficiencydetails-tbl mb-3"
                                         style="overflow:auto; max-height: calc(100vh - 200px);">
                                         <div *ngIf="spinnerLoader"
                                             class="graph-loader d-flex align-items-center justify-content-center">
@@ -570,60 +570,57 @@
                                         <table class="table mb-0 w-100">
                                             <thead>
                                                 <tr>
-                                                    <th colspan="6"
-                                                        style="border-right: 2px solid #e0e1e2;border-bottom: 2px solid #e0e1e2;">
+                                                    <th colspan="6">
                                                         &nbsp;
                                                     </th>
-                                                    <th colspan="3"
-                                                        style="border-right: 2px solid #e0e1e2;border-bottom: 2px solid #e0e1e2;text-align: center !important;">
+                                                    <th colspan="3">
                                                         <span class="m-auto"> Efficiency</span>
                                                     </th>
-                                                    <th colspan="2"
-                                                        style="border-right: 2px solid #e0e1e2;border-bottom: 2px solid #e0e1e2;text-align: center !important;">
+                                                    <th colspan="2">
                                                         <span class="m-auto"> Productivity</span>
                                                     </th>
-                                                    <th colspan="2"
-                                                        style="border-right: 2px solid #e0e1e2;border-bottom: 2px solid #e0e1e2;">
+                                                    <th colspan="2">
                                                         <span class="d-flex align-items-center position-relative px-1">
                                                             <span class="m-auto">&nbsp;</span>
                                                         </span>
                                                     </th>
                                                 </tr>
                                                 <tr>
-                                                    <th style="color: #000;" class="align-left">&nbsp;<br>RO #</th>
-                                                    <th style="color: #000;" class="align-left">&nbsp;<br>Service Writer
+                                                    <th style="color: #000;" class="align-left">RO #</th>
+                                                    <th style="color: #000;" class="align-left">Service Writer
                                                     </th>
-                                                    <th style="color: #000;" class="align-left">&nbsp;<br>RO Date</th>
-                                                    <th>&nbsp;<br>RO Count</th>
-                                                    <th>&nbsp;<br>Line Count</th>
-                                                    <th>Unapplied<br>Time Cost</th>
-                                                    <th>&nbsp;<br>Flag Hrs
+                                                    <th style="color: #000;" class="align-left">RO Date</th>
+                                                    <th>RO Count</th>
+                                                    <th>Line Count</th>
+                                                    <th>Unapplied Time Cost</th>
+                                                    <th>Flag Hrs
                                                     </th>
                                                     <th>
-                                                        Actual Hrs<br>on Jobs</th>
-                                                    <th>&nbsp;<br>%</th>
-                                                    <th>Time Card<br>Hours</th>
+                                                        Actual Hrs on Jobs</th>
+                                                    <th>%</th>
+                                                    <th>Time Card Hours</th>
                                                     <th>
-                                                        %<br>TimeCard/<br>Actual</th>
+                                                        % TimeCard/ Actual</th>
                                                     <th>ELR</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <ng-container *ngFor="let ServiceInfo of ServiceDataDetails;let i=index">
+                                                <ng-container
+                                                    *ngFor="let ServiceInfo of ServiceDataDetails;let i=index">
                                                     <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 }">
-                                                        <td id="DataBody2" [id]="'D_'+i"
-                                                            style="border-right: none !important;color: #2d91f1;cursor: pointer;"
+                                                        <td id="DataBody2" class="text-center" [id]="'D_'+i"
+                                                            style="border-right: none !important;color: #0554ef;cursor: pointer;"
                                                             (click)="viewRO(ServiceInfo)"
                                                             [ngClass]="[ServiceInfo.RO != 0 && ServiceInfo.RO != null && ServiceInfo.RO != undefined && ServiceInfo.RO != '' && ServiceInfo.RO != '-' ? 'popuppointer' : 'popupdisable']">
                                                             {{
                                                             ServiceInfo.RO == 0 || ServiceInfo.RO == null ? '-' :
                                                             ServiceInfo.RO }}</td>
                                                         <td id="DataBody3" style="border-right: none !important;"
-                                                            class="align-left">{{
+                                                            class="text-start">{{
                                                             ServiceInfo.ServiceWriterName == 0 ||
                                                             ServiceInfo.ServiceWriterName == null ? '-' :
                                                             ServiceInfo.ServiceWriterName }}</td>
-                                                        <td id="DataBody4" class="align-left">{{
+                                                        <td id="DataBody4" class="text-center">{{
                                                             ServiceInfo.cdate == 0 || ServiceInfo.cdate == null ? '-' :
                                                             ServiceInfo.cdate |
                                                             date: 'MM.dd.yyyy'}}</td>

@@ -119,54 +119,62 @@
                     </div>
 
 
-
-                    <div class="d-flex " style="white-space: nowrap;margin-top: 1.2rem;">
-                        <h1 class="m-0 ps-1">Top 10 OP Code's: </h1>
-                        <input type="checkbox" [(ngModel)]="topfive" style="margin-bottom: .4rem;">
+                    <div class="dropdown">
+                        <label class="form-check-label d-flex align-items-center text-nowrap" for="topFiveCheck">
+                            <label class="form-check-label check-label font-blue" for="checkIndeterminate">Top 10 OP
+                                Code's :
+                            </label>
+                            <input class="form-check-input mx-2 me-3 mb-2" type="checkbox" id="topFiveCheck"
+                                [(ngModel)]="topfive">
+                        </label>
                     </div>
 
-                    <!-- Apply Button -->
                     <div class="dropdown">
                         <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
                     </div>
 
 
-                    <div class="dropdown d-flex justify-content-center align-items-center">
+                    <!-- <div class="dropdown d-flex justify-content-center align-items-center">
                         <input type="text" class="input-field" placeholder="Search" style="width: 180px;"
                             [(ngModel)]="SearchText" (keyup.enter)="viewreport()" />
+                    </div> -->
+                    <div class="search ms-auto pe-3">
+                        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="SearchText"
+                            (keyup.enter)="viewreport()" style="width: 16rem !important"/>
+                        <img src="images/Magnifer.svg" alt="">
                     </div>
 
                 </div>
             </div>
-            <div class="scorecard-double-header" *ngIf="actionType == 'Y'">
+            <div class="scorecard-multi-header opcoddetracker-tbl" *ngIf="actionType == 'Y'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th class="text-center bg-white"> <span>{{FromDate |date:'MMMM'}} <span
+                            <th class="text-center"> <span>{{FromDate |date:'MMMM'}} <span
                                         *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
                                         |date:'MMMM'}} </span>
                                 </span></th>
 
-                            <th class="spacer"></th>
+
                             <!-- <th>Comments</th> -->
                             <th colspan="1"></th>
-                            <th class="spacer"></th>
 
-                            <th colspan="2" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="2">
                                 Total
                             </th>
-                            <th class="spacer"></th>
 
-                            <th colspan="7" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="7">
                                 Labor
                             </th>
-                            <th class="spacer"></th>
+
 
                             <!-- <th colspan="2" style="border-right: 2px solid #e0e1e2;text-align: initial;">Hours</th> -->
-                            <th colspan="5" style="border-right: 2px solid #e0e1e2;">
+                            <th colspan="5">
                                 Parts
                             </th>
-                            <!-- <th class="spacer"></th> -->
+                            <!--  -->
 
                         </tr>
                         <tr class="bdr-btm">
@@ -181,13 +189,13 @@
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('OpcodeDesc',order)" style="cursor: pointer;"> Description
                             </th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('Count',order)" style="cursor: pointer;">Count </th>
                             <th class="bdr-rt" (click)="sort('Hours',order)" style="cursor: pointer;"> Hours</th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('LaborSale',order)" style="cursor: pointer;">Sales </th>
                             <th class="bdr-rt" (click)="sort('LaborGross',order)" style="cursor: pointer;">Gross </th>
                             <th class="bdr-rt" (click)="sort('LaborGP',order)" style="cursor: pointer;"> GP %</th>
@@ -197,7 +205,7 @@
                                 Sales </th>
                             <th class="bdr-rt" (click)="sort('avg_LaborGP',order)" style="cursor: pointer;">AVG <br> GP
                             </th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('PartsSale',order)" style="cursor: pointer;">Sales </th>
                             <th class="bdr-rt" (click)="sort('PartsGross',order)" style="cursor: pointer;"> Gross</th>
                             <th class="bdr-rt" (click)="sort('PartsGP',order)" style="cursor: pointer;">GP % </th>
@@ -212,14 +220,13 @@
                     <tbody [ngClass]="{'hidden': NoData == true }">
 
                         <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
-                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': ServiceInfo.Dealer === '-'   , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'lightblue-bg': ServiceInfo.Dealer === '-'   , 'divBold': ServiceInfo.data1 === 'REPORTS TOTAL'}"
                                 [id]="'D_'+i" (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')"
                                 style="cursor: pointer;">
                                 <ng-container>
                                     <!-- (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')" -->
 
-                                    <td
-                                        [ngStyle]="{'background-color':ServiceInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
+                                    <td>
 
                                         <span [id]="'D_'+i"
                                             title="{{(ServiceInfo.data1 == undefined ? 'Reports Total': ServiceInfo.data1)}}"
@@ -237,8 +244,8 @@
                                             (ServiceInfo.data1 | date:'MM/dd/YYYY' ): 'REPORTS TOTAL' ) )}}
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
-                                    <td class="lt_align" [id]="'D_'+i"> <span
+
+                                    <td class="text-start" [id]="'D_'+i"> <span
                                             title="{{(ServiceInfo.OpcodeDesc == undefined ? 'Reports Total': ServiceInfo.OpcodeDesc)}}"
                                             class="layer1">
                                             {{(ServiceInfo.OpcodeDesc == undefined || ServiceInfo.OpcodeDesc == null ||
@@ -255,7 +262,7 @@
                                     <!-- <td id="DataBody2" [id]="'D_'+i">
                                     {{ (ServiceInfo.Labortype ? ServiceInfo.Labortype : '' ) }}
                                 </td> -->
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody2" [id]="'D_'+i"
                                         [ngClass]="[ServiceInfo.Count != 0 && ServiceInfo.Count != null && ServiceInfo.Count != undefined && ServiceInfo.Count != '' && ServiceInfo.Count != '-' && selectedDataGrouping.length  < 2 ? 'popuppointer' : 'popupdisable']">
@@ -275,7 +282,7 @@
                                         (ServiceInfo.Hours == 0 || ServiceInfo.Hours == null ? '-' :
                                         ServiceInfo.Hours |number:'1.2-2') }}
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody3" [id]="'D_'+i"
                                         [ngClass]="{ negative: !inTheGreen(ServiceInfo.LaborSale)}">
@@ -360,7 +367,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <!-- |currency:'USD':'symbol':'1.0-0'  for above 3-->
                                     <td id="DataBody3" [id]="'D_'+i"
@@ -435,10 +442,10 @@
                             </tr>
 
                             <ng-container *ngFor="let data2 of ServiceInfo.Data2;let k=index">
-                                <tr [id]="'DN_'+i" class="sub-title" style="cursor: pointer;"
+                                <tr [id]="'DN_'+i" style="cursor: pointer;"
                                     [ngClass]="{'hidden': ServiceInfo.Dealer === '+', 'title-l3' : k % 2 == 0 , 'titleOdd-l3' : k % 2 != 0}"
                                     (click)="expandorcollapse(i,$event,data2.data2sign,data2,ServiceInfo)">
-                                    <td>
+                                    <td class="px-3">
                                         <!-- <span style="margin-right: 1.5rem;"></span> -->
                                         <!-- <span title="{{data2.data2}}" (click)="openDetails(dt2,ServiceInfo,'2')"
                                     class="layer2"> {{(data2.data2
@@ -446,7 +453,7 @@
                                     undefined ? '--' : ( (data2.data2.toString() | slice:0:15) +
                                     (data2.data2.toString().length > 15 ? '...' : '') ))}} </span> -->
 
-                                        <span title="{{data2.data2}}" [id]="'DN_'+i" class="layer2"
+                                        <span title="{{data2.data2}}" [id]="'DN_'+i" class="layer2 "
                                             *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
                                             {{(data2.data2
                                             ==
@@ -460,8 +467,8 @@
                                         </span>
 
                                     </td>
-                                    <td class="spacer"></td>
-                                    <td class="lt_align"> <span [id]="'DN_'+i"
+
+                                    <td class="text-start"> <span [id]="'DN_'+i"
                                             title="{{(data2.OpcodeDesc == undefined ? 'Reports Total': data2.OpcodeDesc)}}"
                                             class="layer1">
                                             {{(data2.OpcodeDesc == undefined || data2.OpcodeDesc == null ||
@@ -478,7 +485,7 @@
                                     <!-- <td id="DataBody2" [id]="'DN_'+i">
                                         {{ (data2.Labortype ? data2.Labortype : '' ) }}
                                     </td> -->
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody2" [id]="'DN_'+i"
                                         [ngClass]="[data2.Count != 0 && data2.Count != null && data2.Count != undefined && data2.Count != '' && data2.Count != '-' &&  selectedDataGrouping.length  < 3 ? 'popuppointer' : 'popupdisable']">
@@ -497,7 +504,7 @@
                                         (data2.Hours == 0 || data2.Hours == null ? '-' :
                                         data2.Hours |number:'1.2-2') }}
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody3" [id]="'DN_'+i"
                                         [ngClass]="{ negative: !inTheGreen(data2.LaborSale)}">
@@ -581,7 +588,7 @@
 
 
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <!-- |currency:'USD':'symbol':'1.0-0'  for above 3-->
                                     <td id="DataBody3" [id]="'DN_'+i"
@@ -651,34 +658,34 @@
 
                                     </td>
                                 </tr>
-                                <tr [id]="'DVN_'+i" class="sub-title" *ngFor="let dt3 of data2.SubData; let l=index"
+                                <tr [id]="'DVN_'+i"  *ngFor="let dt3 of data2.SubData; let l=index"
                                     [ngClass]="{'hidden': ServiceInfo.Dealer === '+' || data2.data2sign === '+' , 'title-l3' : k % 2 == 0 , 'titleOdd-l3' : k % 2 != 0}">
                                     <td style="padding-left: 2rem;">
 
 
                                         <span title="{{dt3.data3}}" (click)="openDetails(dt3,ServiceInfo,'3')"
-                                            class="layer2" *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
+                                            class="layer2 cursor-pointer" *ngIf="selectedDataGrouping[1].columnName != 'cdate'">
                                             {{(dt3.data3
                                             ==
                                             undefined ? '--' : ( (dt3.data3.toString() | slice:0:25) +
                                             (dt3.data3.toString().length > 25 ? '...' : '') ))}}
                                         </span>
                                         <span title="{{dt3.data2}}" (click)="openDetails(dt3,ServiceInfo,'3')"
-                                            class="layer2" *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
+                                            class="layer2 cursor-pointer" *ngIf="selectedDataGrouping[1].columnName == 'cdate'">
                                             {{( dt3.data3 == undefined || dt3.data3 == '' || dt3.data3 ==
                                             null ? '-' : dt3.data3 | date:'MM/dd/YYYY' )}}
                                         </span>
 
                                     </td>
-                                    <td class="spacer"></td>
-                                    <td class="lt_align"> <span [id]="'D_'+i"
-                                            title="{{(dt3.OpcodeDesc == undefined ? 'Reports Total': dt3.OpcodeDesc)}}"
+
+                                    <td class="text-start" style="width: 160px;"> <span [id]="'D_'+i"
+                                            ngbTooltip="{{(dt3.OpcodeDesc == undefined ? 'Reports Total': dt3.OpcodeDesc)}}"
                                             class="layer1">
                                             {{(dt3.OpcodeDesc == undefined || dt3.OpcodeDesc == null || dt3.OpcodeDesc
                                             == '' ? '-' : (
                                             (dt3.OpcodeDesc.toString() |
-                                            slice:0:50) +
-                                            (dt3.OpcodeDesc.toString().length > 50 ? '...' : '') ))}}
+                                            slice:0:40) +
+                                            (dt3.OpcodeDesc.toString().length > 40 ? '...' : '') ))}}
                                         </span>
                                     </td>
 
@@ -688,7 +695,7 @@
                                     <!-- <td id="DataBody2">
                                         {{ (dt3.Labortype ? dt3.Labortype : '' ) }}
                                     </td> -->
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody2"
                                         [ngClass]="[dt3.Count != 0 && dt3.Count != null && dt3.Count != undefined && dt3.Count != '' && dt3.Count != '-' ? 'popuppointer' : 'popupdisable']"
@@ -708,7 +715,7 @@
                                         (dt3.Hours == 0 || dt3.Hours == null ? '-' :
                                         dt3.Hours |number:'1.2-2') }}
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt3.LaborSale)}">
                                         <span class="d-flex justify-content-between">
@@ -787,7 +794,7 @@
 
 
                                     </td>
-                                    <td class="spacer"></td>
+
 
                                     <!-- |currency:'USD':'symbol':'1.0-0'  for above 3-->
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt3.PartsSale)}">

@@ -71,16 +71,16 @@
                 </div>
             </div>
         </div>
-        <div class="scorecard-triple-header WholesaleGrossGroup-tbl w-75">
+        <div class="scorecard-multi-header techfixedtrenddetails-tbl">
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <th class="text-center bg-white">{{TechFixedTrendingKeys[1]}}<span> -
-                            </span>{{TechFixedTrendingKeys[TechFixedTrendingKeys.length - 1]}}</th>
-                        <th class="spacer"></th>
+                        <th class="text-center ">{{TechFixedTrendingKeys[TechFixedTrendingKeys.length - 1]}}<span> -
+                            </span>{{TechFixedTrendingKeys[1]}}</th>
+
 
                         <th scope="col"></th>
-                        <td class="spacer"></td>
+
 
                         <th [attr.colspan]="TechFixedTrendingKeys[TechFixedTrendingKeys.length - 1]"></th>
 
@@ -88,9 +88,9 @@
                     </tr>
                     <tr>
                         <th class="bdr-rt text-center" style="color:#fff">Store</th>
-                        <th class="spacer"></th>
+
                         <th class="bdr-rt">Graph</th>
-                        <th class="spacer"></th>
+
 
                         <th *ngFor="let date of TechFixedTrendingKeys;let i=index"><span> <span
                                     *ngIf="date=='PACE'">{{Month | date:'MMM' }}</span> {{ date}}</span></th>
@@ -100,7 +100,7 @@
                     <ng-container *ngIf="TechFixedTrendingData.length > 0; else NoTechFixedTrendingData">
                         <ng-container *ngFor="let STR of TechFixedTrendingData; let j=index">
                             <tr class="text-bold lightblue-bg">
-                                <td class="lightblue-bg"><span class="dlrship" style="text-transform: uppercase;">
+                                <td class="lightblue-bg text-start text-uppercase"><span>
                                         {{(STR?.Store_Name == "" ||
                                         STR?.Store_Name == null ? '' : STR?.Store_Name)}}
                                     </span></td>
@@ -116,18 +116,17 @@
                                         </ng-container>
                                     </ng-container>
                                 </ng-container>
-                                <th class="spacer"></th>
-                                <th></th>
-                                <th class="spacer"></th>
+
+                                <td></td>
+
                                 <td [attr.colspan]="TechFixedTrendingKeys[TechFixedTrendingKeys.length - 1]"></td>
                             </tr>
                             <ng-container *ngFor="let subdata of STR.sub;let j=index">
                                 <tr *ngIf="subdata.Lable1_subcategory != ''"
                                     [style.display]="subdata.paytype === undefined ? 'none' : ''"
-                                    [style.fontFamily]="STR.Store_Name === 'Report Totals' ? 'RobotoMedium' : 'Roboto'"
-                                    [ngClass]="{'total-paytype': subdata.paytype === 'Totals'}" class="sub-title"
+                                    [ngClass]="{'total-paytype': subdata.paytype === 'Totals'}"
                                     style="pointer-events: none;">
-                                    <td style="cursor: pointer;">
+                                    <td style="cursor: pointer;" class="font-blue text-bold">
                                         <span class="dlrship px-2">
                                             {{
                                             subdata.paytype === 'Totals' ? 'TOTAL' :
@@ -147,26 +146,25 @@
                                             }}
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
+
                                     <td></td>
-                                    <td class="spacer"></td>
+
                                     <td [attr.colspan]="TechFixedTrendingKeys[TechFixedTrendingKeys.length - 1]"></td>
                                 </tr>
-                                <tr *ngFor="let subcat of subdata.subcategory; let k=index"
-                                    [style.fontFamily]="STR.Store_Name === 'Report Totals' ? 'FaktPro-Bold' : 'FaktPro-Normal'">
+                                <tr *ngFor="let subcat of subdata.subcategory; let k=index">
                                     <ng-container>
                                         <td><span class="dlrship px-3">
                                                 {{ (subcat.variable === '' || subcat.variable === null) ? '-' :
                                                 (subcat.variable === 'GP' ?
                                                 'GP%' : subcat.variable) }}
                                             </span></td>
-                                        <td class="spacer"></td>
+
                                         <td style="text-align: center !important; cursor: pointer;">
-                                            <img width="17px" src="images/LineChart_Icon2.png"
-                                                class="ms-2" style="cursor: pointer;" title="Show Graph"
+                                            <img width="17px" src="images/LineChart_Icon2.png" style="cursor: pointer;"
+                                                title="Show Graph"
                                                 (click)="openGraph(Month,TechFixedTrendingKeys,subcat,'MonthSummary')">
                                         </td>
-                                        <td class="spacer"></td>
+
                                         <ng-container *ngFor="let key of TechFixedTrendingKeys">
                                             <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }"
                                                 *ngIf="subcat.variable === 'RO COUNT' || subcat.variable === 'HOURS' || subcat.variable === 'HOURS / RO'

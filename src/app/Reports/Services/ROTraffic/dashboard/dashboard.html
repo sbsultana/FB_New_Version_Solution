@@ -38,12 +38,10 @@
 
                         <div class="timeframe" *ngIf="activePopover === 3">
                             <div class="date-filter-card mt-2">
-                           
-                                <button class="outline-button"
-                                    [ngClass]="{'active':type == 'C','inactive':type != 'C'}"
+
+                                <button class="outline-button" [ngClass]="{'active':type == 'C','inactive':type != 'C'}"
                                     (click)="multipleorsingle('T','C')">Car Count</button>
-                                <button class="outline-button"
-                                    [ngClass]="{'active':type == 'G','inactive':type != 'G'}"
+                                <button class="outline-button" [ngClass]="{'active':type == 'G','inactive':type != 'G'}"
                                     (click)="multipleorsingle('T','G')">Gross</button>
                             </div>
                         </div>
@@ -52,8 +50,7 @@
                         <button class="dropdown-toggle" (click)="togglePopover(4)">
                             Exclude <span class="light-font">( {{includeValues.length
                                 >1 ?
-                                'Selected' : Mileage==true ? 'Mileage < 10,000' : 'Select' }} 
-                                    {{includeValues.length >1 ?
+                                'Selected' : Mileage==true ? 'Mileage < 10,000' : 'Select' }} {{includeValues.length>1 ?
                                     includeValues.length : ''
                                     }}
                                     )</span>
@@ -99,49 +96,49 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-triple-header rotraffic-tbl">
                 <table class="table mb-0 w-100">
-                <thead>
+                    <thead>
                         <tr>
-                            <th class="text-center bg-white">
+                            <th class="text-center">
                                 <!-- <span>{{FromDate |date:'MMMM'}} <span
                                         *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
                                         |date:'MMMM'}} </span>
                                 </span> -->
                             </th>
-                            <th class="spacer"></th>
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="4">
                                 Car Count (Except IP)
                             </th>
-                            <th class="spacer"></th>
 
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="4">
                                 Warranty Only </th>
-                            <th class="spacer"></th>
+
                             <!-- <th>Comments</th> -->
 
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                            <th colspan="4">
                                 Customer Pay
                             </th>
-                            <th class="spacer"></th>
 
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="4">
                                 Warranty Pay
                             </th>
-                            <th class="spacer"></th>
 
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="4">
                                 Extended Warranty (CSC, CSCT, WESP)
                             </th>
 
-                            <th class="spacer"></th>
-                            <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+
+                            <th colspan="4">
                                 Internal Pay
                             </th>
 
-                            <!-- <th class="spacer"></th> -->
+                            <!--  -->
 
-                            <!-- <th colspan="4" style="border-right: 2px solid #e0e1e2;">
+                            <!-- <th colspan="4">
                                 Extended Warranty Only (CSC, CSCT, WESP) </th> -->
 
                         </tr>
@@ -161,46 +158,46 @@
 
                             </th>
 
-                               <th class="spacer"></th>
+
                             <th (click)="sort('CW_CarCount_CY',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('CW_CarCount_PY',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('CW_carcount_diff',ServiceData)" style="cursor: pointer;">+/-</th>
                             <th (click)="sort('CW_carcount_percent',ServiceData)" style="cursor: pointer;">% Change</th>
 
-                            <th class="spacer"></th>
+
                             <th (click)="sort('W_ROCount_CY',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('current_percent',ServiceData)" style="cursor: pointer;">%</th>
                             <th (click)="sort('W_ROCount_PY',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('Prev_precent',ServiceData)" style="cursor: pointer;">%</th>
 
 
-                            <th class="spacer"></th>
+
                             <th (click)="sort('CP_CURR_YR',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('CP_PREV_YR',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('CP_Diff',ServiceData)" style="cursor: pointer;">+/-</th>
                             <th (click)="sort('CP_Percent',ServiceData)" style="cursor: pointer;">% Change</th>
 
-                            <th class="spacer"></th>
+
                             <th (click)="sort('W_CURR_YR',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('W_PREV_YR',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('W_diff',ServiceData)" style="cursor: pointer;">+/-</th>
                             <th (click)="sort('W_Percent',ServiceData)" style="cursor: pointer;">% Change</th>
 
-                            <th class="spacer"></th>
+
                             <th (click)="sort('E_CURR_YR',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('E_PREV_YR',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('E_diff',ServiceData)" style="cursor: pointer;">+/-</th>
                             <th (click)="sort('E_Percent',ServiceData)" style="cursor: pointer;">% Change</th>
 
-                            <th class="spacer"></th>
+
                             <th (click)="sort('I_CURR_YR',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('I_PREV_YR',ServiceData)" style="cursor: pointer;">Prev Year</th>
                             <th (click)="sort('I_diff',ServiceData)" style="cursor: pointer;">+/-</th>
                             <th (click)="sort('I_Percent',ServiceData)" style="cursor: pointer;">% Change</th>
 
-                         
 
-                            <!-- <th class="spacer"></th>
+
+                            <!-- 
                             <th (click)="sort('E_ROCount_CY',ServiceData)" style="cursor: pointer;">Curr Year</th>
                             <th (click)="sort('E_current_percent',ServiceData)" style="cursor: pointer;">%</th>
                             <th (click)="sort('E_ROCount_PY',ServiceData)" style="cursor: pointer;">Prev Year</th>
@@ -213,12 +210,11 @@
                     <tbody [ngClass]="{'hidden': NoData == true }">
 
                         <ng-container *ngFor="let ServiceInfo of ServiceData; let i=index">
-                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 ,  'divBold': ServiceInfo.Store === 'Group Total'}"
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 ,  'divBold text-uppercase': ServiceInfo.Store === 'Report Totals'}"
                                 [id]="'DV_'+i">
                                 <td style="cursor: default;">
                                     <span [id]="'D_'+i"
                                         title="{{(ServiceInfo.Store == undefined ? 'Reports Total': ServiceInfo.Store)}}"
-                                       
                                         class="layer1">
                                         {{(ServiceInfo.Store == undefined ? '-' : ( (ServiceInfo.Store.toString() |
                                         slice:0:22) +
@@ -227,7 +223,7 @@
 
 
                                 </td>
-                                    <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.CW_CarCount_CY)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -264,7 +260,7 @@
                                     '' :
                                     '%' ) }}</td>
 
-                                <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.W_ROCount_CY)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -296,7 +292,7 @@
                                     (ServiceInfo.Prev_precent == 0 || ServiceInfo.Prev_precent == null ? '' :
                                     '%' ) }}</td>
 
-                                <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.CP_CURR_YR)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -329,7 +325,7 @@
                                     (ServiceInfo.CP_Percent == 0 || ServiceInfo.CP_Percent == null ? '' :
                                     '%' ) }}</td>
 
-                                <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.W_CURR_YR)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -362,7 +358,7 @@
                                     (ServiceInfo.W_Percent == 0 || ServiceInfo.W_Percent == null ? '' :
                                     '%' ) }}</td>
 
-                                <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.E_CURR_YR)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -395,7 +391,7 @@
                                     (ServiceInfo.E_Percent == 0 || ServiceInfo.E_Percent == null ? '' :
                                     '%' ) }}</td>
 
-                                <td class="spacer"></td>
+
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.I_CURR_YR)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -428,8 +424,8 @@
                                     (ServiceInfo.I_Percent == 0 || ServiceInfo.I_Percent == null ? '' :
                                     '%' ) }}</td>
 
-                            
-                                <!-- <td class="spacer"></td>
+
+                                <!-- 
 
                                 <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.E_ROCount_CY)}">
                                     <span class="d-flex justify-content-between"> {{
@@ -469,6 +465,6 @@
             </div>
         </div>
 
-   
+
     </div>
 </main>

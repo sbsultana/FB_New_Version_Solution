@@ -39,11 +39,10 @@
                                         <div class="store-columns flex-grow-1">
                                             <ng-container *ngFor="let grp of dataGrouping;let i=index">
                                                 <button class="btn btn-outline-primary store-button"
-                                                     (click)="multipleorsingle('GRP',grp)"
+                                                    (click)="multipleorsingle('GRP',grp)"
                                                     [ngClass]="{'active':grouping.indexOf(grp)>=0,'inactive':grouping.indexOf(grp)<0,'d-none':grp.Active=='N'}">
                                                     <span>{{grp.ARG_LABEL}}</span> <span
-                                                        *ngIf="grouping.indexOf(grp)>=0"
-                                                        style="float:right">
+                                                        *ngIf="grouping.indexOf(grp)>=0" style="float:right">
                                                         {{grouping.indexOf(grp)+1}}
                                                     </span>
                                                 </button>
@@ -64,7 +63,7 @@
                         </div>
                     </div>
 
-                   
+
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(4)">
                             Department <span class="light-font">( {{Department.length ==
@@ -153,25 +152,23 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-triple-header tiregroupsales-tbl">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
 
-                            <th class="text-center bg-white"><span>{{DupFromDate |date:'MMMM'}} <span
+                            <th class="text-center"><span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
                                         |date:'MMMM'}} </span>
                                 </span></th>
-                            <th class="spacer"></th>
-                            <th colspan="10" style="border-right: 2px solid #e0e1e2;">Retail Tire Performance</th>
-                            <th class="spacer"></th>
-                            <th colspan="5" style="border-right: 2px solid #e0e1e2;">Internal Tire Performance</th>
+                            <th colspan="10">Retail Tire Performance</th>
+                            <th colspan="5">Internal Tire Performance</th>
 
                         </tr>
                         <tr>
                             <th class="text-center">
-                                <span style="color: white !important;">{{DupFromDate |date:'dd'}} <span
+                                <span>{{DupFromDate |date:'dd'}} <span
                                         *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
                                     - {{DupToDate |date:'dd'}}<span
@@ -181,7 +178,6 @@
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span>
                             </th>
-                            <th class="spacer"></th>
                             <th (click)="sort('Retail_Tire_Sale')" style="cursor: pointer; text-align: right; ">Sales $
                             </th>
                             <th (click)="sort('Retail_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross $
@@ -203,7 +199,6 @@
                             <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; text-align: right; ">Missed
                                 Opportunity</th>
 
-                            <th class="spacer"></th>
                             <th (click)="sort('Interal_Tire_sale')" style="cursor: pointer; text-align: right; ">Sales $
                             </th>
                             <th (click)="sort('Interal_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross
@@ -230,7 +225,7 @@
                                         (LI.Store_Name.toString().length > 22 ? '...' : '') ))}} </span>
                                 </td>
 
-                                <th class="spacer"></th>
+
                                 <td [ngClass]="{ negative: !inTheGreen(LI.Retail_Tire_Sale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         ( LI.Retail_Tire_Sale == 0 || LI.Retail_Tire_Sale == null || LI.Retail_Tire_Sale
@@ -320,7 +315,7 @@
 
 
 
-                                <th class="spacer"></th>
+
                                 <td [ngClass]="{ negative: !inTheGreen(LI.Interal_Tire_sale)}">
                                     <span class="d-flex justify-content-between"> {{
                                         ( LI.Interal_Tire_sale == 0 || LI.Interal_Tire_sale == null ||
@@ -377,7 +372,7 @@
                                                 (sub.data2.toString().length > 22 ? '...' : '') ))}} </span>
                                         </td>
 
-                                        <th class="spacer"></th>
+
                                         <td [ngClass]="{ negative: !inTheGreen(sub.Retail_Tire_Sale)}">
                                             <span class="d-flex justify-content-between"> {{
                                                 ( sub.Retail_Tire_Sale == 0 || sub.Retail_Tire_Sale == null ||
@@ -474,7 +469,7 @@
 
 
 
-                                        <th class="spacer"></th>
+
                                         <td [ngClass]="{ negative: !inTheGreen(sub.Interal_Tire_sale)}">
                                             <span class="d-flex justify-content-between"> {{
                                                 ( sub.Interal_Tire_sale == 0 || sub.Interal_Tire_sale == null ||
@@ -542,7 +537,6 @@
         <ng-template #tmp>
             <div class="modal-content">
                 <div class="recap position-relative">
-
                     <div class="row d-flex w-100 m-0">
                         <div class="col-lg-12">
 
@@ -563,7 +557,7 @@
                                                 </h2>
                                                 <!-- <img src="images/Export.png" class="img-fluid ms-auto me-2"
                                                     (click)="exportAsXLSX()" alt="" style="cursor: pointer;"> -->
-                                                <a type="button" class="px-3" style="cursor:pointer;"
+                                                <a type="button" class="ms-auto" style="cursor:pointer;"
                                                     (click)="closePopup()">
                                                     <button type="button" class="btn-close" aria-label="Close"></button>
                                                 </a>
@@ -571,10 +565,15 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="scorecard-single-header mb-3" id="scrollcent" #scrollcent
-                                        (scroll)="updateVerticalScroll($event)"
+                                    <div class="scorecard-double-header tiregroupsalesdetails-tbl mb-3" id="scrollcent"
+                                        #scrollcent (scroll)="updateVerticalScroll($event)"
                                         style="overflow:auto; max-height: calc(100vh - 200px);">
-
+                                        <div *ngIf="(ReconDetails == null || ReconDetails.length === 0) && ReconDetailsNoData === ''"
+                                            class="graph-loader d-flex align-items-center justify-content-center">
+                                            <div class="spinner-border text-primary" role="status" aria-hidden="true">
+                                            </div>
+                                            <span class="visually-hidden ms-2">Loading...</span>
+                                        </div>
 
                                         <table class="table mb-0 w-100">
                                             <thead>
@@ -583,51 +582,51 @@
                                                     <th>Date</th>
                                                     <th>RO #</th>
                                                     <th>Part #</th>
-                                                    <th>Vehicle ID</th>
+                                                    <th class="box-shadow ">Vehicle ID</th>
 
-                                                    <th colspan="3">Total</th>
-                                                    <th colspan="3">Customer Pay</th>
-                                                    <th colspan="3">Warranty</th>
-                                                    <th colspan="3">Extended Warranty</th>
+                                                    <th colspan="3" class="box-shadow ">Total</th>
+                                                    <th colspan="3" class="box-shadow ">Customer Pay</th>
+                                                    <th colspan="3" class="box-shadow ">Warranty</th>
+                                                    <th colspan="3" class="box-shadow ">Extended Warranty</th>
 
-                                                    <th colspan="3">Internal</th>
-                                                    <th colspan="3">Wholesale</th>
+                                                    <th colspan="3" class="box-shadow ">Internal</th>
+                                                    <th colspan="3" class="box-shadow ">Wholesale</th>
                                                     <th colspan="3">Retail</th>
 
 
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" class="bdr-rt"></td>
-                                                    <td (click)="sort('Total_Tire_Sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Total_Tire_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Total_GP_Per')" class="bdr-rt">GP % </td>
+                                                    <th colspan="5" class="bdr-rt"></th>
+                                                    <th (click)="sort('Total_Tire_Sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Total_Tire_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Total_GP_Per')" class="bdr-rt">GP % </th>
 
-                                                    <td (click)="sort('Customer_sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Customer_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Customer_GP_per')" class="bdr-rt">GP % </td>
+                                                    <th (click)="sort('Customer_sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Customer_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Customer_GP_per')" class="bdr-rt">GP % </th>
 
-                                                    <td (click)="sort('Warranty_sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Warranty_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Warranty_GP_Per')" class="bdr-rt">GP % </td>
+                                                    <th (click)="sort('Warranty_sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Warranty_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Warranty_GP_Per')" class="bdr-rt">GP % </th>
 
-                                                    <td (click)="sort('ExtendedWarranty_sale')" class="bdr-rt"> Sales $
-                                                    </td>
-                                                    <td (click)="sort('ExtendedWarranty_Gross')" class="bdr-rt"> Gross $
-                                                    </td>
-                                                    <td (click)="sort('ExtendedWarranty_GP_Per')" class="bdr-rt">GP %
-                                                    </td>
+                                                    <th (click)="sort('ExtendedWarranty_sale')" class="bdr-rt"> Sales $
+                                                    </th>
+                                                    <th (click)="sort('ExtendedWarranty_Gross')" class="bdr-rt"> Gross $
+                                                    </th>
+                                                    <th (click)="sort('ExtendedWarranty_GP_Per')" class="bdr-rt">GP %
+                                                    </th>
 
-                                                    <td (click)="sort('Interal_sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Interal_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Interal_GP_Per')" class="bdr-rt">GP % </td>
+                                                    <th (click)="sort('Interal_sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Interal_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Interal_GP_Per')" class="bdr-rt">GP % </th>
 
-                                                    <td (click)="sort('Wholesale_sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Wholesale_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Wholesale_GP_Per')" class="bdr-rt">GP % </td>
+                                                    <th (click)="sort('Wholesale_sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Wholesale_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Wholesale_GP_Per')" class="bdr-rt">GP % </th>
 
-                                                    <td (click)="sort('Retail_Sale')" class="bdr-rt"> Sales $ </td>
-                                                    <td (click)="sort('Retail_Gross')" class="bdr-rt"> Gross $ </td>
-                                                    <td (click)="sort('Retail_GP_Per')" class="bdr-rt">GP % </td>
+                                                    <th (click)="sort('Retail_Sale')" class="bdr-rt"> Sales $ </th>
+                                                    <th (click)="sort('Retail_Gross')" class="bdr-rt"> Gross $ </th>
+                                                    <th (click)="sort('Retail_GP_Per')" class="bdr-rt">GP % </th>
 
 
 
@@ -637,7 +636,8 @@
                                                 <tbody>
                                                     <tr *ngFor="let ld of ReconDetails ;let i=index">
                                                         <td>{{ ld['InvoiceNumber'] || '-'}}</td>
-                                                        <td style="text-align: center !important;">{{ ld['Date'] ? (ld['Date'] |
+                                                        <td style="text-align: center !important;">{{ ld['Date'] ?
+                                                            (ld['Date'] |
                                                             date:'MM.dd.yyyy' ) : '-'}}</td>
                                                         <td>{{ ld['ronumber'] || '-'}}</td>
                                                         <td>{{ ld['Partnumber'] || '-'}}</td>
@@ -895,12 +895,12 @@
                                             <ng-template #NoRD>
                                                 <tr>
                                                     <td colspan="7" *ngIf="ReconDetailsNoData== ''">
-                                                        <div 
+                                                        <!-- <div
                                                             class="graph-loader d-flex align-items-center justify-content-center">
                                                             <div class="spinner-border text-primary" role="status">
                                                                 <span class="visually-hidden">Loading...</span>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
                                                     </td>
                                                     <td colspan="10" *ngIf="ReconDetailsNoData != ''"
                                                         style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">

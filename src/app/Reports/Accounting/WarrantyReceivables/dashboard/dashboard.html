@@ -28,14 +28,15 @@
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
                                         <div class="store-columns flex-grow-1"
                                             style="grid-template-rows: repeat(3, auto);">
-                                            <button class="outline-button" (click)="multipleorsingle('WT','All')"
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="multipleorsingle('WT','All')"
                                                 [ngClass]="{'active':warrantytype.indexOf('All')>=0, 'inactive':warrantytype.indexOf('All')<0}">All
                                             </button>
-                                            <button class="outline-button"
+                                            <button class="btn btn-outline-primary store-button"
                                                 (click)="multipleorsingle('WT','FactoryWarranty')"
                                                 [ngClass]="{'active': warrantytype.indexOf('All')>=0 || warrantytype.indexOf('FactoryWarranty')>=0 , 'inactive':warrantytype.indexOf('FactoryWarranty')<0 && warrantytype.indexOf('All')<0}">Factory
                                                 Warranty</button>
-                                            <button class="outline-button"
+                                            <button class="btn btn-outline-primary store-button"
                                                 (click)="multipleorsingle('WT','ExtendedWarranty')"
                                                 [ngClass]="{'active': warrantytype.indexOf('All')>=0  || warrantytype.indexOf('ExtendedWarranty')>=0 , 'inactive':warrantytype.indexOf('ExtendedWarranty')<0 && warrantytype.indexOf('All')<0 }">Extended
                                                 Warranty</button>
@@ -55,16 +56,15 @@
                             <div class="row h-100">
                                 <div class="stores d-flex flex-column border-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                                        <div class="store-columns flex-grow-1"
-                                            style="grid-template-rows: repeat(4, auto);">
+                                        <div class="flex-grow-1">
                                             <ng-container>
                                                 <div class="btn-grid">
                                                     <h6>Factory&nbsp;:</h6> <input type="text" [(ngModel)]="AgeFrom"
-                                                        class="target-txt-cav" (keypress)="keyPressNumbers($event)">
+                                                        class="input-field" (keypress)="keyPressNumbers($event)">
                                                 </div>
-                                                <div class="btn-grid">
+                                                <div class="btn-grid pt-2">
                                                     <h6>Extended:</h6> <input type="text" [(ngModel)]="AgeTo"
-                                                        class="target-txt-cav" (keypress)="keyPressNumbers($event)">
+                                                        class="input-field" (keypress)="keyPressNumbers($event)">
                                                 </div>
                                             </ng-container>
                                         </div>
@@ -80,12 +80,13 @@
 
                 </div>
             </div>
-            <div class="scorecard-single-header lendersummary-tbl" *ngIf="MainGrid == 'Y'">
+            <div class="scorecard-multi-header warrantyreceivables-tbl" *ngIf="MainGrid == 'Y'">
                 <table class="table mb-0 w-100">
                     <thead>
+                        <tr></tr>
                         <tr class="bdr-btm">
                             <th (click)="sort('STORENAME')" style="cursor: pointer;">&nbsp;</th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('AGED BALANCE')" style="cursor: pointer;">Aged Balance</th>
                             <th class="bdr-rt" (click)="sort('TOTAL')" style="cursor: pointer;">Total Balance</th>
                             <th class="bdr-rt" style="cursor: pointer;"><span (click)="sort('GUIDE')"> Guide</span>
@@ -103,9 +104,10 @@
                     </thead>
                     <tbody [ngClass]="{'hidden': NoData == true }">
                         <ng-container *ngFor="let data1 of InventorySummaryData; let i=index">
-                            <tr *ngIf="!NoData" [id]="'DV_'+i">
+                            <tr *ngIf="!NoData" [id]="'DV_'+i"
+                                [ngClass]="{  'divBold text-uppercase': data1.STORENAME.toLowerCase() == 'report total','lightblue-bg text-uppercase': data1.STORENAME.toLowerCase() !== 'report total'  }">
                                 <td style="text-align: left;" class="text-uppercase">
-                                    <span *ngIf="data1.WARRANTY_TYPE == null" style="font-weight: bold;">
+                                    <span *ngIf="data1.WARRANTY_TYPE == null">
                                         {{data1.STORENAME=='' || data1.STORENAME==undefined ? '-' :
                                         data1.STORENAME}}
                                     </span>
@@ -115,7 +117,7 @@
                                         data1.WARRANTY_TYPE}}
                                     </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data1['AGED BALANCE'])}">
                                     <span class="d-flex "
                                         [ngClass]="{'justify-content-center' : data1['AGED BALANCE'] == 0 || data1['AGED BALANCE'] == null,'justify-content-between': data1['AGED BALANCE'] != 0 && data1['AGED BALANCE'] != null }">
@@ -212,7 +214,7 @@
                                 </td>
                             </tr>
                             <ng-container *ngFor="let data2 of data1.warranty; let j=index">
-                                <tr class="sub-title" *ngIf="j != 0">
+                                <tr *ngIf="j != 0">
                                     <td style="text-align: left;">
                                         <span (click)="openDetails(data2)"
                                             style="text-align: center !important;cursor: pointer;padding-left: 1rem !important;">
@@ -221,7 +223,6 @@
                                             data2.WARRANTY_TYPE}}
                                         </span>
                                     </td>
-                                    <td class="spacer"></td>
                                     <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(data2['AGED BALANCE'])}">
                                         <span class="d-flex "
                                             [ngClass]="{'justify-content-center' : data2['AGED BALANCE'] == 0 || data2['AGED BALANCE'] == null , 'justify-content-between': data2['AGED BALANCE'] != 0 && data2['AGED BALANCE'] != null }">
@@ -331,61 +332,84 @@
 
             <div class="totals-block mb-2 col-12" *ngIf="MainGrid == 'N'">
                 <div class="row">
-                    <div class="col-12 d-flex align-items-center justify-content-start">
-                        <button class="back-button" (click)="backtoWR()"><span><i class="fa fa-long-arrow-left"
-                                    aria-hidden="true"></i> Back</span></button>
-                        <h5 class="divBold m-0 ms-3">
-                            <img src="" alt=""> <span class="slash"><span class="divNormal">// </span>
-                                {{warrantyData[0].displaywarrantytype}}</span> -
-                            <span>
-                                {{warrantyData[0].storename}}</span>
-                        </h5>
-                        <!-- <div class="ms-auto me-3">
-                            <span class="divNormal slash ps-3">Count: </span> <span class="divBold ps-2">
-                                {{inventoryBookDetails.length}}</span>
-                        </div> -->
-                        <div class="col-lg-6 me-2 ms-auto d-flex justify-content-end printHide">
-                            <h5 class="title m-0 ms-3 mt-2 d-flex" style="text-transform: uppercase ;font-size: .9rem;"
-                                *ngIf="WarrantyReceivablesDetailsData != undefined">
-                                <span *ngIf="WarrantyReceivablesDetailsData[0] != undefined">
-                                    <span style="text-transform: uppercase;">
-                                        <!-- Count: {{WarrantyReceivablesDetailsData[0].TOTALS[0].REC_COUNT}} -->
-                                        <!-- {{getTotal('BALANCE') | }} -->
+                    <div class="col-12 d-flex align-items-center">
 
-                                        {{WarrantyReceivablesDetailsData && (WarrantyReceivablesDetailsData ).length > 0 ? 'Count :'+(WarrantyReceivablesDetailsData ).length : ''}}
-                                    </span>
+                        <!-- LEFT SECTION -->
+                        <div class="d-flex align-items-center gap-3">
+
+                            <!-- BACK -->
+                            <span (click)="backtoWR()" class="fw-bold cursor-pointer">
+                                <i class="fa fa-long-arrow-left me-1"></i> Back
+                            </span>
+
+                            <!-- TITLE -->
+                            <h5 class="divBold m-0 d-flex align-items-center">
+                                <span class="slash font-blue fw-bold">
+                                    <span class="divNormal">// </span>
+                                    {{ warrantyData?.[0]?.storename }}
                                 </span>
-                            </h5>&nbsp;&nbsp;
-                            <span class="m-0 ms-2 ps-2 " style="font-size: .9rem;margin-top: .3rem !important;">Age 90
-                                days or
-                                greater: </span>&nbsp;
-                            <input type="checkbox" [(ngModel)]="greaterthanvalue"
-                                (change)="agegreaterthan($event)">&nbsp;
-                            <div class="acc-select">
-                                <select class="form-select _dropdwn" [(ngModel)]="notesStageValueGrid"
-                                    (change)="GetWarrantyReceivablesDetails(warrantyData[0])">
-                                    <option selected value="">All Stages </option>
-                                    <option *ngFor="let s of notesstage" [value]="s.NS_ID">{{s.NS_Text}}
-                                </select>
+
+                                <i class="fa fa-long-arrow-right mx-2"></i>
+
+                                <span>
+                                    {{ warrantyData?.[0]?.displaywarrantytype }}
+                                </span>
+                            </h5>
+
+                        </div>
+
+                        <!-- RIGHT SECTION -->
+                        <div class="d-flex align-items-center gap-3 ms-auto printHide">
+
+                            <!-- COUNT -->
+                            <h6 class="m-0 font-blue" *ngIf="WarrantyReceivablesDetailsData?.length">
+                                Count : <strong>{{ WarrantyReceivablesDetailsData.length }}</strong>
+                            </h6>
+
+                            <!-- AGE FILTER -->
+                            <div class="d-flex align-items-center">
+                                <label for="age90" class="me-2 mb-0 font-blue">
+                                    Age 90 days or greater :
+                                </label>
+                                <input class="form-check-input" type="checkbox" id="age90"
+                                    [(ngModel)]="greaterthanvalue" (change)="agegreaterthan($event)">
                             </div>
+
+                            <!-- DROPDOWN -->
+                            <select class="form-select input-field" style="width: 180px;"
+                                [(ngModel)]="notesStageValueGrid"
+                                (change)="GetWarrantyReceivablesDetails(warrantyData[0])">
+
+                                <option value="">All Stages</option>
+
+                                <option *ngFor="let s of notesstage" [value]="s.NS_ID">
+                                    {{ s.NS_Text }}
+                                </option>
+
+                            </select>
+
+                            <!-- SEARCH -->
+                            <div class="search position-relative pe-2">
+                                <input type="text" class="form-control" [(ngModel)]="SGDSearchName" placeholder="Search"
+                                    (input)="filterData()" style="width: 200px; padding-right: 30px;">
+
+                                <img src="images/Magnifer.svg" alt=""
+                                    style="position:absolute; right:8px; top:50%; transform:translateY(-50%); width:16px;">
+                            </div>
+
                         </div>
 
-
-                        <div class="col-lg-2 me-2  printHide">
-                            <input class="form-control NR_search" name="searchText" [(ngModel)]="SGDSearchName"
-                                placeholder="Search" type="text" (input)="filterData()">
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="scorecard-single-header inventory-book-tbl-details" id="scrollcent" #scrollcent
+            <div class="scorecard-double-header inventory-book-tbl-details" id="scrollcent" #scrollcent
                 *ngIf="MainGrid =='N'">
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
                             <th *ngIf="Role == 100">
                                 <span *ngIf="hideVisibility">
-                                    <input type="checkbox" id="symbol"
+                                    <input class="form-check-input" type="checkbox" id="symbol"
                                         (change)="collectHidevalues($event,'',confirm,'multi')"> Hide
                                 </span>
                                 <span *ngIf="!hideVisibility">
@@ -398,7 +422,7 @@
                                 <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState"
                                     (click)="notesView()"></i>
                             </th>
-                            <th (click)="sortDetails('AGE')" style="cursor: pointer;" class="bdr-rt bg-white">Age</th>
+                            <th (click)="sortDetails('AGE')" style="cursor: pointer;" class="bdr-rt">Age</th>
                             <th (click)="sortDetails('DATE')" style="cursor: pointer;" class="bdr-rt">Date</th>
                             <th (click)="sortDetails('ACCOUNT')" style="cursor: pointer;" class="bdr-rt">Account #</th>
                             <th (click)="sortDetails('STAGE')" style="cursor: pointer;" class="bdr-rt">Stage</th>
@@ -408,8 +432,8 @@
                         <ng-container *ngIf="WarrantyReceivablesDetailsData != undefined">
                             <ng-container *ngIf="WarrantyReceivablesDetailsData[0] != undefined">
                                 <tr *ngIf="WarrantyReceivablesDetailsData[0].TOTALS != undefined && WarrantyReceivablesDetailsData[0].TOTALS != '' && WarrantyReceivablesDetailsData[0].TOTALS != null"
-                                    style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;box-shadow: 1px -4px 0px #2d91f1;">
-                                    <td colspan="4" style="font-family: 'FaktPro-Bold';font-size: .9rem;">Total Balance:
+                                    style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;">
+                                    <td colspan="4" style="font-size: 1rem;">Total Balance:
                                         <!-- {{ WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == 0 ||
                                         WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == null ||
                                         WarrantyReceivablesDetailsData[0].TOTALS[0].TOTAL_BALANCE == undefined ||
@@ -419,7 +443,7 @@
 
                                         {{ getTotal('BALANCE','T') | currency:'USD':'symbol':'1.2-2' }}
                                     </td>
-                                    <td colspan="4" style="font-family: 'FaktPro-Bold';font-size: .9rem;">Aged Balance:
+                                    <td colspan="4" style="font-size: 1rem;">Aged Balance:
                                         <!-- {{ WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == 0 ||
                                         WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == null ||
                                         WarrantyReceivablesDetailsData[0].TOTALS[0].AGED_BALANCE == undefined ||
@@ -438,39 +462,39 @@
                         <ng-container *ngIf="(WarrantyReceivablesDetailsData).length >0; else NoQIdata">
                             <ng-container *ngFor="let data1 of WarrantyReceivablesDetailsData;let k=index">
                                 <tr>
-                                    <td *ngIf="Role == 100">
-                                        <input type="checkbox" style="color:#2d91f1" id="symbols"
+                                    <td class="text-center" *ngIf="Role == 100">
+                                        <input class="form-check-input" type="checkbox" id="symbols"
                                             [checked]="data1.check"
                                             (change)="collectHidevalues($event,data1,confirm,'single')">
                                     </td>
-                                    <td>
-                                        <img *ngIf="data1.NotesStatus == 'N'"
-                                            src="images/Actionblack.png " title="Add Notes"
-                                            data-bs-toggle="modal" data-bs-target="#payplan" (click)="addNotes(data1)"
-                                            style="cursor: pointer;">
-                                        <img *ngIf="data1.NotesStatus == 'Y'"
-                                            src="images/notes_unread.png " title="Add Notes"
-                                            data-bs-toggle="modal" data-bs-target="#payplan" (click)="addNotes(data1)"
-                                            style="cursor: pointer;">
+                                    <td class="text-center">
+                                        <img *ngIf="data1.NotesStatus == 'N'" src="images/Actionblack.png "
+                                            title="Add Notes" data-bs-toggle="modal" data-bs-target="#payplan"
+                                            (click)="addNotes(data1)" style="cursor: pointer;">
+                                        <img *ngIf="data1.NotesStatus == 'Y'" src="images/notes_unread.png "
+                                            title="Add Notes" data-bs-toggle="modal" data-bs-target="#payplan"
+                                            (click)="addNotes(data1)" style="cursor: pointer;">
                                     </td>
                                     <td [style.background-color]="data1.COLOR_CODE">
                                         {{data1.AGE=='' ||
                                         data1.AGE==undefined ? '-' :
                                         data1.AGE}}
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         {{data1.DATE=='' ||
                                         data1.DATE==undefined ? '-' :
                                         data1.DATE | date:'MM.dd.yyyy'}}
                                     </td>
-                                    <td> {{data1['ACCOUNT']=='' || data1['ACCOUNT']==undefined ? '-' :
+                                    <td class="text-center"> {{data1['ACCOUNT']=='' || data1['ACCOUNT']==undefined ? '-'
+                                        :
                                         data1['ACCOUNT'] }}
                                     </td>
-                                    <td>
+                                    <td class="text-start">
                                         {{data1['STAGE']=='' || data1['STAGE']==undefined ? '-'
                                         : data1['STAGE'] }}
                                     </td>
-                                    <td style="color: blue;text-decoration: underline;cursor: pointer;"
+                                    <td class="text-center"
+                                        style="color: blue;text-decoration: underline;cursor: pointer;"
                                         (click)="controlData(data1,data1.controlState)"
                                         [ngClass]="{ negative: !inTheGreen(data1['CONTROL'])}">
                                         {{data1['CONTROL']=='' || data1['CONTROL']==undefined ? '-'
@@ -491,73 +515,47 @@
                                     </td>
                                 </tr>
                                 <ng-container
-                                    *ngIf="(data1.NOTES != null && notesViewState && data1.NotesStatus == 'Y')">
-                                    <tr style="background-color: #fff !important;">
-                                        <td colspan="8" *ngIf="notesViewState">
-                                            <div class="title">Notes</div>
-                                            <div class="gross-tbl-main table-responsive fs-tbl pt-1">
-                                                <table style="width: 100%;">
-                                                    <tbody>
-                                                        <ng-container *ngIf="data1.notesView == '+'">
-                                                            <ng-container
-                                                                *ngFor="let notes of data1.NOTES.slice(0,2); let i=index">
-                                                                <tr class="sub-title">
-                                                                    <td
-                                                                        style="text-align: left;border: 1px solid white;">
-                                                                        <span style="white-space: initial;">
-                                                                            {{notes.STAGE_NOTES=='' ||
-                                                                            notes.STAGE_NOTES==undefined ? '-' :
-                                                                            notes.STAGE_NOTES}}
-                                                                        </span>
-                                                                    </td>
-                                                                </tr>
-                                                            </ng-container>
-                                                        </ng-container>
-                                                        <ng-container *ngIf="data1.notesView == '-'">
-                                                            <ng-container
-                                                                *ngFor="let notes of data1.NOTES; let i=index">
-                                                                <tr class="sub-title">
-                                                                    <td
-                                                                        style="text-align: left;border: 1px solid white;">
-                                                                        <span style="white-space: initial;">
-                                                                            {{notes.STAGE_NOTES=='' ||
-                                                                            notes.STAGE_NOTES==undefined ? '-' :
-                                                                            notes.STAGE_NOTES}}
-                                                                        </span>
-                                                                    </td>
-                                                                </tr>
-                                                            </ng-container>
-                                                        </ng-container>
-                                                        <tr *ngIf="data1.NOTES.length>2">
-                                                            <td colspan="8"
-                                                                style="text-align: center;z-index:999;cursor: pointer;color: #2b91f0;text-decoration: underline ;border: 1px solid white">
-                                                                <span *ngIf="data1.notesView == '+'"
-                                                                    (click)="toggleView(data1)">View More</span>
-                                                                <span *ngIf="data1.notesView == '-'"
-                                                                    (click)="toggleView(data1)"> View Less</span>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                    *ngIf="data1?.NOTES?.length && notesViewState && data1?.NotesStatus === 'Y'">
+
+                                    <tr>
+                                        <td colspan="8" class="text-start ps-3">
+
+                                            <!-- TITLE -->
+                                            <h6 class="fw-bold font-blue small">Notes</h6>
+
+                                            <!-- NOTES LIST -->
+                                            <div *ngFor="let note of (data1.notesView === '+' ? (data1.NOTES | slice:0:2) : data1.NOTES)"
+                                                class="ps-4">
+
+                                                {{ note?.STAGE_NOTES ? note.STAGE_NOTES : '-' }}
+
                                             </div>
+
+                                            <!-- VIEW MORE / LESS -->
+                                            <div *ngIf="data1.NOTES.length > 2" class="ps-4">
+                                                <a class="font-blue cursor-pointer" (click)="toggleView(data1)">
+                                                    {{ data1.notesView === '+' ? 'View More' : 'View Less' }}
+                                                </a>
+                                            </div>
+
                                         </td>
                                     </tr>
+
                                 </ng-container>
                                 <tr *ngIf="data1.controlState == '-'">
                                     <td colspan="8" style="padding: 10px 30px !important;">
-                                        <div class="performance-scorecard-details table-responsive pt-1"
-                                            style="border: 1px solid grey ;">
-                                            <table style="width: 100%;" class="table mb-0">
+                                        <div class="scorecard-single-header" style="max-height: 35vh;height: auto !important;">
+                                            <table style="width: 100%;" class="table mb-0 w-100">
                                                 <thead>
                                                     <tr>
-                                                        <th class="bdr-rt bg-white">Date</th>
+                                                        <th class="bdr-rt">Date</th>
                                                         <th class="bdr-rt">Description</th>
                                                         <th class="bdr-rt">Amount</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <ng-container *ngFor="let ctrl of data1.controlList; let i=index">
-                                                        <tr class="sub-title">
+                                                        <tr>
                                                             <td style="text-align: center;">
                                                                 {{ctrl.DATE |date :'MM.dd.yyyy'}}
                                                             </td>
