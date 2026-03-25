@@ -1080,7 +1080,6 @@ export class Dashboard implements OnInit {
     'Acct Desc',
     'Acct #',
     'Acct Type',
-    'Acct Type Detail',
     'Opera Area',
     'Dept',
     'Sub Type',
@@ -1141,7 +1140,6 @@ export class Dashboard implements OnInit {
       am.accountDescription || '-',
       am.accountNumber || '-',
       am.accountType || '-',
-      ['A', 'L', 'Q'].includes(this.selectedheadertab[0]) ? (am.acctSubtype || '-') : '',
       am.operationalArea || '-',
       am.department || '-',
       am.subType || '-',
@@ -1165,7 +1163,7 @@ export class Dashboard implements OnInit {
 
   /* ================= BORDERS ================= */
   worksheet.eachRow((row, rowNumber) => {
-    if (rowNumber >= headerRowIndex) { // ✅ only apply after header
+    if (rowNumber >= headerRowIndex) { 
       row.eachCell(cell => {
         cell.border = {
           top: { style: 'thin' },
@@ -1194,7 +1192,6 @@ export class Dashboard implements OnInit {
     { width: 35 },
     { width: 20 },
     { width: 18 },
-    { width: 15 },
     { width: 20 },
     { width: 25 },
     { width: 20 },
