@@ -63,7 +63,7 @@
 
       <div class="playbook-inner">
         <div class="playbook-item" *ngFor="let item of playbookmainmenu" (click)="toggleMainMenu(item)">
-          <img [src]="'/images/'+item.label+'.svg'" alt="">
+          <img [src]="'images/'+item.label+'.svg'" alt="">
           <span>{{item.label}}</span>
         </div>
       </div>
@@ -117,7 +117,7 @@
         <div class="submenu-header">
           <h4>
             <span>
-              <img [src]="'/images/'+getselectedTitle()+'.svg'" alt="">
+              <img [src]="'images/'+getselectedTitle()+'.svg'" alt="">
             </span>
             {{ getselectedTitle() }}
           </h4>
