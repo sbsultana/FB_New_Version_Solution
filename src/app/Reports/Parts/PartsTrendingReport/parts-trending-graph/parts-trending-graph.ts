@@ -1,4 +1,4 @@
-import { Component ,OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, Renderer2 } from '@angular/core';
 import { Chart } from 'chart.js';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { getRelativePosition } from 'chart.js/helpers';
@@ -12,7 +12,7 @@ import numeral from 'numeral';
   templateUrl: './parts-trending-graph.html',
   styleUrl: './parts-trending-graph.scss',
 })
-export class PartsTrendingGraph  {
+export class PartsTrendingGraph {
   @Input() PTRgraphdetails: any;
   canvas: any;
   ctx: any;
@@ -32,36 +32,22 @@ export class PartsTrendingGraph  {
     });
   }
   itemdata: any;
+
   ngOnInit(): void {
     console.log(this.PTRgraphdetails.Object);
-    this.itemdata = { ...this.PTRgraphdetails.Object };
-     const Val = 'Store_Name';
-    const Val1 = 'AP_StoreID';
-    const Val2 = 'paytype';
-    const Val3 = 'variable';
-    if (this.itemdata.hasOwnProperty(Val)) {
-      delete this.itemdata[Val];
-    }
-    if (this.itemdata.hasOwnProperty(Val1)) {
-      delete this.itemdata[Val1];
-    }
-    if (this.itemdata.hasOwnProperty(Val2)) {
-      delete this.itemdata[Val2];
-    }
-    if (this.itemdata.hasOwnProperty(Val3)) {
-      delete this.itemdata[Val3];
-    }
-    console.log('Graph Object', this.itemdata);
 
-    this.monthvalues = Object.values(this.itemdata);
-    this.monthkeys = this.PTRgraphdetails.DATES;
-    console.log(this.monthkeys,"monthkeys");
-    console.log(this.monthvalues,'monthvalues');
-    const formattedDates = this.monthkeys.map((date: any) =>
-      this.formatDate(date)
+    const rawData = { ...this.PTRgraphdetails.Object };
+    const removeKeys = ['Store_Name', 'AP_StoreID', 'paytype', 'variable'];
+
+    this.itemdata = Object.fromEntries(
+      Object.entries(rawData).filter(([key]) => !removeKeys.includes(key))
     );
-    this.monthkeys = [];
-    formattedDates.forEach((date: any) => this.monthkeys.push(date));
+    this.monthkeys = this.PTRgraphdetails.DATES || Object.keys(this.itemdata);
+    this.monthvalues = this.monthkeys.map((key: any) => this.itemdata[key] ?? 0);
+    this.monthkeys = this.monthkeys.map((date: any) => this.formatDate(date));
+
+    console.log(this.monthkeys, 'monthkeys');
+    console.log(this.monthvalues, 'monthvalues');
   }
   formatDate(dateStr: string): string {
     const [year, month] = dateStr.split(' ');
@@ -76,74 +62,80 @@ export class PartsTrendingGraph  {
   ngAfterViewInit() {
     this.canvas = this.mychart.nativeElement;
     this.ctx = this.canvas.getContext('2d');
-    console.log(this.monthvalues);
-    const ETPaceValue = this.monthvalues.map((_arrayElement: any) =>
-      Object.assign({}, _arrayElement)
-    );
-    var d1 = [];
 
-    for (var i = 0; i < this.monthvalues.length; i++) {
-      console.log(this.monthvalues[i], this.monthvalues);
-      console.log(i, this.monthvalues[i]);
-      d1.push([i, this.monthvalues[i]]);
-    }
-    let d2 = this.lineFit(d1);
-    ETPaceValue.pop();
-    ETPaceValue.push(this.PTRgraphdetails.Object.PACE);
-    for (let i = 0; i < ETPaceValue.length; i++) {
-      this.pace.push(this.PTRgraphdetails.Object.PACE);
-    }
-    let myChart = new Chart(this.ctx, {
+    // ✅ Pace line (straight line)
+    this.pace = this.monthvalues.map(() => this.PTRgraphdetails.Object.PACE);
+
+    new Chart(this.ctx, {
       type: 'line',
       data: {
-        labels: this.monthkeys.slice(1),
+        labels: this.monthkeys, // ❌ removed slice(1)
         datasets: [
           {
             label: this.PTRgraphdetails.NAME,
-            backgroundColor: '#449df8',
-            borderColor: '#449df8',
-            fill: false,
+            borderColor: '#00c2ff',
+            backgroundColor: 'rgba(0, 194, 255, 0.15)',
+            fill: true,
             data: this.monthvalues,
-            tension: 0,
-            pointBackgroundColor: '#234e7b',
+            tension: 0.35,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#00c2ff',
+            pointRadius: 4,
             borderWidth: 2,
           },
           {
-            data: this.pace,
             label: 'Pace',
-            type: 'line',
-            fill: false,
-            backgroundColor: '#2df1b0',
-            borderColor: '#2df1b0',
-            pointBackgroundColor: '#167b5a',
-            pointRadius: 0,
+            data: this.pace,
+            borderColor: '#ffab00',
             borderWidth: 2,
-          },
+            borderDash: [6, 6],
+            pointRadius: 0,
+            fill: false,
+          }
         ],
-      },      
-    options: {
-  responsive: true,
+      },
+      options: {
+        responsive: true,
 
-  plugins: {
-    legend: {
-      display: true,
-      position: 'bottom',
-      labels: {
-        usePointStyle: true,
-        color: 'white'
-      }
-    },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              color: 'white'
+            }
+          },
 
-    tooltip: {
-      callbacks: {
-        label: (context: any) => {
-          const value = context.raw;
-          return this.ValueFormat(value);
+          tooltip: {
+            callbacks: {
+              label: (context: any) => {
+                return this.ValueFormat(context.raw);
+              }
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            ticks: {
+              color: 'white'
+            },
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            ticks: {
+              color: 'white',
+              callback: (value: any) => this.ValueFormat(value)
+            },
+            grid: {
+              color: 'rgba(255,255,255,0.1)'
+            }
+          }
         }
       }
-    }
-  }
-}
     });
   }
   // private ValueFormat(value: number) {
@@ -158,22 +150,22 @@ export class PartsTrendingGraph  {
   //   }
   // }
   private ValueFormat(value: number) {
-  if (this.PTRgraphdetails.ValueFormat == 'Number') {
-    return numeral(value).format('0,0');
-  } 
-  else if (this.PTRgraphdetails.ValueFormat == 'Percentage') {
-    return numeral(value).format('0') + '%';
-  } 
-  else if (this.PTRgraphdetails.ValueFormat == 'Currancy') {
-    return numeral(value)
-      .format('($0,0)')
-      .replace('(', '-')
-      .replace(')', '');
-  }
+    if (this.PTRgraphdetails.ValueFormat == 'Number') {
+      return numeral(value).format('0,0');
+    }
+    else if (this.PTRgraphdetails.ValueFormat == 'Percentage') {
+      return numeral(value).format('0') + '%';
+    }
+    else if (this.PTRgraphdetails.ValueFormat == 'Currancy') {
+      return numeral(value)
+        .format('($0,0)')
+        .replace('(', '-')
+        .replace(')', '');
+    }
 
-  // ✅ Default return (important)
-  return value?.toString() ?? '';
-}
+    // ✅ Default return (important)
+    return value?.toString() ?? '';
+  }
   private formatPercentage(value: number): string {
     const formattedValue = numeral(value * 1).format('0') + '%';
     return formattedValue;

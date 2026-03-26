@@ -93,7 +93,7 @@
                             </div>
                         </div>
                     </div>
-                   
+
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(5)">
@@ -102,26 +102,26 @@
                                 (saleandservice =='R' ? 'Counter Retail' :(saleandservice =='C' ? 'Customer Pay' :
                                 (saleandservice =='T' ?'Warranty' : (saleandservice =='I' ? 'Internal' : ''))) ))
                                 }}
-                               
-                                    {{saleandservice.length > 1 ?  saleandservice.length : '' }}
+
+                                {{saleandservice.length > 1 ? saleandservice.length : '' }}
                                 )</span>
                             <span class="arrow"></span>
                         </button>
 
                         <div class="timeframe" *ngIf="activePopover === 5">
                             <div class="date-filter-card mt-2">
-                             <button class="outline-button" (click)="multipleorsingle('PT','R')"
-                                        [ngClass]="{ 'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('R')>=0, 'inactive':Paytype.indexOf('R')<0}">Counter
-                                        Retail</button>
-                                    <button class="outline-button" (click)="multipleorsingle('PT','W')"
-                                        [ngClass]="{'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('W')>=0, 'inactive':Paytype.indexOf('W')<0}">Wholesale</button>
-                                    <button class="outline-button" (click)="multipleorsingle('LT','C')"
-                                        [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('C')>=0, 'inactive':servicetype.indexOf('C')<0}">Customer
-                                        Pay</button>
-                                    <button class="outline-button" (click)="multipleorsingle('LT','T')"
-                                        [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('T')>=0, 'inactive':servicetype.indexOf('T')<0}">Warranty</button>
-                                    <button class="outline-button" (click)="multipleorsingle('LT','I')"
-                                        [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('I')>=0, 'inactive':servicetype.indexOf('I')<0}">Internal</button>
+                                <button class="outline-button" (click)="multipleorsingle('PT','R')"
+                                    [ngClass]="{ 'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('R')>=0, 'inactive':Paytype.indexOf('R')<0}">Counter
+                                    Retail</button>
+                                <button class="outline-button" (click)="multipleorsingle('PT','W')"
+                                    [ngClass]="{'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('W')>=0, 'inactive':Paytype.indexOf('W')<0}">Wholesale</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','C')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('C')>=0, 'inactive':servicetype.indexOf('C')<0}">Customer
+                                    Pay</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','T')"
+                                    [ngClass]="{'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('T')>=0, 'inactive':servicetype.indexOf('T')<0}">Warranty</button>
+                                <button class="outline-button" (click)="multipleorsingle('LT','I')"
+                                    [ngClass]="{ 'enabled':Department.indexOf('Service')>=0, 'disabled':Department.indexOf('Service')<0,'active':servicetype.indexOf('I')>=0, 'inactive':servicetype.indexOf('I')<0}">Internal</button>
 
 
                             </div>
@@ -149,7 +149,7 @@
                             </div>
                         </div>
                     </div>
-                
+
 
                     <!-- Apply Button -->
                     <div class="dropdown">
@@ -158,719 +158,709 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
+            <div class="scorecard-multi-header partsopen-tbl">
                 <table class="table mb-0 w-100">
-                           <thead>
-                            <tr>
-                                <th class="text-center">{{FromDate |date:'MMMM'}} <span
-                                        *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
-                                        |date:'MMMM'}} </span></th>
-                                <th class="spacer"></th>
-                                <th colspan="11" style="border-right: 2px solid #e0e1e2;">Total Parts</th>
-                                <th class="spacer"></th>
-                                <th colspan="4" style="border-right: 2px solid #e0e1e2;">
-                                    <!--  -->Mechanical
+                    <thead>
+                        <tr>
+                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
+                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                                    |date:'MMMM'}} </span></th>
+                            
+                            <th colspan="11">Total Parts</th>
+                            
+                            <th colspan="4">
+                                <!--  -->Mechanical
 
-                                </th>
-                                <th class="spacer"></th>
-                                <th colspan="4" style="border-right: 2px solid #e0e1e2;">Retail/Wholesale
+                            </th>
+                            
+                            <th colspan="4">Retail/Wholesale
 
-                                </th>
-                                <th class="spacer"></th>
-                                <th colspan="3" style="border-right: 2px solid #e0e1e2;">Performance</th>
+                            </th>
+                            
+                            <th colspan="3">Performance</th>
 
-                            </tr>
-                            <tr class="bdr-btm">
-                                <th><span>{{FromDate |date:'dd'}} </span> <span
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
-                                        |date:'yyyy'}}</span>
-                                    <span>
-                                        - {{ToDate |date:'dd'}}
-                                    </span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
-                                        |date:'yyyy'}}</span><span
-                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
-                                        date:'yyyy'}}</span>
-                                </th>
-                                <th class="spacer"></th>
-                                <!-- <th></th> -->
-                                <th (click)="sort('Total_Quantity')" style="cursor: pointer;" class="bdr-rt">Quantity
-                                </th>
+                        </tr>
+                        <tr class="bdr-btm">
+                            <th><span>{{FromDate |date:'dd'}} </span> <span
+                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                    |date:'yyyy'}}</span>
+                                <span>
+                                    - {{ToDate |date:'dd'}}
+                                </span>
+                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    |date:'yyyy'}}</span><span
+                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    date:'yyyy'}}</span>
+                            </th>
+                            
+                            <!-- <th></th> -->
+                            <th (click)="sort('Total_Quantity')" style="cursor: pointer;" class="bdr-rt">Quantity
+                            </th>
 
-                                <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
-                                <th class="bdr-rt">Discounts</th>
-                                <th style="cursor: pointer;" class="bdr-rt">0 - 3 <span
-                                        style="text-transform: capitalize !important;background-color: white !important;color: black !important; ">Days</span>
-                                    <br>
-                                    <span (click)="sort('0TO3QTY')">
-                                        Quantity
-                                    </span>-
-                                    <span (click)="sort('0TO3')">
-                                        Gross
-                                    </span>
-                                </th>
-                                <th style="cursor: pointer;" class="bdr-rt"> 4 - 10 <span
-                                    style="text-transform: capitalize !important;background-color: white !important;color: black !important; ">Days</span><br>
-                                    <span (click)="sort('4TO10QTY')">
-                                        Quantity
-                                    </span>-
-                                    <span (click)="sort('4TO10')">
-                                        Gross
-                                    </span>
-                                </th>
-                                <th style="cursor: pointer;" class="bdr-rt"> 11 - 30 <span
-                                    style="text-transform: capitalize !important;background-color: white !important;color: black !important; ">Days</span><br>
-                                    <span (click)="sort('11TO30QTY')">
-                                        Quantity
-                                    </span>-
-                                    <span (click)="sort('11TO30')">
-                                        Gross
-                                    </span>
-                                </th>
-                                <th style="cursor: pointer;" class="bdr-rt"> 30 Above <span
-                                    style="text-transform: capitalize !important;background-color: white !important;color: black !important; ">Days</span><br>
-                                    <span (click)="sort('30ABOVEQTY')">
-                                        Quantity
-                                    </span>-
-                                    <span (click)="sort('30ABOVE')">
-                                        Gross
-                                    </span>
-                                </th>
+                            <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
+                            <th class="bdr-rt">Discounts</th>
+                            <th style="cursor: pointer;" class="bdr-rt">0 - 3 <span>Days</span>
+                                <br>
+                                <span (click)="sort('0TO3QTY')">
+                                    Quantity
+                                </span>-
+                                <span (click)="sort('0TO3')">
+                                    Gross
+                                </span>
+                            </th>
+                            <th style="cursor: pointer;" class="bdr-rt"> 4 - 10 <span>Days</span><br>
+                                <span (click)="sort('4TO10QTY')">
+                                    Quantity
+                                </span>-
+                                <span (click)="sort('4TO10')">
+                                    Gross
+                                </span>
+                            </th>
+                            <th style="cursor: pointer;" class="bdr-rt"> 11 - 30 <span>Days</span><br>
+                                <span (click)="sort('11TO30QTY')">
+                                    Quantity
+                                </span>-
+                                <span (click)="sort('11TO30')">
+                                    Gross
+                                </span>
+                            </th>
+                            <th style="cursor: pointer;" class="bdr-rt"> 30 Above <span>Days</span><br>
+                                <span (click)="sort('30ABOVEQTY')">
+                                    Quantity
+                                </span>-
+                                <span (click)="sort('30ABOVE')">
+                                    Gross
+                                </span>
+                            </th>
 
-                                <th (click)="sort('Total_PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross
-                                </th>
-                                <th (click)="sort('Total_PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
-                                </th>
-                                <th (click)="sort('Total_PartsGrossTarget')" style="cursor: pointer;" class="bdr-rt">
-                                    Target</th>
-                                <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
-                                </th>
-                                <th class="spacer"></th>
+                            <th (click)="sort('Total_PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross
+                            </th>
+                            <th (click)="sort('Total_PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('Total_PartsGrossTarget')" style="cursor: pointer;" class="bdr-rt">
+                                Target</th>
+                            <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            
 
-                                <th (click)="sort('ServiceGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
-                                <th (click)="sort('ServiceGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
-                                </th>
-                                <th (click)="sort('ServiceGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
-                                </th>
-                                <th (click)="sort('ServiceGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
-                                </th>
-                                <th class="spacer"></th>
+                            <th (click)="sort('ServiceGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
+                            <th (click)="sort('ServiceGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
+                            </th>
+                            <th (click)="sort('ServiceGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                            </th>
+                            <th (click)="sort('ServiceGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
+                            </th>
+                            
 
-                                <th (click)="sort('PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
-                                <th (click)="sort('PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
-                                <th (click)="sort('PartsGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
-                                </th>
-                                <th (click)="sort('PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
-                                <th class="spacer"></th>
-                                <th (click)="sort('Parts_RO')" style="cursor: pointer;" class="bdr-rt">Parts/RO</th>
-                                <th (click)="sort('Lost_PerDay')" style="cursor: pointer;" class="bdr-rt">Lost/day</th>
-                                <th (click)="sort('Retention')" style="cursor: pointer;" class="bdr-rt">GP%</th>
-                                <!-- <th></th> -->
-                            </tr>
-                        </thead>
+                            <th (click)="sort('PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
+                            <th (click)="sort('PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
+                            <th (click)="sort('PartsGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
+                            </th>
+                            <th (click)="sort('PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
+                            
+                            <th (click)="sort('Parts_RO')" style="cursor: pointer;" class="bdr-rt">Parts/RO</th>
+                            <th (click)="sort('Lost_PerDay')" style="cursor: pointer;" class="bdr-rt">Lost/day</th>
+                            <th (click)="sort('Retention')" style="cursor: pointer;" class="bdr-rt">GP%</th>
+                            <!-- <th></th> -->
+                        </tr>
+                    </thead>
 
-                        <tbody [ngClass]="{'hidden': NoData == true }">
+                    <tbody [ngClass]="{'hidden': NoData == true }">
 
-                            <ng-container *ngFor="let PartsInfo of PartsData; let i=index">
-                                <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': PartsInfo.Dealer === '-' , 'divBold': PartsInfo.data1 === 'Reports Total'  }"
-                                    [id]="'DV_'+i">
-                                    <td id="DataBody1" [id]="'D_'+i"
-                                        [ngStyle]="{'pointer-events': PartsInfo.data1 == 'Reports Total' ? 'none':'visible', 'background-color':PartsInfo.Dealer === '-' ? '#d3ecff' : '#ffffff'}">
-                                        <span style="float: left; margin-right: .5rem; color: #363b4f;"
-                                            (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')"
-                                            [id]="'D_'+i"></span>
-                                        <span [id]="'D_'+i" title="{{PartsInfo.data1}}"
-                                            (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')">
-                                            <!-- {{(PartsInfo.data1 == undefined ? '--' : ( (PartsInfo.data1.toString() |
+                        <ng-container *ngFor="let PartsInfo of PartsData; let i=index">
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'lightblue-bg': PartsInfo.Dealer === '-' , 'divBold text-uppercase': PartsInfo.data1 === 'Reports Total'  }"
+                                [id]="'DV_'+i">
+                                <td id="DataBody1" [id]="'D_'+i"
+                                    [ngStyle]="{'pointer-events': PartsInfo.data1 == 'Reports Total' ? 'none':'visible'}">
+                                    <span
+                                        (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')"
+                                        [id]="'D_'+i"></span>
+                                    <span [id]="'D_'+i" title="{{PartsInfo.data1}}" class="cursor-pointer"
+                                        (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')">
+                                        <!-- {{(PartsInfo.data1 == undefined ? '--' : ( (PartsInfo.data1.toString() |
                                     slice:0:26) +
                                     (PartsInfo.data1.toString().length > 26 ? '...' : '') ))}}  -->
-                                            <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0]?.columnname != 'ODate'">
-                                                {{( PartsInfo.data1 == undefined ? '--' : (PartsInfo.data1 == 'C' ?
-                                                'Customer Pay':(PartsInfo.data1 == 'T' ? 'Warranty' : (PartsInfo.data1
-                                                ==
-                                                'I' ? 'Internal' : (PartsInfo.data1 == 'R' ? 'Retail': (PartsInfo.data1
-                                                ==
-                                                'W' ? 'Wholesale': ( (PartsInfo.data1.toString() |
-                                                slice:0:26) +
-                                                (PartsInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
-                                            </span>
-                                            <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0]?.columnname == 'ODate'">
-                                                {{( PartsInfo.data1 == undefined || PartsInfo.data1 == '' ||
-                                                PartsInfo.data1 == null ? '-' :(PartsInfo.data1 !='Reports Total' ?
-                                                (PartsInfo.data1 | date:'MM/dd/YYYY' ): 'Reports Total' ) )}}
-                                            </span>
+                                        <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0]?.columnname != 'ODate'">
+                                            {{( PartsInfo.data1 == undefined ? '--' : (PartsInfo.data1 == 'C' ?
+                                            'Customer Pay':(PartsInfo.data1 == 'T' ? 'Warranty' : (PartsInfo.data1
+                                            ==
+                                            'I' ? 'Internal' : (PartsInfo.data1 == 'R' ? 'Retail': (PartsInfo.data1
+                                            ==
+                                            'W' ? 'Wholesale': ( (PartsInfo.data1.toString() |
+                                            slice:0:26) +
+                                            (PartsInfo.data1.toString().length > 26 ? '...' : '') ) ))))))}}
                                         </span>
-                                    </td>
-                                    <td class="spacer"></td>
+                                        <span [id]="'D_'+i" *ngIf="selectedDataGrouping[0]?.columnname == 'ODate'">
+                                            {{( PartsInfo.data1 == undefined || PartsInfo.data1 == '' ||
+                                            PartsInfo.data1 == null ? '-' :(PartsInfo.data1 !='Reports Total' ?
+                                            (PartsInfo.data1 | date:'MM/dd/YYYY' ): 'Reports Total' ) )}}
+                                        </span>
+                                    </span>
+                                </td>
                                 
 
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_Quantity)}">
-                                        <!-- <span class="d-flex justify-content-between">
+
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_Quantity)}">
+                                    <!-- <span class="d-flex justify-content-between">
                                             {{ PartsInfo.Total_Quantity == 0 || PartsInfo.Total_Quantity == null ? ''
                                             : '$'}}
                                             <span> -->
-                                        {{ PartsInfo.Total_Quantity == 0 || PartsInfo.Total_Quantity == null ?
-                                        '-' :
-                                        PartsInfo.Total_Quantity | number:'1.0-0'}}
-                                        <!-- </span>
+                                    {{ PartsInfo.Total_Quantity == 0 || PartsInfo.Total_Quantity == null ?
+                                    '-' :
+                                    PartsInfo.Total_Quantity | number:'1.0-0'}}
+                                    <!-- </span>
                                         </span> -->
-                                    </td>
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsSale)}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ? ''
-                                            : '$'}}
-                                            <span>
-                                                {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ?
+                                </td>
+                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsSale)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ? ''
+                                        : '$'}}
+                                        <span>
+                                            {{ PartsInfo.Total_PartsSale == 0 || PartsInfo.Total_PartsSale == null ?
+                                            '-' :
+                                            PartsInfo.Total_PartsSale | number:'1.0-0'}}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody6">-</td>
+                                <td id="DataBody5">
+                                    <div class="grid-container">
+                                        <div class="quantity">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['0TO3QTY']) }">
+                                                {{ PartsInfo['0TO3QTY'] == 0 || PartsInfo['0TO3QTY'] == null ? '-' :
+                                                PartsInfo['0TO3QTY'] | number:'1.0-0'}}
+                                            </span>
+                                        </div>
+                                        <div class="price">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['0TO3']) }">
+                                                {{ PartsInfo['0TO3'] == 0 || PartsInfo['0TO3'] == null ? '' : '$' }}
+                                                {{ PartsInfo['0TO3'] == 0 || PartsInfo['0TO3'] == null ? '-' :
+                                                PartsInfo['0TO3'] | number:'1.0-0'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td id="DataBody5">
+                                    <div class="grid-container">
+                                        <div class="quantity">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['4TO10QTY']) }">
+                                                {{ PartsInfo['4TO10QTY'] == 0 || PartsInfo['4TO10QTY'] == null ? '-'
+                                                :
+                                                PartsInfo['4TO10QTY'] | number:'1.0-0'}}
+                                            </span>
+                                        </div>
+                                        <div class="price">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['4TO10']) }">
+                                                {{ PartsInfo['4TO10'] == 0 || PartsInfo['4TO10'] == null ? '' : '$'
+                                                }}
+                                                {{ PartsInfo['4TO10'] == 0 || PartsInfo['4TO10'] == null ? '-' :
+                                                PartsInfo['4TO10'] | number:'1.0-0'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td id="DataBody5">
+                                    <div class="grid-container">
+                                        <div class="quantity">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['11TO30QTY']) }">
+                                                {{ PartsInfo['11TO30QTY'] == 0 || PartsInfo['11TO30QTY'] == null ?
                                                 '-' :
-                                                PartsInfo.Total_PartsSale | number:'1.0-0'}}
+                                                PartsInfo['11TO30QTY'] | number:'1.0-0'}}
                                             </span>
-                                        </span>
-                                    </td>
-                                    <td id="DataBody6">-</td>
-                                    <td id="DataBody5">
-                                        <div class="grid-container">
-                                            <div class="quantity">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['0TO3QTY']) }">
-                                                    {{ PartsInfo['0TO3QTY'] == 0 || PartsInfo['0TO3QTY'] == null ? '-' :
-                                                    PartsInfo['0TO3QTY'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                            <div class="price">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['0TO3']) }">
-                                                    {{ PartsInfo['0TO3'] == 0 || PartsInfo['0TO3'] == null ? '' : '$' }}
-                                                    {{ PartsInfo['0TO3'] == 0 || PartsInfo['0TO3'] == null ? '-' :
-                                                    PartsInfo['0TO3'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
                                         </div>
-                                    </td>
-                                    <td id="DataBody5">
-                                        <div class="grid-container">
-                                            <div class="quantity">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['4TO10QTY']) }">
-                                                    {{ PartsInfo['4TO10QTY'] == 0 || PartsInfo['4TO10QTY'] == null ? '-'
-                                                    :
-                                                    PartsInfo['4TO10QTY'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                            <div class="price">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['4TO10']) }">
-                                                    {{ PartsInfo['4TO10'] == 0 || PartsInfo['4TO10'] == null ? '' : '$'
-                                                    }}
-                                                    {{ PartsInfo['4TO10'] == 0 || PartsInfo['4TO10'] == null ? '-' :
-                                                    PartsInfo['4TO10'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
+                                        <div class="price">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['11TO30']) }">
+                                                {{ PartsInfo['11TO30'] == 0 || PartsInfo['11TO30'] == null ? '' :
+                                                '$' }}
+                                                {{ PartsInfo['11TO30'] == 0 || PartsInfo['11TO30'] == null ? '-' :
+                                                PartsInfo['11TO30'] | number:'1.0-0'}}
+                                            </span>
                                         </div>
-                                    </td>
-                                    <td id="DataBody5">
-                                        <div class="grid-container">
-                                            <div class="quantity">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['11TO30QTY']) }">
-                                                    {{ PartsInfo['11TO30QTY'] == 0 || PartsInfo['11TO30QTY'] == null ?
-                                                    '-' :
-                                                    PartsInfo['11TO30QTY'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                            <div class="price">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['11TO30']) }">
-                                                    {{ PartsInfo['11TO30'] == 0 || PartsInfo['11TO30'] == null ? '' :
-                                                    '$' }}
-                                                    {{ PartsInfo['11TO30'] == 0 || PartsInfo['11TO30'] == null ? '-' :
-                                                    PartsInfo['11TO30'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td id="DataBody5">
-                                        <div class="grid-container">
-                                            <div class="quantity">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['30ABOVEQTY']) }">
-                                                    {{ PartsInfo['30ABOVEQTY'] == 0 || PartsInfo['30ABOVEQTY'] == null ?
-                                                    '-' :
-                                                    PartsInfo['30ABOVEQTY'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                            <div class="price">
-                                                <span [ngClass]="{ negative: !inTheGreen(PartsInfo['30ABOVE']) }">
-                                                    {{ PartsInfo['30ABOVE'] == 0 || PartsInfo['30ABOVE'] == null ? '' :
-                                                    '$' }}
-                                                    {{ PartsInfo['30ABOVE'] == 0 || PartsInfo['30ABOVE'] == null ? '-' :
-                                                    PartsInfo['30ABOVE'] | number:'1.0-0'}}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross)}">
-                                        <span class="d-flex justify-content-between">
-                                            {{
-                                            (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ? ''
-                                            : '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ?
+                                    </div>
+                                </td>
+                                <td id="DataBody5">
+                                    <div class="grid-container">
+                                        <div class="quantity">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['30ABOVEQTY']) }">
+                                                {{ PartsInfo['30ABOVEQTY'] == 0 || PartsInfo['30ABOVEQTY'] == null ?
                                                 '-' :
-                                                PartsInfo.Total_PartsGross | number:'1.2-2') }}
+                                                PartsInfo['30ABOVEQTY'] | number:'1.0-0'}}
                                             </span>
-                                        </span>
-                                    </td>
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Pace)}">
-                                        <span class="d-flex justify-content-between">
+                                        </div>
+                                        <div class="price">
+                                            <span [ngClass]="{ negative: !inTheGreen(PartsInfo['30ABOVE']) }">
+                                                {{ PartsInfo['30ABOVE'] == 0 || PartsInfo['30ABOVE'] == null ? '' :
+                                                '$' }}
+                                                {{ PartsInfo['30ABOVE'] == 0 || PartsInfo['30ABOVE'] == null ? '-' :
+                                                PartsInfo['30ABOVE'] | number:'1.0-0'}}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ? ''
+                                        : '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace ==
-                                            null
-                                            ? '' :
-                                            '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace
-                                                == null
-                                                ? '-' :
-                                                PartsInfo.Total_PartsGross_Pace | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.Total_PartsGross == 0 || PartsInfo.Total_PartsGross == null ?
+                                            '-' :
+                                            PartsInfo.Total_PartsGross | number:'1.2-2') }}
                                         </span>
-                                    </td>
+                                    </span>
+                                </td>
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace ==
+                                        null
+                                        ? '' :
+                                        '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace
+                                            == null
+                                            ? '-' :
+                                            PartsInfo.Total_PartsGross_Pace | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
 
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGrossTarget)}">
-                                        <span class="d-flex justify-content-between">
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGrossTarget)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGrossTarget == 0 || PartsInfo.Total_PartsGrossTarget
+                                        ==
+                                        null ? '' :
+                                        '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.Total_PartsGrossTarget == 0 || PartsInfo.Total_PartsGrossTarget
+                                            (PartsInfo.Total_PartsGrossTarget == 0 ||
+                                            PartsInfo.Total_PartsGrossTarget ==
+                                            null ? '-' :
+                                            PartsInfo.Total_PartsGrossTarget | number:'1.0-0') }}
+                                        </span>
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7"
+                                    [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff ==
+                                        null ? '' : '$') }}
+                                        <span>
+                                            {{
+                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff
                                             ==
-                                            null ? '' :
-                                            '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.Total_PartsGrossTarget == 0 ||
-                                                PartsInfo.Total_PartsGrossTarget ==
-                                                null ? '-' :
-                                                PartsInfo.Total_PartsGrossTarget | number:'1.0-0') }}
-                                            </span>
+                                            null ? '-' :
+                                            PartsInfo.Total_PartsGross_Diff | number:'1.0-0') }}
                                         </span>
-                                    </td>
+                                    </span>
+                                </td>
+                                
 
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_PartsGross_Diff)}">
-                                        <span class="d-flex justify-content-between">
+                                <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? '' : '$'
+                                        }}
+                                        <span>
+                                            {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? '-' :
+                                            PartsInfo.ServiceGross | number:'1.2-2' }}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null ?
+                                        '' : '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff ==
-                                            null ? '' : '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff
-                                                ==
-                                                null ? '-' :
-                                                PartsInfo.Total_PartsGross_Diff | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null
+                                            ? '-' :
+                                            PartsInfo.ServiceGross_Pace | number:'1.0-0') }}
                                         </span>
-                                    </td>
-                                    <th class="spacer"></th>
+                                    </span>
+                                </td>
 
-                                    <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross)}">
-                                        <span class="d-flex justify-content-between">
-                                            {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? '' : '$'
-                                            }}
-                                            <span>
-                                                {{PartsInfo.ServiceGross == 0 || PartsInfo.ServiceGross == null ? '-' :
-                                                PartsInfo.ServiceGross | number:'1.2-2' }}
-                                            </span>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Target)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target ==
+                                        null
+                                        ? '' : '$') }}
+                                        <span>
+                                            {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target
+                                            == null
+                                            ? '-' :
+                                            PartsInfo.ServiceGross_Target | number:'1.0-0') }}
                                         </span>
-                                    </td>
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Pace)}">
-                                        <span class="d-flex justify-content-between">
+                                    </span>
+                                </td>
+
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff == null
+                                        ? '' : '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null ?
-                                            '' : '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null
-                                                ? '-' :
-                                                PartsInfo.ServiceGross_Pace | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff ==
+                                            null ? '-' :
+                                            PartsInfo.ServiceGross_Diff | number:'1.0-0') }}
                                         </span>
-                                    </td>
-
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Target)}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target ==
-                                            null
-                                            ? '' : '$') }}
-                                            <span>
-                                                {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target
-                                                == null
-                                                ? '-' :
-                                                PartsInfo.ServiceGross_Target | number:'1.0-0') }}
-                                            </span>
-                                        </span>
-                                    </td>
-
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross_Diff)}">
-                                        <span class="d-flex justify-content-between">
+                                    </span>
+                                </td>
+                                
+                                <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? '' : '$' ) }}
+                                        <span>
                                             {{
-                                            (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff == null
-                                            ? '' : '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff ==
-                                                null ? '-' :
-                                                PartsInfo.ServiceGross_Diff | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? '-' :
+                                            PartsInfo.PartsGross | number:'1.2-2' ) }}
                                         </span>
-                                    </td>
-                                    <th class="spacer"></th>
-                                    <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross)}">
-                                        <span class="d-flex justify-content-between">
+                                    </span>
+
+                                </td>
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Pace)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ? '' :
+                                        '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? '' : '$' ) }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.PartsGross == 0 || PartsInfo.PartsGross == null ? '-' :
-                                                PartsInfo.PartsGross | number:'1.2-2' ) }}
-                                            </span>
+                                            (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ?
+                                            '-' :
+                                            PartsInfo.PartsGross_Pace | number:'1.0-0') }}
                                         </span>
+                                    </span>
+                                </td>
 
-                                    </td>
-                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Pace)}">
-                                        <span class="d-flex justify-content-between">
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Target)}">
+                                    <span class="d-flex justify-content-between"> {{
+                                        (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null ?''
+                                        : '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ? '' :
-                                            '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ?
-                                                '-' :
-                                                PartsInfo.PartsGross_Pace | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null
+                                            ? '-' :
+                                            PartsInfo.PartsGross_Target | number:'1.0-0') }}
                                         </span>
-                                    </td>
+                                    </span>
+                                </td>
 
-                                    <td id="DataBody7"
-                                        [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Target)}">
-                                        <span class="d-flex justify-content-between"> {{
-                                            (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null ?''
-                                            : '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null
-                                                ? '-' :
-                                                PartsInfo.PartsGross_Target | number:'1.0-0') }}
-                                            </span>
-                                        </span>
-                                    </td>
-
-                                    <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Diff)}">
-                                        <span class="d-flex justify-content-between">
+                                <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Diff)}">
+                                    <span class="d-flex justify-content-between">
+                                        {{
+                                        (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ? '' :
+                                        '$') }}
+                                        <span>
                                             {{
-                                            (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ? '' :
-                                            '$') }}
-                                            <span>
-                                                {{
-                                                (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ?
-                                                '-' :
-                                                PartsInfo.PartsGross_Diff | number:'1.0-0') }}
-                                            </span>
+                                            (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ?
+                                            '-' :
+                                            PartsInfo.PartsGross_Diff | number:'1.0-0') }}
                                         </span>
-                                    </td>
-                                    <th class="spacer"></th>
-                                    <td id="DataBody2">{{ PartsInfo.Parts_RO == 0 || PartsInfo.Parts_RO == null ? '-' :
-                                        PartsInfo.Parts_RO | number:'1.2-2'}}</td>
-                                    <td id="DataBody3">{{ PartsInfo.Lost_PerDay == 0 || PartsInfo.Lost_PerDay == null ?
-                                        '-'
-                                        : PartsInfo.Lost_PerDay | number:'1.2-2'}}</td>
-                                    <td id="DataBody4">{{ PartsInfo.Retention == 0 || PartsInfo.Retention == null ? '-'
-                                        :
-                                        PartsInfo.Retention | number:'1.1-1'}}{{ PartsInfo.Retention == 0 ||
-                                        PartsInfo.Retention == null ? '' :
-                                        '%'}}</td>
+                                    </span>
+                                </td>
+                                
+                                <td id="DataBody2">{{ PartsInfo.Parts_RO == 0 || PartsInfo.Parts_RO == null ? '-' :
+                                    PartsInfo.Parts_RO | number:'1.2-2'}}</td>
+                                <td id="DataBody3">{{ PartsInfo.Lost_PerDay == 0 || PartsInfo.Lost_PerDay == null ?
+                                    '-'
+                                    : PartsInfo.Lost_PerDay | number:'1.2-2'}}</td>
+                                <td id="DataBody4">{{ PartsInfo.Retention == 0 || PartsInfo.Retention == null ? '-'
+                                    :
+                                    PartsInfo.Retention | number:'1.1-1'}}{{ PartsInfo.Retention == 0 ||
+                                    PartsInfo.Retention == null ? '' :
+                                    '%'}}</td>
 
-                                </tr>
-                                <tr *ngIf="PartsInfo.Dealer === '-' && selectedDataGrouping.length < 2 ">
-                                    <!-- class="sub-title" -->
-                                    <td>
-                                        &nbsp;
-                                    </td>
-                                    <td class="spacer"></td>
-                                    <td colspan="25" style="padding: 2px 1px !important;">
-                                        <app-parts-open-rodetails [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
-                                    </td>
-                                </tr>
-                                <ng-container *ngFor="let data2 of PartsInfo.Data2;let j=index">
-                                    <tr class="sub-title" [id]="'DVN_'+i"
-                                        *ngIf="data2.data2 != '' && data2.data2 != ' '  "
-                                        [ngClass]="{'hidden': PartsInfo.Dealer === '+', 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0  }">
-                                        <td> <span style="float: left; margin-right: 0.8rem; color: #363b4f;"
-                                                [id]="'DN_'+i"
-                                                [ngClass]="{'disable': PartsInfo.data1 === 'Reports Total' }"></span>
-                                            <span [id]="'DN_'+j"
-                                                (click)="expandorcollapse(j,$event,data2.data2sign,data2,PartsInfo)">
-                                                <!-- {{data2.data2
+                            </tr>
+                            <tr *ngIf="PartsInfo.Dealer === '-' && selectedDataGrouping.length < 2 ">
+                                <!-- class="sub-title" -->
+                                <td>
+                                    &nbsp;
+                                </td>
+                                
+                                <td colspan="25" style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+                                    <app-parts-open-rodetails
+                                        [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
+                                </td>
+                            </tr>
+                            <ng-container *ngFor="let data2 of PartsInfo.Data2;let j=index">
+                                <tr [id]="'DVN_'+i" *ngIf="data2.data2 != '' && data2.data2 != ' '  "
+                                    [ngClass]="{'hidden': PartsInfo.Dealer === '+', 'title-l3' : j % 2 == 0 , 'titleOdd-l3' : j % 2 != 0  }">
+                                    <td> <span [id]="'DN_'+i"
+                                            [ngClass]="{'disable': PartsInfo.data1 === 'Reports Total' }"></span>
+                                        <span [id]="'DN_'+j" class="px-3 cursor-pointer"
+                                            (click)="expandorcollapse(j,$event,data2.data2sign,data2,PartsInfo)">
+                                            <!-- {{data2.data2
                                         == undefined ? '-' : data2.data2}} 
                                      -->
-                                                <!-- {{( data2.data2 == undefined ? '--' : (data2.data2 == 'C' ?
+                                            <!-- {{( data2.data2 == undefined ? '--' : (data2.data2 == 'C' ?
                                         'Customer Pay':(data2.data2 == 'W' ? 'Warranty' : (data2.data2 == 'I' ? 'Internal' : ( (data2.data2.toString() |
                                         slice:0:26) +
                                         (data2.data2.toString().length > 26 ? '...' : '') ) ))))}} -->
-                                                <span [id]="'DN_'+j" *ngIf="selectedDataGrouping[1]?.columnname != 'ODate'">
-                                                    {{( data2.data2 == undefined ? '--' : (data2.data2 == 'C' ?
-                                                    'Customer Pay':(data2.data2 == 'T' ? 'Warranty' : (data2.data2
-                                                    == 'I' ? 'Internal' : (data2.data2 == 'R' ? 'Retail':
-                                                    (data2.data2 == 'W' ? 'Wholesale': ( (data2.data2.toString() |
-                                                    slice:0:26) +
-                                                    (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
-                                                </span>
-                                                <span [id]="'DN_'+j" *ngIf="selectedDataGrouping[1]?.columnname == 'ODate'">
-                                                    {{( data2.data2 == undefined || data2.data2 == '' || data2.data2 ==
-                                                    null ? '-' : data2.data2 | date:'MM/dd/YYYY' )}}
-                                                </span>
-
-
+                                            <span [id]="'DN_'+j" *ngIf="selectedDataGrouping[1]?.columnname != 'ODate'">
+                                                {{( data2.data2 == undefined ? '--' : (data2.data2 == 'C' ?
+                                                'Customer Pay':(data2.data2 == 'T' ? 'Warranty' : (data2.data2
+                                                == 'I' ? 'Internal' : (data2.data2 == 'R' ? 'Retail':
+                                                (data2.data2 == 'W' ? 'Wholesale': ( (data2.data2.toString() |
+                                                slice:0:26) +
+                                                (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}}
                                             </span>
-                                        </td>
-                                        <th class="spacer"></th>
-                                        <td>   {{ data2.Total_Quantity == 0 || data2.Total_Quantity == null ?
+                                            <span [id]="'DN_'+j" *ngIf="selectedDataGrouping[1]?.columnname == 'ODate'">
+                                                {{( data2.data2 == undefined || data2.data2 == '' || data2.data2 ==
+                                                null ? '-' : data2.data2 | date:'MM/dd/YYYY' )}}
+                                            </span>
+
+
+                                        </span>
+                                    </td>
+                                    
+                                    <td> {{ data2.Total_Quantity == 0 || data2.Total_Quantity == null ?
                                         '-' :
                                         data2.Total_Quantity | number:'1.0-0'}}</td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsSale)}">
-                                            <span class="d-flex justify-content-between">
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsSale)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? ' ' :
+                                            '$' ) }}
+                                            <span>
                                                 {{
-                                                (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? ' ' :
-                                                '$' ) }}
-                                                <span>
-                                                    {{
-                                                    (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? '-' :
-                                                    data2.Total_PartsSale | number:'1.0-0' ) }}
-                                                </span>
+                                                (data2.Total_PartsSale == 0 || data2.Total_PartsSale == null ? '-' :
+                                                data2.Total_PartsSale | number:'1.0-0' ) }}
                                             </span>
-                                        </td>
-                                        <td>-</td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['0TO3'])}">
-                                            <span class="d-flex justify-content-between">
-                                                {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '' : '$'}}
-                                                <span>
-                                                    {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '-' :
-                                                    data2['0TO3'] | number:'1.0-0'}}
-                                                </span>
+                                        </span>
+                                    </td>
+                                    <td>-</td>
+                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['0TO3'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '' : '$'}}
+                                            <span>
+                                                {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '-' :
+                                                data2['0TO3'] | number:'1.0-0'}}
                                             </span>
-                                        </td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['4TO10'])}">
-                                            <span class="d-flex justify-content-between">
-                                                {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '' : '$'}}
-                                                <span>
-                                                    {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '-' :
-                                                    data2['4TO10'] | number:'1.0-0'}}
-                                                </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['4TO10'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '' : '$'}}
+                                            <span>
+                                                {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '-' :
+                                                data2['4TO10'] | number:'1.0-0'}}
                                             </span>
-                                        </td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['11TO30'])}">
-                                            <span class="d-flex justify-content-between">
-                                                {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '' : '$'}}
-                                                <span>
-                                                    {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '-' :
-                                                    data2['11TO30'] | number:'1.0-0'}}
-                                                </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['11TO30'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '' : '$'}}
+                                            <span>
+                                                {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '-' :
+                                                data2['11TO30'] | number:'1.0-0'}}
                                             </span>
-                                        </td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['30ABOVE'])}">
-                                            <span class="d-flex justify-content-between">
-                                                {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '' : '$'}}
-                                                <span>
-                                                    {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '-' :
-                                                    data2['30ABOVE'] | number:'1.0-0'}}
-                                                </span>
+                                        </span>
+                                    </td>
+                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['30ABOVE'])}">
+                                        <span class="d-flex justify-content-between">
+                                            {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '' : '$'}}
+                                            <span>
+                                                {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '-' :
+                                                data2['30ABOVE'] | number:'1.0-0'}}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}">
+                                        <span class="d-flex justify-content-between">
 
+                                            {{
+                                            (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? ' ' :
+                                            '$') }}
+                                            <span>
                                                 {{
-                                                (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? ' ' :
-                                                '$') }}
-                                                <span>
-                                                    {{
-                                                    (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? '-'
-                                                    :
-                                                    data2.Total_PartsGross | number:'1.2-2' ) }}
-                                                </span>
+                                                (data2.Total_PartsGross == 0 || data2.Total_PartsGross == null ? '-'
+                                                :
+                                                data2.Total_PartsGross | number:'1.2-2' ) }}
                                             </span>
-                                        </td>
+                                        </span>
+                                    </td>
 
 
 
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross_Pace)}">
-                                            <span class="d-flex justify-content-between">
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace == null
+                                            ?
+                                            ' ' :'$') }}
+                                            <span>
                                                 {{
-                                                (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace == null
-                                                ?
-                                                ' ' :'$') }}
-                                                <span>
-                                                    {{
-                                                    (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace ==
-                                                    null ?
-                                                    '-' :
-                                                    data2.Total_PartsGross_Pace | number:'1.0-0' ) }}
-                                                </span>
+                                                (data2.Total_PartsGross_Pace == 0 || data2.Total_PartsGross_Pace ==
+                                                null ?
+                                                '-' :
+                                                data2.Total_PartsGross_Pace | number:'1.0-0' ) }}
                                             </span>
-                                        </td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <th class="spacer"></th>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.ServiceGross
+                                            == 0 || data2.ServiceGross == null ? ' ' :'$' ) }}
+                                            <span>
                                                 {{
                                                 (data2.ServiceGross
-                                                == 0 || data2.ServiceGross == null ? ' ' :'$' ) }}
-                                                <span>
-                                                    {{
-                                                    (data2.ServiceGross
-                                                    == 0 || data2.ServiceGross == null ? '-' : data2.ServiceGross |
-                                                    currency:'USD':'symbol':'1.2-2' ) }}
-                                                </span>
+                                                == 0 || data2.ServiceGross == null ? '-' : data2.ServiceGross |
+                                                currency:'USD':'symbol':'1.2-2' ) }}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Pace)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ? ' '
+                                            :'$' ) }}
+                                            <span>
 
                                                 {{
-                                                (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ? ' '
-                                                :'$' ) }}
-                                                <span>
-
-                                                    {{
-                                                    (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ?
-                                                    '-' :
-                                                    data2.ServiceGross_Pace | number:'1.0-0' ) }}
-                                                </span>
+                                                (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ?
+                                                '-' :
+                                                data2.ServiceGross_Pace | number:'1.0-0' ) }}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Target)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Target)}">
+                                        <span class="d-flex justify-content-between">
+
+                                            {{
+                                            (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
+                                            data2.ServiceGross_Target == '-' ? ' ' :'$' ) }}
+                                            <span>
 
                                                 {{
-                                                (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
-                                                data2.ServiceGross_Target == '-' ? ' ' :'$' ) }}
-                                                <span>
-
-                                                    {{
-                                                    (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null
-                                                    ? '-' :
-                                                    data2.ServiceGross_Target | number:'1.0-0' ) }}
-                                                </span>
+                                                (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null
+                                                ? '-' :
+                                                data2.ServiceGross_Target | number:'1.0-0' ) }}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Diff)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross_Diff)}">
+                                        <span class="d-flex justify-content-between">
 
+                                            {{
+                                            (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ? ' '
+                                            :'$' ) }}
+                                            <span>
                                                 {{
-                                                (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ? ' '
-                                                :'$' ) }}
-                                                <span>
-                                                    {{
-                                                    (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ?
-                                                    '-' :
-                                                    data2.ServiceGross_Diff | number:'1.0-0' ) }}
-                                                </span>
+                                                (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ?
+                                                '-' :
+                                                data2.ServiceGross_Diff | number:'1.0-0' ) }}
                                             </span>
-                                        </td>
-                                        <th class="spacer"></th>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross)}">
+                                        <span class="d-flex justify-content-between">
 
+                                            {{ (data2.PartsGross
+                                            == 0
+                                            || data2.PartsGross == null ? ' ' :'$' )}}
+                                            <span>
                                                 {{ (data2.PartsGross
                                                 == 0
-                                                || data2.PartsGross == null ? ' ' :'$' )}}
-                                                <span>
-                                                    {{ (data2.PartsGross
-                                                    == 0
-                                                    || data2.PartsGross == null ? '-' : data2.PartsGross |
-                                                    currency:'USD':'symbol':'1.2-2' )}}
-                                                </span>
+                                                || data2.PartsGross == null ? '-' : data2.PartsGross |
+                                                currency:'USD':'symbol':'1.2-2' )}}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Pace)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Pace)}">
+                                        <span class="d-flex justify-content-between">
 
+                                            {{
+                                            (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ? ' ' :'$'
+                                            )}}
+                                            <span>
                                                 {{
-                                                (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ? ' ' :'$'
-                                                )}}
-                                                <span>
-                                                    {{
-                                                    (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ? '-' :
-                                                    data2.PartsGross_Pace | number:'1.0-0' )}}
-                                                </span>
+                                                (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ? '-' :
+                                                data2.PartsGross_Pace | number:'1.0-0' )}}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Target)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Target)}">
+                                        <span class="d-flex justify-content-between">
 
+                                            {{
+                                            (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ? ' '
+                                            :'$' )}}
+                                            <span>
                                                 {{
-                                                (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ? ' '
-                                                :'$' )}}
-                                                <span>
-                                                    {{
-                                                    (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ?
-                                                    '-' :
-                                                    data2.PartsGross_Target | number:'1.0-0' )}}
-                                                </span>
+                                                (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ?
+                                                '-' :
+                                                data2.PartsGross_Target | number:'1.0-0' )}}
                                             </span>
-                                        </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Diff)}">
-                                            <span class="d-flex justify-content-between">
+                                        </span>
+                                    </td>
+                                    <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Diff)}">
+                                        <span class="d-flex justify-content-between">
+                                            {{
+                                            (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
+                                            data2.PartsGross_Diff == '-' ? ' ' :'$' )}}
+                                            <span>
                                                 {{
-                                                (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
-                                                data2.PartsGross_Diff == '-' ? ' ' :'$' )}}
-                                                <span>
-                                                    {{
-                                                    (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ? '-' :
-                                                    data2.PartsGross_Diff | number:'1.0-0' )}}
-                                                </span>
+                                                (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ? '-' :
+                                                data2.PartsGross_Diff | number:'1.0-0' )}}
                                             </span>
-                                        </td>
-                                        <th class="spacer"></th>
-                                        <td>{{data2.Parts_RO == 0 || data2.Parts_RO == null ? '-' : data2.Parts_RO |
-                                            number:'1.2-2'}}</td>
-                                        <td>{{data2.Lost_PerDay == 0 || data2.Lost_PerDay == null ? '-' :
-                                            data2.Lost_PerDay
-                                            }}</td>
-                                        <td> {{data2.Retention == 0 || data2.Retention == null ? '-' : data2.Retention |
-                                            number:'1.1-1'}}{{data2.Retention == 0 || data2.Retention == null ? '' :
-                                            '%'}}
-                                        </td>
+                                        </span>
+                                    </td>
+                                    
+                                    <td>{{data2.Parts_RO == 0 || data2.Parts_RO == null ? '-' : data2.Parts_RO |
+                                        number:'1.2-2'}}</td>
+                                    <td>{{data2.Lost_PerDay == 0 || data2.Lost_PerDay == null ? '-' :
+                                        data2.Lost_PerDay
+                                        }}</td>
+                                    <td> {{data2.Retention == 0 || data2.Retention == null ? '-' : data2.Retention |
+                                        number:'1.1-1'}}{{data2.Retention == 0 || data2.Retention == null ? '' :
+                                        '%'}}
+                                    </td>
 
-                                    </tr>
-                                    <tr *ngIf="PartsInfo.Dealer != '+' && data2.data2sign != '+' ">
+                                </tr>
+                                <tr *ngIf="PartsInfo.Dealer != '+' && data2.data2sign != '+' ">
 
-                                        <td>
-                                            &nbsp;
-                                        </td>
-                                        <td class="spacer"></td>
-                                        <td colspan="26" style="padding: 2px 1px !important;">
-                                            <app-parts-open-rodetails [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
-                                        </td>
-                                    </tr>
-                                </ng-container>
-
+                                    <td>
+                                        &nbsp;
+                                    </td>
+                                    
+                                    <td colspan="26" style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+                                        <app-parts-open-rodetails
+                                            [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
+                                    </td>
+                                </tr>
                             </ng-container>
-                            <!-- <div class="loader" style="margin-top: 5%;margin-left: 30%;" *ngIf="spinnerLoader"></div> -->
 
-                        </tbody>
-                        <tbody *ngIf="NoData">
-                            <tr>
-                                <td colspan="1"></td>
-                                <td class="spacer"></td>
-                                <td colspan="26"
-                                    style="color: black;pointer-events:none ; text-align: center !important;">No
-                                    Records Found</td>
+                        </ng-container>
+                        <!-- <div class="loader" style="margin-top: 5%;margin-left: 30%;" *ngIf="spinnerLoader"></div> -->
 
-                            </tr>
-                        </tbody>
+                    </tbody>
+                    <tbody *ngIf="NoData">
+                        <tr>
+                            <td colspan="1"></td>
+                            
+                            <td colspan="26" style="color: black;pointer-events:none ; text-align: center !important;">
+                                No
+                                Records Found</td>
+
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
-
-      
     </div>
 </main>

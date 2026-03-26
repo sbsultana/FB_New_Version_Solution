@@ -75,7 +75,6 @@ export class Dashboard {
       this.initializeDates('MTD')
 
       if (this.comm.MobileServiceGL != undefined && this.comm.MobileServiceGL.length > 0) {
-        // this.groupsArray = this.comm.MobileServiceGL;
         this.stores = this.comm.MobileServiceGL;
         if (this.storeIds == undefined || this.storeIds.length == 0) {
           this.getStoresandGroupsValues('FL')

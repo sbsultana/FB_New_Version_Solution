@@ -1,0 +1,61 @@
+.partsprofitperformancescorecard-tbl {
+    .table {
+
+        thead,
+        tbody {
+            .boxshadow-none {
+                box-shadow: none !important;
+            }
+
+            th:nth-child(1),
+            th:nth-child(4),
+            th:nth-child(7),
+            th:nth-child(10),
+            th:nth-child(13),
+
+            td:nth-child(1),
+            td:nth-child(4),
+            td:nth-child(7),
+            td:nth-child(10),
+            td:nth-child(13)
+            {
+            box-shadow:
+                inset 0 0.4px 0 0 #e0edff,
+                inset -3px 0 0 0 #e0edff,
+                inset 0 -0.4px 0 0 #e0edff,
+                inset 0.4px 0 0 0 #e0edff;
+        }
+    }
+}
+}
+
+.editabletxt {
+    font-size: .875rem;
+    padding: 0rem .75rem;
+    font-family: 'Roboto';
+    text-align: end;
+    width: 120px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    overflow-x: auto;
+    white-space: nowrap;
+    text-overflow: clip;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.divBold {
+    position: sticky;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    font-family: 'Roboto' !important;
+
+    td {
+        img {
+            display: none;
+        }
+    }
+}

@@ -15,7 +15,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { ServiceOpenRODetails } from '../service-open-rodetails/service-open-rodetails';
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,ServiceOpenRODetails,NgxSliderModule],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores, ServiceOpenRODetails, NgxSliderModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -75,7 +75,7 @@ export class Dashboard {
     { "ARG_ID": 68, "ARG_LABEL": "Opcode", "ARG_SEQ": 15, "state": false, "Active": "Y" }
   ]
 
-    optionProx: Options = {
+  optionProx: Options = {
     floor: 0, ceil: 1000,
     showSelectionBarFromValue: 0,
     hideLimitLabels: true,
@@ -114,7 +114,7 @@ export class Dashboard {
 
 
   Dates: any = {
-    'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,custom:'N',
+    'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime, custom: 'N',
     Types: [
       { 'code': 'Overall', 'name': "All Open RO's" },
       { 'code': '3', 'name': '> 3 Days' },
@@ -123,7 +123,7 @@ export class Dashboard {
     ]
   }
   scrollPosition = 0;
- 
+
   getScrollPosition(event: any): void {
     this.scrollPosition = event.target.scrollLeft;
   }
@@ -140,9 +140,22 @@ export class Dashboard {
     this.selectedDataGrouping.push(this.dataGrouping[0])
     this.initializeDates('Overall')
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        this.rostatus = JSON.parse(localStorage.getItem('userInfo')!).ro_filter  
+        localStorage.setItem('flag', 'M')
+      } else {
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.rostatus = 'All';
+      }
     }
+
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
@@ -797,7 +810,7 @@ export class Dashboard {
     }
   }
 
-    SelectedData(val: any) {
+  SelectedData(val: any) {
     const index = this.selectedDataGrouping.findIndex((i: any) => i == val);
     if (index >= 0) {
       this.selectedDataGrouping.splice(index, 1);

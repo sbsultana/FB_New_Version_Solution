@@ -54,8 +54,7 @@ export const routes: Routes = [
   // SALES BLOCK
   { path: 'SalesGross', loadComponent: () => import('./Reports/Sales/SalesGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'VariableGrossGL', loadComponent: () => import('./Reports/Sales/VariableGrossGL/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'SPranking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'FandIManagerRanking', loadComponent: () => import('./Reports/Sales/FandIManagerRanking/dashboard/dashboard').then(m => m.Dashboard) },
+
   { path: 'FandIProductPenetration', loadComponent: () => import('./Reports/Sales/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FandIProductPenetrationV2', loadComponent: () => import('./Reports/Others/FandIProductPenetration/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SalesToAccountingReconciliation', loadComponent: () => import('./Reports/Sales/SalesToAccountingReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
@@ -64,24 +63,18 @@ export const routes: Routes = [
   { path: 'CarDeals', loadComponent: () => import('./Reports/Sales/CarDeals/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'Appointments', loadComponent: () => import('./Reports/Sales/Appointments/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SalesContest', loadComponent: () => import('./Reports/Sales/SalesContest/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'SalesManagerRanking', loadComponent: () => import('./Reports/Sales/SalesManangerRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'BookedToFinalReconciliation', loadComponent: () => import('./Reports/Sales/BookedToClosedReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'UsedVehicleStocking', loadComponent: () => import('./Reports/Sales/UsedVehicleStocking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'TradeWinPercentage', loadComponent: () => import('./Reports/Sales/TradeWinPercentage/dashboard/dashboard').then(m => m.Dashboard) },
 
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
-  // { path: 'SalespersonRanking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
-  //{ path: 'InventoryBookV1', loadComponent: () => import('./Reports/Sales/InventoryBook/dashboard/dashboard').then(m => m.Dashboard) },
-  //{ path: 'InventorySummaryV1', loadComponent: () => import('./Reports/Sales/InventorySummary/dashboard/dashboard').then(m => m.Dashboard) },
-  //{ path: 'QuickInventory', loadComponent: () => import('./Reports/Sales/QuickInventoryReport/dashboard/dashboard').then(m => m.Dashboard) },
-  //{ path: 'SalesReconciliation', loadComponent: () => import('./Reports/Sales/SalesReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
+
 
 
   // SERVICE BLOCK
   { path: 'ServiceGrossGL', loadComponent: () => import('./Reports/Services/ServiceGrossGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'FixedSummaryGL', loadComponent: () => import('./Reports/Services/ServiceSummaryGL/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceGross', loadComponent: () => import('./Reports/Services/ServiceGross/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceOpenRO', loadComponent: () => import('./Reports/Services/ServiceOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'InventoryOpenRO', loadComponent: () => import('./Reports/Services/InventoryOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceLaborTrendDetail', loadComponent: () => import('./Reports/Services/ServiceLaborTrendDetails/dashboard/dashboard').then(m => m.Dashboard) },
@@ -105,6 +98,7 @@ export const routes: Routes = [
   { path: 'PartsGross', loadComponent: () => import('./Reports/Parts/PartsGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsTrendingReport', loadComponent: () => import('./Reports/Parts/PartsTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsOpenRO', loadComponent: () => import('./Reports/Parts/PartsOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'PartsCounterPersonRanking', loadComponent: () => import('./Reports/Rankings/PartsCounterPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SearchParts', loadComponent: () => import('./Reports/Parts/SearchParts/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsAging', loadComponent: () => import('./Reports/Parts/PartsAging/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsGrossProfitPerformanceScoreCard', loadComponent: () => import('./Reports/Parts/PartsGrossProfitPerformanceScoreCard/dashboard/dashboard').then(m => m.Dashboard) },
@@ -127,6 +121,16 @@ export const routes: Routes = [
   //MobileService Block
   { path: 'MobileServiceGL', loadComponent: () => import('./Reports/MobileService/MobileServiceGL/dashboard/dashboard').then(m => m.Dashboard) },
 
+  //Rankings
+  { path: 'SPranking', loadComponent: () => import('./Reports/Sales/SalesPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'FandIManagerRanking', loadComponent: () => import('./Reports/Sales/FandIManagerRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'SalesManagerRanking', loadComponent: () => import('./Reports/Sales/SalesManangerRanking/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
+
+
+  //Recon 
+  { path: 'ReconAccounting', loadComponent: () => import('./Reports/Recon/ReconGLReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ReconOpenRO', loadComponent: () => import('./Reports/Recon/ReconOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
 
 ];
 

@@ -11,11 +11,12 @@
                                 {{storeIds.length == stores.length ? 'All Stores':
                                 (storeIds.length==1 ? storename : (storeIds.length == 0 ? 'Select
                                 Stores' : 'Selected') )}}
-                             {{storeIds.length == stores.length ? '':
-                                    (storeIds.length==1 || storeIds.length==0 ? '' :
-                                    storeIds.length )}} )</span>
-                                <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}">
+                                {{storeIds.length == stores.length ? '':
+                                (storeIds.length==1 || storeIds.length==0 ? '' :
+                                storeIds.length )}} )</span>
+                            <span class="arrow"></span></button>
+                        <div class="reportstores-card my-2"
+                            [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}">
                             <div class="row h-100">
                                 <!-- <div class="groups pe-2 d-flex flex-column">
                                     <div class="groups-wrapper flex-grow-1">
@@ -32,7 +33,7 @@
                                 </div> -->
                                 <div class="stores d-flex flex-column ps-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                                        <div class="allstores text-start" >
+                                        <div class="allstores text-start">
                                             <a class="text-primary text-decoration-none cursor-pointer me-2"
                                                 (click)="allstores('Y')">Select
                                                 All</a> |
@@ -70,11 +71,16 @@
 
                 </div>
             </div>
-            <div class="scorecard-multi-header lendersummary-tbl">
+            <div class="scorecard-multi-header lendersummary-tbl w-75">
+                <div *ngIf="(ExpensesBlock == null || ExpensesBlock.length === 0) && ExpensesBlockNoData === ''" class="graph-loader d-flex align-items-center justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <table class="table mb-0 w-100">
-                     <thead>
+                    <thead>
                         <tr>
-                            <th colspan="2" style="text-align: justify;">{{FromDate |date:'MMMM'}} <label
+                            <th colspan="2" style="text-align: justify;box-shadow: none;">{{FromDate |date:'MMMM'}} <label
                                     *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                     {{ToDate
                                     |date:'MMMM'}} </label> <label>{{FromDate |date:'dd'}} <label
@@ -88,9 +94,9 @@
                                         date:'yyyy'}}</label></label></th>
                             <th colspan="4" style="text-align: justify;">Mobile Service Profit and Loss</th>
                         </tr>
-                        <tr class="bdr-btm">
+                        <!-- <tr class="bdr-btm">
                             <td colspan="6" class="text-center "></td>
-                        </tr>
+                        </tr> -->
                     </thead>
                     <tbody>
 
@@ -99,17 +105,16 @@
                                 <!-- <tr>
                                     <th colspan="6">{{income.ASG_TYPE}}</th>
                                 </tr> -->
-                                <tr class="lightblue-bg" *ngIf="i<2">
-                                    <td class="store-text">{{income.ASG_TYPE}} </td>
-                                    <td class="store-text">Acct # </td>
-                                    <td class="store-text"> Name/Desc</td>
-                                    <td class="store-text">Sales</td>
-                                    <td class="store-text">Gross</td>
-                                    <td class="store-text">GP% </td>
+                                <tr class="lightblue-bg text-bold" *ngIf="i<2">
+                                    <td class="text-center">{{income.ASG_TYPE}} </td>
+                                    <td class="text-center">Acct # </td>
+                                    <td class="text-center"> Name/Desc</td>
+                                    <td class="text-center">Sales</td>
+                                    <td class="text-center">Gross</td>
+                                    <td class="text-center">GP% </td>
                                 </tr>
                                 <ng-container *ngFor="let dept of income.subdata;let j=index">
-                                    <tr
-                                        [ngStyle]="{'font-family':dept.ASG_Department!='Total' ? 'FaktPro-Normal':'FaktPro-Bold'}">
+                                    <tr [ngStyle]="{'font-weight':dept.ASG_Department!='Total' ? '400':'700'}">
                                         <!-- <td colspan="4" class="text-bold">{{dept.dept}} </td> -->
 
                                         <td *ngIf="dept.ASG_Department!='Total'"> {{dept.ASG_Department}} </td>
@@ -131,15 +136,17 @@
                                             </span>
                                         </td>
                                         <td style="padding-left: 0.2rem !important;">
-                                            <span class="d-flex " [ngClass]="{'setPerens justify-content-end' : dept.Gross < 0 && income.ASG_TYPE == 'Selling Expenses' , 'justify-content-between' : dept.Gross == 0 || dept.Gross == null || income.ASG_TYPE != 'Selling Expenses' }">
+                                            <span class="d-flex "
+                                                [ngClass]="{'setPerens justify-content-end' : dept.Gross < 0 && income.ASG_TYPE == 'Selling Expenses' , 'justify-content-between' : dept.Gross == 0 || dept.Gross == null || income.ASG_TYPE != 'Selling Expenses' }">
                                                 {{
                                                 ( dept.Gross == null || dept.Gross == 0 || dept.Gross == undefined ?
                                                 '&nbsp;' :
                                                 '$' )}}
-                                                <span > {{
+                                                <span> {{
                                                     ( dept.Gross == null || dept.Gross == 0 || dept.Gross == undefined ?
                                                     '-' :
-                                                    (income.ASG_TYPE == 'Selling Expenses' ? (dept.Gross*-1) : dept.Gross ) | number:'1.0-0' )}} </span>
+                                                    (income.ASG_TYPE == 'Selling Expenses' ? (dept.Gross*-1) :
+                                                    dept.Gross ) | number:'1.0-0' )}} </span>
                                             </span>
                                         </td>
                                         <td style="padding-left: 0.2rem !important;">
@@ -158,7 +165,8 @@
                                             <span class="d-flex justify-content-between"
                                                 *ngIf="income.ASG_TYPE != 'Income'">
                                                 {{getGP(dept.Gross) ? '&nbsp;' : '-'}}
-                                                <span> {{getGP(dept.Gross) ? (getGP(dept.Gross) | number:'1.1-1')+'%' : '-'}} </span>
+                                                <span> {{getGP(dept.Gross) ? (getGP(dept.Gross) | number:'1.1-1')+'%' :
+                                                    '-'}} </span>
                                             </span>
                                         </td>
                                     </tr>
@@ -170,12 +178,7 @@
                         <ng-template #NoExpense>
                             <tr>
                                 <td colspan="6" *ngIf="ExpensesBlockNoData== ''">
-                                 <div 
-                                            class="graph-loader d-flex align-items-center justify-content-center">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
-                                        </div>
+
                                 </td>
                                 <td colspan="6" *ngIf="ExpensesBlockNoData != ''"
                                     style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
@@ -188,6 +191,6 @@
                 </table>
             </div>
         </div>
-   
+
     </div>
 </main>

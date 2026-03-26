@@ -15,7 +15,7 @@ import { FilterPipe } from 'ngx-filter-pipe';
 @Component({
   selector: 'app-dashboard',
   imports: [SharedModule, BsDatepickerModule, Stores],
-    providers: [FilterPipe],
+  providers: [FilterPipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -57,7 +57,7 @@ export class Dashboard {
   constructor(
     public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService, private ngmodelactive: NgbActiveModal
   ) {
-
+      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
     if (localStorage.getItem('flag') == 'V') {
       this.storeIds = [];
       console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
@@ -67,7 +67,6 @@ export class Dashboard {
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).wrstore)
       localStorage.setItem('flag', 'M')
     } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         this.Role = JSON.parse(localStorage.getItem('userInfo')!).user_Info.roleid;
@@ -370,7 +369,7 @@ export class Dashboard {
       if (this.excel != undefined) {
         if (res.obj.title == 'Warranty Receivables') {
           if (res.obj.state == true) {
-             if (this.MainGrid == 'Y') {
+            if (this.MainGrid == 'Y') {
               this.exportToExcel();
             } else {
               this.exportToExcelDetails()
@@ -692,7 +691,7 @@ export class Dashboard {
 
   }
   NoDataDetails: any = '';
-  
+
   WarrantyReceivablesDetailsData: any = []
   SGDSearchName: any = '';
 
@@ -706,7 +705,7 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any) {
     if (ref == 'multi') {
       if (this.hideRecords.length == 0) {
-        this.toast.show('Please select atleast one record to hide','warning','Warning');
+        this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
         var element = <HTMLInputElement>document.getElementById('symbol');
         element.checked = false;
       } else {
@@ -732,9 +731,9 @@ export class Dashboard {
       }
     }
   }
-backtoWR(){
-  this.MainGrid = 'Y'
-}
+  backtoWR() {
+    this.MainGrid = 'Y'
+  }
   hideRecords: any = [];
   FinalArray: any = [];
 
@@ -760,7 +759,7 @@ backtoWR(){
       });
     }
     if (this.FinalArray.length == 0) {
-      this.toast.show('Please select atleast one record to hide','warning','Warning');
+      this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
     }
     else {
       const obj = {
@@ -780,13 +779,13 @@ backtoWR(){
             this.hideRecords = [];
             this.hideVisibility = false;
           } else {
-            this.toast.show(res.status, 'danger','Error');
+            this.toast.show(res.status, 'danger', 'Error');
             this.shared.spinner.hide();
             this.NoDataDetails = '';
           }
         },
         (error) => {
-          this.toast.show('502 Bad Gate Way Error', 'danger','Error');
+          this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
           this.shared.spinner.hide();
           this.NoDataDetails = '';
         }
@@ -1012,7 +1011,7 @@ backtoWR(){
       data.notesView = '+'
     }
   }
-    public inTheGreen(value: number): boolean {
+  public inTheGreen(value: number): boolean {
     if (value >= 0) {
       return true;
     }
@@ -1021,10 +1020,10 @@ backtoWR(){
   saveNotes() {
     if (this.notesStageText == '' || this.notesStageValue == '') {
       if (this.notesStageText == '') {
-        this.toast.show('Please enter notes','warning','Warning');
+        this.toast.show('Please enter notes', 'warning', 'Warning');
       }
       if (this.notesStageValue == '') {
-        this.toast.show('Please select Stage','warning','Warning');
+        this.toast.show('Please select Stage', 'warning', 'Warning');
       }
     }
     else {
@@ -1268,9 +1267,9 @@ backtoWR(){
     worksheet.getColumn(20).width = 15;
     worksheet.getColumn(21).width = 15;
     worksheet.addRow([]);
- 
-      this.shared.exportToExcel(workbook, 'Warranty Receivables Details_' + DATE_EXTENSION );
- 
+
+    this.shared.exportToExcel(workbook, 'Warranty Receivables Details_' + DATE_EXTENSION);
+
   }
 
 

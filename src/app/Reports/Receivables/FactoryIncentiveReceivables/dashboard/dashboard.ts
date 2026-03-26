@@ -134,39 +134,26 @@ export class Dashboard {
     private toast: ToastService,
     private datepipe: DatePipe,
   ) {
-    if (localStorage.getItem('flag') == 'V') {
-      this.storeIds = [];
-      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      localStorage.setItem('flag', 'M')
-    } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        this.financeManagerId = 0;
+        JSON.parse(localStorage.getItem('userInfo')!).flag2 == 'A' ? this.allordebit = 'all' : this.allordebit = 'dr';
+        localStorage.setItem('flag', 'M')
+      } else {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
+      this.Role = JSON.parse(localStorage.getItem('userInfo')!).user_Info.title;
+      this.userid = JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid;
     }
-    if (localStorage.getItem('userInfo') != null) {
-      // Keep same logic but don't break when redirectionFrom missing
-      try {
-        const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
-        this.Role = ud.user_Info.title;
-        this.userid = ud.user_Info.userid;
-        console.log(this.Role, this.userid);
-      } catch {
-        // ignore
-      }
 
-      const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
-      let allordebit = ud.flag2
-      console.log(ud, allordebit, '...................................................................')
-      if (ud.user_Info.flag != 'M') {
-        this.financeManagerId = 0;
-        this.allordebit = allordebit == 'A' ? 'all' : 'dr';
-      }
-    }
+
     this.commentsVisibility = true;
     this.shared.setTitle(this.comm.titleName + '-Factory Incentive Receivables');
 

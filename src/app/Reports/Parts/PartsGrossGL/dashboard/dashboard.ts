@@ -10,11 +10,11 @@ import { environment } from '../../../../../environments/environment';
 import { Stores } from '../../../../CommonFilters/stores/stores';
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { CurrencyPipe } from '@angular/common';
-import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,NgbModalModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -184,7 +184,7 @@ export class Dashboard {
       PaytypeC: this.Paytype[0] == 'Customerpay_0' ? 'C' : '',
       PaytypeW: this.Paytype[1] == 'Warranty_1' ? 'W' : '',
       PaytypeI: this.Paytype[2] == 'Internal_2' ? 'I' : '',
-   
+
       RO_CloseDate: '',
       var1: this.selectedDataGrouping.length >= 1 ? this.selectedDataGrouping[0]?.columnname : '',
       var2: this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '',
@@ -269,7 +269,7 @@ export class Dashboard {
       PaytypeC: this.Paytype[0] == 'Customerpay_0' ? 'C' : '',
       PaytypeW: this.Paytype[1] == 'Warranty_1' ? 'W' : '',
       PaytypeI: this.Paytype[2] == 'Internal_2' ? 'I' : '',
-   
+
       RO_CloseDate: '',
       var1: 'Store_Name',
       var2: this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '',
@@ -583,6 +583,7 @@ export class Dashboard {
   pageNumber: any = 0;
   GetDetails() {
     // this.shared.spinner.show()
+    this.spinnerLoadersec = true
     const obj = {
 
       "startdate": this.Servicedetails[0].StartDate,
@@ -611,6 +612,8 @@ export class Dashboard {
     this.shared.api
       .postmethod(this.comm.routeEndpoint + 'GetServicesGrossSummaryDetailsGLV1', obj)
       .subscribe((res) => {
+        this.spinnerLoader = false;
+        this.spinnerLoadersec = false;
         if (res.status == 200) {
           this.details = res.response;
           this.ServicePersonDetails = [
@@ -619,12 +622,13 @@ export class Dashboard {
           ];
           // //console.log(this.ServicePersonDetails);
           // this.shared.spinner.hide()
-          this.spinnerLoader = false;
-          this.spinnerLoadersec = false;
+
           if (this.ServicePersonDetails.length > 0) {
             this.NoDataDetails = false;
+            this.spinnerLoadersec = false;
           } else {
             this.NoDataDetails = true;
+            this.spinnerLoadersec = false;
           }
           this.scrollState = true
         }

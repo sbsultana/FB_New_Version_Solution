@@ -1,80 +1,88 @@
 <!--  -->
 <div *ngIf="RODetailsObject[0] != undefined" class="gross-tbl-scroll" id="ServiceOpenRODetails"
-    (scroll)="updateVerticalScroll($event)" #scrollcent id="scrollcent"
-    [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
-    <div class="scorecard-single-header">
-        <table class="table mb-0 w-100">
+    (scroll)="updateVerticalScroll($event)" #scrollcent id="scrollcent">
+    <div class="scorecard-single-header partsopendetails-tbl" [ngStyle]="{'max-height':RODetailsObject[0].dataLength==2?'70vh':'35vh'}">
+        <div *ngIf="spinnerLoader" class="d-flex align-items-center justify-content-center m-auto">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <table class="table mb-0 w-100" *ngIf="!spinnerLoader">
             <thead>
-            <tr>
-                <th colspan="7">
-                    <div class=" d-flex align-items-center pagination">
-                        <img src="../../../../../assets/images/Excel_Export.png" class="img-fluid  me-2" alt=""
-                            style="cursor: pointer;" (click)="exportAsXLSX()">&nbsp;&nbsp;&nbsp;&nbsp;
-                        <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
-                            placeholder="Search" type="text" (ngModelChange)="filterData()"> &nbsp;
-                    </div>
-
-                </th>
-                <th colspan="5" class="align-cntr">Total </th>
-                <th colspan="5" class="align-cntr">Customer Pay </th>
-                <th colspan="5" class="align-cntr">Warranty </th>
-                <th colspan="5" class="align-cntr">Internal </th>
-                <th colspan="5" class="align-cntr">Counter Retail </th>
-                <th colspan="5" class="align-cntr"> Wholesale </th>
-            </tr>
-            <tr>
-                <!-- <th (click)="openComments()" style="cursor: pointer;">
+                <tr>
+                    <th colspan="7" class="align-middle lightblue-bg box-shadow">
+                        <!-- <div class=" d-flex align-items-center pagination">
+                            <img src="../../../../../assets/images/Excel_Export.png" class="img-fluid  me-2" alt=""
+                                style="cursor: pointer;" (click)="exportAsXLSX()">&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input class="form-control NR_search ms-auto" name="SearchName" [(ngModel)]="QISearchName"
+                                placeholder="Search" type="text" (ngModelChange)="filterData()"> &nbsp;
+                        </div> -->
+                        <div class="search pe-3">
+                            <input type="text" class="form-control" placeholder="Search" [(ngModel)]="QISearchName"
+                                (ngModelChange)="filterData()">
+                            <img src="images/Magnifer.svg" alt="">
+                        </div>
+                    </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Total </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Customer Pay </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Warranty </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Internal </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow">Counter Retail </th>
+                    <th colspan="5" class="align-middle lightblue-bg box-shadow"> Wholesale </th>
+                </tr>
+                <tr>
+                    <!-- <th (click)="openComments()" style="cursor: pointer;">
                     <i alt="" class="fa fa-eye" *ngIf="!commentsVisibility" aria-hidden="true"></i>
                     <i alt="" class="fa-solid fa-eye-slash" *ngIf="commentsVisibility"></i>
                 </th> -->
-                <th class="align-left" (click)="sort('CDate',PartsPersonDetails)">&nbsp;&nbsp;Open Date</th>
-                <th class="align-left" (click)="sort('Customername',PartsPersonDetails)">Customer</th>
-                <th class="align-left" (click)="sort('InvoiceNumber',PartsPersonDetails)">Invoice #</th>
-                <th class="align-left" (click)="sort('Age',PartsPersonDetails)">Age</th>
-                <th class="align-left" (click)="sort('Partnumber',PartsPersonDetails)">Part #</th>
-                <th class="align-left" (click)="sort('RONumber',PartsPersonDetails)">RO #</th>
-                <th class="align-left" (click)="sort('AP_description',PartsPersonDetails)">Description</th>
-                <!-- <th>VIN</th> -->
-                <th (click)="sort('Total_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Total_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Total_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Total_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Total_Discount',PartsPersonDetails)">Discount</th>
-                <th (click)="sort('Cust_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Cust_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Cust_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Cust_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Cust_Discount',PartsPersonDetails)">Discount</th>
-                <th (click)="sort('Warranty_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Warranty_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Warranty_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Warranty_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Warranty_Discount',PartsPersonDetails)">Discount</th>
-                <th (click)="sort('Internal_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Internal_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Internal_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Internal_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Internal_Discount',PartsPersonDetails)">Discount</th>
-                <th (click)="sort('Counter_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Counter_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Counter_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Counter_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Counter_Discount',PartsPersonDetails)">Discount</th>
-                <th (click)="sort('Wholesale_Gross',PartsPersonDetails)">Gross</th>
-                <th (click)="sort('Wholesale_Retention',PartsPersonDetails)">GP%</th>
-                <th (click)="sort('Wholesale_ELR',PartsPersonDetails)">ELR</th>
-                <th (click)="sort('Wholesale_Hours',PartsPersonDetails)">Hours</th>
-                <th (click)="sort('Wholesale_Discount',PartsPersonDetails)">Discount</th>
+                    <th class="text-start" (click)="sort('CDate',PartsPersonDetails)">&nbsp;&nbsp;Open Date</th>
+                    <th class="text-start" (click)="sort('Customername',PartsPersonDetails)">Customer</th>
+                    <th class="text-start" (click)="sort('InvoiceNumber',PartsPersonDetails)">Invoice #</th>
+                    <th class="text-start" (click)="sort('Age',PartsPersonDetails)">Age</th>
+                    <th class="text-start" (click)="sort('Partnumber',PartsPersonDetails)">Part #</th>
+                    <th class="text-start" (click)="sort('RONumber',PartsPersonDetails)">RO #</th>
+                    <th class="text-start" (click)="sort('AP_description',PartsPersonDetails)">Description</th>
+                    <!-- <th>VIN</th> -->
+                    <th (click)="sort('Total_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Total_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Total_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Total_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Total_Discount',PartsPersonDetails)">Discount</th>
+                    <th (click)="sort('Cust_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Cust_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Cust_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Cust_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Cust_Discount',PartsPersonDetails)">Discount</th>
+                    <th (click)="sort('Warranty_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Warranty_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Warranty_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Warranty_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Warranty_Discount',PartsPersonDetails)">Discount</th>
+                    <th (click)="sort('Internal_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Internal_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Internal_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Internal_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Internal_Discount',PartsPersonDetails)">Discount</th>
+                    <th (click)="sort('Counter_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Counter_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Counter_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Counter_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Counter_Discount',PartsPersonDetails)">Discount</th>
+                    <th (click)="sort('Wholesale_Gross',PartsPersonDetails)">Gross</th>
+                    <th (click)="sort('Wholesale_Retention',PartsPersonDetails)">GP%</th>
+                    <th (click)="sort('Wholesale_ELR',PartsPersonDetails)">ELR</th>
+                    <th (click)="sort('Wholesale_Hours',PartsPersonDetails)">Hours</th>
+                    <th (click)="sort('Wholesale_Discount',PartsPersonDetails)">Discount</th>
 
-            </tr>
-            <div class="loader" style="margin-top: 0%;margin-left: 30%;" *ngIf="spinnerLoader"></div>
-        </thead>
+                </tr>
+                <div class="loader" style="margin-top: 0%;margin-left: 30%;" *ngIf="spinnerLoader"></div>
+            </thead>
 
-        <tbody *ngIf="PartsPersonDetails">
-            <ng-container *ngIf="PartsPersonDetails.length > 0;else partsopenro" >
-                <ng-container *ngFor="let det of PartsPersonDetails">
-                    <tr>
-                        <!-- <td style="cursor: pointer;">
+            <tbody *ngIf="PartsPersonDetails">
+                <ng-container *ngIf="PartsPersonDetails.length > 0;else partsopenro">
+                    <ng-container *ngFor="let det of PartsPersonDetails">
+                        <tr>
+                            <!-- <td style="cursor: pointer;">
                             <img *ngIf="det.CommentsStatus =='Y'" title="Add Comment" width="17px"
                                 src="../../../../../assets/images/unread-comments.png "
                                 (click)="openCommentsPopUp(det,commentsPopUp)">
@@ -83,209 +91,211 @@
                                 (click)="openCommentsPopUp(det,commentsPopUp)"
                                 src="../../../../../assets/images/no-comments.png ">
                         </td> -->
-                        <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
-                        <td class="align-left">&nbsp;&nbsp;
-                            {{ (det.CDate == 0 || det.CDate == null || det.CDate == undefined ? '-'
-                            : det.CDate |
-                            date:'MM.dd.yyyy' ) }}
-                        </td>
-                        <td title="{{det.Customername}}" style="cursor: default;" class="align-left">
-                            {{(det.Customername == undefined ||
-                            det.Customername ==
-                            null || det.Customername ==
-                            '' ? '--' : (
-                            (det.Customername.toString() | slice:0:13) +
-                            (det.Customername.toString().length > 13 ? '...' : '') ))}}</td>
-                        <td class="align-left">
-                            {{ (det.InvoiceNumber == 0 || det.InvoiceNumber == null || det.InvoiceNumber == undefined ?
-                            '-' :
-                            det.InvoiceNumber ) }}
-                        </td>
-    
-                        <td class="align-left">
-                            {{ (det.Age == 0 || det.Age == null || det.Age == undefined ?
-                            '-' :
-                            det.Age ) }}
-                        </td>
-                        <td class="align-left">
-                            {{ (det.Partnumber == 0 || det.Partnumber == null || det.Partnumber == undefined ?
-                            '-' :
-                            det.Partnumber ) }}
-                        </td>
-                        <td class="align-left" (click)="viewRO(det)" 
-                        [ngClass]="[det.RONumber != 0 && det.RONumber != null && det.RONumber != undefined && det.RONumber != '' && det.RONumber != '-' ? 'popuppointer' : 'popupdisable']">
-                            {{ (det.RONumber == 0 || det.RONumber == null || det.RONumber == undefined ?
-                            '-' :
-                            det.RONumber ) }}
-                        </td>
-                        <td title="{{det.AP_description}}" style="cursor: default;" class="align-left">
-                            {{(det.AP_description == undefined ||
-                            det.AP_description ==
-                            null || det.AP_description ==
-                            '' ? '--' : (
-                            (det.AP_description.toString() | slice:0:13) +
-                            (det.AP_description.toString().length > 13 ? '...' : '') ))}}</td>
-                        <!-- <td>
+                            <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
+                            <td class="text-start">&nbsp;&nbsp;
+                                {{ (det.CDate == 0 || det.CDate == null || det.CDate == undefined ? '-'
+                                : det.CDate |
+                                date:'MM.dd.yyyy' ) }}
+                            </td>
+                            <td title="{{det.Customername}}" style="cursor: default;" class="text-start">
+                                {{(det.Customername == undefined ||
+                                det.Customername ==
+                                null || det.Customername ==
+                                '' ? '--' : (
+                                (det.Customername.toString() | slice:0:13) +
+                                (det.Customername.toString().length > 13 ? '...' : '') ))}}</td>
+                            <td class="text-start">
+                                {{ (det.InvoiceNumber == 0 || det.InvoiceNumber == null || det.InvoiceNumber ==
+                                undefined ?
+                                '-' :
+                                det.InvoiceNumber ) }}
+                            </td>
+
+                            <td class="text-start">
+                                {{ (det.Age == 0 || det.Age == null || det.Age == undefined ?
+                                '-' :
+                                det.Age ) }}
+                            </td>
+                            <td class="text-start">
+                                {{ (det.Partnumber == 0 || det.Partnumber == null || det.Partnumber == undefined ?
+                                '-' :
+                                det.Partnumber ) }}
+                            </td>
+                            <td class="text-start" (click)="viewRO(det)"
+                                [ngClass]="[det.RONumber != 0 && det.RONumber != null && det.RONumber != undefined && det.RONumber != '' && det.RONumber != '-' ? 'popuppointer' : 'popupdisable']">
+                                {{ (det.RONumber == 0 || det.RONumber == null || det.RONumber == undefined ?
+                                '-' :
+                                det.RONumber ) }}
+                            </td>
+                            <td title="{{det.AP_description}}" style="cursor: default;" class="text-start">
+                                {{(det.AP_description == undefined ||
+                                det.AP_description ==
+                                null || det.AP_description ==
+                                '' ? '--' : (
+                                (det.AP_description.toString() | slice:0:13) +
+                                (det.AP_description.toString().length > 13 ? '...' : '') ))}}</td>
+                            <!-- <td>
                             {{ (det.vin == 0 || det.vin == null || det.vin == undefined ?
                             '-' : det.vin ) }}
                         </td> -->
-    
-                        <td> {{ (det.Total_Gross == 0 || det.Total_Gross == null || det.Total_Gross == undefined
-                            ? '-' :
-                            det.Total_Gross | currency:'USD':'symbol' )}}</td>
-                        <td> {{ (det.Total_Retention == 0 || det.Total_Retention == null || det.Total_Retention
-                            == undefined
-                            ?'-' :
-                            det.Total_Retention | number:'1.1-1' )}}{{ (det.Total_Retention == 0 || det.Total_Retention ==
-                            null || det.Total_Retention
-                            == undefined
-                            ?'' :
-                            '%' )}}</td>
-                        <td> {{ (det.Total_ELR == 0 || det.Total_ELR == null || det.Total_ELR == undefined ? '-'
-                            :
-                            det.Total_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Total_Hours == 0 || det.Total_Hours == null || det.Total_Hours == undefined
-                            ? '-' :
-                            det.Total_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Total_Discount == 0 || det.Total_Discount == null || det.Total_Discount ==
-                            undefined ? '-':
-                            det.Total_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <td> {{ (det.Cust_Gross == 0 || det.Cust_Gross == null || det.Cust_Gross == undefined ?
-                            '-' :
-                            det.Cust_Gross | currency:'USD':'symbol' )}}</td>
-                        <td> {{ (det.Cust_Retention == 0 || det.Cust_Retention == null || det.Cust_Retention ==
-                            undefined ?'-' :
-                            det.Cust_Retention | number:'1.1-1' )}}{{ (det.Cust_Retention == 0 || det.Cust_Retention == null
-                            || det.Cust_Retention ==
-                            undefined ?'' :
-                            '%')}}</td>
-                        <td> {{ (det.Cust_ELR == 0 || det.Cust_ELR == null || det.Cust_ELR == undefined ? '-' :
-                            det.Cust_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Cust_Hours == 0 || det.Cust_Hours == null || det.Cust_Hours == undefined ?
-                            '-' :
-                            det.Cust_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Cust_Discount == 0 || det.Cust_Discount == null || det.Cust_Discount ==
-                            undefined ? '-':
-                            det.Cust_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <td> {{ (det.Warranty_Gross == 0 || det.Warranty_Gross == null || det.Warranty_Gross ==
-                            undefined ? '-'
-                            :
-                            det.Warranty_Gross | currency:'USD':'symbol' )}}</td>
-                        <td> {{ (det.Warranty_Retention == 0 || det.Warranty_Retention == null ||
-                            det.Warranty_Retention ==
-                            undefined ?'-' :
-                            det.Warranty_Retention | number:'1.1-1')}}{{ (det.Warranty_Retention == 0 ||
-                            det.Warranty_Retention == null ||
-                            det.Warranty_Retention ==
-                            undefined ?'' :
-                            '%')}}</td>
-                        <td> {{ (det.Warranty_ELR == 0 || det.Warranty_ELR == null || det.Warranty_ELR ==
-                            undefined ? '-' :
-                            det.Warranty_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Warranty_Hours == 0 || det.Warranty_Hours == null || det.Warranty_Hours ==
-                            undefined ? '-'
-                            :
-                            det.Warranty_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Warranty_Discount == 0 || det.Warranty_Discount == null ||
-                            det.Warranty_Discount ==
-                            undefined ? '-':
-                            det.Warranty_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <td> {{ (det.Internal_Gross == 0 || det.Internal_Gross == null || det.Internal_Gross ==
-                            undefined ? '-'
-                            :
-                            det.Internal_Gross | currency:'USD':'symbol' )}}</td>
-                        <td> {{ (det.Internal_Retention == 0 || det.Internal_Retention == null ||
-                            det.Internal_Retention ==
-                            undefined ?'-' :
-                            det.Internal_Retention | number:'1.1-1' )}}{{ (det.Internal_Retention == 0 ||
-                            det.Internal_Retention == null ||
-                            det.Internal_Retention ==
-                            undefined ?'' :
-                            '%' )}}</td>
-                        <td> {{ (det.Internal_ELR == 0 || det.Internal_ELR == null || det.Internal_ELR ==
-                            undefined ? '-' :
-                            det.Internal_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Internal_Hours == 0 || det.Internal_Hours == null || det.Internal_Hours ==
-                            undefined ? '-'
-                            :
-                            det.Internal_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Internal_Discount == 0 || det.Internal_Discount == null ||
-                            det.Internal_Discount ==
-                            undefined ? '-':
-                            det.Internal_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <td> {{ (det.Counter_Gross == 0 || det.Counter_Gross == null || det.Counter_Gross ==
-                            undefined ? '-' :
-                            det.Counter_Gross | currency:'USD' )}}</td>
-                        <td> {{ (det.Counter_Retention == 0 || det.Counter_Retention == null ||
-                            det.Counter_Retention ==
-                            undefined ?'-' :
-                            det.Counter_Retention | number:'1.1-1' )}}{{ (det.Counter_Retention == 0 ||
-                            det.Counter_Retention == null ||
-                            det.Counter_Retention ==
-                            undefined ?'' :
-                            '%' )}}</td>
-                        <td> {{ (det.Counter_ELR == 0 || det.Counter_ELR == null || det.Counter_ELR == undefined
-                            ? '-' :
-                            det.Counter_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Counter_Hours == 0 || det.Counter_Hours == null || det.Counter_Hours ==
-                            undefined ? '-' :
-                            det.Counter_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Counter_Discount == 0 || det.Counter_Discount == null ||
-                            det.Counter_Discount == undefined
-                            ? '-':
-                            det.Counter_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <td> {{ (det.Wholesale_Gross == 0 || det.Wholesale_Gross == null || det.Wholesale_Gross
-                            == undefined ?
-                            '-' :
-                            det.Wholesale_Gross | currency:'USD':'symbol' )}}</td>
-                        <td> {{ (det.Wholesale_Retention == 0 || det.Wholesale_Retention == null ||
-                            det.Wholesale_Retention ==
-                            undefined ?'-' :
-                            det.Wholesale_Retention | number:'1.1-1' )}}{{ (det.Wholesale_Retention == 0 ||
-                            det.Wholesale_Retention == null ||
-                            det.Wholesale_Retention ==
-                            undefined ?'' :
-                            '%' )}}
-                        </td>
-                        <td> {{ (det.Wholesale_ELR == 0 || det.Wholesale_ELR == null || det.Wholesale_ELR ==
-                            undefined ? '-' :
-                            det.Wholesale_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
-                        <td> {{ (det.Wholesale_Hours == 0 || det.Wholesale_Hours == null || det.Wholesale_Hours
-                            == undefined ?
-                            '-' :
-                            det.Wholesale_Hours |number:'1.2-2')}}</td>
-                        <td> {{ (det.Wholesale_Discount == 0 || det.Wholesale_Discount == null ||
-                            det.Wholesale_Discount ==
-                            undefined ? '-':
-                            det.Wholesale_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
-    
-                        <div class="loader" style="margin-top: 30%;margin-left: 30%;" *ngIf="spinnerLoadersec">
-                        </div>
-    
-                    </tr>
-                
+
+                            <td> {{ (det.Total_Gross == 0 || det.Total_Gross == null || det.Total_Gross == undefined
+                                ? '-' :
+                                det.Total_Gross | currency:'USD':'symbol' )}}</td>
+                            <td> {{ (det.Total_Retention == 0 || det.Total_Retention == null || det.Total_Retention
+                                == undefined
+                                ?'-' :
+                                det.Total_Retention | number:'1.1-1' )}}{{ (det.Total_Retention == 0 ||
+                                det.Total_Retention ==
+                                null || det.Total_Retention
+                                == undefined
+                                ?'' :
+                                '%' )}}</td>
+                            <td> {{ (det.Total_ELR == 0 || det.Total_ELR == null || det.Total_ELR == undefined ? '-'
+                                :
+                                det.Total_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Total_Hours == 0 || det.Total_Hours == null || det.Total_Hours == undefined
+                                ? '-' :
+                                det.Total_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Total_Discount == 0 || det.Total_Discount == null || det.Total_Discount ==
+                                undefined ? '-':
+                                det.Total_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <td> {{ (det.Cust_Gross == 0 || det.Cust_Gross == null || det.Cust_Gross == undefined ?
+                                '-' :
+                                det.Cust_Gross | currency:'USD':'symbol' )}}</td>
+                            <td> {{ (det.Cust_Retention == 0 || det.Cust_Retention == null || det.Cust_Retention ==
+                                undefined ?'-' :
+                                det.Cust_Retention | number:'1.1-1' )}}{{ (det.Cust_Retention == 0 || det.Cust_Retention
+                                == null
+                                || det.Cust_Retention ==
+                                undefined ?'' :
+                                '%')}}</td>
+                            <td> {{ (det.Cust_ELR == 0 || det.Cust_ELR == null || det.Cust_ELR == undefined ? '-' :
+                                det.Cust_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Cust_Hours == 0 || det.Cust_Hours == null || det.Cust_Hours == undefined ?
+                                '-' :
+                                det.Cust_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Cust_Discount == 0 || det.Cust_Discount == null || det.Cust_Discount ==
+                                undefined ? '-':
+                                det.Cust_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <td> {{ (det.Warranty_Gross == 0 || det.Warranty_Gross == null || det.Warranty_Gross ==
+                                undefined ? '-'
+                                :
+                                det.Warranty_Gross | currency:'USD':'symbol' )}}</td>
+                            <td> {{ (det.Warranty_Retention == 0 || det.Warranty_Retention == null ||
+                                det.Warranty_Retention ==
+                                undefined ?'-' :
+                                det.Warranty_Retention | number:'1.1-1')}}{{ (det.Warranty_Retention == 0 ||
+                                det.Warranty_Retention == null ||
+                                det.Warranty_Retention ==
+                                undefined ?'' :
+                                '%')}}</td>
+                            <td> {{ (det.Warranty_ELR == 0 || det.Warranty_ELR == null || det.Warranty_ELR ==
+                                undefined ? '-' :
+                                det.Warranty_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Warranty_Hours == 0 || det.Warranty_Hours == null || det.Warranty_Hours ==
+                                undefined ? '-'
+                                :
+                                det.Warranty_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Warranty_Discount == 0 || det.Warranty_Discount == null ||
+                                det.Warranty_Discount ==
+                                undefined ? '-':
+                                det.Warranty_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <td> {{ (det.Internal_Gross == 0 || det.Internal_Gross == null || det.Internal_Gross ==
+                                undefined ? '-'
+                                :
+                                det.Internal_Gross | currency:'USD':'symbol' )}}</td>
+                            <td> {{ (det.Internal_Retention == 0 || det.Internal_Retention == null ||
+                                det.Internal_Retention ==
+                                undefined ?'-' :
+                                det.Internal_Retention | number:'1.1-1' )}}{{ (det.Internal_Retention == 0 ||
+                                det.Internal_Retention == null ||
+                                det.Internal_Retention ==
+                                undefined ?'' :
+                                '%' )}}</td>
+                            <td> {{ (det.Internal_ELR == 0 || det.Internal_ELR == null || det.Internal_ELR ==
+                                undefined ? '-' :
+                                det.Internal_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Internal_Hours == 0 || det.Internal_Hours == null || det.Internal_Hours ==
+                                undefined ? '-'
+                                :
+                                det.Internal_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Internal_Discount == 0 || det.Internal_Discount == null ||
+                                det.Internal_Discount ==
+                                undefined ? '-':
+                                det.Internal_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <td> {{ (det.Counter_Gross == 0 || det.Counter_Gross == null || det.Counter_Gross ==
+                                undefined ? '-' :
+                                det.Counter_Gross | currency:'USD' )}}</td>
+                            <td> {{ (det.Counter_Retention == 0 || det.Counter_Retention == null ||
+                                det.Counter_Retention ==
+                                undefined ?'-' :
+                                det.Counter_Retention | number:'1.1-1' )}}{{ (det.Counter_Retention == 0 ||
+                                det.Counter_Retention == null ||
+                                det.Counter_Retention ==
+                                undefined ?'' :
+                                '%' )}}</td>
+                            <td> {{ (det.Counter_ELR == 0 || det.Counter_ELR == null || det.Counter_ELR == undefined
+                                ? '-' :
+                                det.Counter_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Counter_Hours == 0 || det.Counter_Hours == null || det.Counter_Hours ==
+                                undefined ? '-' :
+                                det.Counter_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Counter_Discount == 0 || det.Counter_Discount == null ||
+                                det.Counter_Discount == undefined
+                                ? '-':
+                                det.Counter_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <td> {{ (det.Wholesale_Gross == 0 || det.Wholesale_Gross == null || det.Wholesale_Gross
+                                == undefined ?
+                                '-' :
+                                det.Wholesale_Gross | currency:'USD':'symbol' )}}</td>
+                            <td> {{ (det.Wholesale_Retention == 0 || det.Wholesale_Retention == null ||
+                                det.Wholesale_Retention ==
+                                undefined ?'-' :
+                                det.Wholesale_Retention | number:'1.1-1' )}}{{ (det.Wholesale_Retention == 0 ||
+                                det.Wholesale_Retention == null ||
+                                det.Wholesale_Retention ==
+                                undefined ?'' :
+                                '%' )}}
+                            </td>
+                            <td> {{ (det.Wholesale_ELR == 0 || det.Wholesale_ELR == null || det.Wholesale_ELR ==
+                                undefined ? '-' :
+                                det.Wholesale_ELR | currency:'USD':'symbol':'1.2-2' )}}</td>
+                            <td> {{ (det.Wholesale_Hours == 0 || det.Wholesale_Hours == null || det.Wholesale_Hours
+                                == undefined ?
+                                '-' :
+                                det.Wholesale_Hours |number:'1.2-2')}}</td>
+                            <td> {{ (det.Wholesale_Discount == 0 || det.Wholesale_Discount == null ||
+                                det.Wholesale_Discount ==
+                                undefined ? '-':
+                                det.Wholesale_Discount | currency:'USD':'symbol':'1.0-0' )}}</td>
+
+                            <div class="loader" style="margin-top: 30%;margin-left: 30%;" *ngIf="spinnerLoadersec">
+                            </div>
+
+                        </tr>
+
+                    </ng-container>
+
+
+
                 </ng-container>
-             
 
 
-            </ng-container>
-           
-
-        </tbody>
-        <ng-template #partsopenro>
-            <tr *ngIf="!spinnerLoader">                 
-                <td colspan="37" 
-                    style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
-                    <label>No Record Found</label>
-                </td>
-            </tr>
-        </ng-template>
+            </tbody>
+            <ng-template #partsopenro>
+                <tr *ngIf="!spinnerLoader">
+                    <td colspan="37"
+                        style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .875rem;">
+                        <label>No Record Found</label>
+                    </td>
+                </tr>
+            </ng-template>
         </table>
     </div>
 </div>
-

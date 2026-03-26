@@ -108,22 +108,20 @@ export class Dashboard {
     public shared: Sharedservice, public setdates: Setdates, public cp: CurrencyPipe, private toast: ToastService, private ngbmodalActive: NgbActiveModal
   ) {
     this.shared.setTitle(this.shared.common.titleName + '-Sales Gross');
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groups = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        this.actionType = 'Y';
+        this.DefaultLoad = '';
+        this.getSalesData();
 
-    if (localStorage.getItem('flag') == 'V') {
-      this.storeIds = [];
-      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-      this.groups = JSON.parse(localStorage.getItem('userInfo')!).groupid
-      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      this.actionType = 'Y';
-      this.DefaultLoad = ''
-
-      this.getSalesData();
-
-      localStorage.setItem('flag', 'M')
-    } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+        localStorage.setItem('flag', 'M')
+      } else {
         this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         //this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         this.storeIds = []

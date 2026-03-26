@@ -129,7 +129,7 @@ export class Dashboard {
         const currentTitle = document.title;
         if (x.status == 200) {
           this.PartsTrendingData = x.response;
-          const serviceKeys = Object.keys(x.response[0]).slice(4);
+          const serviceKeys = Object.keys(x.response[0]).slice(5);
           this.PartsTrendingKeys = serviceKeys;
           this.PartsTrendingData = x.response.reduce(
             (r: any, { Store_Name }: any) => {

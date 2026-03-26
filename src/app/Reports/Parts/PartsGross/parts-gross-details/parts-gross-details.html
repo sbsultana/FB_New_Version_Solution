@@ -54,7 +54,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="scorecard-double-header mb-3"
+                        <div class="scorecard-double-header partsgrossdetails-tbl  mb-3"
                             style="overflow: auto;max-height: calc(100vh - 200px);"
                             (scroll)="updateVerticalScroll($event)" #scrollOne>
                             <div *ngIf="spinnerLoader"
@@ -72,17 +72,17 @@
                                         <!-- <th>Part</th> -->
                                         <th>Part #</th>
                                         <th>Description</th>
-                                        <th> Tires</th>
-                                        <th colspan="3">Total </th>
-                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('C') >= 0">Customer Pay
+                                        <th class="box-shadow"> Tires</th>
+                                        <th colspan="3" class="box-shadow">Total </th>
+                                        <th colspan="3" class="box-shadow" *ngIf="Partsdetails[0].Labortype.indexOf('C') >= 0">Customer Pay
                                         </th>
-                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('T') >= 0">Warranty
+                                        <th colspan="3" class="box-shadow" *ngIf="Partsdetails[0].Labortype.indexOf('T') >= 0">Warranty
                                         </th>
-                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('E') >= 0">Extended
+                                        <th colspan="3" class="box-shadow" *ngIf="Partsdetails[0].Labortype.indexOf('E') >= 0">Extended
                                             Warranty </th>
-                                        <th colspan="3" *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">Internal
+                                        <th colspan="3" class="box-shadow" *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">Internal
                                         </th>
-                                        <th colspan="3" *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">Counter
+                                        <th colspan="3" class="box-shadow" *ngIf="Partsdetails[0].Saletype.indexOf('R') >= 0">Counter
                                             Retail </th>
                                         <th colspan="3" *ngIf="Partsdetails[0].Saletype.indexOf('W') >= 0"> Wholesale
                                         </th>
@@ -441,7 +441,7 @@
                                         </div>
 
                                     </tr>
-                                    <tr style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;box-shadow: 1px -4px 0px #2d91f1;"
+                                    <tr style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index:99;"
                                         *ngIf="!spinnerLoader && !spinnerLoadersec">
                                         <td colspan="3"></td>
                                         <ng-container *ngIf="Partsdetails[0].Labortype.indexOf('I') >= 0">

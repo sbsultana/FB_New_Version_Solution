@@ -57,7 +57,6 @@ export class Dashboard implements OnInit {
   vehiclear: any = 'WOAR';
   noData: boolean = false;
   NoData: boolean = false;
-  days: any = [];
   LogCount = 1;
   solutionurl: any = (window as any)['environment']?.apiUrl || '';
   groups: any = 1;
@@ -199,135 +198,53 @@ export class Dashboard implements OnInit {
 
   ) {
     // set defaults and mirrored logic from appointment style
-    if (localStorage.getItem('flag') == 'V') {
-      this.storeIds = [];
-      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      localStorage.setItem('flag', 'M')
-    } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        this.dealStatus = this.dealStatus;
+        this.financeManagerId = 0;
+        JSON.parse(localStorage.getItem('userInfo')!).flag2 == 'A' ? this.allordebit = 'all' : this.allordebit = 'dr';
+        localStorage.setItem('flag', 'M')
+      } else {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
+      this.Role = JSON.parse(localStorage.getItem('userInfo')!).user_Info.title;
+      this.userid = JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid;
     }
-    localStorage.setItem('time', 'C');
 
     this.commentsVisibility = true;
 
-    // init user/store info from local storage (same logic)
-    if (localStorage.getItem('userInfo') != null) {
-      // Keep same logic but don't break when redirectionFrom missing
-      try {
-        const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
-        this.Role = ud.user_Info.title;
-        this.userid = ud.user_Info.userid;
-        console.log(this.Role, this.userid);
-      } catch {
-        // ignore
-      }
-      // if comm.redirectionFrom exists apply original logic
-      // try {
-      const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
-      let allordebit = ud.flag2
-      console.log(ud, allordebit, '...................................................................')
-      if (ud.user_Info.flag != 'M') {
-        this.dealStatus = this.dealStatus;
-        this.financeManagerId = 0;
-        this.allordebit = allordebit == 'A' ? 'all' : 'dr';
-      }
-      // } catch { /* ignore */ }
-    }
+  
 
-    // date range for UI (same logic)
-    this.today = new Date();
-    this.startDate = new Date();
-    this.endDate = new Date(this.startDate);
-    this.endDate = new Date(this.endDate.setDate(this.endDate.getDate() + 4));
-    for (let q = new Date(this.startDate); q <= this.endDate; q.setDate(q.getDate() + 1)) {
-      this.days.push({ day: q.toString() });
-    }
+    this.shared.setTitle(this.shared.common.titleName + '-CIT');
 
 
-
-    // if (this.shared.common.groupsandstores.length > 0) {
-    //   this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-    //   this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-    //   this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
-    //   this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-    //   this.getStoresandGroupsValues()
-    // }
-    // set page title
-    try {
-      this.shared.setTitle(this.shared.common.titleName + '-CIT');
-    } catch {
-      // fallback: no-op
-    }
-
-    // initialize From/To based on original logic
-    this.CurrentDate.setDate(this.CurrentDate.getDate() - 1);
-    this.ToDate = new Date(
-      this.CurrentDate.getFullYear(),
-      this.CurrentDate.getMonth(),
-      2
-    );
-    this.FromDate = this.ToDate.toISOString().slice(0, 10);
-    this.ToDate = this.CurrentDate.toISOString().slice(0, 10);
-
-    // set header data unless favorite
-    if (localStorage.getItem('Fav') != 'Y') {
-      const data = {
-        title: 'CIT',
-        stores: this.storeIds,
-        groups: this.groups,
-        financemanagers: this.financeManagerId,
-        dealStatus: this.dealStatus,
-        saleType: this.saleType,
-        allordebit: this.allordebit,
-        vehiclear: this.vehiclear,
-      };
-      try {
-        this.shared.api.SetHeaderData({ obj: data });
-      } catch { /* ignore */ }
-
-      this.header = [
-        {
-          type: 'Bar',
-          storeIds: this.storeIds,
-          vehiclear: this.vehiclear,
-          dealStatus: this.dealStatus,
-          saleType: this.saleType,
-          allordebit: this.allordebit,
-          financemanagers: this.financeManagerId,
-          groups: this.groups,
-        },
-      ];
-
-      if (this.storeIds != '') {
-        this.Getfloorplansdata();
-        this.getEmployees();
-      }
-    }
-
-    // listen window clicks for certain modal close behavior (from report component)
-    this.renderer.listen('window', 'click', (e: Event) => {
-      const TagName = e.target as HTMLButtonElement;
-      if (TagName && TagName.className === 'd-block modal fade show modal-static') {
-        try { this.ngbmodal.dismissAll(); } catch { }
-      }
-    });
-  }
-
-  ngOnInit(): void {
-    // datepicker config and other init tasks
-    this.bsConfig = {
-      dateInputFormat: 'MM/dd/yyyy',
-      showWeekNumbers: false,
-      adaptivePosition: true
+    const data = {
+      title: 'CIT',
+      stores: this.storeIds,
+      groups: this.groups,
+      financemanagers: this.financeManagerId,
+      dealStatus: this.dealStatus,
+      saleType: this.saleType,
+      allordebit: this.allordebit,
+      vehiclear: this.vehiclear,
     };
+    this.shared.api.SetHeaderData({ obj: data }); 
+
+    if (this.storeIds != '') {
+      this.Getfloorplansdata();
+      this.getEmployees();
+    }
+
   }
+
+  ngOnInit(): void { }
 
   // Messaging (report -> parent)
   sendMessage() {
@@ -1256,7 +1173,7 @@ export class Dashboard implements OnInit {
     // 2) 'Floorplan Details' - row-per-record of FloorPlanData
     const workbook: any = this.shared.getWorkbook ? this.shared.getWorkbook() : null;
     if (!workbook) {
-     
+
       this.toast.show('Workbook helper not available in shared service', 'danger', 'Error');
       return;
     }
@@ -1492,13 +1409,13 @@ export class Dashboard implements OnInit {
           this.shared.exportToExcel(workbook, 'CIT');
         } else {
           // fallback: use FileSaver if available globally (not implemented here)
-        
+
           this.toast.show('Export helper not found. Implement shared.exportToExcel or add FileSaver logic.', 'danger', 'Error');
 
         }
       } catch (err) {
         console.error('Export error', err);
-      
+
         this.toast.show('Export failed. See console for details.', 'danger', 'Error');
       }
     });

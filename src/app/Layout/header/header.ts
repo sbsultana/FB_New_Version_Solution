@@ -81,42 +81,23 @@ export class Header {
           this.userData = data;
         }
       });
-    let data: any = {
-      "group": "SILVERTIP",
-      "fullName": "Prasad Chavali",
-      "GU_URL": "https://silvertip.axelone.app",
-      "xtract_url": "",
-      "site": "prod",
-      "user_Info": {
-        "fullName": "Prasad Chavali",
-        "title": "Super Admin",
-        "username": "Prasad Chavali",
-        "payroll_info": "",
-        "id": 1,
-        "userid": 1,
-        "firstname": "Prasad",
-        "lastname": "Chavali",
-        "email": "prasad.chavali@axelautomotive.com",
-        "phone": "+19000000006",
-        "roleid": 100,
-        "status": "Y",
-        "profileImg": "",
-        "moduleids": null,
-        "ADuserid": "DEALERS\\PChavali-AxelOne",
-        "uid": 1,
-        "ustores": "1,2",
-        "Xtract": 1,
-        "Touch": 0,
-        "Xperience": 0,
-        "Xchange": 3,
-        "Xiom": 1,
-        "Tracs": 0,
-        "Preferences": "1",
-        "Storeids": '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11'
-      }
-    }
+    const match = window.location.href.match(/[?&]token=([^&#]+)/i);
 
-    localStorage.setItem('userInfo', JSON.stringify(data))
+    if (match) {
+      console.log(match);
+      const loadingTkn = match?.[1] ? decodeURIComponent(match[1]) : null!;
+      const cleared = loadingTkn?.replaceAll('%253D', '%3D');
+      // localStorage.setItem('finalUser', cleared!)
+      const urltoken = match?.[1] ? decodeURIComponent(match[1]) : null!;
+      const decoded = JSON.parse(atob(cleared));
+      localStorage.setItem('flag', decoded.flag ? decoded.flag : 'M')
+      localStorage.setItem('stime', decoded.Type ? decoded.Type : 'MTD')
+      console.log(decoded, '................ Decoded');
+      localStorage.setItem('userInfo', JSON.stringify(decoded))
+    } else {
+      console.log(match);
+      console.log(JSON.parse(localStorage.getItem('userInfo')!), '..................... Without token')
+    }
     const storedUserInfo = localStorage.getItem('userInfo');
 
     if (storedUserInfo) {
@@ -138,6 +119,8 @@ export class Header {
       this.getGruopsandStores();
       this.getGruopsandStoresAll();
       this.getMobileStores();
+      this.getAccountingReconStores()
+      this.getReconStores();
       this.ready.emit();
 
       return;
@@ -439,7 +422,7 @@ export class Header {
       })
   }
 
-    getMobileStores() {
+  getMobileStores() {
     const obj = {
       "userid": JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
     };
@@ -468,6 +451,62 @@ export class Header {
 
         }
       });
+  }
+  getAccountingReconStores() {
+    const obj = {
+      "userid":JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
+    };
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresListRecon', obj)
+      .subscribe((res: any) => {
+        //console.log(res.response);
+        if (res.status == 200) {
+          let data = res.response
+          let withoutreduce = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          this.shared.common.AccountingReconStores = res.response
+          const obj = {
+            storesData: this.shared.common.AccountingReconStores
+          };
+          this.shared.api.setAccuntingAllStores({ obj: obj });
+        }
+      });
+  }
+ getReconStores() {
+    const obj = {
+      "userid": JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
+      // "userid": 44,
+    }
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresListCustom', obj)
+      .subscribe((res) => {
+        if (res.status == 200) {
+          let data = res.response
+          let withoutreduce = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          this.shared.common.ReconStores = withoutreduce.filter((val: any) => val.sg_name != 'OtherStores')
+          const obj = {
+            storesData: this.shared.common.ReconStores
+          };
+          this.shared.api.setAllStores({ obj: obj });
+        }
+      })
   }
 
   @Input() title!: string;

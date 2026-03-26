@@ -151,13 +151,17 @@ export class Dashboard {
       JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      this.actionType = 'Y'
+      this.actionType = 'Y';
+      this.Department =  ['Service'];
+      this.zeroHours = false;
       localStorage.setItem('flag', 'M')
     } else {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = ''
-        this.actionType = 'N'
+        this.actionType = 'N';
+        this.Department = ['Service', 'Parts', 'Quicklube'] 
+        this.zeroHours =  true ;
       }
     }
     if (this.shared.common.groupsandstores.length > 0) {
