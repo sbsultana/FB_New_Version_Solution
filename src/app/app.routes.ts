@@ -130,6 +130,7 @@ export const routes: Routes = [
 
   //Recon 
   { path: 'ReconAccounting', loadComponent: () => import('./Reports/Recon/ReconGLReport/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'ReconOpenRO', loadComponent: () => import('./Reports/Recon/ReconOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
 
 ];
 
