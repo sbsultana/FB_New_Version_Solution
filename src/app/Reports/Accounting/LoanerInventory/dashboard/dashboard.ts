@@ -127,9 +127,9 @@ export class Dashboard {
     const obj = {
       DealerId: this.storeIds.toString(),
     };
-    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetLoanInventory';
+    const curl = environment.apiUrl + this.comm.routeEndpoint + 'GetLoanInventoryV1';
     this.Api
-      .postmethod(this.comm.routeEndpoint + 'GetLoanInventory', obj)
+      .postmethod(this.comm.routeEndpoint + 'GetLoanInventoryV1', obj)
       .subscribe(
         (res) => {
           const currentTitle = document.title;
