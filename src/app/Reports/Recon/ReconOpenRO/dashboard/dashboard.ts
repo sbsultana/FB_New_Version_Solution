@@ -150,7 +150,6 @@ export class Dashboard {
   }
   ngOnInit(): void {
     this.RunServiceOpenLoad('')
-
   }
 
   setHeaderData() {
