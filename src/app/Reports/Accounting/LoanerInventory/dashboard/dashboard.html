@@ -26,9 +26,9 @@
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <th colspan="2">
-                        </th>
-                        <th colspan="2">Balances</th>
+                        <th colspan="3"> </th>
+                        <th colspan="4">Balances</th>
+                        <th colspan="3"> </th>
                         <th colspan="3">Vehicle</th>
                         <th colspan="1"></th>
 
@@ -36,8 +36,18 @@
                     <tr>
                         <th (click)="sort('StockNo')" style="cursor: pointer;">Stock #</th>
                         <th (click)="sort('Age')" style="cursor: pointer;">Age</th>
-                        <th (click)="sort('Balance')" style="cursor: pointer; text-align: right; ">Balance</th>
-                        <th (click)="sort('Balance2')" style="cursor: pointer; text-align: right; ">1650 Balance</th>
+                        <th (click)="sort('Type')" style="cursor: pointer;">Type</th>
+
+                        <th (click)="sort('Balance')" style="cursor: pointer; text-align: center; ">Balance</th>
+                        <th (click)="sort('Balance2')" style="cursor: pointer; text-align: center; ">1650</th>
+                        <th (click)="sort('Balance3')" style="cursor: pointer; text-align: center; ">1651</th>
+                        <th (click)="sort('Balance4')" style="cursor: pointer; text-align: center; ">2540</th>
+                     
+                        <th (click)="sort('Miles')" style="cursor: pointer;">Current Mileage</th>
+                        <th (click)="sort('Date_New')" style="cursor: pointer;"> Closed 
+                            Agreement Date</th>
+                        <th (click)="sort('Status')" style="cursor: pointer;">Status</th>
+                     
                         <th (click)="sort('Year')" style="cursor: pointer;">Year</th>
                         <th (click)="sort('Make')" style="cursor: pointer; text-align: left !important; ">
                             Make</th>
@@ -55,35 +65,71 @@
                             </td>
                             <td> {{ LI.Age == 0 || LI.Age == null || LI.Age == undefined ||
                                 LI.Age == ''? '-' : LI.Age | number:'1.0-0'}}</td>
+                            <td>
+                                {{ LI.Type == 0 || LI.Type == null || LI.Type == undefined ||
+                                LI.Type == ''? '-' : LI.Type}}
+
+                            </td>
+
                             <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(LI.Balance)}">
                                 <span class="d-flex justify-content-between"> {{
                                     ( LI.Balance == 0 || LI.Balance == null || LI.Balance == undefined ? '' :
                                     '$') }} <span> {{
                                         ( LI.Balance == 0 || LI.Balance== null ? '-' :
-                                        LI.Balance | number:'1.2-2') }}</span></span>
+                                        LI.Balance |number:'1.2-2') }}</span></span>
                             </td>
                             <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(LI['Balance2'])}">
                                 <span class="d-flex justify-content-between"> {{
-                                    ( LI['Balance2'] == 0 || LI['Balance2'] == null || LI['Balance2'] == undefined ? ''
-                                    :
+                                    ( LI['Balance2'] == 0 || LI['Balance2'] == null || LI['Balance2'] == undefined ?
+                                    '' :
                                     '$') }} <span> {{
                                         ( LI['Balance2'] == 0 || LI['Balance2']== null ? '-' :
                                         LI['Balance2'] |number:'1.2-2') }}</span></span>
                             </td>
-                            <td style="text-align: center;"> {{ LI.Year == 0 || LI.Year == null ||
-                                LI.Year ==
-                                undefined|| LI.Year == '' ? '-' : LI.Year}}</td>
-                            <td style="text-align: left;"> {{ LI.Make == 0 || LI.Make == null ||
-                                LI.Make ==
-                                undefined|| LI.Make == '' ? '-' : LI.Make}}</td>
-                            <td style="text-align: left;" title="{{ LI.Model }}"> {{ LI.Model == 0 ||
-                                LI.Model
-                                ==
-                                null || LI.Model == undefined|| LI.Model == '' ? '-' : ((
-                                LI.Model |
-                                slice:0:16)
-                                +
-                                ( LI.Model.length >14 ? '..':''))}}</td>
+                            <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(LI['Balance3'])}">
+                                <span class="d-flex justify-content-between"> {{
+                                    ( LI['Balance3'] == 0 || LI['Balance3'] == null || LI['Balance3'] == undefined ?
+                                    '' :
+                                    '$') }} <span> {{
+                                        ( LI['Balance3'] == 0 || LI['Balance3']== null ? '-' :
+                                        LI['Balance3'] |number:'1.2-2') }}</span></span>
+                            </td>
+                            <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(LI['Balance4'])}">
+                                <span class="d-flex justify-content-between"> {{
+                                    ( LI['Balance4'] == 0 || LI['Balance4'] == null || LI['Balance4'] == undefined ?
+                                    '' :
+                                    '$') }} <span> {{
+                                        ( LI['Balance4'] == 0 || LI['Balance4']== null ? '-' :
+                                        LI['Balance4'] |number:'1.2-2') }}</span></span>
+                            </td>
+                            <td class="align-right">{{LI.Miles == 0 ||
+                                LI.Miles
+                                == null
+                                ? '-' :
+                                LI.Miles | number}}</td>
+                            <td style="text-align: left;">
+                                {{LI.Date ? (LI.Date | date:'MM.dd.yyyy') : '-' }}
+
+                            </td>
+
+                            <td style="text-align: left;">
+                                {{LI.Status ? LI.Status : '-'}}
+
+                            </td>
+                           <td style="text-align: center;"> {{ LI.Year == 0 || LI.Year == null ||
+                                    LI.Year ==
+                                    undefined|| LI.Year == '' ? '-' : LI.Year}}</td>
+                                <td style="text-align: left;"> {{ LI.Make == 0 || LI.Make == null ||
+                                    LI.Make ==
+                                    undefined|| LI.Make == '' ? '-' : LI.Make}}</td>
+                                <td style="text-align: left;" title="{{ LI.Model }}"> {{ LI.Model == 0 ||
+                                    LI.Model
+                                    ==
+                                    null || LI.Model == undefined|| LI.Model == '' ? '-' : ((
+                                    LI.Model |
+                                    slice:0:16)
+                                    +
+                                    ( LI.Model.length >14 ? '..':''))}}</td>
                             <td style="text-align: left;">
                                 {{LI.Store}}
 
@@ -92,28 +138,50 @@
 
                     </ng-container>
                     <ng-container *ngIf="UnappliedData != undefined">
-                        <tr *ngIf="UnappliedData.length > 0" style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;"
+                        <tr *ngIf="UnappliedData.length > 0"
+                            style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;"
                             class="divBold">
-                            <td class="DataBody1" colspan="2">
+                            <td class="DataBody1" colspan="3">
                             </td>
-                            <td>
-                                <span class="d-flex justify-content-between"> {{
-                                    ( getTotal('Balance') == 0 || getTotal('Balance') == null || getTotal('Balance') ==
-                                    undefined ? '' :
-                                    '$') }} <span> {{
-                                        ( getTotal('Balance') == 0 || getTotal('Balance')== null ? '-' :
-                                        getTotal('Balance') |number:'1.2-2') }}</span></span>
-                            </td>
-                            <td>
-                                <span class="d-flex justify-content-between"> {{
-                                    ( getTotal('Balance2') == 0 || getTotal('Balance2') == null || getTotal('Balance2')
-                                    == undefined ? '' :
-                                    '$') }} <span> {{
-                                        ( getTotal('Balance2') == 0 || getTotal('Balance2')== null ? '-' :
-                                        getTotal('Balance2') |number:'1.2-2') }}</span></span>
-
-                            </td>
+                               <td>
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( getTotal('Balance') == 0 || getTotal('Balance') == null || getTotal('Balance')
+                                        == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( getTotal('Balance') == 0 || getTotal('Balance')== null ? '-' :
+                                            getTotal('Balance') |number:'1.2-2') }}</span></span>
+                                    <!-- <span> {{getTotal('Balance') | number:'1.0-0'}} </span> -->
+                                </td>
+                                <td>
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( getTotal('Balance2') == 0 || getTotal('Balance2') == null ||
+                                        getTotal('Balance2') == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( getTotal('Balance2') == 0 || getTotal('Balance2')== null ? '-' :
+                                            getTotal('Balance2') |number:'1.2-2') }}</span></span>
+                                    <!-- <span> {{getTotal('Balance') | number:'1.0-0'}} </span> -->
+                                </td>
+                                <td>
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( getTotal('Balance3') == 0 || getTotal('Balance3') == null ||
+                                        getTotal('Balance3') == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( getTotal('Balance3') == 0 || getTotal('Balance3')== null ? '-' :
+                                            getTotal('Balance3') |number:'1.2-2') }}</span></span>
+                                    <!-- <span> {{getTotal('Balance') | number:'1.0-0'}} </span> -->
+                                </td>
+                                <td>
+                                    <span class="d-flex justify-content-between"> {{
+                                        ( getTotal('Balance4') == 0 || getTotal('Balance4') == null ||
+                                        getTotal('Balance4') == undefined ? '' :
+                                        '$') }} <span> {{
+                                            ( getTotal('Balance4') == 0 || getTotal('Balance4')== null ? '-' :
+                                            getTotal('Balance4') |number:'1.2-2') }}</span></span>
+                                    <!-- <span> {{getTotal('Balance') | number:'1.0-0'}} </span> -->
+                                </td>
                             <td colspan="3"></td>
+                            <td colspan="3"></td>
+
                             <td colspan="1"></td>
                         </tr>
                     </ng-container>
