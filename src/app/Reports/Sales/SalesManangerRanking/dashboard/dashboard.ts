@@ -217,6 +217,7 @@ export class Dashboard {
     this.FromDate = dates[0];
     this.ToDate = dates[1];
     localStorage.setItem('time', type);
+    
   }
 
 
