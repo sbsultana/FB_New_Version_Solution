@@ -139,7 +139,7 @@
                                 1 ? (dealstatus == 'Capped' ? 'Booked' : dealstatus ) : (dealstatus.length==0 ?
                                 'NONE' : 'Selected')}} {{
                                 dealstatus.length
-                                > 1 ? dealstatus.length  :'' }}
+                                > 1 ? dealstatus.length :'' }}
                                 )</span>
                             <span class="arrow"></span>
                         </button>
@@ -165,11 +165,11 @@
 
                 </div>
             </div>
-            <div class="scorecard-double-header">
-                <table class="table mb-0 w-100" >
+            <div class="scorecard-multi-header w-50">
+                <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th colspan="4">
+                            <th colspan="4" style="box-shadow: none;">
                                 <span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
@@ -184,14 +184,14 @@
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span>
                             </th>
-                            <!-- <th class="spacer"></th>
+                            <!-- 
                             <th style="cursor: pointer;" class="bdr-rt" (click)="sort('DealCount')">Deal Count </th> -->
 
                         </tr>
                         <tr>
                             <th class="bdr-rt" style="cursor: pointer;" (click)="sort('data1')"> Insurance Name
                             </th>
-                            <th class="spacer"></th>
+
                             <th class="bdr-rt" (click)="sort('Dealcount')">Deal Count </th>
                             <th class="bdr-rt" (click)="sort('PercentOfall')">Percent of all
                             </th>
@@ -202,15 +202,15 @@
                     <!-- [ngStyle]="{'pointer-events':path2 =='' && path3==''? 'visible':'none'}" -->
                     <tbody *ngIf="LendersData.length > 0;else NoLenders">
                         <ng-container *ngFor="let SalesInfo of LendersData; let j=index">
-                            <tr class="divBold" [ngClass]="{'lightblue-bg' :  DupGrouping && DupGrouping.length > 1  }">
+                            <tr [ngClass]="SalesInfo.data1 === 'REPORTS TOTAL' ? 'divBold' : 'lightblue-bg'">
                                 <td>
-                                    <span >
+                                    <span>
                                         {{(SalesInfo.data1 == undefined ? '--' : ( (SalesInfo.data1.toString()
                                         |
                                         slice:0:30) +
                                         (SalesInfo.data1.toString().length > 30 ? '...' : '') ))}} </span>
                                 </td>
-                                <td class="spacer"></td>
+
                                 <td [ngClass]="{ negative: !inTheGreen(SalesInfo.Dealcount)}">
                                     <span class="d-flex justify-content-between" style="margin-right: 2rem;">
                                         {{
@@ -233,7 +233,8 @@
                                 </td>
                                 <!-- <td colspan="2"></td> -->
                             </tr>
-                            <ng-container *ngIf="DupGrouping && DupGrouping.length > 1 && SalesInfo.data1 != 'REPORTS TOTAL'">
+                            <ng-container
+                                *ngIf="DupGrouping && DupGrouping.length > 1 && SalesInfo.data1 != 'REPORTS TOTAL'">
 
                                 <ng-container *ngFor="let sub of SalesInfo.sub; let i=index">
                                     <tr>
@@ -243,7 +244,7 @@
                                                 slice:0:50) +
                                                 (sub.data2.toString().length > 50 ? '...' : '') ))}} </span>
                                         </td>
-                                        <td class="spacer"></td>
+
                                         <td [ngClass]="{ negative: !inTheGreen(sub.Dealcount)}">
                                             <span class="d-flex justify-content-between" style="margin-right: 2rem;">
                                                 {{
@@ -280,7 +281,7 @@
                                             (dt3.data1.toString() | slice:0:40) +
                                             (dt3.data1.toString().length > 40 ? '...' : '') ))}}</span>
                                     </td>
-                                    <td class="spacer"></td>
+                                    
                                     <td [ngClass]="{ negative: !inTheGreen(dt3.Dealcount)}" style="text-align: right;">
                                         <span class="d-flex justify-content-between" style="margin-right: 2rem;">
                                             {{
@@ -306,7 +307,7 @@
                     <ng-template #NoLenders>
                         <tr *ngIf="NoData != ''">
                             <!-- <td></td>
-                            <td class="spacer"></td> -->
+                             -->
                             <td colspan="4" *ngIf="NoData != ''"
                                 style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;font-family: 'FaktPro-Bold';">
                                 <label>{{NoData}}</label>
@@ -316,7 +317,7 @@
                     </ng-template>
                 </table>
 
-             
+
             </div>
         </div>
 

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="reports-bar">
                 <div class="filter-dropdowns">
-                    
+
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
@@ -23,15 +23,16 @@
 
                 </div>
             </div>
-            <div class="scorecard-multi-header lendersummary-tbl">
+            <div class="scorecard-multi-header partsprofitperformancescorecard-tbl">
                 <table class="table mb-0 w-100">
-                      <thead>
+                    <thead>
                         <tr>
                             <!-- <th class="text-center">  </th> -->
-                            <th colspan="21" style="text-align: center;">Parts Gross Profit Performance Scorecard</th>
+                            <th colspan="21" class="boxshadow-none" style="text-align: center;">Parts Gross Profit
+                                Performance Scorecard</th>
                         </tr>
                         <tr class="bdr-btm">
-                            <th style="background-color:#337ab7 ;"> <span>{{DupFromDate |date:'MMMM'}} <span
+                            <th> <span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
                                         |date:'MMMM'}} </span> </span> <span>{{DupFromDate |date:'dd'}} <span
@@ -43,79 +44,85 @@
                                         *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span></th>
-                            <th class="spacer"></th>
+
 
                             <td class="text-center ">
                                 <span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img src="/images/Edit-Icon.png" class="ms-auto"
-                                    *ngIf="RepairData == 'Y'" style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                &nbsp;&nbsp;<img src="images/Edit_Icon.svg" class="ms-auto" *ngIf="RepairData == 'Y'"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
                                     (click)="toggleGuide('C','Y')">
 
 
-                                <i class="fa fa-check" aria-hidden="true" (click)="toggleGuide('C','Y')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="RepairData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-check" aria-hidden="true" (click)="toggleGuide('C','Y')"
+                                    *ngIf="RepairData == 'N'"></i>
                                 &nbsp;
-                                <i class="fa fa-times" aria-hidden="true" (click)="toggleGuide('C','X')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="RepairData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-times" aria-hidden="true" (click)="toggleGuide('C','X')"
+                                    *ngIf="RepairData == 'N'"></i>
 
                                 <!-- <img src="/images/Save.png" class="ms-auto"
                                     style="cursor: pointer;width:15px;padding-bottom: 2px;" (click)="toggleGuide('R')"> -->
                             </td>
                             <td class="text-center ">Repair Shop</td>
                             <td class="text-center ">Diff</td>
-                            <th class="spacer"></th>
+
 
                             <td class="text-center "><span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img *ngIf="WarrantyData == 'Y'" src="/images/Edit-Icon.png" class="ms-auto"
-                                    style="cursor: pointer;width:15px;padding-bottom: 2px;" (click)="toggleGuide('W','Y')">
+                                &nbsp;&nbsp;<img *ngIf="WarrantyData == 'Y'" src="images/Edit_Icon.svg" class="ms-auto"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                    (click)="toggleGuide('W','Y')">
 
-                                <i class="fa fa-check" aria-hidden="true" (click)="toggleGuide('W','Y')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="WarrantyData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-check" aria-hidden="true" (click)="toggleGuide('W','Y')"
+                                    *ngIf="WarrantyData == 'N'"></i>
                                 &nbsp;
-                                <i class="fa fa-times" aria-hidden="true" (click)="toggleGuide('W','X')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="WarrantyData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-times" aria-hidden="true" (click)="toggleGuide('W','X')"
+                                    *ngIf="WarrantyData == 'N'"></i>
                             </td>
                             <td class="text-center ">Warranty </td>
                             <td class="text-center ">Diff</td>
-                            <th class="spacer"></th>
+
 
 
                             <td class="text-center "><span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img src="/images/Edit-Icon.png" class="ms-auto" *ngIf="ESPData == 'Y'"
-                                    style="cursor: pointer;width:15px;padding-bottom: 2px;" (click)="toggleGuide('E','Y')">
+                                &nbsp;&nbsp;<img src="images/Edit_Icon.svg" class="ms-auto" *ngIf="ESPData == 'Y'"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                    (click)="toggleGuide('E','Y')">
 
-                                         <i class="fa fa-check" aria-hidden="true" (click)="toggleGuide('E','Y')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="ESPData == 'N'"></i> &nbsp;
-                                <i class="fa fa-times" aria-hidden="true" (click)="toggleGuide('E','X')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="ESPData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-check" aria-hidden="true" (click)="toggleGuide('E','Y')"
+                                    *ngIf="ESPData == 'N'"></i>
+                                &nbsp;
+                                <i class="cursor-pointer fa fa-times" aria-hidden="true" (click)="toggleGuide('E','X')"
+                                    *ngIf="ESPData == 'N'"></i>
                             </td>
                             <td class="text-center ">ESP</td>
                             <td class="text-center ">Diff</td>
-                            <th class="spacer"></th>
+
 
 
                             <td class="text-center "><span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img src="/images/Edit-Icon.png" class="ms-auto"
-                                    style="cursor: pointer;width:15px;padding-bottom: 2px;" (click)="toggleGuide('I','Y')" *ngIf="InternalData == 'Y'" >
+                                &nbsp;&nbsp;<img src="images/Edit_Icon.svg" class="ms-auto"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                    (click)="toggleGuide('I','Y')" *ngIf="InternalData == 'Y'">
 
-                                         <i class="fa fa-check" aria-hidden="true" (click)="toggleGuide('I','Y')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="InternalData == 'N'"></i> &nbsp;
-                                <i class="fa fa-times" aria-hidden="true" (click)="toggleGuide('I','X')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="InternalData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-check" aria-hidden="true" (click)="toggleGuide('I','Y')"
+                                    *ngIf="InternalData == 'N'"></i> &nbsp;
+                                <i class="cursor-pointer fa fa-times" aria-hidden="true" (click)="toggleGuide('I','X')"
+                                    *ngIf="InternalData == 'N'"></i>
                             </td>
                             <td class="text-center ">Internal </td>
                             <td class="text-center ">Diff</td>
-                            <th class="spacer"></th>
+
 
 
                             <td class="text-center "><span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img src="/images/Edit-Icon.png" class="ms-auto"
-                                    style="cursor: pointer;width:15px;padding-bottom: 2px;" (click)="toggleGuide('T','Y')" *ngIf="TiresData == 'Y'" >
+                                &nbsp;&nbsp;<img src="images/Edit_Icon.svg" class="ms-auto"
+                                    style="cursor: pointer;width:15px;padding-bottom: 2px;"
+                                    (click)="toggleGuide('T','Y')" *ngIf="TiresData == 'Y'">
 
-                                         <i class="fa fa-check" aria-hidden="true" (click)="toggleGuide('T','Y')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="TiresData == 'N'"></i> &nbsp;
-                                <i class="fa fa-times" aria-hidden="true" (click)="toggleGuide('T','X')"
-                                    style="color: white;font-size: 15px;cursor: pointer;" *ngIf="TiresData == 'N'"></i>
+                                <i class="cursor-pointer fa fa-check" aria-hidden="true" (click)="toggleGuide('T','Y')"
+                                    *ngIf="TiresData == 'N'"></i>
+                                &nbsp;
+                                <i class="cursor-pointer fa fa-times" aria-hidden="true" (click)="toggleGuide('T','X')"
+                                    *ngIf="TiresData == 'N'"></i>
                             </td>
                             <td class="text-center ">Tires (oth Merch) </td>
                             <td class="text-center ">Diff</td>
@@ -131,74 +138,80 @@
                                 <ng-container *ngFor="let psd of main.subData; let j=index">
                                     <tr *ngIf="psd.AP_StoreID != 0">
 
-                                        <td style="padding-left: 1.2rem;background-color: #fff;">{{psd.StoreName ? psd.StoreName : '-' }}</td>
-                                        <th class="spacer"></th>
+                                        <td style="padding-left: 1.2rem;">{{psd.StoreName ?
+                                            psd.StoreName : '-' }}</td>
+
 
                                         <td>
-                                            <span *ngIf="RepairData== 'Y'" >{{psd['C'] ? (psd['C'] |
+                                            <span *ngIf="RepairData== 'Y'">{{psd['C'] ? (psd['C'] |
                                                 number:'1.2-2') + ' %' : '-' }}</span>
                                             <span *ngIf="RepairData== 'N'">
-                                                <div [ngClass]="{  'percent-container': psd.C_dup > 0 }" >
-                                                    <input class="textInput" type="text" [(ngModel)]="psd['C_dup']"  
-                                                    
+                                                <div [ngClass]="{  'percent-container': psd.C_dup > 0 }">
+                                                    <input class="editabletxt" type="text" [(ngModel)]="psd['C_dup']"
                                                         (keypress)="keyPressNumbersincludedecimal($event , psd)"
                                                         (keydown)="onKeyDown($event,psd)">
                                                 </div>
 
-                                                <!-- <input type="text" class="textInput" [(ngModel)]="psd['C_dup']"
+                                                <!-- <input type="text" class="editabletxt" [(ngModel)]="psd['C_dup']"
                                                     (click)="keyPressNumbers($event,psd)"> -->
                                             </span>
                                         </td>
-                                        <td >{{psd['Repair Shop'] ? (psd['Repair Shop'] | number:'1.2-2') + ' %' : '-' }}
+                                        <td>{{psd['Repair Shop'] ? (psd['Repair Shop'] | number:'1.2-2') + ' %' : '-' }}
                                         </td>
-                                          <td [ngClass]="{ positive: psd['Repair Shop'] > psd['C'] , negative : psd['Repair Shop'] <= psd['C']}">{{psd['C_Diff'] ? (psd['C_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                        <th class="spacer"></th>
+                                        <td
+                                            [ngClass]="{ positive: psd['Repair Shop'] > psd['C'] , negative : psd['Repair Shop'] <= psd['C']}">
+                                            {{psd['C_Diff'] ? (psd['C_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                        <td >
+
+                                        <td>
                                             <span *ngIf="WarrantyData== 'Y'">{{psd['W'] ? (psd['W'] |
                                                 number:'1.2-2') + ' %' : '-' }}</span>
                                             <span *ngIf="WarrantyData== 'N'">
 
-                                                 <div [ngClass]="{  'percent-container': psd.W_dup > 0 }">
-                                                    <input class="textInput" type="text" [(ngModel)]="psd['W_dup']"
+                                                <div [ngClass]="{  'percent-container': psd.W_dup > 0 }">
+                                                    <input class="editabletxt" type="text" [(ngModel)]="psd['W_dup']"
                                                         (keypress)="keyPressNumbersincludedecimal($event , psd)"
                                                         (keydown)="onKeyDown($event,psd)">
                                                 </div>
 
                                             </span>
                                         </td>
-                                        <td >{{psd['Warranty Service'] ? (psd['Warranty Service'] | number:'1.2-2') + '
+                                        <td>{{psd['Warranty Service'] ? (psd['Warranty Service'] | number:'1.2-2') + '
                                             %' : '-'}}</td>
-                                        <td [ngClass]="{ positive: psd['Warranty Service'] > psd['W'] , negative : psd['Warranty Service'] <= psd['W']}">{{psd['W_Diff'] ? (psd['W_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                        <th class="spacer"></th>
+                                        <td
+                                            [ngClass]="{ positive: psd['Warranty Service'] > psd['W'] , negative : psd['Warranty Service'] <= psd['W']}">
+                                            {{psd['W_Diff'] ? (psd['W_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+
 
                                         <td>
-                                            <span *ngIf="ESPData== 'Y'" >{{psd['E'] ? (psd['E'] |
+                                            <span *ngIf="ESPData== 'Y'">{{psd['E'] ? (psd['E'] |
                                                 number:'1.2-2') + ' %' : '-' }}</span>
                                             <span *ngIf="ESPData== 'N'">
 
-                                                 <div [ngClass]="{  'percent-container': psd.E_dup > 0 }">
-                                                    <input class="textInput" type="text" [(ngModel)]="psd['E_dup']"
+                                                <div [ngClass]="{  'percent-container': psd.E_dup > 0 }">
+                                                    <input class="editabletxt" type="text" [(ngModel)]="psd['E_dup']"
                                                         (keypress)="keyPressNumbersincludedecimal($event , psd)"
                                                         (keydown)="onKeyDown($event,psd)">
                                                 </div>
 
-                                              
+
                                             </span>
 
                                         </td>
-                                        <td >{{psd['Esp Repair Shop'] ? (psd['Esp Repair Shop'] | number:'1.2-2') + ' %'
+                                        <td>{{psd['Esp Repair Shop'] ? (psd['Esp Repair Shop'] | number:'1.2-2') + ' %'
                                             : '-'}}</td>
-                                       <td [ngClass]="{ positive: psd['Esp Repair Shop'] > psd['E'] , negative : psd['Esp Repair Shop'] <= psd['E']}" >{{psd['E_Diff'] ? (psd['E_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                        <th class="spacer"></th>
+                                        <td
+                                            [ngClass]="{ positive: psd['Esp Repair Shop'] > psd['E'] , negative : psd['Esp Repair Shop'] <= psd['E']}">
+                                            {{psd['E_Diff'] ? (psd['E_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                        <td >
-                                            <span *ngIf="InternalData== 'Y'" >{{psd['I'] ? (psd['I'] |
+
+                                        <td>
+                                            <span *ngIf="InternalData== 'Y'">{{psd['I'] ? (psd['I'] |
                                                 number:'1.2-2') + ' %' : '-' }}</span>
                                             <span *ngIf="InternalData== 'N'">
 
-                                                 <div [ngClass]="{  'percent-container': psd.I_dup > 0 }">
-                                                    <input class="textInput" type="text" [(ngModel)]="psd['I_dup']"
+                                                <div [ngClass]="{  'percent-container': psd.I_dup > 0 }">
+                                                    <input class="editabletxt" type="text" [(ngModel)]="psd['I_dup']"
                                                         (keypress)="keyPressNumbersincludedecimal($event , psd)"
                                                         (keydown)="onKeyDown($event,psd)">
                                                 </div>
@@ -206,70 +219,84 @@
                                             </span>
 
                                         </td>
-                                        <td >{{psd['Internal Service'] ? (psd['Internal Service'] | number:'1.2-2') + '
+                                        <td>{{psd['Internal Service'] ? (psd['Internal Service'] | number:'1.2-2') + '
                                             %' : '-'}}</td>
-                                        <td [ngClass]="{ positive: psd['Internal Service'] > psd['I'] , negative : psd['Internal Service'] <= psd['I']}">{{psd['I_Diff'] ? (psd['I_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                        <th class="spacer"></th>
+                                        <td
+                                            [ngClass]="{ positive: psd['Internal Service'] > psd['I'] , negative : psd['Internal Service'] <= psd['I']}">
+                                            {{psd['I_Diff'] ? (psd['I_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+
 
                                         <td>
-                                            <span *ngIf="TiresData== 'Y'" >{{psd['T'] ? (psd['T'] |
+                                            <span *ngIf="TiresData== 'Y'">{{psd['T'] ? (psd['T'] |
                                                 number:'1.2-2') + ' %' : '-' }}</span>
                                             <span *ngIf="TiresData== 'N'">
 
-                                                 <div [ngClass]="{  'percent-container': psd.T_dup > 0 }">
-                                                    <input class="textInput" type="text" [(ngModel)]="psd['T_dup']"
+                                                <div [ngClass]="{  'percent-container': psd.T_dup > 0 }">
+                                                    <input class="editabletxt" type="text" [(ngModel)]="psd['T_dup']"
                                                         (keypress)="keyPressNumbersincludedecimal($event , psd)"
                                                         (keydown)="onKeyDown($event,psd)">
                                                 </div>
 
-                                            
+
                                             </span>
 
                                         </td>
-                                        <td >{{psd['Tires'] ? (psd['Tires'] | number:'1.2-2') + ' %' : '-'}}</td>
-                                        <td [ngClass]="{ positive: psd['Tires'] > psd['T'] , negative : psd['Tires'] <= psd['T']}">{{psd['T_Diff'] ? (psd['T_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                        <td>{{psd['Tires'] ? (psd['Tires'] | number:'1.2-2') + ' %' : '-'}}</td>
+                                        <td
+                                            [ngClass]="{ positive: psd['Tires'] > psd['T'] , negative : psd['Tires'] <= psd['T']}">
+                                            {{psd['T_Diff'] ? (psd['T_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
                                     </tr>
 
                                 </ng-container>
                                 <tr
-                                    [ngClass]="{'grandtotal' : i == PreformanceScorecardData.length-1 , 'total' : i != PreformanceScorecardData.length-1  }">
-                                    <td style="text-transform: uppercase;background-color: #98a2ab;">{{main.GroupName}}</td>
+                                    [ngClass]="{'divBold' : i == PreformanceScorecardData.length-1 , 'lightblue-bg' : i != PreformanceScorecardData.length-1  }">
+                                    <td class="text-uppercase">{{main.GroupName}}</td>
 
-                                    <th class="spacer"></th>
-                                    <td >{{main['C'] ? (main['C'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                    <td >{{main['Repair Shop'] ? (main['Repair Shop'] | number:'1.2-2') + ' %' : '-' }}
+
+                                    <td>{{main['C'] ? (main['C'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td>{{main['Repair Shop'] ? (main['Repair Shop'] | number:'1.2-2') + ' %' : '-' }}
                                     </td>
-                                    <td [ngClass]="{ positive: main['Repair Shop'] > main['C'] , negative : main['Repair Shop'] <= main['C']}">{{main['C_Diff'] ? (main['C_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                    <th class="spacer"></th>
+                                    <td
+                                        [ngClass]="{ positive: main['Repair Shop'] > main['C'] , negative : main['Repair Shop'] <= main['C']}">
+                                        {{main['C_Diff'] ? (main['C_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <td >{{main['W'] ? (main['W'] | number:'1.2-2') + ' %' : '-' }}</td>
-                                    <td >{{main['Warranty Service'] ? (main['Warranty Service'] | number:'1.2-2') + ' %'
+
+                                    <td>{{main['W'] ? (main['W'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td>{{main['Warranty Service'] ? (main['Warranty Service'] | number:'1.2-2') + ' %'
                                         : '-'}}</td>
-                                    <td [ngClass]="{ positive: main['Warranty Service'] > main['W'] , negative : main['Warranty Service'] <= main['W']}">{{main['W_Diff'] ? (main['W_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td
+                                        [ngClass]="{ positive: main['Warranty Service'] > main['W'] , negative : main['Warranty Service'] <= main['W']}">
+                                        {{main['W_Diff'] ? (main['W_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <th class="spacer"></th>
 
-                                    <td >{{main['E'] ? (main['E'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <td >{{main['Esp Repair Shop'] ? (main['Esp Repair Shop'] | number:'1.2-2') + ' %' :
+                                    <td>{{main['E'] ? (main['E'] | number:'1.2-2') + ' %' : '-' }}</td>
+
+                                    <td>{{main['Esp Repair Shop'] ? (main['Esp Repair Shop'] | number:'1.2-2') + ' %' :
                                         '-'}}</td>
-                                    <td [ngClass]="{ positive: main['Esp Repair Shop'] > main['E'] , negative : main['Esp Repair Shop'] <= main['E']}">{{main['E_Diff'] ? (main['E_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td
+                                        [ngClass]="{ positive: main['Esp Repair Shop'] > main['E'] , negative : main['Esp Repair Shop'] <= main['E']}">
+                                        {{main['E_Diff'] ? (main['E_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <th class="spacer"></th>
 
-                                    <td >{{main['I'] ? (main['I'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <td >{{main['Internal Service'] ? (main['Internal Service'] | number:'1.2-2') + ' %'
+                                    <td>{{main['I'] ? (main['I'] | number:'1.2-2') + ' %' : '-' }}</td>
+
+                                    <td>{{main['Internal Service'] ? (main['Internal Service'] | number:'1.2-2') + ' %'
                                         : '-'}}</td>
-                                    <td [ngClass]="{ positive: main['Internal Service'] > main['I'] , negative : main['Internal Service'] <= main['I']}">{{main['I_Diff'] ? (main['I_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td
+                                        [ngClass]="{ positive: main['Internal Service'] > main['I'] , negative : main['Internal Service'] <= main['I']}">
+                                        {{main['I_Diff'] ? (main['I_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <th class="spacer"></th>
 
-                                    <td >{{main['T'] ? (main['T'] | number:'1.2-2') + ' %' : '-' }}</td>
 
-                                    <td >{{main['Tires'] ? (main['Tires'] | number:'1.2-2') + ' %' : '-'}}</td>
-                                    <td [ngClass]="{ positive: main['Tires'] > main['T'] , negative : main['Tires'] <= main['T']}">{{main['T_Diff'] ? (main['T_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
+                                    <td>{{main['T'] ? (main['T'] | number:'1.2-2') + ' %' : '-' }}</td>
+
+                                    <td>{{main['Tires'] ? (main['Tires'] | number:'1.2-2') + ' %' : '-'}}</td>
+                                    <td
+                                        [ngClass]="{ positive: main['Tires'] > main['T'] , negative : main['Tires'] <= main['T']}">
+                                        {{main['T_Diff'] ? (main['T_Diff'] | number:'1.2-2') + ' %' : '-' }}</td>
 
 
                                 </tr>
@@ -369,6 +396,6 @@
                 </table>
             </div>
         </div>
-      
+
     </div>
 </main>

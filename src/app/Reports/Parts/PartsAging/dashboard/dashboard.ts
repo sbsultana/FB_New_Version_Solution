@@ -8,9 +8,10 @@ import { Subscription } from 'rxjs';
 import { Workbook } from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { DatePipe, CommonModule } from '@angular/common';
+import { Stores } from '../../../../CommonFilters/stores/stores';
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule],
+  imports: [SharedModule, Stores],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -20,7 +21,7 @@ export class Dashboard {
   storeButtonLabel = 'All';
   storeIds: any = '2'; // Default to store ID 2
   stores: any[] = [];
-  selectedReportTotal: string = 'BOTTOM';
+  selectedReportTotal: string = 'Bottom';
   storeData: any[] = [];
   showModal = false;
   selectedStore: any = null;
@@ -35,7 +36,7 @@ export class Dashboard {
   DateType: any = '30';
   excel!: Subscription;
   NoData: boolean = false;
- groupedParts: Record<string, any[]> = {};
+  groupedParts: Record<string, any[]> = {};
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -163,7 +164,7 @@ export class Dashboard {
     this.updateStoreSelection();
   }
 
-  selectReportTotal(position: 'TOP' | 'BOTTOM') {
+  selectReportTotal(position: 'Top' | 'Bottom') {
     this.selectedReportTotal = position;
     this.isReportDropdownOpen = false;
   }
@@ -198,15 +199,15 @@ export class Dashboard {
       });
     }
 
-    // 3️⃣ Filter by report total (TOP / BOTTOM)
+    // 3️⃣ Filter by report total (Top / Bottom)
     if (this.selectedReportTotal) {
       filteredStores = filteredStores.map((store: { AgeGroupData: any; }) => {
         let sortedAgeGroups = [...store.AgeGroupData];
         sortedAgeGroups.sort((a, b) => b.Total_Qty - a.Total_Qty); // descending by total qty
 
-        if (this.selectedReportTotal === 'TOP') {
+        if (this.selectedReportTotal === 'Top') {
           sortedAgeGroups = sortedAgeGroups.slice(0, 5); // top 5
-        } else if (this.selectedReportTotal === 'BOTTOM') {
+        } else if (this.selectedReportTotal === 'Bottom') {
           sortedAgeGroups = sortedAgeGroups.slice(-5); // bottom 5
         }
 
@@ -257,7 +258,7 @@ export class Dashboard {
           }));
           this.originalStoreData = [...this.storeData];
 
-          if (this.selectedReportTotal == 'TOP') {
+          if (this.selectedReportTotal == 'Top') {
             let last = this.storeData.pop()
             this.storeData.unshift(last)
           }
@@ -290,18 +291,18 @@ export class Dashboard {
         next: (res: any) => {
           if (res?.status === 200 && res.response?.length > 0) {
             const data = res.response[0];
- const rawParts = JSON.parse(data.PartsJsonDetails || '[]') || [];
+            const rawParts = JSON.parse(data.PartsJsonDetails || '[]') || [];
 
-rawParts.forEach((p: { Manufacturer: any; }) => p.Manufacturer = data.Mfr || '-'); // assign Mfr first
+            rawParts.forEach((p: { Manufacturer: any; }) => p.Manufacturer = data.Mfr || '-'); // assign Mfr first
 
-this.groupedParts = rawParts.reduce((acc: any, item: any) => {
-  const key = item.Manufacturer;
-  acc[key] = acc[key] || [];
-  acc[key].push(item);
-  return acc;
-}, {});
-  console.log(this.groupedParts);
-  
+            this.groupedParts = rawParts.reduce((acc: any, item: any) => {
+              const key = item.Manufacturer;
+              acc[key] = acc[key] || [];
+              acc[key].push(item);
+              return acc;
+            }, {});
+            console.log(this.groupedParts);
+
           } else {
             this.groupedParts = {};
           }

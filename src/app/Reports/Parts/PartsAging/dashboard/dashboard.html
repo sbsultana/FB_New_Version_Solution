@@ -4,53 +4,24 @@
 <main>
   <div>
     <div class="container-fluid">
-      <div class="report-bar">
+      <div class="reports-bar">
         <div class="filter-dropdowns" *ngIf="!partsDetails">
-          <div class="dropdown d-none">
-            <button class="dropdown-toggle" (click)="togglePopover(0)">
-              <span *ngIf="storeIds.length !== 1">Stores ({{storeButtonLabel}})</span>
-              <span *ngIf="storeIds.length === 1">{{storeButtonLabel}}</span>
-              <span class="arrow"></span>
-            </button>
-            <div class="dropdown-menu" *ngIf="activePopover === 0">
-              <label *ngFor="let store of stores">
-                <input type="checkbox" [checked]="storeIds.includes(store.ID)" (change)="onStoreToggle(store.ID)" />
-                {{ store.storename }}
-              </label>
-            </div>
-            <div class="reportstores-card my-3" *ngIf="activePopover === 0">
-              <div class="row h-100">
-                <div class="stores d-flex flex-column ps-0">
-                  <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                    <div class="allstores text-start">
-                      <a class="text-primary text-decoration-none cursor-pointer me-2" (click)="allstores('Y')">
-                        Select All
-                      </a>
-                      |
-                      <a class="text-primary text-decoration-none cursor-pointer ms-2" (click)="allstores('N')">
-                        Clear All
-                      </a>
-                    </div>
-                    <div class="store-columns flex-grow-1">
-                      <ng-container *ngFor="let s of stores">
-                        <button class="btn btn-outline-primary store-button" (click)="individualStores(s)"
-                          [ngClass]="{'active': storeIds.includes(s.ID), 'inactive': !storeIds.includes(s.ID)}">
-                          <span ngbTooltip="{{s.storename}}">{{s.storename}}</span>
-                        </button>
-                      </ng-container>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="dropdown d-none">
+          <!-- <div class="dropdown">
+            <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
+                {{storecount}}
+                {{storedisplayname}} )</span>
+              <span class="arrow"></span></button>
+            <app-stores
+              [ngStyle]="{'display' : activePopover === 0 ? 'block' : 'none','position' : activePopover === 0 ? 'fixed' : '','z-index': activePopover === 0 ? '1050' : ''}"
+              [storesFilterData]="storesFilterData" (StoresData)="StoresData($event)"></app-stores>
+          </div> -->
+          <div class="dropdown">
             <button class="dropdown-toggle" (click)="toggleReportDropdown()">
-              Report Totals (
-              {{ selectedReportTotal === 'TOP' ? 'TOP' :
-              selectedReportTotal === 'BOTTOM' ? 'BOTTOM' :
-              'ALL' }}
-              )
+              Report Totals <span class="light-font"> (
+                {{ selectedReportTotal === 'Top' ? 'Top' :
+                selectedReportTotal === 'Bottom' ? 'Bottom' :
+                'ALL' }}
+                )</span>
               <span class="arrow"></span>
             </button>
 
@@ -61,20 +32,20 @@
                     <div class="store-columns flex-grow-1" style="grid-template-rows: repeat(2, auto);">
 
                       <ng-container>
-                        <!-- TOP -->
+                        <!-- Top -->
                         <button class="btn btn-outline-primary store-button" [ngClass]="{
-                                    'active': selectedReportTotal === 'TOP',
-                                    'inactive': selectedReportTotal !== 'TOP'
-                                }" (click)="selectReportTotal('TOP')">
-                          TOP
+                                    'active': selectedReportTotal === 'Top',
+                                    'inactive': selectedReportTotal !== 'Top'
+                                }" (click)="selectReportTotal('Top')">
+                          Top
                         </button>
 
-                        <!-- BOTTOM -->
+                        <!-- Bottom -->
                         <button class="btn btn-outline-primary store-button" [ngClass]="{
-                                    'active': selectedReportTotal === 'BOTTOM',
-                                    'inactive': selectedReportTotal !== 'BOTTOM'
-                                }" (click)="selectReportTotal('BOTTOM')">
-                          BOTTOM
+                                    'active': selectedReportTotal === 'Bottom',
+                                    'inactive': selectedReportTotal !== 'Bottom'
+                                }" (click)="selectReportTotal('Bottom')">
+                          Bottom
                         </button>
                       </ng-container>
 
@@ -89,11 +60,11 @@
 
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(3)">
-              Source (
-              {{ selectedStoreSources.length === partsSourceList.length ? 'All' :
-              selectedStoreSources.length > 0 ? selectedStoreSources.length + ' Selected' : 'Select'
-              }}
-              )
+              Source <span class="light-font"> (
+                {{ selectedStoreSources.length === partsSourceList.length ? 'All' :
+                selectedStoreSources.length > 0 ? selectedStoreSources.length + ' Selected' : 'Select'
+                }}
+                )</span>
               <span class="arrow"></span>
             </button>
 
@@ -137,16 +108,16 @@
           </div>
         </div>
       </div>
-      <div class="performance-scorecard" *ngIf="!partsDetails">
-        <table class="table mb-0">
+      <div class="scorecard-multi-header partsaging-tbl" *ngIf="!partsDetails">
+        <table class="table mb-0 w-100">
 
-          <thead class="bg-dark text-white">
+          <thead>
             <tr>
               <th rowspan="2" style="width: 15%;">AS OF</th>
 
               <th colspan="4">STOCK</th>
               <th colspan="4">NON-STOCK</th>
-              <th colspan="4">TOTAL</th>
+              <th colspan="4" class="boxshadow-none">TOTAL</th>
             </tr>
 
             <tr>
@@ -160,127 +131,81 @@
               <th>QTY</th>
               <th>QTY %</th>
               <th>COST</th>
-              <th>IDLE </th>
+              <th>IDLE</th>
 
               <!-- TOTAL -->
               <th>QTY</th>
               <th>QTY %</th>
               <th>COST</th>
-              <th>IDLE </th>
+              <th>IDLE</th>
             </tr>
           </thead>
 
           <tbody>
 
-            <!-- STORE HEADER ROW -->
             <ng-container *ngFor="let store of storeData">
 
               <!-- STORE HEADER ROW -->
-              <tr class="bg-primary text-white fw-bold">
+              <tr class="lightblue-bg">
                 <td class="text-start ps-3">{{ store.StoreName }}</td>
 
                 <!-- STOCK -->
                 <td>{{ store.Stock_Qty | number }}</td>
-                <!-- <td>{{ calculateQtyPer(store.Stock_Qty, store.Total_Qty) | number:'1.2-2' }}%</td> -->
                 <td></td>
-                <td>${{ store.Stock_Cost | number:'1.0-0' }}</td>
-                <td>${{ store.Stock_Idle | number:'1.0-0' }}</td>
-                <!-- <td>
-        {{ store.Stock_Idle > 0 
-            ? (store.Stock_Idle * 100 / store.Stock_Cost | number:'1.2-2') + '%' 
-            : '-' }}
-      </td> -->
-
+                <td>{{ store.Stock_Cost ? (store.Stock_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                <td>{{ store.Stock_Idle ? (store.Stock_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
 
                 <!-- NON-STOCK -->
                 <td>{{ store.NonStock_Qty | number }}</td>
-                <!-- <td>{{ calculateQtyPer(store.NonStock_Qty, store.Total_Qty) | number:'1.2-2' }}%</td> -->
                 <td></td>
-                <td>${{ store.NonStock_Cost | number:'1.0-0' }}</td>
-                <td>${{ store.NonStock_Idle | number:'1.0-0' }}</td>
-                <!-- <td>
-        {{ store.NonStock_Idle > 0 
-            ? (store.NonStock_Idle * 100 / store.NonStock_Cost | number:'1.2-2') + '%' 
-            : '-' }}
-      </td> -->
+                <td>{{ store.NonStock_Cost ? (store.NonStock_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                <td>{{ store.NonStock_Idle ? (store.NonStock_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
 
                 <!-- TOTAL -->
                 <td>{{ store.Total_Qty | number }}</td>
-                <!-- <td>{{ calculateQtyPer(store.Total_Qty, store.Total_Qty) | number:'1.2-2' }}%</td> -->
                 <td></td>
-                <td>${{ store.Total_Cost | number:'1.0-0' }}</td>
-                <td>${{ store.Total_Idle | number:'1.0-0' }}</td>
-                <!-- <td>
-        {{ store.Total_Idle > 0 
-            ? (store.Total_Idle * 100 / store.Total_Cost | number:'1.2-2') + '%' 
-            : '-' }}
-      </td> -->
+                <td>{{ store.Total_Cost ? (store.Total_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                <td>{{ store.Total_Idle ? (store.Total_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
               </tr>
 
               <!-- AGE GROUP ROWS -->
               <ng-container *ngFor="let g of store.AgeGroupData; let k = index">
 
-                <!-- If last row = SUMMARY ROW -->
-                <!-- <tr *ngIf="k === store.AgeGroupData.length - 1" class="bg-secondary text-white fw-bold">
-    <td class="text-start ps-4">{{ g.Never_sold }}</td>
-
-  
-    <td>{{ g.Stock_Qty | number }}hjlkj.</td>
-    <td>{{ calculateQtyPer(g.Stock_Qty, store.Stock_Qty) | number:'1.2-2' }}%</td>
-    <td>${{ g.Stock_Cost | number:'1.0-0' }}</td>
-    <td>${{ g.Stock_Idle | number:'1.0-0' }}</td>
-
-   
-
-   
-    <td>{{ g.NonStock_Qty | number }}</td>
-    <td>{{ calculateQtyPer(g.NonStock_Qty, store.NonStock_Qty) | number:'1.2-2' }}%</td>
-    <td>${{ g.NonStock_Cost | number:'1.0-0' }}</td>
-    <td>{{ g.NonStock_Idle | number:'1.0-0' }}</td>
-   
-
- 
-    <td>{{ g.Total_Qty | number }}</td>
-    <td>{{ calculateQtyPer(g.Total_Qty, store.Total_Qty) | number:'1.2-2' }}%</td>
-    <td>${{ g.Total_Cost | number:'1.0-0' }}</td>
-    <td>{{ g.Total_Idle | number:'1.0-0' }}</td>
-    
-    
-  </tr> -->
-
-                <!-- Normal Age Groups -->
+                <!-- NORMAL ROWS -->
                 <tr *ngIf="k !== store.AgeGroupData.length - 1">
                   <td class="text-start ps-4" (click)="getPartsDetails(store,g)" style="cursor:pointer;">
                     {{ g.Never_sold }}
                   </td>
+
+                  <!-- STOCK -->
                   <td>{{ g.Stock_Qty | number }}</td>
                   <td>{{ calculateQtyPer(g.Stock_Qty, store.Stock_Qty) | number:'1.2-2' }}%</td>
-                  <td>${{ g.Stock_Cost | number:'1.0-0' }}</td>
-                  <td>${{ g.Stock_Idle }}</td>
+                  <td>{{ g.Stock_Cost ? (g.Stock_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                  <td>{{ g.Stock_Idle ? (g.Stock_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
 
+                  <!-- NON-STOCK -->
                   <td>{{ g.NonStock_Qty | number }}</td>
                   <td>{{ calculateQtyPer(g.NonStock_Qty, store.NonStock_Qty) | number:'1.2-2' }}%</td>
-                  <td>${{ g.NonStock_Cost | number:'1.0-0' }}</td>
-                  <td>${{ g.NonStock_Idle }}</td>
+                  <td>{{ g.NonStock_Cost ? (g.NonStock_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                  <td>{{ g.NonStock_Idle ? (g.NonStock_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
 
+                  <!-- TOTAL -->
                   <td>{{ g.Total_Qty | number }}</td>
                   <td>{{ calculateQtyPer(g.Total_Qty, store.Total_Qty) | number:'1.2-2' }}%</td>
-                  <td>${{ g.Total_Cost | number:'1.0-0' }}</td>
-                  <td>${{ g.Total_Idle }}</td>
+                  <td>{{ g.Total_Cost ? (g.Total_Cost | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
+                  <td>{{ g.Total_Idle ? (g.Total_Idle | currency:'USD':'symbol':'1.0-0') : '-' }}</td>
                 </tr>
 
-
-
-
               </ng-container>
-              <tr>
-                <td>
 
-                </td>
+              <!-- FOOTER PERCENT ROW -->
+              <tr>
+                <td></td>
+
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td>{{ calculatestock(store) | number:'1.2-2' }}% </td>
+                <td>{{ calculatestock(store) | number:'1.2-2' }}%</td>
 
                 <td>-</td>
                 <td>-</td>
@@ -290,8 +215,7 @@
                 <td>-</td>
                 <td>-</td>
                 <td>-</td>
-                <td>{{ calculatetotal(store) | number:'1.2-2' }}% </td>
-
+                <td>{{ calculatetotal(store) | number:'1.2-2' }}%</td>
               </tr>
 
             </ng-container>
@@ -304,8 +228,8 @@
       <button class="btn btn-primary btn-sm mb-0" (click)="closeGroupDetails()" *ngIf="partsDetails">
         <i class="bi bi-arrow-left"></i>
       </button>
-      <div class="performance-scorecard-details mt-3" *ngIf="partsDetails">
-        <table class="table table-bordered text-center">
+      <div class="scorecard-double-header mt-3" *ngIf="partsDetails">
+        <table class="table mb-0 w-100">
           <thead class="bg-dark text-white">
             <tr>
               <th rowspan="2">MANUFACTURER</th>
