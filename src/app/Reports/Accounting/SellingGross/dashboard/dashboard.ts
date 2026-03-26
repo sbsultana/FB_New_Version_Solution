@@ -9,7 +9,7 @@ import { CurrencyPipe, DatePipe, formatDate } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import FileSaver from 'file-saver';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -547,7 +547,7 @@ export class Dashboard {
         },
         {
           label: 'Month',
-          value: this.datepipe.transform(this.currentMonth, 'MMMM yyyy')
+          value: this.datepipe.transform(this.selectDate, 'MMMM yyyy')
         },
         {
           label: 'Type',
@@ -590,65 +590,173 @@ export class Dashboard {
     return rowCount;
   }
   exportToExcel(): void {
-    const workbook = new Workbook();
+
+    const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Selling Gross');
 
-    // Build header based on selected grid blocks
-    const headerRow = ['Dealer'];
+    /* ================= FILTER SECTION ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    if (this.gridBlocks.includes('Net to Sales')) {
-      headerRow.push('Net to Sales ' + this.datepipe.transform(this.previousMonth, 'MMM yy'), 'Net to Sales Jan-' + this.datepipe.transform(this.previousMonth, 'MMM yy'));
-    }
-    if (this.gridBlocks.includes('Net to Gross')) {
-      headerRow.push('Net to Gross ' + this.datepipe.transform(this.previousMonth, 'MMM yy'), 'Net to Gross Jan-' + this.datepipe.transform(this.previousMonth, 'MMM yy'));
-    }
-    if (this.gridBlocks.includes('Selling Gross')) {
-      headerRow.push(this.datepipe.transform(this.previousMonth, 'MMM yy') + ' Gross', this.datepipe.transform(this.previousMonth, 'MMM yy') + ' %', 'Jan-' + this.datepipe.transform(this.previousMonth, 'MMM yy') + ' Gross', 'Jan-' + this.datepipe.transform(this.previousMonth, 'MMM yy') + 'YTD %', 'YTD Gross', 'YTD');
-    }
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any) => {
+      row.eachCell((cell: any, colNumber: number) => {
 
-    const excelHeader = worksheet.addRow(headerRow);
-    excelHeader.eachCell({ includeEmpty: false }, (cell, colNumber) => {
-      cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FF1F4E78' } // Dark Blue
-      };
-      cell.alignment = { horizontal: 'center' };
-    });
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
 
-    for (const info of this.SalesData) {
-      const row = [info.AS_DEALERNAME ?? '--'];
+        if (colNumber === 1) {
+          cell.alignment = { horizontal: 'left', vertical: 'middle' };
+        } else {
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        }
 
-      if (this.gridBlocks.includes('Net to Sales')) {
-        row.push(
-          info.NS_MTD == 0 || info.NS_MTD == null ? '-' : info.NS_MTD,
-          info.NS_YTD == 0 || info.NS_YTD == null ? '-' : info.NS_YTD
-        );
-      }
-
-      if (this.gridBlocks.includes('Net to Gross')) {
-        row.push(
-          info.NG_MTD == 0 || info.NG_MTD == null ? '-' : info.NG_MTD,
-          info.NG_YTD == 0 || info.NG_YTD == null ? '-' : info.NG_YTD
-        );
-      }
-
-      if (this.gridBlocks.includes('Selling Gross')) {
-        row.push('', '', '', ''); // parent gross row blank
-      }
-
-      const dealerRow = worksheet.addRow(row);
-      dealerRow.font = { bold: true };
-
-      dealerRow.eachCell((cell) => {
-        if (!isNaN(Number(cell.value))) {
-          cell.alignment = { horizontal: 'right' };
+        if (!cell.value || cell.value === '-') {
+          cell.value = '-';
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
         }
       });
 
+      /* ===== ZEBRA ===== */
+      if (row.number % 2 === 0) {
+        row.eachCell((cell: any) => {
+          if (!cell.fill) {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'F5F7FA' }
+            };
+          }
+        });
+      }
+    };
+
+    /* ================= GROUP HEADER ================= */
+    const selectedMonth = this.datepipe.transform(this.selectDate, 'MMM yyyy');
+
+    const groupHeader: any[] = [selectedMonth || ''];
+    if (this.gridBlocks.includes('Net to Sales')) {
+      groupHeader.push('Net to Sales %', '');
+    }
+    if (this.gridBlocks.includes('Net to Gross')) {
+      groupHeader.push('Net to Gross %', '');
+    }
+    if (this.gridBlocks.includes('Selling Gross')) {
+      groupHeader.push('Selling Gross', '', '', '', 'YTD', '');
+    }
+
+    const groupHeaderRow = worksheet.addRow(groupHeader);
+
+    let colIndex = 2;
+
+    if (this.gridBlocks.includes('Net to Sales')) {
+      worksheet.mergeCells(groupHeaderRow.number, colIndex, groupHeaderRow.number, colIndex + 1);
+      colIndex += 2;
+    }
+    if (this.gridBlocks.includes('Net to Gross')) {
+      worksheet.mergeCells(groupHeaderRow.number, colIndex, groupHeaderRow.number, colIndex + 1);
+      colIndex += 2;
+    }
+    if (this.gridBlocks.includes('Selling Gross')) {
+      worksheet.mergeCells(groupHeaderRow.number, colIndex, groupHeaderRow.number, colIndex + 3);
+      colIndex += 4;
+      worksheet.mergeCells(groupHeaderRow.number, colIndex, groupHeaderRow.number, colIndex + 1);
+    }
+
+    groupHeaderRow.eachCell((cell: any) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF0554EF' } // ✅ DARK BLUE
+      };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+
+    /* ================= MAIN HEADER ================= */
+    const headerRow = [''];
+    const month = this.datepipe.transform(this.previousMonth, 'MMM yy') || '';
+    if (this.gridBlocks.includes('Net to Sales')) {
+      headerRow.push(
+        month,
+        'Jan-' + month
+      );
+    }
+    if (this.gridBlocks.includes('Net to Gross')) {
+      headerRow.push(
+        month,
+        'Jan-' + month
+      );
+    }
+    if (this.gridBlocks.includes('Selling Gross')) {
+      headerRow.push(
+        month + ' Gross',
+        month,
+        'Jan-' + month + ' Gross',
+        'Jan-' + month,
+        'YTD' + ' Gross',
+        'YTD'
+      );
+    }
+
+    const excelHeader = worksheet.addRow(headerRow);
+
+    excelHeader.eachCell((cell: any) => {
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4584FF' } // ✅ LIGHT BLUE
+      };
+      cell.font = { bold: true, color: { argb: 'FFFFFF' }, name: 'Calibri' };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    /* ================= DATA ================= */
+
+    for (const info of this.SalesData) {
+
+      const row = [info.AS_DEALERNAME ?? '--'];
+
+      if (this.gridBlocks.includes('Net to Sales')) {
+        row.push(info.NS_MTD || '-', info.NS_YTD || '-');
+      }
+
+      if (this.gridBlocks.includes('Net to Gross')) {
+        row.push(info.NG_MTD || '-', info.NG_YTD || '-');
+      }
+
+      if (this.gridBlocks.includes('Selling Gross')) {
+        row.push('', '', '', '');
+      }
+
+      const dealerRow = worksheet.addRow(row);
+
+      // ✅ Apply full row background color
+      dealerRow.eachCell((cell: any) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFD9E7FF' } // D9E7FF
+        };
+      });
+
+      // apply borders + alignment (after color)
+      formatRow(dealerRow);
+
       for (const dept of info.DetailData) {
+
         if (this.departmentblocks.includes(dept.TitleValue)) {
+
           const nestedRow = ['   ' + dept.TitleValue];
 
           if (this.gridBlocks.includes('Net to Sales')) nestedRow.push('', '');
@@ -656,60 +764,126 @@ export class Dashboard {
 
           if (this.gridBlocks.includes('Selling Gross')) {
             nestedRow.push(
-              dept.MTD_Gross == 0 || dept.MTD_Gross == null ? '-' : dept.MTD_Gross,
-              dept.MTD == 0 || dept.MTD == null ? '-' : dept.MTD,
-              dept.YTD_Gross == 0 || dept.YTD_Gross == null ? '-' : dept.YTD_Gross,
-              dept.YTD == 0 || dept.YTD == null ? '-' : dept.YTD,
-              dept.YTD_Gross_YTD == 0 || dept.YTD_Gross_YTD == null ? '-' : dept.YTD_Gross_YTD,
-              dept.YTD_YTD == 0 || dept.YTD_YTD == null ? '-' : dept.YTD_YTD
+              dept.MTD_Gross || '-',
+              dept.MTD || '-',
+              dept.YTD_Gross || '-',
+              dept.YTD || '-',
+              dept.YTD_Gross_YTD || '-',
+              dept.YTD_YTD || '-'
             );
           }
 
           const rowRef = worksheet.addRow(nestedRow);
+          formatRow(rowRef);
 
-          rowRef.eachCell((cell) => {
-            if (!isNaN(Number(cell.value))) {
-              cell.alignment = { horizontal: 'right' };
+          const add = (cell: any, type: 'pct' | 'cur') => {
+            if (!cell || cell.value === null || cell.value === undefined || cell.value === '-') return;
+
+            let val = cell.value.toString().replace('%', '').replace('$', '');
+
+            if (val === '') return;
+
+            if (type === 'cur') {
+              cell.value = '$' + val;
+            } else {
+              const num = parseFloat(val);
+
+              if (!isNaN(num)) {
+                cell.value = num.toFixed(1) + '%'; // ✅ ONLY DISPLAY FIX
+              }
             }
-          });
+          };
+          let col = 2; // start after dealer column
 
-          // Conditional coloring for MTD % and YTD %
-          const mtdCol = rowRef.getCell(rowRef.cellCount - 3);
-          const ytdCol = rowRef.getCell(rowRef.cellCount);
+          // Net to Sales → %
+          if (this.gridBlocks.includes('Net to Sales')) {
+            add(rowRef.getCell(col), 'pct');
+            add(rowRef.getCell(col + 1), 'pct');
+            col += 2;
+          }
 
-          [mtdCol, ytdCol].forEach(cell => {
-            const val = typeof cell.value === 'number' ? cell.value : parseFloat((cell.value as string).toString().replace('%', ''));
-            if (!isNaN(val)) {
-              cell.fill = {
-                type: 'pattern',
-                pattern: 'solid',
-                fgColor: {
-                  argb: val >= 0 ? 'FF92D050' : 'FFFF6666' // Green if positive, Red if negative
-                }
-              };
-            }
-          });
+          // Net to Gross → %
+          if (this.gridBlocks.includes('Net to Gross')) {
+            add(rowRef.getCell(col), 'pct');
+            add(rowRef.getCell(col + 1), 'pct');
+            col += 2;
+          }
+
+          // Selling Gross
+          if (this.gridBlocks.includes('Selling Gross')) {
+
+            // SAFE: check value exists before applying
+            add(rowRef.getCell(col), 'cur');       // Mar Gross $
+            add(rowRef.getCell(col + 1), 'pct');   // Mar %
+            add(rowRef.getCell(col + 2), 'cur');   // Jan-Mar Gross $
+            add(rowRef.getCell(col + 3), 'pct');   // Jan-Mar %
+            add(rowRef.getCell(col + 4), 'cur');   // YTD Gross $
+            add(rowRef.getCell(col + 5), 'pct');   // YTD %
+          }
+          /* ===== KEEP YOUR COLOR LOGIC ===== */
+
+          // ✅ DEFINE FIRST
+          const applyColor = (cell: any, block: any) => {
+            if (!cell || cell.value === null || cell.value === undefined || cell.value === '-') return;
+
+            let val = typeof cell.value === 'number'
+              ? cell.value
+              : parseFloat(cell.value.toString().replace('%', ''));
+
+            if (isNaN(val)) return;
+
+            const bg = this.getBackgroundColor(val, block);
+
+            if (!bg) return;
+
+            const hex = bg.replace('#', '').toUpperCase();
+            const argb = 'FF' + hex;
+
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb }
+            };
+          };
+
+          // ✅ THEN USE
+          if (this.gridBlocks.includes('Selling Gross')) {
+
+            let i = 2;
+
+            if (this.gridBlocks.includes('Net to Sales')) i += 2;
+            if (this.gridBlocks.includes('Net to Gross')) i += 2;
+
+            applyColor(rowRef.getCell(i + 1), dept.TitleValue); // MTD %
+            applyColor(rowRef.getCell(i + 3), dept.TitleValue); // Jan-Mar %
+            applyColor(rowRef.getCell(i + 5), dept.TitleValue); // YTD %
+          }
         }
       }
     }
 
-    // Auto width for all columns
-    worksheet.columns.forEach((column: any) => {
-      let maxLength = 10;
-      column.eachCell({ includeEmpty: true }, (cell: any) => {
-        const cellValue = cell.value ? cell.value.toString() : '';
-        maxLength = Math.max(maxLength, cellValue.length);
-      });
-      column.width = maxLength + 2;
-    });
+    /* ================= AUTO WIDTH ================= */
+    worksheet.columns.forEach((col: any, index: number) => {
 
-    // Save
+      // Dealer column
+      if (index === 0) {
+        col.width = 30;
+      }
+
+      // % columns
+      else {
+        col.width = 20;
+      }
+
+    });
+    /* ================= EXPORT ================= */
     workbook.xlsx.writeBuffer().then((buffer: any) => {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-      FileSaver.saveAs(blob, `Selling_Gross_${new Date().getTime()}.xlsx`);
+      FileSaver.saveAs(blob, `Selling_Gross`);
     });
+
   }
 
 
