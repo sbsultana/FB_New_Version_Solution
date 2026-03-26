@@ -62,9 +62,12 @@ export class Dashboard {
       this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.store = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       this.RoleId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.roleid
-      // this.userData = JSON.parse(localStorage.getItem('userInfo')!).flag
-      // this.column = JSON.parse(localStorage.getItem('userInfo')!).flag.CN
-      // this.userData.DS ? this.dealStatus = ['Finalized'] : ''
+      if (localStorage.getItem('flag') == 'V') {
+        this.column = JSON.parse(localStorage.getItem('userInfo')!).CN
+        JSON.parse(localStorage.getItem('userInfo')!).DS ? this.dealStatus = ['Finalized'] : '';
+        localStorage.setItem('flag', 'M')
+
+      }
     }
     if (localStorage.getItem('CarDeals') != undefined && localStorage.getItem('CarDeals') != null) {
       let fromIBData = JSON.parse(localStorage.getItem('CarDealsData')!)[0]
@@ -155,7 +158,8 @@ export class Dashboard {
                 ...this.cardealsdata,
                 ...this.details,
               ];
-              // this.callLoadingState == 'ANS' ? this.sort(this.column) : ''
+              this.callLoadingState == 'ANS' ? this.sort(this.column, this.callLoadingState) : JSON.parse(localStorage.getItem('userInfo')!).DS ? (this.sort(this.column, this.userData?.SR)) : '';
+
               this.NoData = false;
               this.spinnerLoader = false
               console.log(this.details, this.cardealsdata);
@@ -273,7 +277,7 @@ export class Dashboard {
       "startdealdate": this.FromDate,
       "enddealdate": this.ToDate,
       "dealid": item.dealid,
-      "StoreID":item.dealerid
+      "StoreID": item.dealerid
     }
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetSalesCarDealsTradeDetails', obj).subscribe((res: any) => {
       if (res.status == 200) {
@@ -293,31 +297,31 @@ export class Dashboard {
     })
   }
 
-    toggleView(data: any) {
+  toggleView(data: any) {
     if (data.notesView == '+') {
       data.notesView = '-'
     } else {
       data.notesView = '+'
     }
   }
-  sort(property: any) {
-    this.isDesc = !this.isDesc; //change the direction
+  sort(property: any, state?: any) {
+    if (state == undefined) {
+      this.isDesc = !this.isDesc;
+    }
+    console.log(this.isDesc, 'Desc');
+
+    this.callLoadingState = 'FL'
     this.column = property;
     let direction = this.isDesc ? 1 : -1;
-
-    this.cardealsdata.sort((a: any, b: any) => {
-      const valA = a[property] ?? ''; // replace null/undefined with empty string
-      const valB = b[property] ?? '';
-
-      if (valA < valB) {
+    this.cardealsdata.sort(function (a: any, b: any) {
+      if (a[property] < b[property]) {
         return -1 * direction;
-      } else if (valA > valB) {
+      } else if (a[property] > b[property]) {
         return 1 * direction;
       } else {
         return 0;
       }
     });
-
   }
   subdataindex: any = 0;
   excel!: Subscription;
@@ -425,7 +429,7 @@ export class Dashboard {
     this.header = [{
       type: 'Bar', storeIds: this.store, fromDate: this.FromDate, toDate: this.ToDate, ReportTotal: this.TotalReport, search: this.QISearchName, groups: this.groups, datevaluetype: this.DateType, dealType: this.dealType,
       saleType: this.saleType,
-      dealStatus: this.dealStatus,as:this.acquisition, otherblock: this.otherblocks,
+      dealStatus: this.dealStatus, as: this.acquisition, otherblock: this.otherblocks,
     }]
     if (this.store != '') {
       this.GetData()

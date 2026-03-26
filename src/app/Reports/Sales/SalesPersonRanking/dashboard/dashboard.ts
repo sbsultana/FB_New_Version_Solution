@@ -90,23 +90,7 @@ export class Dashboard {
 
     // this.initializeDates();
     this.shared.setTitle('Salesperson Rankings');
-    // this.GetData(this.columnName, this.columnState);
-
-    // let today = new Date();
-    // let enddate = new Date(today.setDate(today.getDate() - 1));
-    // let dt = new Date(today.setDate(today.getDate()));
-
-    // this.FromDate =
-    //   ('0' + (enddate.getMonth() + 1)).slice(-2) + '-01' + '-' + enddate.getFullYear();
-    // this.ToDate =
-    //   ('0' + (enddate.getMonth() + 1)).slice(-2) +
-    //   '-' +
-    //   ('0' + enddate.getDate()).slice(-2) +
-    //   '-' +
-    //   enddate.getFullYear();
-
-    // this.FromDate = this.FromDate.replace(/-/g, '/');
-    // this.ToDate = this.ToDate.replace(/-/g, '/');
+  
 
     if (typeof window !== 'undefined') {
       if (localStorage.getItem('flag') == 'V') {

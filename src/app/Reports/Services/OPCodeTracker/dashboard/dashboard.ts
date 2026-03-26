@@ -16,7 +16,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,NgbModule],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores, NgbModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -58,11 +58,11 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-DefaultLoad:any ='E'
+  DefaultLoad: any = 'E'
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,'DefaultLoad':this.DefaultLoad
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
 
   FromDate: any = '';
@@ -114,6 +114,11 @@ DefaultLoad:any ='E'
     this.shared.setTitle(this.comm.titleName + '-OP Code Tracker');
     this.initializeDates('MTD')
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.Department = ['Service'];
+      } else {
+        this.Department = ['Service', 'Parts', 'Body']
+      }
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = ''
     }
@@ -255,8 +260,8 @@ DefaultLoad:any ='E'
   }
   CompleteServiceData: any = []
   GetData() {
-    console.log(this.selectedDataGrouping,'Selected Data Grouping');
-    
+    console.log(this.selectedDataGrouping, 'Selected Data Grouping');
+
     this.IndividualServiceGross = [];
     const obj = {
       startdate: this.FromDate,
@@ -773,7 +778,7 @@ DefaultLoad:any ='E'
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N','DefaultLoad':this.DefaultLoad
+      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
     };
   }
   updatedDates(data: any) {
@@ -861,8 +866,8 @@ DefaultLoad:any ='E'
           this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
         }
         else {
-               this.actionType = 'Y';
-               this.DefaultLoad = ''
+          this.actionType = 'Y';
+          this.DefaultLoad = ''
           this.setHeaderData()
           this.getServiceData()
         }

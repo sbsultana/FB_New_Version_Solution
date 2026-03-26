@@ -70,39 +70,24 @@ export class Dashboard {
   dealStatus: any;
 
   constructor(
-    public shared: Sharedservice, public setdates: Setdates, private comm: common,private toast: ToastService,
+    public shared: Sharedservice, public setdates: Setdates, private comm: common, private toast: ToastService,
   ) {
     // this.initializeDates();
     this.shared.setTitle(this.shared.common.titleName + 'F&I Manager Ranking');
-    // this.GetData(this.columnName, this.columnState);
 
-    let today = new Date();
-    let enddate = new Date(today.setDate(today.getDate() - 1));
-    this.FromDate =
-      ('0' + (enddate.getMonth() + 1)).slice(-2) +
-      '-01' +
-      '-' +
-      enddate.getFullYear();
-    this.ToDate =
-      ('0' + (enddate.getMonth() + 1)).slice(-2) +
-      '-' +
-      ('0' + enddate.getDate()).slice(-2) +
-      '-' +
-      enddate.getFullYear();
-    this.FromDate = this.FromDate.replace(/-/g, '/');
-    this.ToDate = this.ToDate.replace(/-/g, '/');
     this.shared.setTitle(this.shared.common.titleName + '-F&I Manager Ranking');
     if (typeof window !== 'undefined') {
-      if (localStorage.getItem('flag') == 'V') {
-        this.storeIds = [];
-        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-        localStorage.setItem('flag', 'M')
-      } else {
-        if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+
+        if (localStorage.getItem('flag') == 'V') {
+          this.storeIds = [];
+          console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+          this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+          JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+            this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+            this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+          localStorage.setItem('flag', 'M')
+        } else {
           this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
           this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         }
@@ -125,7 +110,7 @@ export class Dashboard {
         this.initializeDates('MTD')
         this.DateType = 'MTD'
       }
-      localStorage.setItem('stime', 'MTD')
+      // localStorage.setItem('stime', 'MTD')
 
     }
     this.shared.setTitle(this.shared.common.titleName + '-F&I Manager Ranking');
@@ -167,23 +152,9 @@ export class Dashboard {
 
   ngOnInit(): void {
     this.SetDates(this.DateType);
-    // if (typeof window !== 'undefined') {
-
-    // localStorage.setItem('time', this.dateType);
-
-    // }
-    // // var curl = 'https://fbxtract.axelautomotive.com/favouritereports/GetFIManagerRankings';
-    // // this.apiSrvc.logSaving(curl,{},'','Success','F&I Manager Rankings');
+  
   }
-  // private initializeDates() {
-  //   const today = new Date();
-  //   const enddate = new Date(today.setDate(today.getDate() - 1));
 
-  //   this.FromDate = `${('0' + (enddate.getMonth() + 1)).slice(-2)}/01/${enddate.getFullYear()}`;
-  //   this.ToDate = `${('0' + (enddate.getMonth() + 1)).slice(-2)}/${('0' + enddate.getDate()).slice(
-  //     -2
-  //   )}/${enddate.getFullYear()}`;
-  // }
 
 
   GetData(sortdata?: any, sortstate?: any) {
@@ -692,7 +663,7 @@ export class Dashboard {
     // DetailsSF.result.then(
     //   (data) => {},
     //   (reason) => {
-    
+
     //     // // on dismiss
     //     // const Data = {
     //     //   state: true,
@@ -1101,19 +1072,19 @@ export class Dashboard {
 
 
     if (this.storeIds.length === 0) {
-     
+
       this.toast.show('Please select any store', 'warning', 'Warning');
     }
     else if (this.retailorlease.length == 0) {
-      
+
       this.toast.show('Please select any one Deal Type', 'warning', 'Warning');
     }
     else if (this.neworused.length == 0) {
-     
+
       this.toast.show('Please select atleast one Sale Type', 'warning', 'Warning');
     }
     else if (this.financetype.length == 0) {
-      
+
       this.toast.show('Please select atleast one Finance Type', 'warning', 'Warning');
     }
     else {

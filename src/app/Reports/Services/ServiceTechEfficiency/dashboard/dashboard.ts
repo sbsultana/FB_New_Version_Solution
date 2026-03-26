@@ -95,23 +95,22 @@ export class Dashboard {
 
     this.selectedDataGrouping.push(this.dataGrouping[0])
     this.selectedDataGrouping.push(this.dataGrouping[2])
-
-    if (localStorage.getItem('flag') == 'V') {
-      this.storeIds = [];
-      console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
-      this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
-      JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
-        this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
-        this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
-      localStorage.setItem('flag', 'M')
-    } else {
-      if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+    if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
+      if (localStorage.getItem('flag') == 'V') {
+        this.storeIds = [];
+        console.log(JSON.parse(localStorage.getItem('userInfo')!), JSON.parse(localStorage.getItem('userInfo')!).user_Info, 'Widget Stores............');
+        this.groupId = JSON.parse(localStorage.getItem('userInfo')!).groupid
+        JSON.parse(localStorage.getItem('userInfo')!).store.indexOf(',') > 0 ?
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
+          this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
+        localStorage.setItem('flag', 'M')
+      } else {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
       }
     }
 
-        if (this.shared.common.groupsandstores.length > 0) {
+    if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -432,7 +431,7 @@ export class Dashboard {
     // });
   }
   details: any = [];
-ServiceDataDetails:any=[]
+  ServiceDataDetails: any = []
   getDetails() {
     this.ServiceDataDetails = []
     const obj = {
@@ -476,8 +475,8 @@ ServiceDataDetails:any=[]
       })
   }
 
-    closePopup() {
-   this.shared.ngbmodal.dismissAll()
+  closePopup() {
+    this.shared.ngbmodal.dismissAll()
   }
   currentElement!: string;
 
@@ -614,7 +613,7 @@ ServiceDataDetails:any=[]
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-      this.getlabourTypesData('FR', this.labourType)
+    this.getlabourTypesData('FR', this.labourType)
 
   }
 
@@ -688,23 +687,23 @@ ServiceDataDetails:any=[]
     if (this.storeIds != '') {
       this.spinnerLoaderlabor = true;
       this.responcestatus = '';
-      
+
       // this.shared.spinner.show();    
-        const obj = {
-          StoreID: this.storeIds.toString(),
-          type: type == 'N' ? 'A' : type
-        };
-        this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
-          this.spinnerLoaderlabor = false;
-          this.labortypes = res.response;
-          this.LaborTypeVal = res.response.map(function (a: any) {
-            return a.ASD_labortype;
-          });
-          if (block == 'FL') {
-            this.getServiceData()
-          }
-        })   
-      
+      const obj = {
+        StoreID: this.storeIds.toString(),
+        type: type == 'N' ? 'A' : type
+      };
+      this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
+        this.spinnerLoaderlabor = false;
+        this.labortypes = res.response;
+        this.LaborTypeVal = res.response.map(function (a: any) {
+          return a.ASD_labortype;
+        });
+        if (block == 'FL') {
+          this.getServiceData()
+        }
+      })
+
     } else {
       // this.NoData = true
     }
@@ -738,22 +737,22 @@ ServiceDataDetails:any=[]
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
 
-    viewreport() {
+  viewreport() {
     this.activePopover = -1
     if (this.selectedDataGrouping.length == 0 || this.LaborTypeVal.length == 0 || this.storeIds.length == 0) {
       if (this.selectedDataGrouping.length == 0) {
-        this.toast.show('Please select atleast one Value from Grouping', 'warning','Warning');
+        this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
       }
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning','Warning');
+        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       }
       if (this.LaborTypeVal.length == 0) {
-        this.toast.show('Please select any labor type','warning','Warning');
+        this.toast.show('Please select any labor type', 'warning', 'Warning');
       }
     } else {
-     
-    this.setHeaderData()
-    this.getServiceData()
+
+      this.setHeaderData()
+      this.getServiceData()
     }
   }
 
