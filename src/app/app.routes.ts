@@ -68,7 +68,7 @@ export const routes: Routes = [
   { path: 'TradeWinPercentage', loadComponent: () => import('./Reports/Sales/TradeWinPercentage/dashboard/dashboard').then(m => m.Dashboard) },
 
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
- 
+
 
 
   // SERVICE BLOCK
@@ -98,6 +98,7 @@ export const routes: Routes = [
   { path: 'PartsGross', loadComponent: () => import('./Reports/Parts/PartsGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsTrendingReport', loadComponent: () => import('./Reports/Parts/PartsTrendingReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsOpenRO', loadComponent: () => import('./Reports/Parts/PartsOpenRO/dashboard/dashboard').then(m => m.Dashboard) },
+  { path: 'PartsCounterPersonRanking', loadComponent: () => import('./Reports/Rankings/PartsCounterPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SearchParts', loadComponent: () => import('./Reports/Parts/SearchParts/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsAging', loadComponent: () => import('./Reports/Parts/PartsAging/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsGrossProfitPerformanceScoreCard', loadComponent: () => import('./Reports/Parts/PartsGrossProfitPerformanceScoreCard/dashboard/dashboard').then(m => m.Dashboard) },
@@ -125,7 +126,7 @@ export const routes: Routes = [
   { path: 'FandIManagerRanking', loadComponent: () => import('./Reports/Sales/FandIManagerRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SalesManagerRanking', loadComponent: () => import('./Reports/Sales/SalesManangerRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'PartsCounterPersonRanking', loadComponent: () => import('./Reports/Rankings/PartsCounterPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
+
 
 
 ];

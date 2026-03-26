@@ -70,19 +70,19 @@
                                 {{DateType=="MTD" ? "MTD" : DateType=="YTD" ? "YTD" : DateType=="QTD" ? "QTD" :
                                 DateType=="LM" ? "LAST MONTH" : DateType=="LY" ? "LAST YEAR" : FromDate +" to "+
                                 ToDate}}</th>
-                            <th class="spacer"></th>
+
                             <th colspan="6"></th>
                         </tr>
                         <tr>
                             <!-- <th class="bdr-rt"></th> -->
-                          
+
                             <th class="bdr-rt" (click)="tabClick('Rank',columnState)" style="cursor: pointer;
                             white-space: nowrap; ">Rank</th>
                             <th class="bdr-rt" (click)="tabClick('CounterPerson',columnState)" style="cursor: pointer;">
                                 Counter Person</th>
                             <th class="bdr-rt" (click)="tabClick('StoreName',columnState)" style=" cursor: pointer;">
                                 Store Name</th>
-                            <th class="spacer"></th>
+
                             <th (click)="tabClick('TotalSale',columnState)" style="cursor: pointer;">Total Sale</th>
                             <th (click)="tabClick('TotalGross',columnState)" style="cursor: pointer;">
                                 Total Gross</th>
@@ -99,60 +99,67 @@
                                 <th (click)="tabClick('ELR',columnState)" style="cursor: pointer;text-align: right;">ELR</th> -->
                         </tr>
                     </thead>
-                    <tbody *ngFor="let spdata of ServiceAdvisorData; let i=index">
-                        <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' , 'divBold': spdata.data1 === 'Reports Total'}"
-                            [id]="'DV_'+i">
-                            <!-- <td id="DataBody1"> <span>&nbsp;</span></td> -->
-                         
-                         
-                            <td id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'"> <span>{{spdata.Rank=='' ||
-                                    spdata.Rank==null || spdata.Rank==undefined ? '-' :spdata.Rank}}</span>
-                            </td>
-                            <!-- (click)="openDetails(spdata.Data2)" -->
-                            <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'"
-                                style="width: 10%;text-align: left !important;"><span>{{ spdata.CounterPerson == '' ||
-                                    spdata.CounterPerson == null || spdata.CounterPerson==undefined ? '-'
-                                    :spdata.CounterPerson}}</span></td>
-                            <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'"
-                                style="width: 10%;text-align: left !important;">
-                                <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>  -->
-                                <span [id]="'D_'+i"
-                                    title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">
-                                    {{spdata.StoreName=='' || spdata.StoreName==null || spdata.StoreName==undefined ?
-                                    '-' :spdata.StoreName }}
-                                </span>
-                            </td>
-                            <th class="spacer"></th>
-                            <td id="DataBody4" style="text-align: right;"
-                                [ngClass]="{ negative: !inTheGreen(spdata.TotalSale)}">{{spdata.TotalSale=='' ||
-                                spdata.TotalSale==null || spdata.TotalSale==undefined ? '-' :spdata.TotalSale |
-                                currency:'USD':'symbol':'1.0-0'}} </td>
-                            <td id="DataBody5" style="text-align: right;"
-                                [ngClass]="{ negative: !inTheGreen(spdata.TotalGross)}">{{spdata.TotalGross=='' ||
-                                spdata.TotalGross==null || spdata.TotalGross==undefined ? '-' :spdata.TotalGross|
-                                currency:'USD':'symbol':'1.0-0'}}</td>
-                            <td id="DataBody4" style="text-align: right;"
-                                [ngClass]="{ negative: !inTheGreen(spdata.GP)}">
-                                {{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '-' : spdata.GP |
-                                number:'1.1-1')}}{{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '' :
-                                '%')}}
-                            </td>
-                            <td id="DataBody4" style="text-align: right;" (click)="openDetails(spdata)"
-                                [ngClass]="[spdata.InvoiceCount != 0 && spdata.InvoiceCount != null && spdata.InvoiceCount != undefined && spdata.InvoiceCount != '' && spdata.InvoiceCount != '-' ? 'popuppointer' : 'popupdisable']">
-                                {{spdata.InvoiceCount=='' ||
-                                spdata.InvoiceCount==null || spdata.InvoiceCount==undefined ? '-' :spdata.InvoiceCount|
-                                number:'1.0-0'}} </td>
-                            <td id="DataBody4" style="text-align: right;">
-                                {{spdata.AP_Numberofparts=='' || spdata.AP_Numberofparts==null ||
-                                spdata.AP_Numberofparts==undefined ? '-' :spdata.AP_Numberofparts| number:'1.0-0'}}
-                            </td>
-                            <td id="DataBody4" style="text-align: right;"
-                                [ngClass]="{ negative: !inTheGreen(spdata.PartsPerInvoice)}">
-                                {{spdata.PartsPerInvoice=='' || spdata.PartsPerInvoice==null ||
-                                spdata.PartsPerInvoice==undefined ? '-' :spdata.PartsPerInvoice| number:'1.0-0'}} </td>
-                            <!-- <td id="DataBody11"></td> -->
-                        </tr>
-                     
+                    <tbody>
+                        <ng-container *ngFor="let spdata of ServiceAdvisorData; let i=index">
+                            <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 , 'Selectedrow': spdata.Dealerx === '-' , 'divBold': spdata.data1 === 'Reports Total'}"
+                                [id]="'DV_'+i">
+                                <!-- <td id="DataBody1"> <span>&nbsp;</span></td> -->
+
+
+                                <td id="DataBody1" *ngIf="spdata.data1 !== 'Reports Total'" class="text-center"> <span>{{spdata.Rank=='' ||
+                                        spdata.Rank==null || spdata.Rank==undefined ? '-' :spdata.Rank}}</span>
+                                </td>
+                                <!-- (click)="openDetails(spdata.Data2)" -->
+                                <td id="DataBody2" *ngIf="spdata.data1 !== 'Reports Total'"
+                                    style="width: 10%;text-align: left !important;"><span>{{ spdata.CounterPerson == ''
+                                        ||
+                                        spdata.CounterPerson == null || spdata.CounterPerson==undefined ? '-'
+                                        :spdata.CounterPerson}}</span></td>
+                                <td id="DataBody3" *ngIf="spdata.data1 !== 'Reports Total'"
+                                    style="width: 10%;text-align: left !important;">
+                                    <!-- <span style="float: left; margin-right: .5rem; color: #363b4f;" (click)="expandorcollapse(i,$event,spdata.Dealerx,spdata)" [id]="'D_'+i">{{spdata.StoreName}}</span>  -->
+                                    <span [id]="'D_'+i"
+                                        title="{{(spdata.StoreName == undefined ? 'Reports Total': spdata.StoreName)}}">
+                                        {{spdata.StoreName=='' || spdata.StoreName==null || spdata.StoreName==undefined
+                                        ?
+                                        '-' :spdata.StoreName }}
+                                    </span>
+                                </td>
+
+                                <td id="DataBody4" style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(spdata.TotalSale)}">{{spdata.TotalSale=='' ||
+                                    spdata.TotalSale==null || spdata.TotalSale==undefined ? '-' :spdata.TotalSale |
+                                    currency:'USD':'symbol':'1.0-0'}} </td>
+                                <td id="DataBody5" style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(spdata.TotalGross)}">{{spdata.TotalGross=='' ||
+                                    spdata.TotalGross==null || spdata.TotalGross==undefined ? '-' :spdata.TotalGross|
+                                    currency:'USD':'symbol':'1.0-0'}}</td>
+                                <td id="DataBody4" style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(spdata.GP)}">
+                                    {{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '-' : spdata.GP |
+                                    number:'1.1-1')}}{{(spdata.GP=='' || spdata.GP==null || spdata.GP==undefined ? '' :
+                                    '%')}}
+                                </td>
+                                <td id="DataBody4" style="text-align: right;" (click)="openDetails(spdata)"
+                                    [ngClass]="[spdata.InvoiceCount != 0 && spdata.InvoiceCount != null && spdata.InvoiceCount != undefined && spdata.InvoiceCount != '' && spdata.InvoiceCount != '-' ? 'popuppointer' : 'popupdisable']">
+                                    {{spdata.InvoiceCount=='' ||
+                                    spdata.InvoiceCount==null || spdata.InvoiceCount==undefined ? '-'
+                                    :spdata.InvoiceCount|
+                                    number:'1.0-0'}} </td>
+                                <td id="DataBody4" style="text-align: right;">
+                                    {{spdata.AP_Numberofparts=='' || spdata.AP_Numberofparts==null ||
+                                    spdata.AP_Numberofparts==undefined ? '-' :spdata.AP_Numberofparts| number:'1.0-0'}}
+                                </td>
+                                <td id="DataBody4" style="text-align: right;"
+                                    [ngClass]="{ negative: !inTheGreen(spdata.PartsPerInvoice)}">
+                                    {{spdata.PartsPerInvoice=='' || spdata.PartsPerInvoice==null ||
+                                    spdata.PartsPerInvoice==undefined ? '-' :spdata.PartsPerInvoice| number:'1.0-0'}}
+                                </td>
+                                <!-- <td id="DataBody11"></td> -->
+                            </tr>
+                        </ng-container>
+
+
                     </tbody>
                     <tbody *ngIf="NoData">
                         <tr>
