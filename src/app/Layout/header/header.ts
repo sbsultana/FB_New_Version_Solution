@@ -119,6 +119,8 @@ export class Header {
       this.getGruopsandStores();
       this.getGruopsandStoresAll();
       this.getMobileStores();
+      this.getAccountingReconStores()
+      this.getReconStores();
       this.ready.emit();
 
       return;
@@ -449,6 +451,62 @@ export class Header {
 
         }
       });
+  }
+  getAccountingReconStores() {
+    const obj = {
+      "userid":JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
+    };
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresListRecon', obj)
+      .subscribe((res: any) => {
+        //console.log(res.response);
+        if (res.status == 200) {
+          let data = res.response
+          let withoutreduce = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          this.shared.common.AccountingReconStores = res.response
+          const obj = {
+            storesData: this.shared.common.AccountingReconStores
+          };
+          this.shared.api.setAccuntingAllStores({ obj: obj });
+        }
+      });
+  }
+ getReconStores() {
+    const obj = {
+      "userid": JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid,
+      // "userid": 44,
+    }
+    this.shared.api
+      .postmethod(this.shared.common.routeEndpoint + 'GetStoresListCustom', obj)
+      .subscribe((res) => {
+        if (res.status == 200) {
+          let data = res.response
+          let withoutreduce = data.reduce((r: any, { sg_name, sg_id }: any) => {
+            if (!r.some((o: any) => o.sg_name == sg_name)) {
+              r.push({
+                sg_name,
+                sg_id,
+                Stores: data.filter((v: any) => v.sg_name == sg_name),
+              });
+            }
+            return r;
+          }, []);
+          this.shared.common.ReconStores = withoutreduce.filter((val: any) => val.sg_name != 'OtherStores')
+          const obj = {
+            storesData: this.shared.common.ReconStores
+          };
+          this.shared.api.setAllStores({ obj: obj });
+        }
+      })
   }
 
   @Input() title!: string;

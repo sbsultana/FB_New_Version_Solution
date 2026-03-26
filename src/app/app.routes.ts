@@ -68,7 +68,7 @@ export const routes: Routes = [
   { path: 'TradeWinPercentage', loadComponent: () => import('./Reports/Sales/TradeWinPercentage/dashboard/dashboard').then(m => m.Dashboard) },
 
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
- 
+
 
 
   // SERVICE BLOCK
@@ -127,6 +127,8 @@ export const routes: Routes = [
   { path: 'ServiceAdvisorRanking', loadComponent: () => import('./Reports/Services/ServiceAdvisorRanking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'PartsCounterPersonRanking', loadComponent: () => import('./Reports/Rankings/PartsCounterPersonRanking/dashboard/dashboard').then(m => m.Dashboard) },
 
+  //Recon 
+  { path: 'ReconAccounting', loadComponent: () => import('./Reports/Recon/ReconGLReport/dashboard/dashboard').then(m => m.Dashboard) },
 
 ];
 
