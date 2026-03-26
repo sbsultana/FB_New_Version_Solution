@@ -52,9 +52,12 @@ export class Dashboard {
   gridvisibility: any;
   bsRangeValue!: Date[];
   activePopover: number = -1;
-  storeIds: any = '0';
   popup: any = [{ type: 'Popup' }];
+
+  
   pdfStyleService: any;
+
+  storeIds: any = '0';
   groupsArray: any = [];
   storename: any = ''
   storecount: any = null;
@@ -104,9 +107,6 @@ export class Dashboard {
     this.title.setTitle(this.comm.titleName + '-Loaner Inventory');
     const data = {
       title: 'Loaner Inventory',
-      path1: '',
-      path2: '',
-      path3: '',
       stores: this.storeIds.toString(),
       store: this.storeIds,
       groups: this.groups,
