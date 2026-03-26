@@ -14,7 +14,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Title } from '@angular/platform-browser';
 import { CommonModule, CurrencyPipe, DatePipe, NgStyle } from '@angular/common';
 import * as FileSaver from 'file-saver';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Subscription } from 'rxjs';
@@ -375,122 +375,149 @@ export class Dashboard {
   }
   ExcelStoreNames: any = [];
   exportToExcel() {
-    let storeNames: any = [];
-    let store = this.storeIds.split(',');
 
-    storeNames = this.comm.groupsandstores
-      .filter((v: any) => v.sg_id == this.groups)[0]
-      .Stores.filter((item: any) =>
-        store.some((cat: any) => cat === item.ID.toString())
-      );
-    if (
-      store.length ==
-      this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0]
-        .Stores.length
-    ) {
-      this.ExcelStoreNames = 'All Stores';
-    } else {
-      this.ExcelStoreNames = storeNames.map(function (a: any) {
-        return a.storename;
-      });
-    }
+    const workbook = new ExcelJS.Workbook();
     const unapplied = this.UnappliedData.map((_arrayElement: any) =>
       Object.assign({}, _arrayElement)
     );
-    console.log(unapplied);
 
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet('Loaner Inventory');
-    worksheet.views = [
-      {
-        state: 'frozen',    // Enables the frozen pane view
-        ySplit: 15,         // Freezes the first 15 rows
-        topLeftCell: 'A16', // Sets the top-left cell to start scrolling from after the frozen pane
-        showGridLines: false, // Hides grid lines in the worksheet
-      },
-    ];
+    const worksheet = workbook.addWorksheet('Title Report');
 
-    worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Loaner Inventory']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = { indent: 1, vertical: 'middle', horizontal: 'left' };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    worksheet.addRow('');
+    /* ================= FILTER SECTION ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
 
-    const DateToday = this.datepipe.transform(
-      new Date(),
-      'MM/dd/yyyy h:mm:ss a'
-    );
-    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any) => {
+      row.eachCell((cell: any, colNumber: number) => {
 
-    const ReportFilter = worksheet.addRow(['Report Controls :']);
-    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
 
-    const Groups = worksheet.getCell('A6');
-    Groups.value = 'Group :';
-    const groups = worksheet.getCell('B6');
-    groups.value = this.comm.groupsandstores.filter(
-      (val: any) => val.sg_id == this.groups.toString()
-    )[0].sg_name;
-    groups.font = { name: 'Arial', family: 4, size: 9 };
-    groups.alignment = {
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
+        // Column-based alignment (FIXED)
+        if (colNumber === 1 || colNumber === 6 || colNumber === 7 || colNumber === 8) {
+          // Text columns → LEFT
+          cell.alignment = { horizontal: 'left', vertical: 'middle' };
+        }
+        else if (colNumber === 5) {
+          // Age → CENTER
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        }
+        else {
+          // Balance columns → RIGHT
+          cell.alignment = { horizontal: 'right', vertical: 'middle' };
+        }
+
+        if (!cell.value || cell.value === '-') {
+          cell.value = '-';
+          return;
+        }
+
+        const num = Number(cell.value);
+
+        if (!isNaN(num)) {
+
+          if (num === 0) {
+            cell.value = '-';
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            return;
+          }
+
+          // Currency columns
+          if (colNumber === 3 || colNumber === 4) {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+
+          if (num < 0) {
+            cell.font = {
+              ...cell.font,
+              color: { argb: 'FFFF0000' }
+            };
+          }
+        }
+      });
+
+      /* ===== ALT ROW COLOR ===== */
+      if (row.number % 2 === 0) {
+        row.eachCell((cell: any) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'F5F7FA' }
+          };
+        });
+      }
     };
 
-    worksheet.mergeCells('B7', 'K9');
-    const Stores = worksheet.getCell('A7');
-    Stores.value = 'Stores :';
-    const stores = worksheet.getCell('B7');
-    stores.value =
-      this.ExcelStoreNames == 0
-        ? 'All Stores'
-        : this.ExcelStoreNames == null
-          ? '-'
-          : this.ExcelStoreNames.toString().replaceAll(',', ', ');
-    stores.font = { name: 'Arial', family: 4, size: 9 };
-    stores.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
+    // ===== GROUP HEADER =====
+    const groupHeader = worksheet.addRow([
+      '', '', 'Balances', '', 'Vehicle', '', '', ''
+    ]);
 
+    worksheet.mergeCells(groupHeader.number, 3, groupHeader.number, 4); // Balance cols
+    worksheet.mergeCells(groupHeader.number, 5, groupHeader.number, 8); // Vehicle cols
 
-
+    groupHeader.eachCell((cell: any) => {
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '0554ef' }
+      };
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        name: 'Calibri'
+      };
+    });
+    /* ================= HEADER ================= */
 
     let Headings = [
       'Stock #',
       'Age',
       'Balance',
-      'Balance2',
+      '1650 Balance',
       'Year',
       'Make',
       'Model',
       'Store',
-
     ];
+
     const headerRow = worksheet.addRow(Headings);
-    headerRow.font = {
-      name: 'Arial',
-      family: 4,
-      size: 8,
-      bold: true,
-      color: { argb: 'FFFFFF' },
-    };
-    headerRow.alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'center',
-    };
-    headerRow.eachCell((cell, number) => {
+
+    headerRow.eachCell((cell: any) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '788494' },
-        bgColor: { argb: 'FF0000FF' },
+        fgColor: { argb: 'd9e7ff' }
       };
-      cell.border = { right: { style: 'thin' } };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+      cell.font = {
+        bold: true,
+        name: 'Calibri'
+      };
+
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
     });
+
+    /* ================= FREEZE ================= */
+    worksheet.views = [{
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: headerRow.number
+    }];
+
+    /* ================= DATA ================= */
 
     for (const d of unapplied) {
 
@@ -499,75 +526,85 @@ export class Dashboard {
         d.Age == '' ? '-' : d.Age == null ? '-' : d.Age.toString(),
         d.Balance == '' ? '-' : d.Balance == null ? '-' : d.Balance,
         d['Balance2'] == '' ? '-' : d['Balance2'] == null ? '-' : d['Balance2'],
-        d.store == '' ? '-' : d.store == null ? '-' : d.store,
         d.Year == '' ? '-' : d.Year == null ? '-' : d.Year,
         d.Make == '' ? '-' : d.Make == null ? '-' : d.Make,
         d.Model == '' ? '-' : d.Model == null ? '-' : d.Model,
-
+        d.store == '' ? '-' : d.store == null ? '-' : d.store,
       ]);
-      // Data1.outlineLevel = 1; // Grouping level 1
-      Data1.font = { name: 'Arial', family: 4, size: 8 };
-      Data1.alignment = { vertical: 'middle', horizontal: 'center' };
-      // Data1.getCell(1).alignment = {indent: 1,vertical: 'middle', horizontal: 'center'}
-      Data1.eachCell((cell, number) => {
-        cell.border = { right: { style: 'thin' } };
-      });
-      Data1.eachCell((cell, number) => {
-        cell.numFmt = '$#,##0.00';
-        if (number == 4 || number == 3) {
-          cell.alignment = {
-            indent: 1,
-            vertical: 'middle',
-            horizontal: 'right',
-          };
-        }
-      });
-      if (Data1.number % 2) {
-        Data1.eachCell((cell, number) => {
-          cell.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'e5e5e5' },
-            bgColor: { argb: 'FF0000FF' },
-          };
-        });
-      }
 
+      Data1.font = { name: 'Calibri', size: 11 };
 
+      formatRow(Data1);
     }
 
-    worksheet.getColumn(1).width = 10;
-    worksheet.getColumn(1).alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'left',
-    };
-    worksheet.getColumn(2).width = 25;
-    worksheet.getColumn(2).alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'left',
-      wrapText: true,
-    };
-    worksheet.getColumn(3).width = 15;
-    worksheet.getColumn(4).width = 13;
-    worksheet.getColumn(5).width = 13;
-    worksheet.getColumn(6).width = 13;
-    // worksheet.getColumn(7).width = 13;
-    worksheet.getColumn(7).width = 25;
-    worksheet.getColumn(8).width = 10;
-    worksheet.getColumn(9).width = 25;
-    worksheet.getColumn(10).width = 25;
-    worksheet.getColumn(11).width = 10;
+    /* ================= TOTAL ROW ================= */
 
-    worksheet.addRow([]);
+    // Calculate totals
+    const totalBalance1 = unapplied.reduce((sum: number, d: any) => {
+      return sum + (parseFloat(d.Balance) || 0);
+    }, 0);
+
+    const totalBalance2 = unapplied.reduce((sum: number, d: any) => {
+      return sum + (parseFloat(d.Balance2) || 0);
+    }, 0);
+
+    // Create empty row with 8 columns
+    const totalRowData = new Array(8).fill('');
+
+    // Set totals directly in columns
+    totalRowData[2] = totalBalance1; // Balance (col 3)
+    totalRowData[3] = totalBalance2; // Balance2 (col 4)
+
+    const totalRow = worksheet.addRow(totalRowData);
+
+    // Styling
+    totalRow.eachCell((cell: any, colNumber: number) => {
+
+      cell.font = {
+        bold: true,
+        name: 'Calibri'
+      };
+
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '8DB4FF' }
+      };
+
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'double' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+
+      // Alignment
+      if (colNumber === 3 || colNumber === 4) {
+        cell.alignment = { horizontal: 'right', vertical: 'middle' };
+
+        // Currency format
+        cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+      } else {
+        cell.alignment = { horizontal: 'left', vertical: 'middle' };
+      }
+    });
+    /* ================= COLUMN WIDTH ================= */
+
+    worksheet.columns = [
+      { width: 15 }, { width: 15 }, { width: 20 },
+      { width: 20 }, { width: 20 }, { width: 20 },
+      { width: 25 }, { width: 25 }
+    ];
+
+    /* ================= EXPORT ================= */
+
     workbook.xlsx.writeBuffer().then((data: any) => {
       const blob = new Blob([data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
-      FileSaver.saveAs(blob, 'Loaner Inventory_' + DATE_EXTENSION + EXCEL_EXTENSION);
+      FileSaver.saveAs(blob, 'Loaner Inventory');
     });
-    // });
+
   }
 
 
