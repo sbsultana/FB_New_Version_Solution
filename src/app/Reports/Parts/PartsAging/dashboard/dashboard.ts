@@ -110,7 +110,7 @@ export class Dashboard {
             return a.AP_Source;
           });
         } else {
-          alert('Invalid Details');
+          this.toast.show('Invalid Details','danger','Error');
         }
       },
       (error) => {

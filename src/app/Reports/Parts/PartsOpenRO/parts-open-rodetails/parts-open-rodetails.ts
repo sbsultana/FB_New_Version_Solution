@@ -133,7 +133,7 @@ export class PartsOpenRODetails {
       event.target.scrollTop + event.target.clientHeight >=
       event.target.scrollHeight - 2
     ) {
-      // alert("reached at bottom");
+      // this.toast.show("reached at bottom");
       if (this.pageNumber == 0) {
         if (this.details.length == 100) {
           this.spinnerLoader = true;
@@ -246,7 +246,7 @@ export class PartsOpenRODetails {
             //console.log(item);
 
           } else {
-            alert('Invalid Details');
+            this.toast.show('Invalid Details','danger','Error');
           }
         },
         (error) => {

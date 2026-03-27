@@ -1094,7 +1094,7 @@ export class Dashboard {
           'warning',
           'Warning'
         );
-        // alert('Please select at least one record to hide');
+        // alert('Please select atleast one record to hide');
 
         (document.getElementById('symbol') as HTMLInputElement).checked = false;
         return;
@@ -1125,7 +1125,7 @@ export class Dashboard {
 
   hideAdd() {
     if (this.hideRecords.length === 0) {
-      // alert('Please select at least one record to hide');
+      // alert('Please select atleast one record to hide');
       this.toast.show(
         'Please select atleast one record to hide',
         'warning',
