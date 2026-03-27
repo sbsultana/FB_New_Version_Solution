@@ -14,7 +14,7 @@ import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstra
 import { Title } from '@angular/platform-browser';
 import { CommonModule, CurrencyPipe, DatePipe, NgStyle } from '@angular/common';
 import * as FileSaver from 'file-saver';
-import { Workbook } from 'exceljs';
+import * as ExcelJS from 'exceljs';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Subscription } from 'rxjs';
@@ -544,203 +544,246 @@ export class Dashboard {
 
   ExcelStoreNames: any = [];
   exportToExcel() {
-    let storeNames: any = [];
-    let store = this.storeIds;
-    storeNames = this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.filter((item: any) => this.storeIds.includes(item.ID));
-    if (store.length == this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groups)[0].Stores.length) {
-      this.ExcelStoreNames = 'All Stores'
-    } else {
-      this.ExcelStoreNames = storeNames.map(function (a: any) {
-        return a.storename;
-      });
-    }
 
-
-    const workbook = new Workbook();
+    const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Title Report');
-    worksheet.views = [
-      {
-        state: 'frozen',
-        ySplit: 11, // Number of rows to freeze (2 means the first two rows are frozen)
-        topLeftCell: 'A12', // Specify the cell to start freezing from (in this case, the third row)
-        showGridLines: false,
-      },
-    ];
-    worksheet.addRow('');
-    const titleRow = worksheet.addRow(['Title Report']);
-    titleRow.eachCell((cell, number) => {
-      cell.alignment = { indent: 1, vertical: 'top', horizontal: 'left' };
-    });
-    titleRow.font = { name: 'Arial', family: 4, size: 12, bold: true };
-    titleRow.worksheet.mergeCells('A2', 'D2');
 
-    worksheet.addRow('');
-    const DateToday = this.datepipe.transform(
-      new Date(),
-      'MM/dd/yyyy h:mm:ss a'
-    );
-    const DATE_EXTENSION = this.datepipe.transform(new Date(), 'MMddyyyy');
-    worksheet.addRow([DateToday]).font = { name: 'Arial', family: 4, size: 9 };
-    const Appointmentdata = this.TitleData.map((_arrayElement: any) =>
-      Object.assign({}, _arrayElement)
-    );
-    const ReportFilter = worksheet.addRow(['Report Filters :']);
-    ReportFilter.font = { name: 'Arial', family: 4, size: 10, bold: true };
-    const Groups = worksheet.getCell('A6');
-    Groups.value = 'Group :';
-    Groups.font = { name: 'Arial', family: 4, size: 9, bold: true };
-    const groups = worksheet.getCell('B6');
-    groups.value =
-      this.comm.groupsandstores.filter((val: any) => val.sg_id == this.groups.toString())[0].sg_name;
-    groups.font = { name: 'Arial', family: 4, size: 9 };
-    groups.alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-    worksheet.mergeCells('B7', 'K9');
-    const Stores = worksheet.getCell('A7');
-    Stores.value = 'Stores :'
-    const stores = worksheet.getCell('B7');
-    stores.value = this.ExcelStoreNames == 0
-      ? '-'
-      : this.ExcelStoreNames == null
-        ? '-'
-        : this.ExcelStoreNames.toString().replaceAll(',', ', ');
-    stores.font = { name: 'Arial', family: 4, size: 9 };
-    stores.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
-    Stores.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
+    /* ================= FILTER SECTION ================= */
+    const filterRowCount = this.addExcelFiltersSection(worksheet);
+
+    /* ================= FORMAT FUNCTION ================= */
+    const formatRow = (row: any) => {
+      row.eachCell((cell: any, colNumber: number) => {
+
+        cell.border = {
+          top: { style: 'thin' },
+          bottom: { style: 'thin' },
+          left: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+
+        if (colNumber === 1) {
+          cell.alignment = { horizontal: 'left', vertical: 'middle' };
+          return;
+        }
+
+        if (!cell.value || cell.value === '-') {
+          cell.value = '-';
+          cell.alignment = { horizontal: 'center', vertical: 'middle' };
+          return;
+        }
+
+        const num = Number(cell.value);
+
+        if (!isNaN(num)) {
+
+          if (num === 0) {
+            cell.value = '-';
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            return;
+          }
+
+          // Currency columns
+          if (colNumber === 4 || colNumber === 5 || colNumber === 14) {
+            cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+          }
+
+          if (num < 0) {
+            cell.font = {
+              ...cell.font,
+              color: { argb: 'FFFF0000' }
+            };
+          }
+        }
+
+        cell.alignment = { horizontal: 'right', vertical: 'middle' };
+      });
+
+      /* ===== ALT ROW COLOR ===== */
+      if (row.number % 2 === 0) {
+        row.eachCell((cell: any) => {
+          // Avoid overriding header or note row colors if needed
+          if (!cell.fill || cell.fill.fgColor?.argb !== '4584FF') {
+            cell.fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'F5F7FA' }
+            };
+          }
+        });
+      }
     };
-    const Timeframe = worksheet.addRow(['Timeframe :']);
-    Timeframe.getCell(1).font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: true,
-    };
-    const timeframe = worksheet.getCell('B10');
-    timeframe.font = { name: 'Arial', family: 4, size: 9 };
-    worksheet.addRow('');
-    // const Note = worksheet.addRow(['Note :']);const note = worksheet.getCell("C4");note.value = this.StoreValues;note.font = {name: 'Arial',family: 4,size: 8,bold: false,};
-    // Note.font = {name: 'Arial',family: 4,size: 8,bold: true,};
+
+    /* ================= HEADER ================= */
+
     let Headings = [
-      'Stock #', 'Age',
-      'Status',
-      'Price 1',
-      'Price 2', 'Store Name', 'Year', 'Make', 'Model', 'VIN', 'Deal Dept', 'Title Department', 'Title #', 'Balance'
+      'Stock #', 'Age', 'Status',
+      'Price 1', 'Price 2', 'Store Name',
+      'Year', 'Make', 'Model', 'VIN',
+      'Deal Dept', 'Title Department', 'Title #', 'Balance'
     ];
+
     const headerRow = worksheet.addRow(Headings);
-    headerRow.font = {
-      name: 'Arial',
-      family: 4,
-      size: 9,
-      bold: false,
-      color: { argb: 'FFFFFF' },
-    };
-    headerRow.alignment = {
-      indent: 1,
-      vertical: 'middle',
-      horizontal: 'center',
-    };
-    headerRow.eachCell((cell: any, number: any) => {
+
+    headerRow.eachCell((cell: any) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '788494' },
-        bgColor: { argb: 'FF0000FF' },
+        fgColor: { argb: '4584FF' }
       };
-      cell.border = { right: { style: 'dotted' } };
-      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+      cell.font = {
+        bold: true,
+        color: { argb: 'FFFFFF' },
+        name: 'Calibri'
+      };
+
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'thin' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
     });
+
+    /* ================= FREEZE ================= */
+    worksheet.views = [{
+      state: 'frozen',
+      xSplit: 1,
+      ySplit: headerRow.number
+    }];
+
+    /* ================= DATA ================= */
+
     const SalesData = this.TitleData.map((_arrayElement: any) =>
       Object.assign({}, _arrayElement)
     );
-    let count = 13
+
+    let count = headerRow.number;
 
     for (const d of SalesData) {
-      count++
-      var data1obj = [
-        d.stockno == '' ? '-' : d.stockno == null ? '-' : d.stockno,
-        d.Age == '' ? '-' : d.Age == null ? '-' : d.Age,
-        d.status == '' ? '-' : d.status == null ? '-' : d.status,
-        d['price1'] == '' ? '-' : d['price1'] == null ? '-' : parseFloat(d['price1']),
-        d['price2'] == '' ? '-' : d['price2'] == null ? '-' : parseFloat(d['price2']),
-        d.StoreName == '' ? '-' : d.StoreName == null ? '-' : d.StoreName,
-        d.Year == '' ? '-' : d.Year == null ? '-' : d.Year,
-        d.Make == '' ? '-' : d.Make == null ? '-' : d.Make,
-        d.Model == '' ? '-' : d.Model == null ? '-' : d.Model,
-        d.VIN == '' ? '-' : d.VIN == null ? '-' : d.VIN,
 
-        d['Deal Dept'] == '' ? '-' : d['Deal Dept'] == null ? '-' : d['Deal Dept'],
-        d['Title Dept 2'] == '' ? '-' : d['Title Dept 2'] == null ? '-' : d['Title Dept 2'],
-        d['Title Dept 1'] == '' ? '-' : d['Title Dept 1'] == null ? '-' : d['Title Dept 1'],
+      count++;
 
-        d['balance'] == '' ? '-' : d['balance'] == null ? '-' : parseFloat(d['balance']),
+      const data1obj = [
+        d.stockno || '-',
+        d.Age || '-',
+        d.status || '-',
+        d.price1 ? parseFloat(d.price1) : '-',
+        d.price2 ? parseFloat(d.price2) : '-',
+        d.StoreName || '-',
+        d.Year || '-',
+        d.Make || '-',
+        d.Model || '-',
+        d.VIN || '-',
+        d['Deal Dept'] || '-',
+        d['Title Dept 2'] || '-',
+        d['Title Dept 1'] || '-',
+        d.balance ? parseFloat(d.balance) : '-',
+      ];
 
-      ]
       const Data1 = worksheet.addRow(data1obj);
-      Data1.font = { name: 'Arial', family: 4, size: 9 };
-      Data1.alignment = { vertical: 'middle', horizontal: 'center' };
-      Data1.getCell(1).alignment = {
-        indent: 1,
-        vertical: 'middle',
-        horizontal: 'left',
-      };
-      Data1.eachCell((cell: any, number: any) => {
-        cell.border = { right: { style: 'dotted' } };
-        // cell.numFmt = '$#,##0.00';
+      Data1.font = { name: 'Calibri', size: 11 };
 
-        if (number == 4 || number == 5 || number == 14) {
-          cell.numFmt = '$#,##0.00';
-        }
-        if (number > 1 && data1obj[number] != undefined) {
-          if (data1obj[number] < 0) {
-            Data1.getCell(number + 1).font = { name: 'Arial', family: 4, size: 9, color: { argb: 'FFFF0000' } };
-          }
-        }
-      });
+      formatRow(Data1);
+
+      /* ===== NOTES ===== */
       if (d.NotesStatus == 'Y' && this.notesViewState == true) {
         for (const d1 of d.Notes) {
+
           worksheet.mergeCells(count, 1, count, 14);
+
           const Data2 = worksheet.getCell(count, 1);
-          Data2.value = ' ' + ' ' + ' ' + ' ' + ' ' + ' ' + d1.GN_Text
-          Data2.alignment = { indent: 2, vertical: 'middle', horizontal: 'left', };
-          Data2.font = { name: 'Arial', family: 4, size: 9 };
-          Data2.border = { right: { style: 'thin' }, left: { style: 'thin' }, top: { style: 'thin' }, bottom: { style: 'thin' } };
+          Data2.value = '      ' + d1.GN_Text;
+
+          Data2.alignment = { horizontal: 'left', vertical: 'middle' };
+          Data2.font = { name: 'Calibri', size: 11 };
+
+          Data2.border = {
+            top: { style: 'thin' },
+            bottom: { style: 'thin' },
+            left: { style: 'thin' },
+            right: { style: 'thin' }
+          };
+
           Data2.fill = {
             type: 'pattern',
             pattern: 'solid',
-            fgColor: { argb: 'b6d3ec' },
-            bgColor: { argb: 'b4c7dc' },
+            fgColor: { argb: 'E8F1FF' }
           };
-          count++
+
+          count++;
         }
       }
     }
-    worksheet.getColumn(1).width = 15; worksheet.getColumn(1).alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-    worksheet.getColumn(2).width = 15;
-    worksheet.getColumn(3).width = 20;
-    worksheet.getColumn(4).width = 25;
-    worksheet.getColumn(5).width = 25;
-    worksheet.getColumn(6).width = 25;
-    worksheet.getColumn(7).width = 25;
+    /* ================= TOTAL ROW ================= */
 
-    worksheet.getColumn(8).width = 25;
+    // Calculate total balance
+    const totalBalance = SalesData.reduce((sum: number, d: any) => {
+      const val = parseFloat(d.balance);
+      return sum + (isNaN(val) ? 0 : val);
+    }, 0);
 
-    worksheet.getColumn(9).width = 25;
-    worksheet.getColumn(10).width = 25;
+    // Create total row
+    const totalRowData = new Array(13).fill('');
+    totalRowData.push(totalBalance); // 14th column = balance
 
-    worksheet.getColumn(11).width = 25;
-    worksheet.getColumn(12).width = 25;
-    worksheet.addRow([]);
+    const totalRow = worksheet.addRow(totalRowData);
+
+    // Put TOTAL text in last column
+    totalRow.getCell(14).value = `TOTAL BALANCE : ${totalBalance}`;
+
+    // Styling
+    totalRow.eachCell((cell: any, colNumber: number) => {
+
+      cell.font = {
+        bold: true,
+        name: 'Calibri'
+      };
+
+      cell.border = {
+        top: { style: 'thin' },
+        bottom: { style: 'double' },
+        left: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+
+      // Background color
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '8DB4FF' }
+      };
+
+      // Alignment
+      if (colNumber === 14) {
+        cell.alignment = { horizontal: 'right', vertical: 'middle' };
+
+        // Currency format (if you want separate number instead of text)
+        cell.numFmt = '"$" * #,##0;[Red]"$" * -#,##0';
+      } else {
+        cell.alignment = { horizontal: 'right', vertical: 'middle' };
+      }
+    });
+    /* ================= COLUMN WIDTH ================= */
+
+    worksheet.columns = [
+      { width: 15 }, { width: 15 }, { width: 20 },
+      { width: 25 }, { width: 25 }, { width: 25 },
+      { width: 25 }, { width: 25 }, { width: 25 },
+      { width: 25 }, { width: 25 }, { width: 25 },
+      { width: 25 }, { width: 25 }
+    ];
+
+    /* ================= EXPORT ================= */
+
     workbook.xlsx.writeBuffer().then((data: any) => {
       const blob = new Blob([data], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
       });
-      FileSaver.saveAs(
-        blob,
-        'Title Report_' + DATE_EXTENSION + EXCEL_EXTENSION
-      );
+      FileSaver.saveAs(blob, 'Title Report.xlsx');
     });
   }
 
