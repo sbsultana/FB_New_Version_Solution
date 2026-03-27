@@ -90,7 +90,7 @@
                             <th class="bdr-rt" (click)="sort('AGED BALANCE')" style="cursor: pointer;">Aged Balance</th>
                             <th class="bdr-rt" (click)="sort('TOTAL')" style="cursor: pointer;">Total Balance</th>
                             <th class="bdr-rt" style="cursor: pointer;"><span (click)="sort('GUIDE')"> Guide</span>
-                                &nbsp;&nbsp;<img src="images/edit_icon.png" class="ms-auto"
+                                &nbsp;&nbsp;<img src="images/Actionblack.png" class="ms-auto"
                                     style="cursor: pointer;width:15px;padding-bottom: 2px;"
                                     (click)="getNewdetails(tmp)">
                             </th>
@@ -544,7 +544,8 @@
                                 </ng-container>
                                 <tr *ngIf="data1.controlState == '-'">
                                     <td colspan="8" style="padding: 10px 30px !important;">
-                                        <div class="scorecard-single-header" style="max-height: 35vh;height: auto !important;">
+                                        <div class="scorecard-single-header"
+                                            style="max-height: 35vh;height: auto !important;">
                                             <table style="width: 100%;" class="table mb-0 w-100">
                                                 <thead>
                                                     <tr>
@@ -609,7 +610,7 @@
 
                             <div class="row">
                                 <div class="col-lg-12 col-12">
-                                    <div class="m-2 p-2">
+                                    <div class="m-2 p-2 px-3">
                                         <div class="row align-items-center">
                                             <div class="col-12 p-0 d-flex align-items-center">
 
@@ -623,7 +624,7 @@
                                                     </span>
                                                 </h2>
 
-                                                <a type="button" class="ms-auto px-3" style="cursor:pointer;"
+                                                <a type="button" class="ms-auto" style="cursor:pointer;"
                                                     (click)="closepopup()">
                                                     <button type="button" class="btn-close" aria-label="Close"></button>
                                                 </a>
@@ -635,28 +636,30 @@
                                         <div class="col-12 menu-list ">
                                             <div class="row align-items-center justify-content-center">
                                                 <div class="col-12 ">
-                                                    <div class="col-2"></div>
-                                                    <div *ngFor="let data1 of newValuesToEdit; let i=index"
-                                                        class="col-lg-10 mb-4"
-                                                        [ngStyle]="{'display':data1.STORENAME=='Report Total'? 'none': 'block'}">
-                                                        <div class="divBold mb-2 text-uppercase"
-                                                            style="font-size:1rem !important ;"> {{data1.STORENAME==''
-                                                            || data1.STORENAME==undefined ?
-                                                            '-' : data1.STORENAME}}</div>
-                                                        <div class="list-group list-group-flush "
-                                                            *ngFor="let dt2 of data1.warranty; let i=index">
-                                                            <div class="list-group-item d-flex" *ngIf="i !=0">
-                                                                <div class="col-6">
-                                                                    {{dt2.WARRANTY_TYPE=='' ||
-                                                                    dt2.WARRANTY_TYPE==undefined ?
-                                                                    '-' : dt2.WARRANTY_TYPE}}
-                                                                </div>
-                                                                <div class="d-flex">
-                                                                    <!-- <span class="dollar" *ngIf="dt2.TargetValue != '' && dt2.TargetValue != 0">$</span>                                                  -->
-                                                                    <input type="text" [(ngModel)]="dt2.TargetValue"
-                                                                        class="target-txt"
-                                                                        (keypress)="keyPressNumbers($event, dt2.TargetValue)"
-                                                                        (blur)="dt2.TargetValue = addPercentageSymbol(dt2.TargetValue)">
+                                                    <div class="scroll" style="height: 60vh;overflow-y: auto;">
+                                                        <div *ngFor="let data1 of newValuesToEdit; let i=index"
+                                                            class="p-3"
+                                                            [ngStyle]="{'display':data1.STORENAME=='Report Total'? 'none': 'block'}">
+                                                            <div class="fw-bold text-uppercase mb-2"
+                                                                style="font-size:1rem !important ;">
+                                                                {{data1.STORENAME==''
+                                                                || data1.STORENAME==undefined ?
+                                                                '-' : data1.STORENAME}}</div>
+                                                            <div class="list-group list-group-flush bordered"
+                                                                *ngFor="let dt2 of data1.warranty; let i=index">
+                                                                <div class="list-group-item d-flex" *ngIf="i !=0">
+                                                                    <div class="col-6">
+                                                                        {{dt2.WARRANTY_TYPE=='' ||
+                                                                        dt2.WARRANTY_TYPE==undefined ?
+                                                                        '-' : dt2.WARRANTY_TYPE}}
+                                                                    </div>
+                                                                    <div class="d-flex">
+                                                                        <!-- <span class="dollar" *ngIf="dt2.TargetValue != '' && dt2.TargetValue != 0">$</span>                                                  -->
+                                                                        <input type="text" [(ngModel)]="dt2.TargetValue"
+                                                                            class="editabletxt"
+                                                                            (keypress)="keyPressNumbers($event, dt2.TargetValue)"
+                                                                            (blur)="dt2.TargetValue = addPercentageSymbol(dt2.TargetValue)">
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -666,11 +669,11 @@
                                         </div>
                                     </div>
                                     <div class="footer">
-                                        <div class="row mt-3 align-items-center justify-content-center">
-                                            <div class="text-center d-flex align-items-center col-4">
-                                                <button type="button" class="btn btn-view mx-1"
-                                                    (click)="save()">Save</button>
-                                                <div class="cancel-txt col-4" (click)="closepopup()" id="close">
+                                        <div class="row">
+                                            <div
+                                                class="text-center d-flex justify-content-end align-items-center p-3">
+                                                <button type="button" class="editbtn mx-1" (click)="save()">Save</button>
+                                                <div class="cancelbtn mx-1" (click)="closepopup()" id="close">
                                                     <a>Cancel</a>
                                                 </div>
                                             </div>

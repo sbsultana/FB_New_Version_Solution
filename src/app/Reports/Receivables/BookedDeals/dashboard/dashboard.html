@@ -45,6 +45,11 @@
         </div>
         <div class="dropdown">
           <button class="dropdown-toggle" (click)="togglePopover(4)">
+            <div *ngIf="spinnerLoader" class="graph-loader d-flex align-items-center justify-content-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
             People
             <span class="light-font">
               (
@@ -72,18 +77,18 @@
                 </div>
                 <div class="store-columns flex-grow-1">
 
-                  <ng-container *ngIf="storeIds.length > 0">
+                  <!-- <ng-container *ngIf="storeIds.length > 0">
                     <div class="allstores text-start" *ngIf="selectedFiManagersvalues.length == 0">
                       <a class="text-primary text-decoration-none cursor-pointer me-2" style="pointer-events: none;">No
                         Records Found
                       </a>
                     </div>
-                  </ng-container>
+                  </ng-container> -->
                   <ng-container *ngIf="activePopover==4">
                     <ng-container *ngFor="let fm of financeManager;let i=index">
                       <button class="btn btn-outline-primary store-button" (click)="employees('FM',fm.FiId,fm.FiName)"
                         [ngClass]="{'active':selectedFiManagersvalues.indexOf(fm.FiId)>=0,'inactive':selectedFiManagersvalues.indexOf(fm.FiId)<0}">
-                        <span> {{fm.FiName}}</span>
+                        <span ngbTooltip="{{fm.FiName}}"> {{fm.FiName}}</span>
                       </button>
                     </ng-container>
                   </ng-container>
@@ -131,7 +136,8 @@
         </div>
         &nbsp;
         <div class="dropdown">
-          <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+          <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+            [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
         </div>
         <div class="search ms-auto me-2">
           <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchText"
@@ -316,14 +322,16 @@
                        'background-color': i.toString() != index ? '' : '#363b4f' }">
 
               <td *ngIf="Role=='Super Admin' || userid=='8'" class="text-center">
-                <input type="checkbox" [checked]="fp.check"
-                  (change)="collectHidevalues($event,fp,confirm,'single',fp.Stockno)">
+                <div class="form-check d-flex justify-content-center">
+                  <input class="form-check-input" type="checkbox" id="symbols" [checked]="fp.check"
+                    (change)="collectHidevalues($event,fp,confirm,'single',fp.StockNo)">
+                </div>
               </td>
 
               <td class="text-center">
-                <img *ngIf="fp.NotesStatus === 'N'" src="/images/Actionblack.png" data-bs-toggle="modal"
+                <img *ngIf="fp.NotesStatus === 'N'" src="images/Actionblack.png" data-bs-toggle="modal"
                   data-bs-target="#payplan" (click)="addNotes(fp)" style="cursor:pointer;">
-                <img *ngIf="fp.NotesStatus === 'Y'" src="/images/notes_unread.png" data-bs-toggle="modal"
+                <img *ngIf="fp.NotesStatus === 'Y'" src="images/notes_unread.png" data-bs-toggle="modal"
                   data-bs-target="#payplan" (click)="addNotes(fp)" style="cursor:pointer;">
               </td>
 
@@ -383,6 +391,7 @@
           style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
           <tr class="even divBold" *ngIf="FloorPlanTotalData?.length > 0">
             <td colspan="1" *ngIf="Role=='Super Admin' || userid=='8'"></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
@@ -452,7 +461,7 @@
         <h2 class="m-0">
           Notes :
           <span>
-            {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
+            {{ selecteddata.Stockno ? '#' + selecteddata.Stockno : selecteddata.Stockno }}
           </span>
         </h2>
 
@@ -484,14 +493,14 @@
         <div class="mb-2">
           <h5>
             Control :
-            <span class="fw-bold">{{ selecteddata.Control }}</span>
+            <span class="fw-bold">{{selecteddata.Dealno}}</span>
           </h5>
         </div>
 
         <div class="mb-3">
           <h5>
             Post Date :
-            <span>{{ selecteddata.FundingDate | date:'MM.dd.yyyy' }}</span>
+            <span class="fw-bold">{{selecteddata.CTDate | date:'MM.dd.yyyy'}}</span>
           </h5>
         </div>
 

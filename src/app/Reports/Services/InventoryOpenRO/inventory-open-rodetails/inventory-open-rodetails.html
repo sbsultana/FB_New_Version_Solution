@@ -110,10 +110,10 @@
                     <ng-container *ngFor="let det of paginatedItems; let i=index">
                         <tr>
                             <td>
-                                <img *ngIf="det.NotesStatus=='N'" src="/images/Actionblack.png"
+                                <img *ngIf="det.NotesStatus=='N'" src="images/Actionblack.png"
                                     (click)="addNotes(det,notes)" style="cursor: pointer;">
 
-                                <img *ngIf="det.NotesStatus=='Y'" src="/images/notes_unread.png "
+                                <img *ngIf="det.NotesStatus=='Y'" src="images/notes_unread.png "
                                     (click)="addNotes(det,notes)" style="cursor: pointer;">
 
                             </td>

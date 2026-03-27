@@ -40,7 +40,7 @@ export class Dashboard {
   allordebit: any = 'dr';
   selectedreceviabe: any = [];
   StoreVal: any = '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11';
-  spinnerLoader: boolean = true;
+  spinnerLoader: boolean = false;
   Role: any = [];
   userid: any;
 
@@ -152,6 +152,27 @@ export class Dashboard {
       }
     }
     this.commentsVisibility = true;
+
+    if (localStorage.getItem('userInfo') != null) {
+      // Keep same logic but don't break when redirectionFrom missing
+      try {
+        const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
+        this.Role = ud.user_Info.title;
+        this.userid = ud.user_Info.userid;
+        console.log(this.Role, this.userid);
+      } catch {
+        // ignore
+      }
+
+      const ud: any = JSON.parse(localStorage.getItem('userInfo')!);
+      let allordebit = ud.flag2
+      console.log(ud, allordebit, '...................................................................')
+      if (ud.user_Info.flag != 'M') {
+        this.financeManagerId = 0;
+        this.allordebit = allordebit == 'A' ? 'all' : 'dr';
+      }
+    }
+
     this.shared.setTitle(this.comm.titleName + '-Booked Deals');
 
     /* --------- HEADER FOR REPORTING --------- */
@@ -281,7 +302,11 @@ export class Dashboard {
   exportToExcel(): void {
     const workbook: any = this.shared.getWorkbook?.();
     if (!workbook) {
-      alert('Workbook helper not available');
+      this.toast.show(
+        'Workbook helper not available',
+        'warning',
+        'Warning'
+      );
       return;
     }
 
@@ -554,7 +579,7 @@ export class Dashboard {
   /* ------------------------------- MAIN API CALL ------------------------------- */
   previousReportPath: string | null = null;
   Getfloorplansdata(path: any) {
-
+    this.goToFirstPage();
     this.DefaultLoad = ''
     if (this.previousReportPath !== path.path) {
       this.AgeFrom = 0;
@@ -571,7 +596,11 @@ export class Dashboard {
       this.AgeTo !== null &&
       Number(this.AgeFrom) > Number(this.AgeTo)
     ) {
-      alert('Please Enter Valid Age Range');
+      this.toast.show(
+        'Please Enter Valid Age Range',
+        'warning',
+        'Warning'
+      );
       return; // ⛔ stop execution
     }
     this.spinner.show();
@@ -626,7 +655,11 @@ export class Dashboard {
         }
       },
       () => {
-        alert('502 Bad Gateway Error');
+        this.toast.show(
+          '502 Bad Gateway Error',
+          'danger',
+          'Error'
+        );
         this.spinner.hide();
         this.NoData = true;
       },
@@ -918,7 +951,11 @@ export class Dashboard {
   }
   save() {
     if (this.notesStageText.trim() === '') {
-      alert('Please enter notes');
+      this.toast.show(
+        'Please enter notes',
+        'warning',
+        'Warning'
+      );
       return;
     }
 
@@ -935,7 +972,11 @@ export class Dashboard {
       .postmethod(this.comm.routeEndpoint + 'AddScheduleNotesAction', obj)
       .subscribe((res: any) => {
         if (res.status == 200) {
-          alert('Notes Added Successfully');
+          this.toast.show(
+            'Notes Added Successfully',
+            'success',
+            'Success'
+          )
           this.callLoadingState = 'ANS';
           (document.getElementById('close') as HTMLInputElement)?.click();
           this.oncloseone();
@@ -970,7 +1011,11 @@ export class Dashboard {
           this.selecteddata.duplicateNotes.unshift(newNote);
           this.selecteddata.NotesStatus = 'Y';
         } else {
-          alert('Something went wrong. Please try again.');
+          this.toast.show(
+            'Something went wrong. Please try again.',
+            'danger',
+            'Error'
+          );
         }
       });
   }
@@ -980,7 +1025,11 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any, refval: any) {
     if (ref === 'multi') {
       if (this.hideRecords.length === 0) {
-        alert('Please select at least one record to hide');
+        this.toast.show(
+          'Please select atleast one record to hide',
+          'warning',
+          'Warning'
+        );
         (document.getElementById('symbol') as HTMLInputElement).checked = false;
         return;
       }
@@ -1010,7 +1059,11 @@ export class Dashboard {
 
   hideAdd() {
     if (this.hideRecords.length === 0) {
-      alert('Please select at least one record to hide');
+      this.toast.show(
+        'Please select atleast one record to hide',
+        'warning',
+        'Warning'
+      );
       return;
     }
 
@@ -1030,14 +1083,22 @@ export class Dashboard {
 
     this.shared.api.postmethod('ReceivableExcludeControls', obj).subscribe((res) => {
       if (res.status == 200) {
-        alert('This Control Hidden Successfully');
+        this.toast.show(
+          'This Control Hidden Successfully',
+          'success',
+          'Success'
+        );
         (document.getElementById('closeone') as HTMLElement).click();
         this.oncloseone();
         this.Getfloorplansdata(this.selectedreceviabe);
         this.hideRecords = [];
         this.hideVisibility = false;
       } else {
-        alert('Failed to hide control.');
+        this.toast.show(
+          'Failed to hide control.',
+          'danger',
+          'Error'
+        );
       }
     });
   }
@@ -1129,9 +1190,11 @@ export class Dashboard {
       AS_ID: this.StoreVal,
       type: 'F',
     };
+    this.spinnerLoader = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res: any) => {
         if (res && res.status == 200) {
+          this.spinnerLoader = false;
           // if (val == 'F') {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
           this.selectedFiManagersvalues = this.financeManager.map(function (a: any) {
@@ -1152,7 +1215,13 @@ export class Dashboard {
           // }
           // }
         } else {
-          alert('Invalid Details');
+          this.spinnerLoader = false;
+          this.toast.show(
+            'Invalid Details',
+            'danger',
+            'Error'
+          );
+
         }
       },
       (error: any) => {

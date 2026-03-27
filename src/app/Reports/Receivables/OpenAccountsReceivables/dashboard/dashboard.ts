@@ -620,6 +620,7 @@ export class Dashboard {
   // ---------------------- Fetch Data ----------------------
   Getfloorplansdata(searchName: string) {
     this.spinner.show();
+    this.goToFirstPage();
     const obj = {
       CUSTNAME: searchName || "",
       ASID: this.storeIds?.toString() || "",
@@ -630,12 +631,12 @@ export class Dashboard {
     this.shared.api.postmethod(this.comm.routeEndpoint + 'GetAropenAccountReceivables', obj)
       .subscribe({
         next: (res: any) => {
-            this.spinner.hide();
+          this.spinner.hide();
           if (res?.status === 200 && Array.isArray(res.response)) {
             if (this.pageNumber === 1) {
               this.FloorPlanData = res.response;
             } else {
-              this.FloorPlanData = [...this.FloorPlanData, ...res.response]; 
+              this.FloorPlanData = [...this.FloorPlanData, ...res.response];
             }
             this.filteredFloorplanData = [...this.FloorPlanData];
             this.NoData = this.FloorPlanData.length === 0;
@@ -645,7 +646,7 @@ export class Dashboard {
           }
         },
         error: (err) => {
-           this.spinner.hide();
+          this.spinner.hide();
           this.NoData = true;
           console.error('API Error:', err);
           alert('502 Bad Gateway Error');
@@ -668,7 +669,7 @@ export class Dashboard {
     }
   }
 
- 
+
   updateVerticalScroll(event: any): void {
     this.scrollCurrentposition = event.target.scrollTop;
     const scrollEl = this.scrollcent.nativeElement as HTMLElement;

@@ -18,6 +18,11 @@
         </div>
         <div class="dropdown">
           <button class="dropdown-toggle" (click)="togglePopover(4)">
+            <div *ngIf="spinnerLoader" class="graph-loader d-flex align-items-center justify-content-center">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
             People
             <span class="light-font">
               (
@@ -44,21 +49,18 @@
                     All</a>
                 </div>
                 <div class="store-columns flex-grow-1">
-
-                  <ng-container *ngIf="storeIds.length > 0">
+                  <!-- <ng-container *ngIf="storeIds.length > 0">
                     <div class="allstores text-start" *ngIf="selectedFiManagersvalues.length == 0">
                       <a class="text-primary text-decoration-none cursor-pointer me-2" style="pointer-events: none;">No
                         Records Found
                       </a>
                     </div>
-                  </ng-container>
-
-
+                  </ng-container> -->
                   <ng-container *ngIf="activePopover==4">
                     <ng-container *ngFor="let fm of financeManager;let i=index">
                       <button class="btn btn-outline-primary store-button" (click)="employees('FM',fm.FiId,fm.FiName)"
                         [ngClass]="{'active':selectedFiManagersvalues.indexOf(fm.FiId)>=0,'inactive':selectedFiManagersvalues.indexOf(fm.FiId)<0}">
-                        <span> {{fm.FiName}}</span>
+                        <span ngbTooltip="{{fm.FiName}}"> {{fm.FiName}}</span>
                       </button>
                     </ng-container>
                   </ng-container>
@@ -116,7 +118,8 @@
         &nbsp;
 
         <div class="dropdown">
-          <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+          <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+            [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
         </div>
         <div class="search ms-auto me-2">
           <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchText"
@@ -167,7 +170,7 @@
                 <span class="d-flex justify-content-between">
                   $<span>
                     {{ FloorPlanData[0]?.AgeData?.[0]?.TOTAL != null ?
-                    (FloorPlanData[0].AgeData[0].TOTAL | number: '1.2-2') : '-' }}
+                    (FloorPlanData[0].AgeData[0].TOTAL | number: '1.0-0') : '-' }}
                   </span>
                 </span>
               </td>
@@ -178,7 +181,7 @@
                 <span class="d-flex justify-content-between">
                   $<span>
                     {{ FloorPlanData[0]?.AgeData?.[0]?.D1 != null ?
-                    (FloorPlanData[0].AgeData[0].D1 | number: '1.2-2') : '-' }}
+                    (FloorPlanData[0].AgeData[0].D1 | number: '1.0-0') : '-' }}
                   </span>
                 </span>
               </td>
@@ -189,7 +192,7 @@
                 <span class="d-flex justify-content-between">
                   $<span>
                     {{ FloorPlanData[0]?.AgeData?.[0]?.D2 != null ?
-                    (FloorPlanData[0].AgeData[0].D2 | number: '1.2-2') : '-' }}
+                    (FloorPlanData[0].AgeData[0].D2 | number: '1.0-0') : '-' }}
                   </span>
                 </span>
               </td>
@@ -200,7 +203,7 @@
                 <span class="d-flex justify-content-between">
                   $<span>
                     {{ FloorPlanData[0]?.AgeData?.[0]?.D3 != null ?
-                    (FloorPlanData[0].AgeData[0].D3 | number: '1.2-2') : '-' }}
+                    (FloorPlanData[0].AgeData[0].D3 | number: '1.0-0') : '-' }}
                   </span>
                 </span>
               </td>
@@ -211,7 +214,7 @@
                 <span class="d-flex justify-content-between">
                   $<span>
                     {{ FloorPlanData[0]?.AgeData?.[0]?.D4 != null ?
-                    (FloorPlanData[0].AgeData[0].D4 | number: '1.2-2' ) : '-' }}
+                    (FloorPlanData[0].AgeData[0].D4 | number: '1.0-0' ) : '-' }}
                   </span>
                 </span>
               </td>
@@ -345,10 +348,10 @@
               </td>
 
               <td class="text-center">
-                <img *ngIf="fp.NotesStatus === 'N'" src="/images/Actionblack.png" (click)="addNotes(fp)"
+                <img *ngIf="fp.NotesStatus === 'N'" src="images/Actionblack.png" (click)="addNotes(fp)"
                   style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#payplan">
 
-                <img *ngIf="fp.NotesStatus === 'Y'" src="/images/notes_unread.png" (click)="addNotes(fp)"
+                <img *ngIf="fp.NotesStatus === 'Y'" src="images/notes_unread.png" (click)="addNotes(fp)"
                   style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#payplan">
               </td>
 
@@ -491,7 +494,7 @@
         <h2 class="m-0">
           Notes :
           <span>
-            {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
+            {{ selecteddata.StockNo ? '#' + selecteddata.StockNo : selecteddata.StockNo }}
           </span>
         </h2>
 
@@ -530,7 +533,7 @@
         <div class="mb-3">
           <h5>
             Post Date :
-            <span>{{ selecteddata.FundingDate | date:'MM.dd.yyyy' }}</span>
+            <span class="fw-bold">{{selecteddata.FundedDate | date:'MM.dd.yyyy'}}</span>
           </h5>
         </div>
 

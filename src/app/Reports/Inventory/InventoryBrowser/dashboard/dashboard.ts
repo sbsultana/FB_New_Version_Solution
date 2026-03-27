@@ -642,6 +642,7 @@ export class Dashboard {
   // ---------------------- Fetch Data ----------------------
   Getfloorplansdata() {
     this.spinner.show();
+    this.goToFirstPage();
     let obj = {};
     if (localStorage.getItem('IBObject') != null) {
       const InvObj = JSON.parse(localStorage.getItem('IBObject')!);

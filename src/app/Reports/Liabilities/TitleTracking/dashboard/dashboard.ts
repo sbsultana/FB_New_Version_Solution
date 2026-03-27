@@ -613,6 +613,7 @@ export class Dashboard {
   /* ------------------------------- MAIN API CALL ------------------------------- */
   previousReportPath: string | null = null;
   Getfloorplansdata(path: any) {
+        this.goToFirstPage();
     if (this.previousReportPath !== path.path) {
       this.AgeFrom = 0;
       this.AgeTo = 0;

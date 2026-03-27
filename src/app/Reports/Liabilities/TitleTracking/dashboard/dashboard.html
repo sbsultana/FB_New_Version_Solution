@@ -101,7 +101,7 @@
         <tbody>
           <ng-container *ngFor="let fp of paginatedItems; let i = index">
             <tr [ngClass]="{ even: i % 2 === 0, odd: i % 2 !== 0 }">
-              <td class="divRed">{{ fp.age || '-' }}</td>
+              <td class="divRed text-end">{{ fp.age || '-' }}</td>
               <td class="text-center">
                 {{ fp.dealdate ? (fp.dealdate | date:'MM.dd.yyyy') : '-' }}
               </td>
