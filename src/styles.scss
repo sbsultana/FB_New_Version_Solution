@@ -151,6 +151,11 @@ main {
   padding-top: 70px;
 }
 
+.modal,
+.popup-container {
+  z-index: 10001 !important;
+}
+
 .container-fluid {
   font-family: 'Roboto';
 }
@@ -900,7 +905,7 @@ select:focus {
 
 
 
-.input-field{
+.input-field {
   min-height: 2rem;
   width: auto;
   padding: 0.475rem;

@@ -18,7 +18,7 @@ export const routes: Routes = [
   { path: 'TitleReport', loadComponent: () => import('./Reports/Accounting/TitleReport/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'LoanerInventoryV2', loadComponent: () => import('./Reports/Accounting/LoanerInventory/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseIncomeByExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpense/dashboard/dashboard').then(m => m.Dashboard) },
-  { path: 'EnterpriseExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseDepartment/dashboard/dashboard').then(m => m.Dashboard) },
+  // { path: 'EnterpriseExpense', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseDepartment/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'EnterpriseIncomeByExpenseTrend', loadComponent: () => import('./Reports/Accounting/EnterpriseIncomeByExpenseTrend/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'SellingGross', loadComponent: () => import('./Reports/Accounting/SellingGross/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'NetAddsDeducts', loadComponent: () => import('./Reports/Accounting/NetAddsByDeducts/dashboard/dashboard').then(m => m.Dashboard) },

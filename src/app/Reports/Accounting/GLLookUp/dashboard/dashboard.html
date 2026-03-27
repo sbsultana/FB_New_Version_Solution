@@ -35,14 +35,12 @@
                             </span>
                         </button>
 
-                        <input bsDatepicker [(ngModel)]="month"
-                            [bsConfig]="bsConfig" readonly  
-                             (keydown)="$event.preventDefault()" [bsConfig]="bsConfig" #dp="bsDatepicker"
+                        <input bsDatepicker [(ngModel)]="month" [bsConfig]="bsConfig" readonly
+                            (keydown)="$event.preventDefault()" [bsConfig]="bsConfig" #dp="bsDatepicker"
                             (onShown)="onOpenCalendar($event)" (ngModelChange)="changeDate($event)" [maxDate]="maxDate"
-                            [minDate]="minDate"
-                            style="position: absolute; opacity: 0; height: 0; width: 0;" />
+                            [minDate]="minDate" style="position: absolute; opacity: 0; height: 0; width: 0;" />
 
-                     
+
                     </div>
                     <div class="dropdown">
                         <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
@@ -55,9 +53,9 @@
                 <thead>
 
                     <tr>
-                        <th (click)="sort('Accountnumber',GLData,'M')">Account #</th>
+                        <th (click)="sort('Accountnumber',GLData,'M')" class="w-25">Account #</th>
                         <th (click)="sort('AccountName',GLData,'M')" style="cursor: pointer;">Account Name</th>
-                        <th (click)="sort('Store',GLData,'M')" style="cursor: pointer;">Store</th>
+                        <th (click)="sort('Store',GLData,'M')" style="cursor: pointer;" class="w-50">Store</th>
                         <th (click)="sort('postingamount',GLData,'M')" style="cursor: pointer;">Posting Amount</th>
                     </tr>
                 </thead>
@@ -121,7 +119,7 @@
                                                     </td>
 
                                                     <td (click)="sort('detaildescription', data.childRows, 'GL')"
-                                                        style="cursor: pointer; text-align: center;">
+                                                        style="cursor: pointer; text-align: center;" class="w-50">
                                                         Description
                                                     </td>
 
@@ -182,12 +180,31 @@
                                                         <span class="d-flex justify-content-between">
                                                             $<span>{{ row.postingamount !== null && row.postingamount
                                                                 !== undefined
-                                                                ? (row.postingamount | number:'1.0-0')
+                                                                ? (row.postingamount | number:'1.2-2')
                                                                 : '-' }}</span>
                                                         </span>
                                                     </td>
                                                 </tr>
+                                                <tr class="divBold"
+                                                    style="position: sticky; bottom: 0; z-index: 995; font-family: 'Roboto' !important;">
 
+                                                    <td></td>
+
+                                                    <td colspan="3" style="text-align:right; font-weight:bold;">
+                                                        Sub Total:
+                                                    </td>
+
+                                                    <td style="font-weight:bold;"
+                                                        [ngClass]="{ negative: getSubTotal(data.childRows) < 0 }">
+
+                                                        <span class="d-flex justify-content-between">
+                                                            $<span>{{ getSubTotal(data.childRows) | number:'1.2-2'
+                                                                }}</span>
+                                                        </span>
+
+                                                    </td>
+
+                                                </tr>
                                             </tbody>
 
                                         </table>
@@ -229,7 +246,8 @@
         </div>
 
 
-        <div *ngIf="actionType == 'N'" class="mt-4" style="text-align: center;color: black; display: revert;font-size: 1rem;">
+        <div *ngIf="actionType == 'N'" class="mt-4"
+            style="text-align: center;color: black; display: revert;font-size: 1rem;">
             Please enter Account Number to Fetch data..!
         </div>
     </div>

@@ -55,7 +55,6 @@
           <tr>
             <th> {{ FromDate ? (FromDate | date:'MMM-yyyy') : '' }} to {{ ToDate ? (ToDate | date:'MMM-yyyy') : '' }}
             </th>
-            <th>
             <th></th>
             <th
               *ngFor="let item of ExpenseTrendByStoreKeysMonth.slice(0, ExpenseTrendByStoreKeysMonth.length - 1); let i = index">

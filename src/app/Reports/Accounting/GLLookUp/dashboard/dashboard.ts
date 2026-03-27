@@ -185,7 +185,13 @@ export class Dashboard {
       }
     );
   }
+  getSubTotal(rows: any[]): number {
+    if (!rows) return 0;
 
+    return rows.reduce((sum, r) => {
+      return sum + (r.postingamount ? Number(r.postingamount) : 0);
+    }, 0);
+  }
   expandedGLRows: any[] = [];
 
   expandGL(i: number, row: any) {

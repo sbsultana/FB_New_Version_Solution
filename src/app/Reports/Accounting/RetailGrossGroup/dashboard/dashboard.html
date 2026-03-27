@@ -174,7 +174,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="scorecard-single-header" style="max-height: 30vh;overflow: auto;">
+                                        <div class="scorecard-single-header" style="max-height: 35vh;overflow: auto;">
                                             <table class="table table-borderless mb-0 w-100">
                                                 <thead>
                                                     <tr class="tp-bx-shdw lightblue-bg">
@@ -256,8 +256,27 @@
                                                             </span>
                                                         </td>
                                                     </tr>
-                                                </tbody>
+                                                    <tr class="divBold"
+                                                        style="position: sticky; bottom: 0; z-index: 995; font-family: 'Roboto' !important;">
 
+                                                        <td></td>
+
+                                                        <td colspan="4" style="text-align:right; font-weight:bold;">
+                                                            Sub Total:
+                                                        </td>
+
+                                                        <td style="font-weight:bold;"
+                                                            [ngClass]="{ negative: getSubTotal(sub.subdata) < 0 }">
+
+                                                            <span class="d-flex justify-content-between">
+                                                                $<span>{{ getSubTotal(sub.subdata) | number:'1.2-2'
+                                                                    }}</span>
+                                                            </span>
+
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
                                             </table>
                                         </div>
                                     </td>
