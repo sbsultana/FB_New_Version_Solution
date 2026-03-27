@@ -14,7 +14,7 @@ import { NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dashboard',
-    imports: [SharedModule, BsDatepickerModule, DateRangePicker],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -108,9 +108,9 @@ export class Dashboard {
         this.getStoresandGroupsValues('FL')
       }
     }
-    this.initializeDates('MTD') 
+    this.initializeDates('MTD')
     this.setHeaderData();
-    
+
   }
 
   asoftime: any = [];
@@ -285,13 +285,13 @@ export class Dashboard {
         else if (res.status == 200) {
           this.emptyData(block)
         } else {
-          this.toast.show(res.status, 'danger','show');
+          this.toast.show(res.status, 'danger', 'show');
           this.shared.spinner.hide();
           this.emptyData(block)
         }
       },
       (error) => {
-        this.toast.show('502 Bad Gate Way Error','danger','Error');
+        this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
         this.shared.spinner.hide();
         this.emptyData(block)
       }
@@ -341,7 +341,6 @@ export class Dashboard {
     return 0
 
   }
-
   getNetProfit(columnname: any) {
     // console.log(data);
     // console.log(columnname, this.SellingandfixedData);
@@ -617,7 +616,7 @@ export class Dashboard {
     });
     let duptokenstores: any = [];
     // type == 'FL' ? JSON.parse(localStorage.getItem('UserDetails')!).Store_Ids.indexOf(',') > 0 ? duptokenstores = JSON.parse(localStorage.getItem('UserDetails')!).Store_Ids.split(',') : duptokenstores.push(JSON.parse(localStorage.getItem('UserDetails')!).Store_Ids) : ''
-   type == 'FL' ? JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.indexOf(',') > 0 ? duptokenstores = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',') : duptokenstores.push(JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids) : ''
+    type == 'FL' ? JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.indexOf(',') > 0 ? duptokenstores = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',') : duptokenstores.push(JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids) : ''
     const intersection = dupStores.filter((element: any) => duptokenstores.includes(element));
     console.log(intersection, duptokenstores, dupStores);
 
@@ -668,7 +667,7 @@ export class Dashboard {
   }
 
 
-    allstores(state: any) {
+  allstores(state: any) {
     if (state == 'N') {
       this.storeIds = [];
     } else if (state == 'Y') {
@@ -705,7 +704,7 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     if (this.storeIds.length == 0) {
-      this.toast.show('Please select atleast one store','warning','Warning');
+      this.toast.show('Please select atleast one store', 'warning', 'Warning');
     }
     else {
       // const data = {
@@ -1167,9 +1166,9 @@ export class Dashboard {
     worksheet.getColumn(1).width = 25;
     worksheet.getColumn(2).width = 20;
 
- 
-      this.shared.exportToExcel(workbook, 'Recon GL Report V1_' + DATE_EXTENSION + '.xlsx');
-   
+
+    this.shared.exportToExcel(workbook, 'Recon GL Report V1_' + DATE_EXTENSION + '.xlsx');
+
   }
 
 
@@ -1337,9 +1336,9 @@ export class Dashboard {
     worksheet.getColumn(7).width = 30;
     worksheet.getColumn(8).width = 50;
     worksheet.addRow([]);
- 
-      this.shared.exportToExcel(workbook, 'Recon GL Report Composite_' + DATE_EXTENSION );
-   
+
+    this.shared.exportToExcel(workbook, 'Recon GL Report Composite_' + DATE_EXTENSION);
+
   }
 
 }

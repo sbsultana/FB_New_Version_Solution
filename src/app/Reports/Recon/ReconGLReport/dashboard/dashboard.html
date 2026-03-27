@@ -81,20 +81,19 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th colspan="4">Fred Beans Recon Center Chart</th>
+                            <th colspan="4" style="box-shadow: none;">Fred Beans Recon Center Chart</th>
                         </tr>
-                        <tr class="bdr-btm">
-                            <td colspan="4" class="text-center "></td>
-                        </tr>
+                        <tr class="bdr-btm"></tr>
                     </thead>
                     <tbody>
 
                         <ng-container *ngIf="ExpensesBlock && ExpensesBlock.length > 0;else NoExpense">
                             <ng-container *ngFor="let income of ExpensesBlock; let i=index">
                                 <tr>
-                                    <th colspan="4">{{income.category}}</th>
+                                    <td colspan="4" class="text-center text-bold text-white"
+                                        style="background-color: #4584ff;">{{income.category}}</td>
                                 </tr>
-                                <tr class="lightblue-bg">
+                                <tr class="lightblue-bg fw-bold">
                                     <td class="store-text"> </td>
                                     <td class="store-text">Income </td>
                                     <td class="store-text"> Gross</td>
@@ -148,11 +147,12 @@
                                         </td>
                                     </tr>
                                     <tr *ngFor="let acct of dept.DetailsData">
-                                        <td class="sub-subtitle" colspan="1" title="{{acct.accountnumber}}"
+                                        <td class="sub-subtitle  px-3" colspan="1" title="{{acct.accountnumber}}"
                                             [ngClass]="{'pointercursor' :acct.Income > 0 || acct.Income < 0 || acct.Income == 0 }"
                                             (click)="reconaccountpopup(tmp,income.category, acct.accountnumber,acct.incbalgrp,income.companyid,acct.StoreName,acct.SubtypeDetail,dept.dept)">
-                                            {{acct.SubtypeDetail}} </td>
-                                        <td class="sub-subtitle " style="padding-left: 0.2rem !important;">
+                                            <span class="cursor-pointer"> {{acct.SubtypeDetail}}</span>
+                                        </td>
+                                        <td style="padding-left: 0.2rem !important;">
 
                                             <span class="d-flex justify-content-between">
                                                 {{
@@ -263,7 +263,7 @@
 
                             </ng-container>
                             <ng-container>
-                                <tr class="lightblue-bg">
+                                <tr class="divBold">
                                     <!-- <td colspan="4" class="text-bold">{{dept.dept}} </td> -->
 
                                     <td class="text-bold"> Net Profit </td>
@@ -386,7 +386,12 @@
                             <div class="scorecard-single-header mb-3"
                                 style="overflow:auto; max-height: calc(100vh - 200px);">
 
-
+                                <div *ngIf="(ReconDetails == null || ReconDetails.length === 0) && ReconDetailsNoData === ''"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                                 <table class="table mb-0 w-100">
 
                                     <thead>
@@ -402,8 +407,9 @@
                                         <tbody>
                                             <tr *ngFor="let ld of ReconDetails ;let i=index">
 
-                                                <td style="text-align: center !important;">{{ ld['accountingdate']  ? (ld['accountingdate']|
-                                                    date:'MM.dd.yyyy') :  '-'}}</td>
+                                                <td style="text-align: center !important;">{{ ld['accountingdate'] ?
+                                                    (ld['accountingdate']|
+                                                    date:'MM.dd.yyyy') : '-'}}</td>
 
                                                 <td style="text-align: left !important;">{{ ld['refer'] || '-'}}</td>
                                                 <td>
@@ -436,12 +442,12 @@
                                     <ng-template #NoRD>
                                         <tr>
                                             <td colspan="4" *ngIf="ReconDetailsNoData== ''">
-                                                <div
+                                                <!-- <div
                                                     class="graph-loader d-flex align-items-center justify-content-center">
                                                     <div class="spinner-border text-primary" role="status">
                                                         <span class="visually-hidden">Loading...</span>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </td>
                                             <td colspan="4" *ngIf="ReconDetailsNoData != ''"
                                                 style="text-align: center;background: #fff !important;color: black; display: revert;font-size: .8rem;">
