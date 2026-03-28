@@ -251,6 +251,7 @@ export class SalesgrossReports {
 
   }
   spinnerLoaderteams: boolean = false
+  spinnerLoader:boolean = false;
   getEmployees(val: any,strids:any, barorpopup?: any) {
     this.salesManagers = []
     this.salesPersons = []
