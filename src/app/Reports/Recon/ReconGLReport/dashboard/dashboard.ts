@@ -73,7 +73,6 @@ export class Dashboard {
   email!: Subscription;
   excel!: Subscription;
   otherstoreid: any = '';
-  selectedotherstoreids: any = '';
   selectedRecon: any = [];
 
   storeIds: any = []

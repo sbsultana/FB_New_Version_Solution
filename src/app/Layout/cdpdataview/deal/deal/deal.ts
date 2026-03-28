@@ -41,7 +41,7 @@ export class Deal {
       "custno": this.data.custno ? this.data.custno : '',
     }
     this.isLoading = true;
-    this.http.post('cc/basic/getdealview', obj).subscribe((res: any) => {
+    this.http.post('cc/sales/getdealview', obj).subscribe((res: any) => {
       this.isLoading = false;
       console.log(res);
       if (res.response[0]?.amountdetails)
@@ -65,7 +65,7 @@ export class Deal {
       if (res.response[0]?.trade2)
         this.trade2 = JSON.parse(res.response[0]?.trade2);
       if (res.response[0]?.salesmembers)
-        this.salesMembers = JSON.parse(res.response[0]?.salesmembers);      
+        this.salesMembers = JSON.parse(res.response[0]?.salesmembers);
       console.log("amountDetails", this.amountDetails);
       console.log("feeDetails", this.feeDetails);
       console.log("grossDetails", this.grossDetails);
@@ -104,9 +104,9 @@ export class Deal {
       // printWindow.document.write('<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><style> @media print {@page {margin: 0;}}body {margin: 0;}header, .title, .date, footer {display: none !important;}.some-other-element { display: none !important;}.content {width: 100%;padding: 20px;}</style></head><body><h2>Home page</h2></body></html>')
       // printWindow.document.write('<html><head><style type="text/css" media="print">@print {@page :footer {display: none}@page :header {display: none} }</style></head><body>');
       printWindow.document.write(`<html><head><title>Deal</title> <style>
-      @font-face {font-family: 'FaktPro-Medium';
-      src: url("${this.http.fontUrl}FaktPro-Medium.otf") format("opentype");
-      font-weight: 300;
+      @font-face {font-family: 'Roboto';
+      src: url('assets/fonts/Roboto-Regular.ttf') ;
+      font-weight: 700;
     }
      @font-face {
         font-family: 'FaktPro-Normal';

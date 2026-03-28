@@ -27,7 +27,6 @@ export class Dashboard {
   TotalReport: any = 'T';
 
 
-  selectedotherstoreids: any = ''
 
   columnName: any = 'Rank';
   columnState: any = 'asc';
@@ -42,11 +41,12 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-
+otherStoresArray: any = [];
+  otherStoreIds: any = [];
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
   };
 
   FromDate: any = '';
@@ -98,6 +98,8 @@ export class Dashboard {
       } else {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
       }
     }
     if (localStorage.getItem('stime') != null) {
@@ -112,6 +114,8 @@ export class Dashboard {
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -140,6 +144,8 @@ export class Dashboard {
       todate: this.ToDate,
       groups: this.groupId,
       storeorgroup: this.storeorgroup,
+      otherstoreids: this.otherStoreIds
+
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -182,8 +188,7 @@ export class Dashboard {
     const obj = {
       StartDate: this.FromDate,
       EndDate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds,
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
 
       Exp: sortdata,
       OrderType: sortstate,
@@ -335,6 +340,8 @@ export class Dashboard {
       if (this.shared.common.pageName == 'Parts Counter Person Rankings') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -407,6 +414,8 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
 
     this.storesFilterData = {
       groupsArray: this.groupsArray,
@@ -417,7 +426,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
     };
 
     // this.setHeaderData();
@@ -431,6 +441,8 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+	      this.otherStoreIds = data.otherStoreIds;
+
   }
   updatedDates(data: any) {
     console.log(data);
@@ -443,7 +455,6 @@ export class Dashboard {
     // localStorage.setItem('time', type);
     // this.datevaluetype=
     console.log(type);
-
     this.displaytime = '(' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     this.maxDate = new Date();
     this.minDate = new Date();
@@ -467,7 +478,7 @@ export class Dashboard {
     if (this.DateType == '') {
       this.toast.show("Please select any Datetype", 'warning', 'Warning');
     }
-    else if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+    else if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
       this.toast.show('Please select atleast one Store', 'warning', 'Warning');
     }
 

@@ -92,7 +92,11 @@ export class Header {
       const decoded = JSON.parse(atob(cleared));
       localStorage.setItem('flag', decoded.flag ? decoded.flag : 'M')
       localStorage.setItem('stime', decoded.Type ? decoded.Type : 'MTD')
-      console.log(decoded, '................ Decoded');
+      decoded.user_Info = decoded.user_Info.user_Info
+      this.shared.common.otherstoreids =[]
+      this.shared.common.otherstoreids=decoded.other_stores.split(",").map(Number)
+      localStorage.setItem('otherstoreids',JSON.stringify(this.shared.common.otherstoreids))
+      console.log(decoded, '................ Decoded',this.shared.common.otherstoreids);
       localStorage.setItem('userInfo', JSON.stringify(decoded))
     } else {
       console.log(match);
@@ -169,8 +173,8 @@ export class Header {
 
     try {
       const decoded = JSON.parse(atob(token));
-      decoded.user_Info['Preferences'] = 1
-      decoded.user_Info['Storeids'] = '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11'
+      // decoded.user_Info['Preferences'] = 1
+      // decoded.user_Info['Storeids'] = '71,53,8,7,4,35,1,32,40,50,25,18,31,3,70,72,2,17,41,55,42,51,12,73,54,9,15,5,14,30,11'
       localStorage.setItem('userInfo', JSON.stringify(decoded));
       this.userInfo = decoded;
       this.afterUserLoad();

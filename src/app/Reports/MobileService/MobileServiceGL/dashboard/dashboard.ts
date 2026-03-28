@@ -28,8 +28,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+
 
   stores: any = []
   groupsArray: any = [];

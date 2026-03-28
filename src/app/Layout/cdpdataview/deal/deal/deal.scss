@@ -1,4 +1,4 @@
-.CC_loading-overlay {
+.cc_loading-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -16,7 +16,7 @@
     // overflow: auto;
     border-radius: 15px;
     background: linear-gradient(to right, #F3F6FF 41%, #fff 20%);
-    border: 1px solid #363636;
+    // border: 1px solid #363636;
     border-right: none;
 
     .cc_store_logo {
@@ -36,13 +36,13 @@
         }
     }
 
-    .cc_bdr-btm {
+    .bdr-btm {
         position: relative;
         height: 20px;
         /* Adjust height as needed */
     }
 
-    .cc_bdr-btm::after {
+    .bdr-btm::after {
         content: "";
         position: absolute;
         left: 50%;
@@ -141,7 +141,7 @@
         margin: 1rem;
     }
 
-    .cc_bd-left {
+    .bd-left {
         border-left: 2px solid #c6c1c1;
         height: 10px;
         margin: auto;
@@ -163,7 +163,7 @@
             font-size: 0.7rem !important;
         }
 
-        .cc_head {
+        .head {
             background: #0554ef;
             border-radius: 15px 15px 0 0;
             color: #fff;
@@ -306,12 +306,12 @@
                 text-align: end;
             }
 
-            .cc_bg-blue {
+            .bg-blue {
                 background: #F3F6FF;
                 margin: 5px 0;
             }
 
-            .cc_bg-blue {
+            .bg-blue {
                 td {
                     padding-top: 4px;
                     padding-bottom: 4px;
@@ -326,13 +326,13 @@
                 }
             }
 
-            .cc_rounded-corners td:first-child {
+            .rounded-corners td:first-child {
                 border-top-left-radius: 25px;
                 border-bottom-left-radius: 25px;
                 padding-left: 20px;
             }
 
-            .cc_rounded-corners td:last-child {
+            .rounded-corners td:last-child {
                 border-top-right-radius: 25px;
                 border-bottom-right-radius: 25px;
                 padding-right: 20px;
@@ -346,13 +346,13 @@
                 padding-right: 20px;
             }
 
-            .cc_bdr-btm {
+            .bdr-btm {
                 position: relative;
                 height: 20px;
                 /* Adjust height as needed */
             }
 
-            .cc_bdr-btm::after {
+            .bdr-btm::after {
                 content: "";
                 position: absolute;
                 left: 50%;
@@ -369,7 +369,7 @@
 
     }
 
-    .summary-table {
+    .cc_summary-table {
         border: transparent;
 
         .h-15 {
@@ -438,17 +438,17 @@
     }
 }
 
-.cc_robotoNormal {
+.robotoNormal {
     font-family: "Roboto";
     font-weight: 400;
 }
 
-.cc_robotoMedium {
+.robotoMedium {
     font-family: "Roboto";
     font-weight: 600;
 }
 
-.cc_robotoBold {
+.robotoBold {
     font-family: "Roboto";
     font-weight: 700;
 }
@@ -458,26 +458,37 @@
     color: #fff;
     padding: .1rem .5rem;
     border-radius: 12px;
+    position: relative;
+    right: 25px;
 }
 
 .cc_close {
     cursor: pointer;
 }
 
-.cc_font_weight {
+.font_weight {
     font-weight: 700;
 }
 
-span.cc_close {
+span.close {
     border: 1px solid #353131;
-    padding: 1px 5px 1px 5px;
+    padding: 2px 3px 0px 3px;
     border-radius: 7px;
     position: absolute;
-    top: 5px;
-    right: 15px;
+    top: 0px;
+    right: 12px;
     cursor: pointer;
+
     i {
         font-size: 12px;
         color: #000;
     }
+}
+
+.titleCase {
+    text-transform: capitalize !important;
+}
+
+.lowerCase {
+    text-transform: lowercase !important;
 }

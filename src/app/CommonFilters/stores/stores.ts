@@ -27,7 +27,8 @@ export class Stores {
   storedisplayname: any = ''
   storecount: any = null
   Defaultload: any = ''
-
+  otherStoreIds: any = []
+  otherstoresArray: any = []
   constructor(private comm: common) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -38,15 +39,15 @@ export class Stores {
       this.others = changes['storesFilterData'].currentValue.others;
       this.groupsArray = changes['storesFilterData'].currentValue.groupsArray;
       this.stores = changes['storesFilterData'].currentValue.storesArray;
-
       this.storeIds = changes['storesFilterData'].currentValue.storeids;
       this.groupId = changes['storesFilterData'].currentValue.groupId;
       this.groupName = changes['storesFilterData'].currentValue.groupName;
       this.storename = changes['storesFilterData'].currentValue.storename;
       this.storecount = changes['storesFilterData'].currentValue.storecount;
       this.storedisplayname = changes['storesFilterData'].currentValue.storedisplayname;
-      this.Defaultload = changes['storesFilterData'].currentValue.DefaultLoad
-      console.log(this.stores, changes['storesFilterData'].currentValue.storesArray);
+      this.Defaultload = changes['storesFilterData'].currentValue.DefaultLoad;
+      this.otherstoresArray = changes['storesFilterData'].currentValue.otherStoresArray;
+      this.otherStoreIds = changes['storesFilterData'].currentValue.otherStoreIds;
 
       if (this.storesFilterData.storesArray && this.storesFilterData.storesArray.length > 0) {
         this.getGroupBaseStores(this.groupId.toString())
@@ -71,11 +72,13 @@ export class Stores {
     this.storeIds = []
     this.type == 'S' ? this.storeIds.push(parseInt(singleid)) : (this.Defaultload == 'E' ? this.storeIds = [] : this.storeIds = this.stores.map(function (a: any) {
       return a.ID;
-    }) ) 
+    }))
     console.log(this.storeIds, 'After condition');
 
     if (this.storeIds && this.storeIds.length == 1) {
       this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename;
+    } else if (this.storeIds && this.storeIds.length == 0 && this.otherStoreIds && this.otherStoreIds.length == 1) {
+      this.storename = this.otherstoresArray.filter((val: any) => val.ID == this.otherStoreIds.toString())[0].storename
     } else {
       this.storename = ''
     }
@@ -92,6 +95,8 @@ export class Stores {
     }
     if (this.storeIds.length == 1) {
       this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename
+    } else if (this.storeIds && this.storeIds.length == 0 && this.otherStoreIds && this.otherStoreIds.length == 1) {
+      this.storename = this.otherstoresArray.filter((val: any) => val.ID == this.otherStoreIds.toString())[0].storename
     } else {
       this.storename = ''
     }
@@ -110,32 +115,93 @@ export class Stores {
     this.setValues()
   }
 
+  individualotherStores(e: any) {
+    const index = this.otherStoreIds.findIndex((i: any) => i == e.ID);
+    if (index >= 0) {
+      this.otherStoreIds.splice(index, 1);
+    } else {
+      this.otherStoreIds.push(e.ID);
+    }
+
+    this.setValues()
+  }
+  allotherstores(state: any) {
+    if (state == 'N') {
+      this.otherStoreIds = [];
+    } else if (state == 'Y') {
+      this.otherStoreIds = this.otherstoresArray.map(function (a: any) {
+        return a.ID;
+      });
+    }
+    this.setValues()
+  }
   setValues() {
 
-    if (this.storeIds.length == 1) {
-      this.storecount = null;
-      this.storedisplayname = this.storename
+
+    if (this.others == 'Y') {
+      let combineStores: any = []
+      combineStores = [...this.storeIds, ...this.otherStoreIds]
+      if (this.storeIds.length == this.stores.length) {
+        this.storecount = null
+        this.storedisplayname = this.groupName;
+        this.storename = ''
+
+      }
+    else  if (combineStores.length == 1) {
+        this.storecount = null
+        this.storeIds.length == 1 ? this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename :
+          this.storename = this.otherstoresArray.filter((val: any) => val.ID == this.otherStoreIds.toString())[0].storename
+        this.storedisplayname = this.storename
+      }
+     else if (combineStores.length > 1) {
+        this.storecount = combineStores.length
+        this.storedisplayname = 'Selected'
+      }
+      else{
+        this.storecount=null;
+        this.storename=''
+        this.storedisplayname='Select'
+      }
+    } else {
+      if (this.storeIds.length == 1) {
+        this.storecount = null;
+        this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename
+        this.storedisplayname = this.storename
+      }
+      else if (this.storeIds.length == this.stores.length) {
+        this.storecount = null;
+        this.storename = ''
+        this.storedisplayname = this.groupName;
+      }
+      else if (this.storeIds.length > 0 && this.otherStoreIds.length > 0) {
+        this.others == 'Y' ? this.storecount = this.storeIds.length + this.otherStoreIds.length : this.storecount = this.storeIds.length
+        this.storedisplayname = 'Selected'
+      }
+      else if (this.storeIds.length > 1) {
+        this.others == 'Y' ? this.storecount = this.storeIds.length + this.otherStoreIds.length : this.storecount = this.storeIds.length
+        this.storedisplayname = 'Selected'
+      }
+      else if (this.storeIds.length == 0 && this.otherStoreIds.length == 1) {
+        this.storename = this.otherstoresArray.filter((val: any) => val.ID == this.otherStoreIds.toString())[0].storename
+        this.storedisplayname = this.storename
+        this.storecount = null;
+      }
+      else {
+        this.storename = ''
+        this.storedisplayname = 'Select'
+      }
     }
-    else if (this.storeIds.length == this.stores.length) {
-      this.storecount = null;
-      this.storedisplayname = this.groupName;
-    }
-    else if (this.storeIds.length > 1) {
-      this.storecount = this.storeIds.length;
-      this.storedisplayname = 'Selected'
-    }
-    else {
-      this.storedisplayname = 'Select'
-    }
+
+
     this.storesFilterData.groupsArray = this.groupsArray;
     this.storesFilterData.storesArray = this.stores;
-
     this.storesFilterData.groupId = this.groupId;
     this.storesFilterData.storeids = this.storeIds;
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.groupName = this.groupName;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
 
     this.StoresData.emit(this.storesFilterData);
 

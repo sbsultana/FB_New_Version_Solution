@@ -41,7 +41,6 @@ export class Dashboard {
   inventory: any = ['All'];
   topfive: boolean = false;
   otherstoreid: any = '';
-  selectedotherstoreids: any = '';
 
   reportOpenSub!: Subscription;
   reportGetting!: Subscription;
@@ -200,7 +199,7 @@ export class Dashboard {
   }
 
   getServiceData() {
-    if (this.storeIds != '' || this.selectedotherstoreids != '') {
+    if (this.storeIds != '') {
       this.responcestatus = '';
       this.shared.spinner.show();
       this.GetData();
@@ -659,7 +658,7 @@ export class Dashboard {
     if (this.selectedDataGrouping.length == 0) {
       this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
     } else {
-      if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+      if (this.storeIds.length == 0) {
         this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       } else {
 

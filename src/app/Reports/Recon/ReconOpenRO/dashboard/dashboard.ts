@@ -44,8 +44,7 @@ export class Dashboard {
   inventory: any = 'All'
   rostatus: any = ['All'];
   topfive: boolean = false;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+  
   storeIds: any = []
   groupId: any = 7
   groupName: any = ''
@@ -209,7 +208,7 @@ export class Dashboard {
     })
   }
   getServiceData() {
-    if (this.storeIds != '' || this.selectedotherstoreids != '') {
+    if (this.storeIds != '' ) {
       this.responcestatus = '';
       this.shared.spinner.show();
       this.GetData();
@@ -224,8 +223,7 @@ export class Dashboard {
       startdate: this.FromDate,
       enddate: this.ToDate,
       // enddate: "11-20-2023",
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: this.storeIds.toString(),
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: this.rostatus == 'All' ? '' : this.rostatus.toString(),
@@ -327,8 +325,7 @@ export class Dashboard {
       startdate: this.FromDate,
       enddate: this.ToDate,
       // enddate: "11-20-2023",
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID:this.storeIds.toString(),
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: this.rostatus == 'All' ? '' : this.rostatus.toString(),
@@ -791,7 +788,7 @@ export class Dashboard {
         this.storeIds.push(e.ID);
       }
     }
-    if (this.storeIds.length == 1 && this.selectedotherstoreids.length == 0) {
+    if (this.storeIds.length == 1 ) {
       this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename
     }
   }
@@ -804,7 +801,7 @@ export class Dashboard {
       });
       this.groupName = 'Recon Centers';
     }
-  if (this.storeIds.length == 1 && this.selectedotherstoreids.length == 0) {
+  if (this.storeIds.length == 1) {
       this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename
     }
 
@@ -815,7 +812,7 @@ export class Dashboard {
     if (this.selectedDataGrouping.length == 0) {
       this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
     } else {
-      if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+      if (this.storeIds.length == 0 ) {
         this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       } else {
         let gt = this.Grosstype.filter((e: any) => e != '');

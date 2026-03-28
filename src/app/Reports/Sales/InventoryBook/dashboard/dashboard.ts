@@ -39,10 +39,14 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
-  stores: any = []
+  stores: any = [];
+  		  otherStoresArray: any = [];
+  otherStoreIds: any = [];
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+
   };
 
   @HostListener('document:click', ['$event'])
@@ -57,9 +61,13 @@ export class Dashboard {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -82,6 +90,7 @@ export class Dashboard {
       status: this.status,
       wholesale: this.wholesale,
       aged: this.aged,
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: headerdata,
@@ -107,7 +116,6 @@ export class Dashboard {
     if (state == undefined) {
       this.isDesc = !this.isDesc;
     }
-    // this.callLoadingState = 'FL' //change the direction
     this.column = property;
     let direction = this.isDesc ? 1 : -1;
     // // console.log(property)
@@ -126,7 +134,7 @@ export class Dashboard {
     localStorage.removeItem('childDetailData')
     this.shared.spinner.show();
     const obj = {
-      as_id: this.storeIds,
+      as_id: [...this.storeIds, ...this.otherStoreIds],
       Header: this.key,
       Order: this.order,
       StockType: this.stockType.toString(),
@@ -320,6 +328,8 @@ export class Dashboard {
       if (this.shared.common.pageName == 'Inventory Book') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -378,6 +388,9 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
+
 
     this.storesFilterData = {
       groupsArray: this.groupsArray,
@@ -388,7 +401,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
     };
 
     // this.setHeaderData();
@@ -402,6 +416,8 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+	      this.otherStoreIds = data.otherStoreIds;
+
   }
   ngOnDestroy() {
     this.unSubscribeing()
@@ -578,7 +594,7 @@ export class Dashboard {
   getDetails() {
     this.shared.spinner.show()
     const obj = {
-      "As_id": this.StoreId,
+      "As_id": [...this.storeIds, ...this.otherStoreIds],
       "StockType": this.stockType.toString(),
       "Status": this.status.toString(),
       "WholeSale": this.wholesale.toString(),

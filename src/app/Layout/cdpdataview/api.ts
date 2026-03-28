@@ -7,14 +7,15 @@ import { tap, map, catchError, switchMap, filter, take } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class Api {
-  private baseUrl = 'https://tpccapi.axelone.app/api/';
+  private baseUrl = 'https://fbccapi.axelone.app/api/';
   fontUrl = `${this.baseUrl}resources/fonts/`;
   constructor(private http: HttpClient) { }
 
   ////////========== TOKEN AUTHENTICATION METHODS ======/////////
 
-  username = JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.ADuserid;
-  password = 'tpcc@2k25#';
+  //  username = JSON.parse(localStorage.getItem('userInfo')!)?.user_Info?.ADuserid;
+  username = 'fbcc'
+  password = 'fbcc@2k25#';
   base64Credentials = btoa(`${this.username}:${this.password}`);
   private httpOptions1 = {
     headers: new HttpHeaders({
@@ -25,10 +26,10 @@ export class Api {
   };
 
   post(url: string, data: any): Observable<any> {
-    console.log(this.username,this.base64Credentials,'UserName');
-    
-    return this.http.post(`${this.baseUrl}${url}`, data , this.httpOptions1);
+    console.log(this.username, this.base64Credentials, 'UserName');
+
+    return this.http.post(`${this.baseUrl}${url}`, data, this.httpOptions1);
   }
 
- 
+
 }

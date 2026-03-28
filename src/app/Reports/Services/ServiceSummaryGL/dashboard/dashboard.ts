@@ -22,8 +22,6 @@ export class Dashboard {
   IndividualServiceGross: any = [];
   TotalServiceGross: any = [];
 
-
-
   NoData: boolean = false;
   Department: any = ['Service'];
   Paytype: any = ['Customerpay', 'Warranty', 'Internal'];
@@ -37,8 +35,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+
 
 
   stores: any = []
@@ -49,11 +46,15 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
+  		  otherStoresArray: any = [];
+  otherStoreIds: any = [];
 
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+
   };
 
   FromDate: any = '';
@@ -90,9 +91,13 @@ export class Dashboard {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -137,7 +142,7 @@ export class Dashboard {
       todate: this.ToDate,
       groups: this.groupId,
       subtype: this.selectedSubType,
-      otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids
+    otherstoreids: this.otherStoreIds
 
     };
     this.shared.api.SetHeaderData({
@@ -161,8 +166,7 @@ export class Dashboard {
     const obj = {
       "Startdate": this.FromDate.replaceAll('/', '-'),
       "Enddate": this.ToDate.replaceAll('/', '-'),
-      "AS_IDS": this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      "AS_IDS": [...this.storeIds, ...this.otherStoreIds],
       "DEPTTYPE": this.Department.indexOf('Service') >= 0 && this.Department.indexOf('Parts') >= 0 ? 'Service,Parts' : (this.Department.indexOf('Service') >= 0 ? 'Service' : (this.Department.indexOf('Parts') >= 0) ? 'Parts' : ''),
       "SUBTYPE": this.selectedSubType.toString(),
       "Details": this.Department.indexOf('Details') >= 0 ? 'Details' : ''
@@ -284,6 +288,8 @@ export class Dashboard {
       if (this.comm.pageName == 'Fixed Summary GL') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -355,6 +361,8 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+	      this.otherStoreIds = data.otherStoreIds;
+
     this.getSubTypeDetail()
   }
 
@@ -367,6 +375,9 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
+
     this.storesFilterData = {
       groupsArray: this.groupsArray,
       groupId: this.groupId,
@@ -376,7 +387,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
     };
   }
   updatedDates(data: any) {
@@ -499,7 +511,7 @@ export class Dashboard {
 
   getSubTypeDetail(data?: any) {
     const obj = {
-      "AS_IDS": this.storeIds.toString(),
+      "AS_IDS": [...this.storeIds, ...this.otherStoreIds],
       "DEPTTYPE": this.Department.toString()
     }
     this.spinnerLoader = true;
@@ -566,7 +578,7 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
 
-    if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+    if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
       this.toast.show('Please select atleast one Store', 'warning', 'Warning');
     } else if (this.Department.length == 0) {
       this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');

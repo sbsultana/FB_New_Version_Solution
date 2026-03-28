@@ -34,8 +34,6 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
   stores: any = []
   groupsArray: any = [];
   storename: any = ''
@@ -90,7 +88,6 @@ export class Dashboard {
       reporttotal: this.ReportTotal,
       PreviousMonths: this.PreviousMonths,
       groups: this.groupId,
-      otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -115,8 +112,7 @@ export class Dashboard {
     const DateToday = this.shared.datePipe.transform(new Date(this.Month), 'yyyy-MM-dd');
     const obj = {
       startdate: DateToday,
-      stores: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds.toString() != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      stores: this.storeIds.toString(),
       count: this.PreviousMonths,
       type: 'D',
     };
@@ -173,8 +169,7 @@ export class Dashboard {
     const DateToday = this.shared.datePipe.transform(new Date(this.Month), 'yyyy-MM-dd');
     const obj = {
       startdate: DateToday,
-      stores: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds.toString() != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      stores: this.storeIds.toString(),
       count: this.PreviousMonths,
       type: 'T',
     };
@@ -332,7 +327,7 @@ export class Dashboard {
   }
   DataSelection(Val: any) {
     if (this.Filter == 'ServiceTrend') {
-      if (this.storeIds != '' || this.selectedotherstoreids != '') {
+      if (this.storeIds != '' ) {
         this.GetDataByMonths();
       }
     }
@@ -418,7 +413,7 @@ export class Dashboard {
   }
   viewreport() {
     this.activePopover = -1
-    if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+    if (this.storeIds.length == 0 ) {
       this.toast.show('Please select atleast one Store', 'warning', 'Warning');
     } else {
       this.setHeaderData();

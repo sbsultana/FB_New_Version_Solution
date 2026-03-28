@@ -51,8 +51,6 @@ export class Dashboard {
   responcestatus: any = '';
   CurrentDate = new Date();
 
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
   getState: any = '';
   zeroHours: any = true;
   Sublet: any = false;
@@ -78,10 +76,12 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
+  			  otherStoresArray: any = [];
+  otherStoreIds: any = [];
 
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',  otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
 
@@ -159,6 +159,8 @@ export class Dashboard {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = ''
+        this.otherStoreIds = '';
+
         this.actionType = 'N';
         this.Department = ['Service', 'Parts', 'Quicklube'] 
         this.zeroHours =  true ;
@@ -166,6 +168,8 @@ export class Dashboard {
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -193,7 +197,7 @@ export class Dashboard {
 
       // this.shared.spinner.show();    
       const obj = {
-        StoreID: this.storeIds.toString(),
+        StoreID: [...this.storeIds, ...this.otherStoreIds],
         type: type == 'N' ? 'A' : type
       };
       this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
@@ -237,14 +241,15 @@ export class Dashboard {
       groups: this.groupId,
       labourtype: this.labourType,
       zeroHours: this.zeroHours,
-      labourtypevalues: this.LaborTypeVal
+      labourtypevalues: this.LaborTypeVal,
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({ obj: data });
 
 
   }
   getServiceData() {
-    if (this.storeIds != '' || this.selectedotherstoreids != '') {
+    if (this.storeIds != '' || this.otherStoreIds != '') {
       this.actionType = 'Y'
       this.DefaultLoad = ''
       if (this.getState.indexOf('S') < 0) {
@@ -267,8 +272,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       // StoreID:'27,14,15,3,23,7,28,13,29,11,10,30,16,17,8,1,26,20,21,6,25,18,9,4,19',
 
       AdvisorNumber: '',
@@ -367,8 +371,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -691,6 +694,8 @@ export class Dashboard {
       if (this.comm.pageName == 'Service Gross') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -803,8 +808,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -910,8 +914,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -1028,8 +1031,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
 
       AdvisorNumber: '',
       AdvisorName: '',
@@ -1137,8 +1139,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -1252,8 +1253,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -1359,8 +1359,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate,
       enddate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds.toString() + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       AdvisorNumber: '',
       AdvisorName: '',
       ROSTATUS: '',
@@ -1471,7 +1470,10 @@ export class Dashboard {
     this.storename = data.storename;
     this.groupName = data.groupName;
     this.storecount = data.storecount;
+    this.otherStoreIds = data.otherStoreIds;
     this.storedisplayname = data.storedisplayname;
+
+    
     this.getlabourTypesData('FR', this.labourType)
 
   }
@@ -1485,6 +1487,8 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
     this.storesFilterData = {
       groupsArray: this.groupsArray,
       groupId: this.groupId,
@@ -1494,7 +1498,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds, 'DefaultLoad': this.DefaultLoad
     };
   }
   updatedDates(data: any) {
@@ -1634,7 +1639,7 @@ export class Dashboard {
     if (this.selectedDataGrouping.length == 0) {
       this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
     } else {
-      if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+      if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
         this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       } else {
         let gt = this.Grosstype.filter((e: any) => e != '');

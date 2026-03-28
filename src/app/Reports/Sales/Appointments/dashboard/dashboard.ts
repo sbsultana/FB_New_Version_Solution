@@ -73,11 +73,16 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
-  stores: any = []
+  stores: any = [];
+
+  otherStoresArray: any = [];
+  otherStoreIds: any = [];
+
   // activePopover: number = -1;
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
   };
   // @HostListener('document:click', ['$event'])
   // onDocumentClick(event: MouseEvent) {
@@ -92,7 +97,9 @@ export class Dashboard {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       // this.StoreValues = '1,2';
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-      this.StoreValues = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      this.StoreValues = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',');
+      this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
       if (this.StoreValues.toString().indexOf(',') > 0) {
         this.gridvisibility = 'DL';
       } else {
@@ -112,56 +119,27 @@ export class Dashboard {
     this.FromDate = this.shared.datePipe.transform(today, 'MM/dd/yyyy');
     this.ToDate = this.shared.datePipe.transform(tomorrow, 'MM/dd/yyyy');
     this.setDates(this.DateType)
-    // if (localStorage.getItem('Fav') != 'Y') {
-    const data = {
-      title: this.dynamicTitle,
-      stores: this.StoreValues,
-      groups: this.groups,
-      count: 0,
-      fromdate: this.FromDate,
-      todate: this.ToDate,
-    };
-    this.shared.api.SetHeaderData({
-      obj: data,
-    });
+    this.setHeaderData()
 
     this.GetAppointment();
     // }
   }
   dynamicTitle = 'Sales Appointments'
   titleSetting() {
-    // if (localStorage.getItem('time') == 'C') {
     console.log(this.todaytitle, this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy'), this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy'));
-
-    // if ((this.todaytitle == this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy')) && (this.todaytitle == this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy'))) {
-    //   this.dynamicTitle = 'Today Sales Appointments'
-    // }
-    // else {
     this.dynamicTitle = 'Sales Appointments'
-    // }
-    const data = {
-      title: this.dynamicTitle,
-      stores: this.StoreValues,
-      groups: this.groups,
-      count: 0,
-      fromdate: this.FromDate,
-      todate: this.ToDate,
-    };
-    this.shared.api.SetHeaderData({
-      obj: data,
-    });
-
-    // }
+    this.setHeaderData()
   }
 
   setHeaderData() {
     const data = {
       title: this.dynamicTitle,
       stores: this.storeIds,
-      groups: 1,
-      count: 0,
+      groups: this.groupId,
       fromdate: this.FromDate,
       todate: this.ToDate,
+      otherstoreids: this.otherStoreIds
+
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -200,6 +178,8 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
 
     this.storesFilterData = {
       groupsArray: this.groupsArray,
@@ -210,7 +190,9 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
+
     };
 
     // this.setHeaderData();
@@ -224,6 +206,7 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.otherStoreIds = data.otherStoreIds;
   }
   getStores() {
     this.selectedstorevalues = [];
@@ -235,7 +218,6 @@ export class Dashboard {
     this.shared.spinner.show();
     let obj = {};
     if (localStorage.getItem('DetailsObject') != null) {
-      // console.log('locstg', JSON.parse(localStorage.getItem('DetailsObject')!));
       const InvObj = JSON.parse(localStorage.getItem('DetailsObject')!);
       obj = {
         DealerId: InvObj.dataobj.Data1,
@@ -246,30 +228,11 @@ export class Dashboard {
       this.ToDate = InvObj.dataobj.Data2
       this.storeIds = InvObj.dataobj.Data1
       console.log(this.todaytitle);
-
-      // if ((this.todaytitle == this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy')) && (this.todaytitle == this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy'))) {
-      //   this.dynamicTitle = 'Today Sales Appointments'
-      // }
-      // else {
       this.dynamicTitle = 'Sales Appointments'
-      // }
-      const data = {
-        title: this.dynamicTitle,
-
-        stores: this.StoreValues,
-        groups: 1,
-        count: 0,
-        fromdate: this.FromDate,
-        todate: this.ToDate,
-      };
-      this.shared.api.SetHeaderData({
-        obj: data,
-      });
-
+      this.setHeaderData()
     } else {
       obj = {
-
-        DealerId: this.StoreValues,
+        DealerId: [...this.StoreValues, ...this.otherStoreIds],
         StartDate: this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy'),
         EndDate: this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy'),
       };
@@ -336,6 +299,7 @@ export class Dashboard {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
           this.StoreValues.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.StoreValues.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.StoreValues)[0].storename : this.storename = ''
           this.getStoresandGroupsValues()

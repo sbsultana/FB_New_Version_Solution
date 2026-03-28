@@ -44,13 +44,13 @@
                             <div class="m-3 mt-0 mx-4 cc_details" *ngIf="storeDetails[0]?.showuserdetails=='Y'">
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="cc_head">Customer Details</div>
+                                        <div class="head">Customer Details</div>
                                     </div>
                                 </div>
                                 <div class="row px-3 py-1 pt-3">
                                     <div class="col-lg-6">
                                         <h6 class="m-0 p-0">name:</h6>
-                                        <h4 class="m-0 p-0">{{userDetails[0]?.customername}}</h4>
+                                        <h4 class="m-0 p-0 titleCase">{{userDetails[0]?.customername}}</h4>
                                     </div>
                                     <div class="col-lg-3">
                                         <h6 class="m-0 p-0">customer ID:</h6>
@@ -64,8 +64,8 @@
                                 <div class="row px-3 py-1">
                                     <div class="col-lg-5">
                                         <h6 class="m-0 p-0">address:</h6>
-                                        <h5 class="m-0 p-0">{{userDetails[0]?.address}}</h5>
-                                        <h5 class="m-0 p-0">{{userDetails[0]?.cityzip}}</h5>
+                                        <h5 class="m-0 p-0 titleCase">{{userDetails[0]?.address}}</h5>
+                                        <h5 class="m-0 p-0 titleCase">{{userDetails[0]?.cityzip}}</h5>
                                     </div>
                                     <div class="col-lg-7">
                                         <div class="row">
@@ -99,7 +99,7 @@
                                 <div class="row px-3 py-1 pb-3">
                                     <div class="col-12 ">
                                         <h6 class="m-0 p-0 pe-2">Email:</h6>
-                                        <h4>{{userDetails[0]?.email}}</h4>
+                                        <h4 class="lowerCase">{{userDetails[0]?.email}}</h4>
                                     </div>
 
                                 </div>
@@ -108,7 +108,7 @@
                             <div class="m-3 mx-4 cc_veh_details">
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="cc_head">Vehicle Details
+                                        <div class="head">Vehicle Details
                                         </div>
                                     </div>
                                 </div>
@@ -173,7 +173,7 @@
                                             <div class="col-lg-6 col-12">
                                                 <div class="row">
                                                     <div class="col-4">
-                                                        <h5 class="mb-1 p-0" >License:</h5>
+                                                        <h5 class="mb-1 p-0">License:</h5>
                                                     </div>
                                                     <div class="col-8 ps-0">
                                                         <h6>{{vehicleDetails[0]?.license}}</h6>
@@ -225,7 +225,7 @@
                             <div class="m-3 mx-4 cc_veh_details">
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="cc_head">RO Details</div>
+                                        <div class="head">RO Details</div>
                                     </div>
                                 </div>
                                 <!-- <div class="row px-3 py-3">
@@ -263,23 +263,17 @@
 
                         </div>
                     </div>
-                    <div class="col-lg-7 col-12 cc_bg-white">
-                        <div class="cc_bg-white ps-2 pe-0">
-                            <div class="d-flex justify-content-end mb-2">
-                                <span class="cc_close" (click)="closeModal()"><i class="bi bi-x"></i></span>
-                                <!-- <svg (click)="closeModal()" title="Close" class="mt-2  close" 
-                                    xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="15" height="15"
-                                    viewBox="0 0 30 30">
-                                    <path
-                                        d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z">
-                                    </path>
-                                </svg> -->
+                    <div class="col-lg-7 col-12 bg-white">
+                        <div class="bg-white ps-2 pe-0">
+                            <div class="d-flex justify-content-end my-3">
+                                <span class="close" (click)="closeModal()"><i class="bi bi-x"></i></span>
+
                             </div>
                             <div class="cc_tbl-repair mt-3">
                                 <div class="float-start w-100 px-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="cc_head">
+                                            <div class="head">
                                                 <span>RO Summary</span>
                                                 <span class="ms-4">Internal Copy</span>
                                             </div>
@@ -332,7 +326,7 @@
                                 <div class="float-start w-100 mt-2 px-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="cc_head">
+                                            <div class="head">
                                                 <span>Line Items (Sale)</span>
                                             </div>
                                         </div>
@@ -388,142 +382,85 @@
                                     </div>
                                 </div>
 
+
                                 <div class="float-start w-100 mt-2 px-3">
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="cc_head">
+                                            <div class="head">
                                                 <span>Totals</span>
                                             </div>
                                         </div>
                                         <div class="col-12 px-3">
                                             <div class="row">
                                                 <div class="col-md-4 col-12"></div>
-                                                <div class="col-md-8 col-12" *ngIf="customerpay?.length>0">
+
+                                                <div class="col-md-8 col-12">
+
                                                     <table class="cc_repair-table mt-2 mx-0">
-                                                        <tr style="white-space: nowrap;">
-                                                            <td colspan="4"
-                                                                style="font-size: 0.9rem;font-family: 'Roboto';font-weight: 600;">
-                                                                Customer Pay</td>
-                                                        </tr>
-                                                        <ng-container *ngIf="customerpay?.length>0">
+
+                                                        <!-- ✅ Customer Pay Section -->
+                                                        <ng-container *ngIf="customerpay?.length > 0">
+                                                            <tr style="white-space: nowrap;">
+                                                                <td colspan="5"
+                                                                    style="font-size: 0.9rem;font-family: 'Roboto';font-weight: 600;">
+                                                                    Customer Pay
+                                                                </td>
+                                                            </tr>
+
                                                             <tr *ngFor="let pay of customerpay">
                                                                 <td>&nbsp;</td>
                                                                 <td class="lcolor">{{pay?.name}}</td>
-                                                                <td class="cc_vcolor "
+
+                                                                <td class="vcolor text-end pe-4"
                                                                     [ngStyle]="{'color': checkSymbols(pay?.value) ? 'red' : 'black'}">
-                                                                    {{pay?.value}}</td>
-                                                                <td class="lcolor pe-2">
-                                                                    {{pay?.name2}}
+                                                                    {{pay?.value}}
                                                                 </td>
-                                                                <td class="cc_vcolor"
+
+                                                                <td class="lcolor pe-2">{{pay?.name2}}</td>
+
+                                                                <td class="cc_vcolor text-end"
                                                                     [ngStyle]="{'color': checkSymbols(pay?.value2) ? 'red' : 'black'}">
-                                                                    {{pay?.value2}}</td>
+                                                                    {{pay?.value2}}
+                                                                </td>
                                                             </tr>
                                                         </ng-container>
 
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4 col-12"></div>
-                                                <div class="col-md-8 col-12" *ngIf="internalpay?.length>0">
-                                                    <table class="cc_repair-table mt-2 mx-0">
-                                                        <tr style="white-space: nowrap;">
-                                                            <td colspan="4"
-                                                                style="font-size: 0.9rem;font-family: 'Roboto';font-weight: 600;">
-                                                                Internal Pay</td>
-                                                        </tr>
-                                                        <ng-container *ngIf="internalpay?.length>0">
+                                                        <!-- ✅ Internal Pay Section -->
+                                                        <ng-container *ngIf="internalpay?.length > 0">
+
+                                                            <!-- Section Title -->
+                                                            <tr style="white-space: nowrap;">
+                                                                <td colspan="5"
+                                                                    style="font-size: 0.9rem;font-family: 'Roboto';font-weight: 600;">
+                                                                    Internal Pay
+                                                                </td>
+                                                            </tr>
+
                                                             <tr *ngFor="let pay of internalpay">
                                                                 <td>&nbsp;</td>
-                                                                <td class="lcolor">{{pay?.name}} </td>
-                                                                <td class="cc_vcolor" [ngStyle]="{'color': checkSymbols(pay?.value) ? 'red' : 'black'}"> {{pay?.value}}</td>
-                                                                <td class=" lcolor pe-2">{{pay?.name2}}</td>
-                                                                <td class="cc_vcolor"
-                                                                    [ngStyle]="{'color': checkSymbols(pay?.value2) ? 'red' : 'black'}">
-                                                                    {{pay?.value2}}</td>
+                                                                <td class="lcolor">{{pay?.name}}</td>
 
+                                                                <td class="vcolor text-end pe-4"
+                                                                    [ngStyle]="{'color': checkSymbols(pay?.value) ? 'red' : 'black'}">
+                                                                    {{pay?.value}}
+                                                                </td>
+
+                                                                <td class="lcolor pe-2">{{pay?.name2}}</td>
+
+                                                                <td class="vcolor text-end "
+                                                                    [ngStyle]="{'color': checkSymbols(pay?.value2) ? 'red' : 'black'}">
+                                                                    {{pay?.value2}}
+                                                                </td>
                                                             </tr>
                                                         </ng-container>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <!-- 
-                                                <table class="cc_repair-table mt-2 mx-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td colspan="7"></td>
-                                                        </tr>
-                                                        <tr *ngIf="customerpay?.length>0">
-                                                            <td colspan="2"></td>
-                                                            <td
-                                                                style="font-size: 0.8rem;text-align: right;font-family: 'FaktPro-Bold';">
-                                                                Customer Pay</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                        </tr>
-
-                                                        <ng-container *ngIf="customerpay?.length>0">
-                                                            <tr *ngFor="let pay of customerpay">
-                                                                <td colspan="2"></td>
-                                                                <td></td>
-                                                                <td class="text-end lcolor pe-2">{{pay?.name}}
-
-                                                                </td>
-                                                                <td class="cc_vcolor text-end"
-                                                                    [ngStyle]="{'color': checkSymbols(pay?.value) ? 'red' : 'black'}"
-                                                                    *ngIf="pay?.name!=''">{{pay?.value}}</td>
-                                                                <td class="text-end lcolor pe-2">
-                                                                    {{pay?.name1}}
-                                                                </td>
-                                                                <td class="cc_vcolor text-end"
-                                                                    [ngStyle]="{'color': checkSymbols(pay?.value1) ? 'red' : 'black'}"
-                                                                    *ngIf="pay?.name1!=''">{{pay?.value1}}</td>
-
-                                                            </tr>
-
-                                                        </ng-container>
-
-                                                        <tr *ngIf="internalpay?.length>0">
-                                                            <td colspan="2"></td>
-                                                            <td
-                                                                style="font-size: 0.8rem;text-align: right;font-family: 'FaktPro-Bold';">
-                                                                Internal Pay</td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                        </tr>
-
-                                                        <ng-container *ngIf="internalpay?.length>0">
-                                                            <tr *ngFor="let pay of internalpay">
-                                                                <td colspan="2"></td>
-                                                                <td></td>
-                                                                <td class="text-end lcolor pe-2">{{pay?.name}}
-
-                                                                </td>
-                                                                <td class="cc_vcolor text-end"
-                                                                    [ngStyle]="{'color': checkSymbols(pay?.value) ? 'red' : 'black'}"
-                                                                    *ngIf="pay?.name!=''">{{pay?.value}}</td>
-                                                                <td class="text-end lcolor pe-2">
-                                                                    {{pay?.name1}}
-                                                                </td>
-                                                                <td class="cc_vcolor text-end"
-                                                                    [ngStyle]="{'color': checkSymbols(pay?.value1) ? 'red' : 'black'}"
-                                                                    *ngIf="pay?.name1!=''">{{pay?.value1}}</td>
-
-                                                            </tr>
-
-                                                        </ng-container>
-                                                    </tbody>
-
-                                                </table> -->
                                         </div>
                                     </div>
 
                                 </div>
+
 
                             </div>
                         </div>

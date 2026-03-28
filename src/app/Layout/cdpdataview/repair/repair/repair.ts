@@ -46,7 +46,7 @@ export class Repair {
 
     }
     this.isLoading = true;
-    this.http.post('cc/basic/getroview', obj).subscribe((res: any) => {
+    this.http.post('cc/service/getroview', obj).subscribe((res: any) => {
       if (JSON.parse(res.response[0].userdetails) == null) {
         this.showData = false;
       }

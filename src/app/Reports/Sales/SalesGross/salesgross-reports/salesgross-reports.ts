@@ -27,12 +27,17 @@ export class SalesgrossReports {
   storename: any = ''
   storecount: any = null;
   storedisplayname: any = '';
+  otherStoresArray: any = [];
+  otherStoreIds: any = [];
   DefaultLoad: any = ''
 
   groupName: any = '';
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': this.storeIds, 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,'DefaultLoad':this.DefaultLoad
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores,
+    'storeids': this.storeIds, 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null,
+    'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
   };
   Performance: string = 'Load';
 
@@ -127,6 +132,7 @@ export class SalesgrossReports {
     this.selectedDataGrouping = [...this.ngChanges.dataGroupings]
     this.ProductDeals = this.ngChanges.ProductDeals
     this.DefaultLoad = this.ngChanges.DefaultLoad
+    this.otherStoreIds = this.ngChanges.otherstoreids
 
   }
   constructor(private shared: Sharedservice, private datesSrvc: Setdates, private toast: ToastService) { }
@@ -138,9 +144,7 @@ export class SalesgrossReports {
 
     this.getGroups();
     this.acquisitionsrc();
-    // this.getEmployees('SP', 'Bar');
-    // this.getEmployees('F', 'Bar');
-    // this.getEmployees('M', 'Bar');
+
   }
 
 
@@ -246,12 +250,12 @@ export class SalesgrossReports {
 
   }
   spinnerLoaderteams: boolean = false
-  getEmployees(val: any, barorpopup?: any) {
+  getEmployees(val: any,strids:any, barorpopup?: any) {
     this.salesManagers = []
     this.salesPersons = []
     this.financeManager = []
     const obj = {
-      AS_ID: this.storeIds,
+      AS_ID: strids,
       type: val,
     };
     this.spinnerLoaderteams = true
@@ -339,6 +343,7 @@ export class SalesgrossReports {
           this.groupsArray = res.obj.storesData;
           this.groupId = this.ngChanges.groups;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
           this.storeIds = this.ngChanges.stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -360,6 +365,8 @@ export class SalesgrossReports {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
         this.groupId = this.ngChanges.groups
         this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+        this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
         this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
         this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
         this.getStoresandGroupsValues()
@@ -376,7 +383,8 @@ export class SalesgrossReports {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
-
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
     this.storesFilterData = {
       groupsArray: this.groupsArray,
       groupId: this.groupId,
@@ -386,14 +394,12 @@ export class SalesgrossReports {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N', 'DefaultLoad':this.DefaultLoad
+      'type': 'M', 'others': 'Y', 'DefaultLoad': this.DefaultLoad, otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
     };
     console.log(this.storesFilterData, 'Store FIlter Data');
     let allstrids = [];
     allstrids = [...this.storeIds]
-    // this.getEmployees('SP', 'Bar');
-    // this.getEmployees('F', 'Bar');
-    // this.getEmployees('M', 'Bar');
+ 
   }
   StoresData(data: any) {
 
@@ -403,12 +409,12 @@ export class SalesgrossReports {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-
+    this.otherStoreIds = data.otherStoreIds;
     let allstrids = [];
-    allstrids = [...this.storeIds]
-    this.getEmployees('SP', '');
-    this.getEmployees('F', '');
-    this.getEmployees('M', '');
+    allstrids = [...this.storeIds,...this.otherStoreIds]
+    this.getEmployees('SP', allstrids,'');
+    this.getEmployees('F', allstrids,'');
+    this.getEmployees('M', allstrids,'');
 
   }
   setDates(type: any) {
@@ -534,7 +540,7 @@ export class SalesgrossReports {
     this.activePopover = -1
     let peoples = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
     let aqusrc: any = ['All']
-    if (!this.storeIds || this.storeIds.length === 0) {
+    if ((!this.storeIds || this.storeIds.length === 0) && (!this.otherStoreIds || this.otherStoreIds.length === 0)) {
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',
@@ -579,7 +585,7 @@ export class SalesgrossReports {
         Reference: 'Sales Gross',
         FromDate: this.shared.datePipe.transform(this.FromDate, 'MM-dd-yyyy'),
         ToDate: this.shared.datePipe.transform(this.ToDate, 'MM-dd-yyyy'),
-        storeValues: this.storeIds.toString(),
+        storeValues: this.storeIds,
         Spvalues:
           this.selectedSalespersonvalues.length == this.salesPersons.length
             ? '0'
@@ -600,8 +606,8 @@ export class SalesgrossReports {
         reportTotal: this.reporttotal,
         acquisition: this.Acquisition.length == this.acquisitionsource.length ? aqusrc : this.Acquisition,
         groups: this.groupId,
-        ProductDeals: this.ProductDeals
-        // otherstoreids: this.selectedotherstoreids
+        ProductDeals: this.ProductDeals,
+        otherstoreids: this.otherStoreIds
       };
       this.shared.api.SetReports({
         obj: data,

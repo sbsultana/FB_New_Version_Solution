@@ -29,7 +29,6 @@ export class Dashboard {
   DateType: any = 'MTD';
   displaytime: any = '';
   NoData: boolean = false;
-
   //  storeIds: any = []
   stores: any = []
   groupsArray: any = [];
@@ -38,10 +37,14 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
+  		  otherStoresArray: any = [];
+  otherStoreIds: any = [];
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+
   };
 
   Dates: any = {
@@ -105,10 +108,14 @@ export class Dashboard {
         if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
           this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
           this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
         }
       }
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
         this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
         this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
         this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -241,6 +248,8 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+	      this.otherStoreIds = data.otherStoreIds;
+
   }
 
   // tabClick(col_Name: any, Col_state: any) {
@@ -292,7 +301,7 @@ export class Dashboard {
       UserID: 0,
       StartDate: this.FromDate,
       EndDate: this.ToDate,
-      StoreID: this.storeIds,
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       Exp: sortdata,
       OrderType: sortstate,
       RankBy: this.storeorgrp,
@@ -388,6 +397,8 @@ export class Dashboard {
       if (this.comm.pageName == 'Salesperson Rankings') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           // this.groupId = this.ngChanges.groups;
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           // this.storeIds = this.ngChanges.storeIds;
@@ -454,6 +465,7 @@ export class Dashboard {
           storeorgroup: this.storeorgrp,
           saleType: this.saleType,
           dealStatus: this.dealStatus,
+          otherstoreids: this.otherStoreIds
         };
         this.shared.api.SetHeaderData({
           obj: headerdata,
@@ -468,6 +480,7 @@ export class Dashboard {
             saleType: this.saleType,
             groups: this.groups,
             dealStatus: this.dealStatus,
+            otherstoreids: this.otherStoreIds
           },
         ];
       }
@@ -543,6 +556,9 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
+
 
     this.storesFilterData = {
       groupsArray: this.groupsArray,
@@ -553,7 +569,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
     };
 
     // this.setHeaderData();
@@ -905,7 +922,7 @@ export class Dashboard {
     //               DealStatus: this.dealStatus
     // });
 
-    if (!this.storeIds || this.storeIds.length === 0) {
+    if ((!this.storeIds || this.storeIds.length === 0) && (this.otherStoreIds.length ===0)) {
 
       this.toast.show('Please select at least one store', 'warning', 'Warning');
       return;

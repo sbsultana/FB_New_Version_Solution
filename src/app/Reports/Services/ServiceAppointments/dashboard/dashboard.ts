@@ -43,8 +43,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+
   minDate!: Date;
   maxDate!: Date;
   DateType: any = 'C';
@@ -73,9 +72,11 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
-  stores: any = []
+  stores: any = [];
+  			  otherStoresArray: any = [];
+  otherStoreIds: any = [];
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',  otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
   constructor(
@@ -85,6 +86,8 @@ export class Dashboard {
       // this.StoreValues = '1,2';
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.StoreValues = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
       if (this.StoreValues.toString().indexOf(',') > 0) {
         this.gridvisibility = 'DL';
       } else {
@@ -116,27 +119,18 @@ export class Dashboard {
       }
     }
 
-    const data = {
-      title: this.dynamicTitle,
-      stores: '2',
-      groups: this.groups,
-      count: 0,
-      fromdate: this.FromDate,
-      todate: this.ToDate,
-    };
-    this.shared.api.SetHeaderData({
-      obj: data,
-    });
+  this.setHeaderData()
   }
 
   setHeaderData() {
     const data = {
       title: this.dynamicTitle,
       stores: this.storeIds,
-      groups: 1,
-      count: 0,
+      groups: this.groupId,
       fromdate: this.FromDate,
       todate: this.ToDate,
+      otherstoreids: this.otherStoreIds
+
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -193,7 +187,7 @@ export class Dashboard {
       this.setHeaderData()
     } else {
       obj = {
-        DealerId: this.StoreValues,
+        DealerId: [...this.StoreValues, ...this.otherStoreIds],
         StartDate: this.FromDate,
         EndDate: this.ToDate,
       };
@@ -256,6 +250,8 @@ export class Dashboard {
       if (this.shared.common.pageName == this.dynamicTitle) {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.StoreValues.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.StoreValues.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.StoreValues)[0].storename : this.storename = ''
@@ -311,7 +307,8 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
-
+this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
     this.storesFilterData = {
       groupsArray: this.groupsArray,
       groupId: this.groupId,
@@ -321,7 +318,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds,
     };
 
     // this.setHeaderData();
@@ -334,7 +332,10 @@ export class Dashboard {
     this.storename = data.storename;
     this.groupName = data.groupName;
     this.storecount = data.storecount;
+    this.otherStoreIds = data.otherStoreIds;
     this.storedisplayname = data.storedisplayname;
+
+
   }
   ngOnDestroy() {
     if (this.excel != undefined) {

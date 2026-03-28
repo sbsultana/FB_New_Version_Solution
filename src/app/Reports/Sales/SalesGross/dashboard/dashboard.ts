@@ -58,8 +58,7 @@ export class Dashboard {
   responcestatus: string = '';
   groups: any = 1;
   acquisition: any = ['All'];
-  otherstoreid: any = '';
-  selectedotherstoreids: any = ''
+  otherstoreids: any = [];
 
   ProductDeals: any = 'No'
   Months: any = [
@@ -88,7 +87,7 @@ export class Dashboard {
       sm: this.salesManagerId,
       fm: this.financeManagerId,
       as: this.acquisition,
-      gridview: this.GridView, otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids, ProductDeals: this.ProductDeals, 'DefaultLoad': this.DefaultLoad
+      gridview: this.GridView, otherstoreids: this.otherstoreids, ProductDeals: this.ProductDeals, 'DefaultLoad': this.DefaultLoad
     },
   ];
 
@@ -122,7 +121,8 @@ export class Dashboard {
 
         localStorage.setItem('flag', 'M')
       } else {
-        this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
+        this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences;
+        this.otherstoreids = '';
         //this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         this.storeIds = []
         this.DefaultLoad = 'E'
@@ -139,7 +139,6 @@ export class Dashboard {
       this.setDates('MTD')
       this.DateType = 'MTD'
     }
-    localStorage.setItem('stime', 'MTD')
     this.getPeopleList()
 
   }
@@ -187,7 +186,8 @@ export class Dashboard {
       groups: this.groups,
       as: this.acquisition,
       datevaluetype: this.DateType,
-      'DefaultLoad': this.DefaultLoad
+      'DefaultLoad': this.DefaultLoad,
+      otherstoreids: this.otherstoreids
 
     };
     this.shared.api.SetHeaderData({ obj: data });
@@ -214,7 +214,9 @@ export class Dashboard {
         as: this.acquisition,
         datevaluetype: this.DateType,
         ProductDeals: this.ProductDeals,
-        'DefaultLoad': this.DefaultLoad
+        'DefaultLoad': this.DefaultLoad,
+        otherstoreids: this.otherstoreids
+
       },
     ];
     // this.getSalesData()
@@ -231,7 +233,7 @@ export class Dashboard {
   }
   getSalesData() {
     // this.responcestatus = '';
-    if ((this.storeIds != '' && this.storeIds != '0') || this.selectedotherstoreids != '') {
+    if ((this.storeIds != '' && this.storeIds != '0') || this.otherstoreids != '') {
       this.shared.spinner.show();
       this.NoData = false;
       this.actionType = 'Y';
@@ -262,8 +264,9 @@ export class Dashboard {
     const obj = {
       startdealdate: this.FromDate,
       enddealdate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds,
+          StoreID: [...this.storeIds, ...this.otherstoreids],
+
+
       SalesPerson: this.salesPersonId,
       SalesManager: this.salesManagerId,
       FinanceManager: this.financeManagerId,
@@ -441,8 +444,8 @@ export class Dashboard {
     const obj = {
       startdealdate: this.FromDate,
       enddealdate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds,
+           StoreID: [...this.storeIds, ...this.otherstoreids],
+
       SalesPerson: this.salesPersonId,
       SalesManager: this.salesManagerId,
       FinanceManager: this.financeManagerId,
@@ -615,83 +618,7 @@ export class Dashboard {
   }
 
 
-  GetTotalData() {
-    this.TotalSalesGross = [];
-    const obj = {
-      startdealdate: this.FromDate,
-      enddealdate: this.ToDate,
-      StoreID: this.storeIds,
-      SalesPerson: this.salesPersonId,
-      SalesManager: this.salesManagerId,
-      FinanceManager: this.financeManagerId,
-      dealtype: this.dealType,
-      saletype: this.saleType,
-      dealstatus: this.dealStatus.toString(),
-      var1: this.selectedDataGrouping.length >= 1 ? this.selectedDataGrouping[0]?.columnname : '',
-      var2: this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '',
-      var3: this.selectedDataGrouping.length == 3 ? this.selectedDataGrouping[2]?.columnname : '',
-      Rowtype: 'T',
-    };
-    this.shared.api
-      .postmethod(this.shared.common.routeEndpoint + 'GetSalesGrossData', obj)
-      .subscribe(
-        (totalres) => {
-          if (totalres.status == 200) {
-            if (totalres.response != undefined) {
-              if (totalres.response.length > 0) {
-                this.TotalSalesGross = totalres.response.map((v: any) => ({
-                  ...v,
-                  Data2: [],
-                  Dealer: '+',
-                }));
-                this.responcestatus = this.responcestatus + 'T';
-                this.combineIndividualandTotal();
-              } else {
-                this.shared.spinner.hide();
-                this.NoData = true;
-              }
-            } else {
-              this.shared.spinner.hide();
-              this.NoData = true;
-            }
-          } else {
-            this.toast.show(totalres.status, 'danger', 'Error');
-            this.shared.spinner.hide();
-            this.NoData = true;
-          }
-        },
-        (error) => {
-          this.toast.show('502 Bad Gate Way Error', 'danger', 'Error');
-          this.shared.spinner.hide();
-          this.NoData = true;
-        }
-      );
-  }
-  combineIndividualandTotal() {
-    this.SalesData = this.IndividualSalesGross;
-    this.shared.spinner.hide();
-    if (this.responcestatus == 'IT' || this.responcestatus == 'TI') {
-      if (this.TotalReport == 'B') {
-        this.IndividualSalesGross.push(this.TotalSalesGross[0]);
-        this.SalesData = this.IndividualSalesGross;
-        this.shared.spinner.hide();
-        console.log(this.SalesData);
-      } else {
-        this.IndividualSalesGross.unshift(this.TotalSalesGross[0]);
-        this.SalesData = this.IndividualSalesGross;
-        this.shared.spinner.hide();
-        console.log(this.SalesData);
-      }
-    } else if (this.responcestatus == 'T') {
-      this.SalesData = this.TotalSalesGross;
-      this.shared.spinner.hide();
-    } else if (this.responcestatus == 'I') {
-      this.SalesData = this.IndividualSalesGross;
-      this.shared.spinner.hide();
-    } else {
-      this.NoData = true;
-    }
-  }
+
   public inTheGreen(value: number): boolean {
     if (value >= 0) {
       return true;
@@ -840,6 +767,8 @@ export class Dashboard {
   }
   subdataindex: any = 0;
   expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any) {
+    console.log(this.selectedDataGrouping,'.............');
+    
     let id = (e.target as Element).id;
     if (id == 'D_' + ind) {
       if (this.selectedDataGrouping[1]?.columnname == '') {
@@ -943,7 +872,9 @@ export class Dashboard {
           this.groups = data.obj.groups;
           this.acquisition = data.obj.acquisition;
           this.ProductDeals = data.obj.ProductDeals;
-          this.selectedotherstoreids = data.obj.otherstoreids;
+          this.otherstoreids = data.obj.otherstoreids;
+          console.log(data.obj);
+          
           if (this.GridView == 'Global') {
             this.getSalesData();
           } else {
@@ -997,8 +928,8 @@ export class Dashboard {
     const obj = {
       startdealdate: this.FromDate,
       enddealdate: this.ToDate,
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds,
+      StoreID: [...this.storeIds, ...this.otherstoreids],
+
       SalesPerson: this.salesPersonId,
       SalesManager: this.salesManagerId,
       FinanceManager: this.financeManagerId,

@@ -31,8 +31,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+
   stores: any = []
   groupsArray: any = [];
   storename: any = ''
@@ -88,7 +87,6 @@ export class Dashboard {
       reporttotal: this.ReportTotal,
       PreviousMonths: this.PreviousMonths,
       groups: this.groupId,
-      otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -314,7 +312,7 @@ export class Dashboard {
   }
   DataSelection(Val: any) {
     if (this.Filter == 'PartsTrend') {
-      if (this.storeIds != '' || this.selectedotherstoreids != '') {
+      if (this.storeIds != '') {
         this.GetDataByMonths();
       }
     }

@@ -35,7 +35,6 @@ export class Dashboard {
   storeorgrp: any = 'G';
   groups: any = 0;
 
-
   stores: any = []
   groupsArray: any = [];
   storename: any = ''
@@ -43,11 +42,15 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
+  otherStoresArray: any = [];
+  otherStoreIds: any = [];
   excel!: Subscription;
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+
   };
 
 
@@ -89,11 +92,15 @@ export class Dashboard {
           localStorage.setItem('flag', 'M')
         } else {
           this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+          this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',');
+          this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
         }
       }
       if (this.shared.common.groupsandstores.length > 0) {
         this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+        this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
         this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
         this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
         this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -132,6 +139,7 @@ export class Dashboard {
         dealType: this.dealType,
         saleType: this.saleType,
         financeType: this.financeType,
+        otherstoreids: this.otherStoreIds,
         count: 0
       };
       this.shared.api.SetHeaderData({
@@ -140,7 +148,7 @@ export class Dashboard {
       this.header = [{
         type: 'Bar', storeIds: this.storeIds, storeorgroup: this.storeorgrp, dealType: this.dealType,
         saleType: this.saleType,
-        financeType: this.financeType, groups: this.groups
+        financeType: this.financeType, groups: this.groups, otherstoreids: this.otherStoreIds
       }]
 
       this.GetData('Rank', 'asc');
@@ -152,7 +160,7 @@ export class Dashboard {
 
   ngOnInit(): void {
     this.SetDates(this.DateType);
-  
+
   }
 
 
@@ -163,7 +171,7 @@ export class Dashboard {
     const obj = {
       StartDate: this.FromDate,
       EndDate: this.ToDate,
-      StoreID: this.storeIds,
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       Exp: sortdata,
       OrderType: sortstate,
       RankBy: this.storeorgroup,
@@ -273,86 +281,7 @@ export class Dashboard {
       }
     );
   }
-  // GetTotalData() {
-  //   this.TotalSalesPersonsData = [];
-  //   const obj = {
-  //     AU_ID: '69',
-  //     AS_ID: this.storeIds,
-  //     StartDate: this.FromDate,
-  //     EndDate: this.ToDate,
-  //     OrderBy: 'TR',
-  //     type: 'T',
-  //   };
-  //   this.apiSrvc
-  //     .postmethod(this.comm.routeEndpoint+'GetFIManagerRankings', obj)
-  //     .subscribe(
-  //       (totalres) => {
-  //         if (totalres.status == 200) {
-  //           this.TotalSalesPersonsData = totalres.response.map((v) => ({
-  //             ...v,
-  //             Data2: [],
-  //           }));
-  //           this.spinner.hide();
-  //           if (this.TotalSalesPersonsData.length > 0) {
-  //             this.TotalSalesPersonsData.some(function (x: any) {
-  //               x.data1 = 'Reports Total';
-  //             });
-  //             if (this.TotalReport == 'B') {
-  //               this.FIManagerData.push(
-  //                 this.TotalSalesPersonsData[0]
-  //               );
-  //             } else {
-  //               this.FIManagerData.unshift(
-  //                 this.TotalSalesPersonsData[0]
-  //               );
-  //             }
-  //           }
 
-  //           this.SalesPersonsData = [];
-
-  //           this.SalesPersonsData = this.FIManagerData;
-  //           // //console.log(this.SalesData)
-  //           // this.spinner.hide()
-  //           //   if(this.SalesPersonsData.length>0){
-  //           //      this.SalesPersonsData.some(function(x:any){
-  //           //        if(x.data1 != 'Reports Total'){
-  //           //      if(x.Data2 != undefined){
-  //           //       x.Data2=JSON.parse(x.Data2);
-  //           //       x.Data2=x.Data2.map(v => ({ ...v, SubData:[],data2sign:'-' }))
-
-  //           //                    }
-
-  //           //                    if(x.Data3 != undefined){
-  //           //                     x.Data3=JSON.parse(x.Data3);
-
-  //           //                     x.Data2.forEach(val=>{
-
-  //           //                       x.Data3.forEach(ele=>{
-  //           //                         if(val.data2==ele.data2){
-  //           //                           val.SubData.push(ele)
-  //           //                         }
-  //           //                       })
-  //           //                     })
-  //           //                    }
-  //           //        }
-  //           //     x.Dealer ='+';
-  //           //     return false;
-  //           //   });
-  //           // }
-  //           if (this.SalesPersonsData.length == 0) {
-  //             this.NoData = true;
-  //           } else {
-  //             this.NoData = false;
-  //           }
-  //         } else {
-  //           
-  //         }
-  //       },
-  //       (error) => {
-  //         //console.log(error);
-  //       }
-  //     );
-  // }
 
   public inTheGreen(value: number): boolean {
     if (value >= 0) {
@@ -360,14 +289,7 @@ export class Dashboard {
     }
     return false;
   }
-  reportOpen(temp: any) {
 
-
-    // this.shared.ngbmodalActive = this.shared.ngbmodal.open(temp, {
-    //   size: 'xl',
-    //   backdrop: 'static',
-    // });
-  }
   expandorcollapse(ind: any, e: any, ref: any, Item: any) {
     let id = (e.target as Element).id;
     if (id == 'D_' + ind) {
@@ -456,6 +378,8 @@ export class Dashboard {
       if (this.shared.common.pageName == 'F&I Manager Rankings') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -521,6 +445,7 @@ export class Dashboard {
           dealType: this.dealType,
           saleType: this.saleType,
           financeType: this.financeType,
+          otherstoreids: this.otherStoreIds
         };
         this.shared.api.SetHeaderData({
           obj: headerdata,
@@ -528,7 +453,8 @@ export class Dashboard {
         this.header = [{
           type: 'Bar', storeIds: this.storeIds, storeorgroup: this.storeorgrp, dealType: this.dealType,
           saleType: this.saleType,
-          financeType: this.financeType, groups: this.groups
+          financeType: this.financeType, groups: this.groups,
+          otherstoreids: this.otherStoreIds
         }]
       }
     });
@@ -592,24 +518,11 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.otherStoreIds = data.otherStoreIds;
+
   }
 
 
-  // openDetails(Item) {
-  //   this.CompleteComponentState = false;
-  //   const DetailsSalesPeron = this.ngbmodal.open(SalespersonsDealsComponent, {
-  //     // size:'xl',
-  //     backdrop: 'static',
-  //   });
-  //   DetailsSalesPeron.componentInstance.Dealdetails = Item;
-  //   DetailsSalesPeron.result.then(
-  //     (data) => {},
-  //     (reason) => {
-  //       // on dismiss
-  //       this.CompleteComponentState = true;
-  //     }
-  //   );
-  // }
 
   Scrollpercent: any = 0;
   scrollCurrentposition: any = 0
@@ -627,101 +540,13 @@ export class Dashboard {
   }
 
   selBlock: any;
-  commentopen(item: any, i: any, slblock: any = '') {
-    this.index = '';
-    //console.log('Selected Obj :', item);
-    //return
-    this.selBlock = slblock + i.toString();
-    this.index = i.toString();
-    this.commentobj = {
-      TYPE: item.fimanager,
-      NAME: item.fimanager,
-      STORES: item.StoreName,
-      STORENAME: item.StoreName,
-      Month: '',
-      ModuleId: '24',
-      ModuleRef: 'FIMR',
-      state: 1,
-      indexval: i,
-    };
 
-
-    // const DetailsSF = this.ngbmodal.open(CommentsComponent, {
-    //   size: 'xl',
-    //   backdrop: 'static',
-    // });
-    // DetailsSF.componentInstance.SFComments = {
-    //   TYPE: item.LABLEVAL,
-    //   NAME: item.LABLE,
-    //   STORES: this.selectedstorevalues,
-    //   LatestDate: this.Month,
-    //   STORENAME: this.selectedstorename,
-    //   Month: this.Month,
-    //   ModuleId: '66',
-    //   ModuleRef: 'SF',
-    // };
-    // DetailsSF.result.then(
-    //   (data) => {},
-    //   (reason) => {
-
-    //     // // on dismiss
-    //     // const Data = {
-    //     //   state: true,
-    //     // };
-    //     // this.apiSrvc.setBackgroundstate({ obj: Data });
-    //     this.GetData();
-    //   }
-    // );
-
-  }
 
 
   index = '';
   commentobj: any = {};
 
-  addcmt(data: any) {
-    if (data == 'A') {
-      this.index = '';
-      const DetailsSF = this.shared.ngbmodal.open({
-        size: 'xl',
-        backdrop: 'static',
-      });
-      // myObject['skillItem2'] = 15;
-      this.commentobj['state'] = 0;
-      (DetailsSF.componentInstance.SFComments = this.commentobj),
-        DetailsSF.result.then(
-          (data: any) => {
-            // //console.log(data);
-          },
-          (reason: string) => {
-            // //console.log(reason);
 
-            if (reason == 'O') {
-              this.commentobj['state'] = 1;
-              this.index = this.commentobj['indexval'];
-            } else {
-              this.commentobj['state'] = 1;
-              this.index = this.commentobj['indexval'];
-
-              this.GetData(this.columnName, this.columnState);
-
-            }
-            // // on dismiss
-
-            // const Data = {
-            //   state: true,
-            // };
-            // this.apiSrvc.setBackgroundstate({ obj: Data });
-            // this.GetData();
-          }
-        );
-    }
-    if (data == 'AD') {
-
-      this.GetData(this.columnName, this.columnState);
-
-    }
-  }
   // close(data: any) {
   //   // //console.log(data);
   //   this.index = '';
@@ -785,6 +610,9 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
+
 
     this.storesFilterData = {
       groupsArray: this.groupsArray,
@@ -795,7 +623,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
     };
 
     // this.setHeaderData();
@@ -803,55 +632,7 @@ export class Dashboard {
 
   }
 
-  // Store selection
-  allstores() {
-    this.AllStores = !this.AllStores;
-    this.selectedstorevalues = this.AllStores ? this.stores.map((s: { ID: any; }) => s.ID) : [];
-  }
 
-
-  individualStores(e: any) {
-
-    const index = this.selectedstorevalues.findIndex((i: any) => i == e.ID);
-    if (index >= 0) {
-      this.selectedstorevalues.splice(index, 1);
-      this.AllStores = false;
-      if (this.selectedstorevalues.length == 1) {
-        this.storeorgroup = 'S'
-      }
-      else {
-        this.storeorgroup = 'G'
-      }
-
-    } else {
-      this.selectedstorevalues.push(e.ID);
-      if (this.selectedstorevalues.length == 1) {
-        this.storeorgroup = 'S'
-      }
-      else {
-        this.storeorgroup = 'G'
-      }
-      if (this.selectedstorevalues.length == this.stores.length) {
-        this.AllStores = true;
-      } else {
-        this.AllStores = false;
-      }
-    }
-    if (this.selectedstorevalues.length == 1) {
-      this.storeName = this.stores.filter((val: any) => val.ID == this.selectedstorevalues.toString())[0].storename
-    }
-  }
-  // Group selection
-  allgroups() {
-    this.AllGroups = !this.AllGroups;
-    this.selectedGroups = this.AllGroups ? this.groups.map((g: { sg_id: any; }) => g.sg_id) : [];
-  }
-
-  individualgroups(g: any) {
-    this.selectedGroups = [g.sg_id];
-    this.groupName = g.sg_name;
-    this.storeorgroup = g.sg_id === 1 ? 'S' : 'G';
-  }
 
   // Deal type & status
   multipleorsingle(block: string, val: string) {
@@ -1071,7 +852,7 @@ export class Dashboard {
     });
 
 
-    if (this.storeIds.length === 0) {
+    if (this.storeIds.length === 0 && this.otherStoreIds.lenth === 0) {
 
       this.toast.show('Please select any store', 'warning', 'Warning');
     }

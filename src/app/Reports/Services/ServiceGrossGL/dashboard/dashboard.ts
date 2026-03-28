@@ -39,8 +39,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  otherstoreid: any = '';
-  selectedotherstoreids: any = '';
+
 
   stores: any = []
   groupsArray: any = [];
@@ -50,10 +49,12 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
+  			  otherStoresArray: any = [];
+  otherStoreIds: any = [];
 
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'N',
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',  otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
 
@@ -102,9 +103,13 @@ export class Dashboard {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
       this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -158,7 +163,7 @@ export class Dashboard {
       fromdate: this.FromDate,
       todate: this.ToDate,
       groups: this.groupId,
-      otherstoreids: this.otherstoreid, selectedotherstoreids: this.selectedotherstoreids
+    otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -166,7 +171,7 @@ export class Dashboard {
 
   }
   getServiceData() {
-    if (this.storeIds != '' || this.selectedotherstoreids != '') {
+    if (this.storeIds != '' || this.otherStoreIds != '') {
       this.responcestatus = '';
       this.shared.spinner.show();
       this.GetData();
@@ -180,8 +185,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate.replaceAll('/', '-'),
       enddate: this.ToDate.replaceAll('/', '-'),
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID:[...this.storeIds, ...this.otherStoreIds],
       PaytypeC: this.Paytype[0] == 'Customerpay_0' ? 'C' : '',
       PaytypeW: this.Paytype[1] == 'Warranty_1' ? 'W' : '',
       PaytypeI: this.Paytype[2] == 'Internal_2' ? 'I' : '',
@@ -265,8 +269,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate.replaceAll('/', '-'),
       enddate: this.ToDate.replaceAll('/', '-'),
-      StoreID: this.selectedotherstoreids != undefined && this.selectedotherstoreids != '' && this.selectedotherstoreids != null ?
-        (this.storeIds != '' ? this.storeIds + ',' + this.selectedotherstoreids.toString() : this.selectedotherstoreids.toString()) : this.storeIds.toString(),
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       PaytypeC: this.Paytype[0] == 'Customerpay_0' ? 'C' : '',
       PaytypeW: this.Paytype[1] == 'Warranty_1' ? 'W' : '',
       PaytypeI: this.Paytype[2] == 'Internal_2' ? 'I' : '',
@@ -660,6 +663,8 @@ export class Dashboard {
       if (this.comm.pageName == 'Service Gross GL') {
         if (res.obj.storesData != undefined) {
           this.groupsArray = res.obj.storesData;
+          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+
           this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
@@ -734,7 +739,10 @@ export class Dashboard {
     this.storename = data.storename;
     this.groupName = data.groupName;
     this.storecount = data.storecount;
+    this.otherStoreIds = data.otherStoreIds;
     this.storedisplayname = data.storedisplayname;
+
+    
   }
 
   getStoresandGroupsValues() {
@@ -746,6 +754,8 @@ export class Dashboard {
     this.storesFilterData.storename = this.storename;
     this.storesFilterData.storecount = this.storecount;
     this.storesFilterData.storedisplayname = this.storedisplayname;
+    this.storesFilterData.otherStoreIds = this.otherStoreIds;
+    this.storesFilterData.otherStoresArray = this.otherStoresArray;
     this.storesFilterData = {
       groupsArray: this.groupsArray,
       groupId: this.groupId,
@@ -755,7 +765,8 @@ export class Dashboard {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N'
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds,
     };
   }
   updatedDates(data: any) {
@@ -821,7 +832,7 @@ export class Dashboard {
     if (this.selectedDataGrouping.length == 0) {
       this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
     } else {
-      if (this.storeIds.length == 0 && this.selectedotherstoreids.length == 0) {
+      if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
         this.toast.show('Please select atleast one Store', 'warning', 'Warning');
       } else if (this.Department.length == 0) {
         this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');

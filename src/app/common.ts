@@ -24,7 +24,7 @@ export class common {
   public reconID: any = 7;
   public allstores: any = [];
   public OtherStoresData: any = []
-  public otherstoreids: any = '';
+  public otherstoreids: any = [];
   public DefaultOtherstoresSelection: any = ''
   public modules: any = '';
   public currentRoute: any = ''
