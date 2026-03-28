@@ -121,7 +121,7 @@
                                 '-' :
                                 det.Partnumber ) }}
                             </td>
-                            <td class="text-start" (click)="viewRO(det)"
+                            <td class="text-start" (click)="openServiceModal(det.RONumber,det.vin,det.StoreID,det.vehicleid,det?.source ,det?.customernumber)"
                                 [ngClass]="[det.RONumber != 0 && det.RONumber != null && det.RONumber != undefined && det.RONumber != '' && det.RONumber != '-' ? 'popuppointer' : 'popupdisable']">
                                 {{ (det.RONumber == 0 || det.RONumber == null || det.RONumber == undefined ?
                                 '-' :

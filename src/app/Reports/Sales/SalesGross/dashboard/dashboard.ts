@@ -629,6 +629,8 @@ export class Dashboard {
   }
 
   openDetails(Item: any, ParentItem: any, cat: any) {
+    console.log(ParentItem,'......');
+    
     if (cat == '3') {
       if (Item.data3 != undefined) {
         const DetailsSalesPeron = this.shared.ngbmodal.open(
@@ -767,11 +769,11 @@ export class Dashboard {
   }
   subdataindex: any = 0;
   expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any) {
-    console.log(this.selectedDataGrouping,'.............');
     
     let id = (e.target as Element).id;
+
     if (id == 'D_' + ind) {
-      if (this.selectedDataGrouping[1]?.columnname == '') {
+      if ((this.selectedDataGrouping.length >= 2 ? this.selectedDataGrouping[1]?.columnname : '') == '') {
         this.openDetails(Item, parentData, '1');
       } else {
         if (ref == '-') {
@@ -783,7 +785,9 @@ export class Dashboard {
       }
     }
     if (id == 'DN_' + ind) {
-      if (this.selectedDataGrouping[2]?.columnname == '') {
+      if ((this.selectedDataGrouping.length == 3 ? this.selectedDataGrouping[2]?.columnname : '') == '') {
+    console.log(this.selectedDataGrouping,id,'.............');
+
         this.openDetails(Item, parentData, '2');
       } else {
         if (ref == '-') {

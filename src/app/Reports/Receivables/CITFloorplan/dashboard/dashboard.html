@@ -589,7 +589,8 @@
                                         *ngIf="fp.StockNumner != 0 &&
                   fp.StockNumner != null && fp.StockNumner != undefined && fp.StockNumner != '' && fp.StockNumner != '-'">{{fp.StockNumner}}</span>
                                 </td>
-                                <td style="text-align: center;" (click)="viewDeal(fp)"
+                                <td style="text-align: center;"
+                                    (click)="openSalesModal(fp.Deal,fp.vin,fp.storeid,fp.StockNumner,fp?.source,fp?.CustomerNumber)"
                                     [ngClass]="[fp.Deal != 0 && fp.Deal != null && fp.Deal != undefined && fp.Deal != '' && fp.Deal != '-' ? 'popuppointer' : 'popupdisable']">
                                     {{ fp.Deal == 0 ||
                                     fp.Deal == null || fp.Deal == undefined|| fp.Deal

@@ -3027,3 +3027,35 @@ select:focus {
     }
   }
 }
+
+.popuppointer {
+  cursor: pointer;
+  color: #026df3 !important;
+  text-decoration: underline;
+  //  pointer-events: none;
+  //   color: #000;
+}
+
+.popupdisable {
+  pointer-events: none;
+  color: #000;
+  // text-decoration: underline;
+}
+
+.connectedmodal .modal-content {
+  border-radius: 20px !important;
+  width: 100% !important;
+  background-color: #fff !important;
+  top: 0 !important;
+  // border: none !important;
+  // box-shadow: none !important;
+}
+
+.connectedmodal .modal-dialog {
+  // max-width: 60% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: auto;
+}

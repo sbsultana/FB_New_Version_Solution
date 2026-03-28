@@ -337,7 +337,8 @@
 
               <td class="text-center">{{ fp.CTAge || '-' }}</td>
               <td class="text-center">{{ fp.CTDate ? (fp.CTDate | date:'MM.dd.yyyy') : '-' }}</td>
-              <td class="text-center popuppointer" (click)="viewDeal(fp)">{{ fp.Dealno || '-' }}</td>
+              <td class="text-center"  (click)="openSalesModal(fp.Dealno,fp.vin,fp.storeid,fp.Stockno,fp?.source,fp?.CustId)"
+                                    [ngClass]="[fp.Dealno != 0 && fp.Dealno != null && fp.Dealno != undefined && fp.Dealno != '' && fp.Dealno != '-' ? 'popuppointer' : 'popupdisable']">{{ fp.Dealno || '-' }}</td>
               <td *ngIf="Role=='Super Admin' || userid=='8'" class="text-center">{{ fp.Control || '-' }}</td>
               <td class="text-end TotalDueDates" [ngClass]="{ negative: !inTheGreen(fp.Balance) }">
                 <span *ngIf="fp.Balance !== null && fp.Balance !== undefined && fp.Balance !== 0; else noBalance"
