@@ -375,7 +375,8 @@
 
               <td class="text-start">{{ fp.StockNo || '-' }}</td>
 
-              <td class="text-center popuppointer" (click)="viewDeal(fp)">
+              <td class="text-center popuppointer" (click)="openSalesModal(fp.DealNo,fp.vin,fp.storeid,fp.StockNo,fp?.source,fp?.CustomerNumber)"
+                                    [ngClass]="[fp.DealNo != 0 && fp.DealNo != null && fp.DealNo != undefined && fp.DealNo != '' && fp.DealNo != '-' ? 'popuppointer' : 'popupdisable']">
                 {{ fp.DealNo || '-' }}
               </td>
 

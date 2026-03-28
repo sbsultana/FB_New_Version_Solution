@@ -417,6 +417,21 @@ export class Dashboard implements OnInit {
     });
 
   }
+
+    async openSalesModal(dealnumber: any, vin: any, storeid: any, stock: any, source: any, custno: any) {
+    const module = await import('../../../../Layout/cdpdataview/deal/deal-module');
+    const component = module.Deal;
+
+    const modalRef = this.shared.ngbmodal.open(component, { size: 'xl', windowClass: 'connectedmodal' });
+    modalRef.componentInstance.data = { dealno: dealnumber, vin: vin, storeid: storeid, stock: stock, source: source, custno: custno }; // Pass data to the modal component    
+    modalRef.result.then((result) => {
+      // this.topScroll()
+      console.log(result); // Handle modal close result
+    }, (reason) => {
+      // this.topScroll()
+      console.log(`Dismissed: ${reason}`); // Handle dismiss reason
+    });
+  }
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
   sortTable(column: string) {

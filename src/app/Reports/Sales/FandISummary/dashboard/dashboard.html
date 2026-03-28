@@ -548,7 +548,7 @@
 
                                                 <td style="text-align: left !important;"
                                                     [ngClass]="[ld.ad_dealid != 0 && ld.ad_dealid != null && ld.ad_dealid != undefined && ld.ad_dealid != '' && ld.ad_dealid != '-' ? 'popuppointer' : 'popupdisable']"
-                                                    (click)="viewDeal(ld)">{{ ld['ad_dealid'] || '-'}}</td>
+                                                     (click)="openSalesModal(ld.ad_dealid,ld.VIN,ld.Store_Id,ld.Stock,ld?.source,ld?.customernumber)">{{ ld['ad_dealid'] || '-'}}</td>
 
                                                 <td style="text-align: center;">{{ ld['Stock'] || '-'}}</td>
 
