@@ -41,7 +41,7 @@ export class Deal {
       "custno": this.data.custno ? this.data.custno : '',
     }
     this.isLoading = true;
-    this.http.post('cc/sales/getdealview', obj).subscribe((res: any) => {
+    this.http.post('cc/basic/getdealview', obj).subscribe((res: any) => {
       this.isLoading = false;
       console.log(res);
       if (res.response[0]?.amountdetails)
