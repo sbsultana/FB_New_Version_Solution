@@ -422,7 +422,6 @@ export class SalesgrossReports {
 
   }
   setDates(type: any) {
-    // localStorage.setItem('time', type);
     // this.datevaluetype=
     if (type != 'C') {
       this.displaytime = '( ' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ' )';
@@ -443,6 +442,8 @@ export class SalesgrossReports {
     this.ToDate = data.ToDate;
     this.DateType = data.DateType;
     this.displaytime = data.DisplayTime
+    localStorage.setItem('time', this.DateType);
+
   }
   neworused: any = ['New', 'Used'];
   retailorlease: any = ['Retail ', 'Lease ', 'Misc '];

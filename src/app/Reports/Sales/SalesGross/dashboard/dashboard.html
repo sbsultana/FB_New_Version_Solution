@@ -116,9 +116,9 @@
                                         </span>
                                         &nbsp;&nbsp;
                                         <span *ngIf="SalesInfo.data1.toLowerCase() != 'report totals'">
-                                            <img *ngIf="SalesInfo.Dealer === '+'" src="images/Add_Circle.svg"
+                                            <img *ngIf="SalesInfo.Dealer === '+' && selectedDataGrouping.length > 1" src="images/Add_Circle.svg"
                                                 alt="Expand" [id]="'D_'+i">
-                                            <img *ngIf="SalesInfo.Dealer === '-'" src="images/Minus_CircleIcon.svg"
+                                            <img *ngIf="SalesInfo.Dealer === '-' && selectedDataGrouping.length > 1" src="images/Minus_CircleIcon.svg"
                                                 [id]="'D_'+i" alt="Collapse">
                                         </span>
                                     </span>
