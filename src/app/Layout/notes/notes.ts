@@ -3,6 +3,7 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router'
 import { Sharedservice } from '../../Core/Providers/Shared/sharedservice';
 import { SharedModule } from '../../Core/Providers/Shared/shared.module';
+import { ToastService } from '../../Core/Providers/Shared/toast.service';
 
 
 
@@ -28,7 +29,7 @@ export class Notes {
   renderer: any;
   FullData: any;
 
-  constructor(public shared: Sharedservice, private router: Router,) {
+  constructor(public shared: Sharedservice, private router: Router,private toast: ToastService) {
     // this.renderer.listen('window', 'click', (e: Event) => {
     //   const TagName = e.target as HTMLButtonElement;
     // });
@@ -74,7 +75,7 @@ export class Notes {
 
   savenotes() {
     if (this.notes == '') {
-      alert('Please enter notes');
+      this.toast.show('Please enter notes','warning','Warning');
     } else {
       let obj = {}
       if (this.notesData.apiRoute == 'AddGeneralNotes') {
@@ -102,14 +103,14 @@ export class Notes {
       this.shared.api.postmethod(this.shared.common.routeEndpoint + this.notesData.apiRoute, obj).subscribe(
         (res) => {
           if (res.status == 200) {
-            alert('Notes inserted successfully')
+            this.toast.show('Notes inserted successfully','success','Success')
             // let data={notes:this.notes+'- ' +JSON.parse(localStorage.getItem('UserDetails')!).UserName +' - ('+ this.datepipe.transform(new Date(),'MM/dd/yy') + ')' }
             // this.SavedNotesData.emit(data);
             this.onClose.emit('S');
             // this.ngbmodel.dismissAll();
 
           } else {
-            alert('Invalid Details');
+            this.toast.show('Invalid Details','danger','Error');
           }
         },
         (error) => { }

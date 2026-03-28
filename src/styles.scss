@@ -151,6 +151,11 @@ main {
   padding-top: 70px;
 }
 
+.modal,
+.popup-container {
+  z-index: 10001 !important;
+}
+
 .container-fluid {
   font-family: 'Roboto';
 }
@@ -900,7 +905,7 @@ select:focus {
 
 
 
-.input-field{
+.input-field {
   min-height: 2rem;
   width: auto;
   padding: 0.475rem;
@@ -2836,13 +2841,13 @@ select:focus {
           text-align: center;
           font-family: "Roboto";
           font-size: .8rem;
-          border-radius: 12px;
+          border-radius: 12px !important;
           padding: .5rem;
           line-height: 1rem;
           text-transform: capitalize;
 
           &:hover {
-            border-radius: 50px;
+            border-radius: 50px !important;
           }
 
           &.active {

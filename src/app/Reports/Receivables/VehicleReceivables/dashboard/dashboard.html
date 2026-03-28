@@ -206,25 +206,25 @@
               <i class="fa fa-eye" *ngIf="!commentsVisibility"></i>
               <i class="fa-solid fa-eye-slash" *ngIf="commentsVisibility"></i>
             </th>
-            <th (click)="sort('AGE')">Age</th>
-            <th (click)="sort('FundedDate')">Date</th>
-            <th (click)="sort('Account')">Account</th>
-            <th *ngIf="Role=='Super Admin' || userid=='8'" (click)="sort('Control')">Control</th>
-            <th (click)="sort('control2')">Control</th>
-            <th (click)="sort('Balance')" class="text-end">Balance</th>
-            <th (click)="sort('CustomerName')">Name</th>
-            <th (click)="sort('CustomerNo')">Number</th>
-            <th *ngIf="storeIds.toString().indexOf(',')>0" (click)="sort('store')">Store</th>
-            <th (click)="sort('StockNo')">Stock #</th>
-            <th (click)="sort('DealNo')">Deal #</th>
-            <th (click)="sort('Stage')">Stage</th>
-            <th (click)="sort('FIManager')">F&I Mgr</th>
-            <th (click)="sort('SaleType')">New/Used</th>
-            <th (click)="sort('DealStatus')">Status</th>
-            <th (click)="sort('BankName')">Bank Name</th>
-            <th (click)="sort('VehicleYear')">Year</th>
-            <th (click)="sort('VehicleMake')">Make</th>
-            <th (click)="sort('VehicleModel')">Model</th>
+            <th class="cursor-pointer" (click)="sort('AGE')">Age</th>
+            <th class="cursor-pointer" (click)="sort('FundedDate')">Date</th>
+            <th class="cursor-pointer" (click)="sort('Account')">Account</th>
+            <th *ngIf="Role=='Super Admin' || userid=='8'" class="cursor-pointer" (click)="sort('Control')">Control</th>
+            <th class="cursor-pointer" (click)="sort('control2')">Control</th>
+            <th class="cursor-pointer" (click)="sort('Balance')">Balance</th>
+            <th class="cursor-pointer" (click)="sort('CustomerName')">Name</th>
+            <th class="cursor-pointer" (click)="sort('CustomerNo')">Number</th>
+            <th *ngIf="storeIds.toString().indexOf(',')>0" class="cursor-pointer" (click)="sort('store')">Store</th>
+            <th class="cursor-pointer" (click)="sort('StockNo')">Stock #</th>
+            <th class="cursor-pointer" (click)="sort('DealNo')">Deal #</th>
+            <th class="cursor-pointer" (click)="sort('Stage')">Stage</th>
+            <th class="cursor-pointer" (click)="sort('FIManager')">F&I Mgr</th>
+            <th class="cursor-pointer" (click)="sort('SaleType')">New/Used</th>
+            <th class="cursor-pointer" (click)="sort('DealStatus')">Status</th>
+            <th class="cursor-pointer" (click)="sort('BankName')">Bank Name</th>
+            <th class="cursor-pointer" (click)="sort('VehicleYear')">Year</th>
+            <th class="cursor-pointer" (click)="sort('VehicleMake')">Make</th>
+            <th class="cursor-pointer" (click)="sort('VehicleModel')">Model</th>
           </tr>
         </thead>
 
@@ -240,10 +240,10 @@
               </td>
 
               <td class="text-center">
-                <img *ngIf="fp.NotesStatus === 'N'" src="images/Actionblack.png" data-bs-toggle="modal"
-                  data-bs-target="#payplan" (click)="addNotes(fp)">
-                <img *ngIf="fp.NotesStatus === 'Y'" src="images/notes_unread.png" data-bs-toggle="modal"
-                  data-bs-target="#payplan" (click)="addNotes(fp)">
+                <img class="cursor-pointer" *ngIf="fp.NotesStatus === 'N'" src="images/Actionblack.png"
+                  data-bs-toggle="modal" data-bs-target="#payplan" (click)="addNotes(fp)">
+                <img class="cursor-pointer" *ngIf="fp.NotesStatus === 'Y'" src="images/notes_unread.png"
+                  data-bs-toggle="modal" data-bs-target="#payplan" (click)="addNotes(fp)">
               </td>
 
               <td class="text-end">{{ fp.AGE || '-' }}</td>
@@ -251,9 +251,12 @@
               <td class="text-center">{{ fp.Account || '-' }}</td>
               <td class="text-start">{{ fp.Control || '-' }}</td>
               <td class="text-start">{{ fp.control2 || '-' }}</td>
-              <td class="text-end" [ngClass]="{negative: !inTheGreen(fp.Balance)}">
-                <span *ngIf="fp.Balance"> ${{ fp.Balance | number:'1.2-2' }} </span>
-                <span *ngIf="!fp.Balance">-</span>
+              <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(fp.Balance)}">
+                <span class="d-flex justify-content-between"> {{
+                  ( fp.Balance == 0 || fp.Balance == null || fp.Balance == undefined ? '' :
+                  '$') }} <span> {{
+                    ( fp.Balance == 0 || fp.Balance== null ? '-' :
+                    fp.Balance |number:'1.2-2') }}</span></span>
               </td>
               <td class="text-start">{{ fp.CustomerName || '-' }}</td>
               <td class="text-start">{{ fp.CustomerNo || '-' }}</td>
@@ -341,7 +344,7 @@
         <h2 class="m-0">
           Notes :
           <span>
-            {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
+            {{ selecteddata.StockNo ? '#' + selecteddata.StockNo : selecteddata.StockNo }}
           </span>
         </h2>
 
@@ -379,7 +382,7 @@
         <div class="mb-3">
           <h5>
             Post Date :
-            <span>{{ selecteddata.FundingDate | date:'MM.dd.yyyy' }}</span>
+            <span class="fw-bold">{{selecteddata.FundedDate | date:'MM.dd.yyyy'}}</span>
           </h5>
         </div>
 

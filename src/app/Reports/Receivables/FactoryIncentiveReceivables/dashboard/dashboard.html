@@ -268,10 +268,10 @@
               </td>
 
               <td class="text-center">
-                <img *ngIf="fp.NotesStatus=='N'" src="images/Actionblack.png" data-bs-toggle="modal"
+                <img class="cursor-pointer" *ngIf="fp.NotesStatus=='N'" src="images/Actionblack.png" data-bs-toggle="modal"
                   data-bs-target="#payplan" (click)="addNotes(fp)">
 
-                <img *ngIf="fp.NotesStatus=='Y'" src="images/notes_unread.png" data-bs-toggle="modal"
+                <img class="cursor-pointer" *ngIf="fp.NotesStatus=='Y'" src="images/notes_unread.png" data-bs-toggle="modal"
                   data-bs-target="#payplan" (click)="addNotes(fp)">
               </td>
 
@@ -414,7 +414,7 @@
         <h2 class="m-0">
           Notes :
           <span>
-            {{ selecteddata.StockNumner ? '#' + selecteddata.StockNumner : selecteddata.StockNumner }}
+            {{ selecteddata.Stockno ? '#' + selecteddata.Stockno : selecteddata.Stockno }}
           </span>
         </h2>
 
@@ -452,7 +452,7 @@
         <div class="mb-3">
           <h5>
             Post Date :
-            <span>{{ selecteddata.FundingDate | date:'MM.dd.yyyy' }}</span>
+            <span class="fw-bold">{{selecteddata.FundedDate | date:'MM.dd.yyyy'}}</span>
           </h5>
         </div>
 

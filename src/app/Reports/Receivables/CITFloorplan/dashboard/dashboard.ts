@@ -52,7 +52,7 @@ export class Dashboard implements OnInit {
   userid: any;
 
   // UI state
-  spinnerLoader: boolean = true;
+  spinnerLoader: boolean = false;
   enablevehicle: any = false;
   vehiclear: any = 'WOAR';
   noData: boolean = false;
@@ -220,7 +220,7 @@ export class Dashboard implements OnInit {
 
     this.commentsVisibility = true;
 
-  
+
 
     this.shared.setTitle(this.shared.common.titleName + '-CIT');
 
@@ -235,7 +235,7 @@ export class Dashboard implements OnInit {
       allordebit: this.allordebit,
       vehiclear: this.vehiclear,
     };
-    this.shared.api.SetHeaderData({ obj: data }); 
+    this.shared.api.SetHeaderData({ obj: data });
 
     if (this.storeIds != '') {
       this.Getfloorplansdata();
@@ -267,6 +267,7 @@ export class Dashboard implements OnInit {
 
   }
   Getfloorplansdata() {
+    this.goToFirstPage();
     this.NoData = false;
     this.FloorPlanData = [];
     this.FloorPlanTotalData = [];
@@ -505,7 +506,11 @@ export class Dashboard implements OnInit {
     this.selectedPriorityRecord = val;
     if (ref == 'multi') {
       if (this.priorityRecords.length == 0) {
-        alert('Please select atleast one record to prioritize');
+        this.toast.show(
+          'Please select atleast one record to prioritize',
+          'warning',
+          'Warning'
+        );
         const element = <HTMLInputElement>document.getElementById('Priority');
         if (element) element.checked = false;
       } else {
@@ -570,17 +575,29 @@ export class Dashboard implements OnInit {
     this.shared.api.postmethod('ReceivableExcludeControls/AddScheduleControlPriority', payload).subscribe(
       (res: any) => {
         if (res && res.status === 200) {
-          alert('Priority removed successfully');
+          this.toast.show(
+            'Priority removed successfully',
+            'success',
+            'Success'
+          );
           (document.getElementById('closeadd') as HTMLInputElement)?.click();
           this.onclose()
           this.Getfloorplansdata();
           this.prioritycheck = false;
         } else {
-          alert('Failed to unprioritize');
+          this.toast.show(
+            'Failed to unprioritize',
+            'danger',
+            'Error'
+          );
         }
       },
       () => {
-        alert('502 Bad Gateway Error');
+        this.toast.show(
+          '502 Bad Gateway Error',
+          'danger',
+          'Error'
+        );
       }
     );
   }
@@ -601,12 +618,20 @@ export class Dashboard implements OnInit {
       });
     }
     if (payload.schedulecontrolpriority.length == 0) {
-      alert('Please select atleast one record to prioritize');
+      this.toast.show(
+        'Please select atleast one record to prioritize',
+        'warning',
+        'Warning'
+      );
       return;
     }
     this.shared.api.postmethod('ReceivableExcludeControls/AddScheduleControlPriority', payload).subscribe((res: any) => {
       if (res && res.status == 200) {
-        alert('This control prioritized successfully');
+        this.toast.show(
+          'This control prioritized successfully',
+          'success',
+          'Success'
+        );
         (document.getElementById('closeadd') as HTMLInputElement)?.click();
         this.onclose()
         this.Getfloorplansdata();
@@ -614,12 +639,20 @@ export class Dashboard implements OnInit {
         this.priorityRecords = [];
         this.priorityVisibility = false;
       } else {
-        alert(res.status);
+        this.toast.show(
+          res.status,
+          'danger',
+          'Error'
+        );
         try { this.shared.spinner.hide(); } catch { }
         this.NoData = true;
       }
     }, (error: any) => {
-      alert('502 Bad Gate Way Error');
+      this.toast.show(
+        '502 Bad Gateway Error',
+        'danger',
+        'Error'
+      );
       try { this.shared.spinner.hide(); } catch { }
       this.NoData = true;
     });
@@ -788,6 +821,7 @@ export class Dashboard implements OnInit {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.getEmployees()
   }
   ngOnDestroy() {
     if (this.reportGetting) this.reportGetting.unsubscribe();
@@ -844,12 +878,14 @@ export class Dashboard implements OnInit {
 
   getEmployees(val?: any, ids?: any, count?: any, bar?: any) {
     const obj = {
-      AS_ID: this.StoreVal,
+      AS_ID: this.storeIds.toString(),
       type: 'F',
     };
+    this.spinnerLoader = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res: any) => {
         if (res && res.status == 200) {
+          this.spinnerLoader = false;
           // if (val == 'F') {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
           this.selectedFiManagersvalues = this.financeManager.map(function (a: any) {
@@ -857,7 +893,11 @@ export class Dashboard implements OnInit {
           });
 
         } else {
-          alert('Invalid Details');
+          this.toast.show(
+            'Invalid Details',
+            'danger',
+            'Error'
+          );
         }
       },
       (error: any) => {
@@ -914,6 +954,24 @@ export class Dashboard implements OnInit {
         this.selectedFiManagersvalues.length == this.financeManager.length
           ? '0'
           : this.selectedFiManagersvalues.toString()));
+    if (!this.storeIds || this.storeIds.length === 0) {
+      this.toast.show(
+        'Please Select Atleast One Store',
+        'warning',
+        'Warning'
+      );
+      return;
+    }
+
+    // ✅ Finance Manager (People) validation
+    if (!this.selectedFiManagersvalues || this.selectedFiManagersvalues.length === 0) {
+      this.toast.show(
+        'Please Select Atleast One People',
+        'warning',
+        'Warning'
+      );
+      return;
+    }
     this.Getfloorplansdata();
   }
 

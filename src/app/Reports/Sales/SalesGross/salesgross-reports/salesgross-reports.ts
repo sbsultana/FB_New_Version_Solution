@@ -8,9 +8,10 @@ import { Stores } from '../../../../CommonFilters/stores/stores';
 
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-salesgross-reports',
-  imports: [SharedModule, DateRangePicker, Stores, ToastContainer],
+  imports: [SharedModule, DateRangePicker, Stores, ToastContainer,NgbModule],
   templateUrl: './salesgross-reports.html',
   styleUrl: './salesgross-reports.scss'
 })
@@ -258,10 +259,12 @@ export class SalesgrossReports {
       AS_ID: strids,
       type: val,
     };
-    this.spinnerLoaderteams = true
+    this.spinnerLoaderteams = true;
+    this.spinnerLoader = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res) => {
         if (res.status == 200) {
+          this.spinnerLoader = false;
           if (val == 'SP') {
             this.salesPersons = res.response.filter((e: any) => e.SPName != 'Unknown' && e.SPName != '');
             this.selectedSalespersonvalues = this.salesPersons.map(function (a: any) { return a.SPID; });
@@ -317,7 +320,7 @@ export class SalesgrossReports {
           this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
         } else {
-
+          this.spinnerLoader = false;
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },

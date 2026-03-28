@@ -67,6 +67,12 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(4)">
+                        <div *ngIf="spinnerLoaderPeople"
+                            class="graph-loader d-flex align-items-center justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
                         People <span class="light-font">
                             ({{ financeManagerId.length == 1 ? fiManagersname : 'Selected' }}
                             <span *ngIf="financeManagerId.length > 1"> {{ financeManagerId.length }}
@@ -75,7 +81,7 @@
 
                         <span class="arrow"></span>
                     </button>
-                    <div class="reportstores-card my-3 " *ngIf="activePopover ===4">
+                    <div class="reportstores-card my-2" *ngIf="activePopover ===4">
                         <div class="row h-100">
                             <div class="groups pe-2 d-flex flex-column">
                                 <div class="groups-wrapper flex-grow-1">
@@ -126,18 +132,24 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <button class="dropdown-toggle" (click)="togglePopover(5)">Product Type:
-                        ( {{selectedProductType.length == 1 ? selectedProductType[0].TNAME : (selectedProductType.length
-                        == producttype.length ? 'All' : 'Selected')}}
-                        {{selectedProductType.length == 1 ? '' : (selectedProductType.length == producttype.length ? ''
-                        : selectedProductType.length )
-                        }} )
+                    <button class="dropdown-toggle" (click)="togglePopover(5)">Product Type <span class="light-font">(
+                            {{selectedProductType.length == 1 ? selectedProductType[0].TNAME :
+                            (selectedProductType.length
+                            == producttype.length ? 'All' : 'Selected')}}
+                            {{selectedProductType.length == 1 ? '' : (selectedProductType.length == producttype.length ?
+                            ''
+                            : selectedProductType.length )
+                            }} )</span>
+
                         <span class="arrow"></span></button>
-                    <div class="reportstores-card my-3" *ngIf="activePopover === 5">
+                    <div class="reportstores-card my-2" *ngIf="activePopover === 5">
                         <div class="row h-100">
-                            <div class="stores d-flex flex-column ps-0">
+                            <div class="stores d-flex flex-column border-0">
                                 <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                                    <div class="store-columns flex-grow-1">
+                                    <div class="store-columns flex-grow-1" [ngStyle]="{
+                                        'display': 'grid',
+                                        'grid-template-rows': 'repeat(' + producttype.length + ', auto)'
+                                        }">
                                         <ng-container>
                                             <button class="btn btn-outline-primary store-button"
                                                 *ngFor="let pt of producttype;let i=index"
@@ -152,18 +164,23 @@
                 </div>
 
                 <div class="dropdown">
-                    <button class="dropdown-toggle" (click)="togglePopover(6)">Product Category:
-                        ( {{selectedProductCategory.length == 1 ? selectedProductCategory[0].CNAME :
-                        (selectedProductCategory.length == productcategory.length ? 'All' : 'Selected')}}
-                        {{selectedProductCategory.length == 1 ? '' : (selectedProductCategory.length ==
-                        productcategory.length ? '' : selectedProductCategory.length )
-                        }} )
+                    <button class="dropdown-toggle" (click)="togglePopover(6)">Product Category <span
+                            class="light-font">
+                            ( {{selectedProductCategory.length == 1 ? selectedProductCategory[0].CNAME :
+                            (selectedProductCategory.length == productcategory.length ? 'All' : 'Selected')}}
+                            {{selectedProductCategory.length == 1 ? '' : (selectedProductCategory.length ==
+                            productcategory.length ? '' : selectedProductCategory.length )
+                            }} )
+                        </span>
                         <span class="arrow"></span></button>
-                    <div class="reportstores-card my-3" *ngIf="activePopover === 6">
+                    <div class="reportstores-card my-2" *ngIf="activePopover === 6">
                         <div class="row h-100">
-                            <div class="stores d-flex flex-column ps-0">
+                            <div class="stores d-flex flex-column border-0">
                                 <div class="stores-wrapper flex-grow-1 d-flex flex-column">
-                                    <div class="store-columns flex-grow-1">
+                                    <div class="store-columns flex-grow-1" [ngStyle]="{
+                                        'display': 'grid',
+                                        'grid-template-rows': 'repeat(' + productcategory.length + ', auto)'
+                                        }">
                                         <ng-container>
                                             <button class="btn btn-outline-primary store-button"
                                                 *ngFor="let pc of productcategory;let i=index"
@@ -218,10 +235,12 @@
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <th><span>{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                    {{ToDate
-                                    |date:'MMMM'}} </span></span></th>
+                        <th class="text-center bdr-rt">
+                            {{FromDate |date:'MMMM'}} <label
+                                *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                {{ToDate
+                                |date:'MMMM'}} </label>
+                        </th>
                         <!-- <th class="text-start bdr-rt">
                             <span> Date </span>: {{FromDate |date:'MMMM'}} <label
                                 *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
@@ -249,7 +268,7 @@
 
                     </tr>
                     <tr class="bdr-btm">
-                        <th>
+                        <!-- <th>
                             <span>{{FromDate |date:'dd'}} <span
                                     *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
                                     |date:'yyyy'}}</span>
@@ -259,9 +278,9 @@
                                     *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
                                     {{FromDate |
                                     date:'yyyy'}}</span></span>
-                        </th>
-                        <!-- <th class="text-center">{{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy'
-                            }}</th> -->
+                        </th> -->
+                        <th class="text-center">{{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy'
+                            }}</th>
                         <th (click)="sort('toatlBG')" style="cursor: pointer;">Gross</th>
                         <th (click)="sort('TotalPVR')" style="cursor: pointer;">PVR</th>
                         <th (click)="sort('TotalProduct')" style="cursor: pointer;">Products</th>
@@ -299,11 +318,10 @@
 
                     <ng-container *ngIf="FandIPPData.length > 0; else NoFIPPdata">
                         <ng-container *ngFor="let FIPP of FandIPPData;let i=index;'index' as z">
-                            <tr class="title"
-                                [ngClass]="{'maintitle': FIPP.data1 == 'Total','white-bg': FIPP.Dealer !== '-' || path2 == '','lightblue-bg': FIPP.Dealer === '-' && path2 != '' , 'divBold': FIPP.data1 == 'REPORT TOTALS'}"
+                            <tr [ngClass]="{'maintitle': FIPP.data1 == 'Total','white-bg': FIPP.Dealer !== '-' || path2 == '','lightblue-bg': isApplyClicked && FIPP?.data2?.length && FIPP.data1 !== 'REPORT TOTALS', 'divBold': FIPP.data1 == 'REPORT TOTALS'}"
                                 [id]="'D_'+i">
                                 <td
-                                    [ngStyle]="{'background-color':FIPP.Dealer === '-' && path2 != '' ? '#d3ecff' : '#ffffff', 'cursor': path2 != '' ? 'pointer' : 'default','pointer-events': selectedDataGrouping && selectedDataGrouping.length > 1 ? 'visible' : 'none' }">
+                                    [ngStyle]="{ 'cursor': path2 != '' ? 'pointer' : 'default','pointer-events': selectedDataGrouping && selectedDataGrouping.length > 1 ? 'visible' : 'none' }">
                                     <span title="{{FIPP.data1}}" [id]="'D_'+i"
                                         (click)="expandorcollapse(i,$event,FIPP.Dealer,FIPP,'')">{{FIPP.data1
                                         == 0 ||

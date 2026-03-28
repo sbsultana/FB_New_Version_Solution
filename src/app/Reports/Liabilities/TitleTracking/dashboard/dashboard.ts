@@ -19,6 +19,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Router } from '@angular/router';
 import { common } from '../../../../common';
 import { Stores } from '../../../../CommonFilters/stores/stores';
+import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -147,7 +148,7 @@ export class Dashboard {
     private router: Router,
     private ngbmodalActive: NgbActiveModal,
     private spinner: NgxSpinnerService,
-
+    private toast: ToastService,
     private datepipe: DatePipe,
   ) {
     if (localStorage.getItem('flag') == 'V') {
@@ -345,7 +346,7 @@ export class Dashboard {
   exportToExcel(): void {
     const workbook: any = this.shared.getWorkbook?.();
     if (!workbook) {
-      alert('Workbook helper not available');
+      this.toast.show('Workbook helper not available','danger','Error');
       return;
     }
 
@@ -613,6 +614,7 @@ export class Dashboard {
   /* ------------------------------- MAIN API CALL ------------------------------- */
   previousReportPath: string | null = null;
   Getfloorplansdata(path: any) {
+    this.goToFirstPage();
     if (this.previousReportPath !== path.path) {
       this.AgeFrom = 0;
       this.AgeTo = 0;
@@ -628,7 +630,7 @@ export class Dashboard {
       this.AgeTo !== null &&
       Number(this.AgeFrom) > Number(this.AgeTo)
     ) {
-      alert('Please Enter Valid Age Range');
+      this.toast.show('Please Enter Valid Age Range','warning','Warning');
       return;
     }
     this.spinner.show();
@@ -691,7 +693,7 @@ export class Dashboard {
         }
       },
       () => {
-        alert('502 Bad Gateway Error');
+        this.toast.show('502 Bad Gateway Error','danger','Error');
         this.spinner.hide();
         this.NoData = true;
       },
@@ -946,7 +948,7 @@ export class Dashboard {
   }
   save() {
     if (this.notesStageText.trim() === '') {
-      alert('Please enter notes');
+      this.toast.show('Please enter notes','warning','Warning');
       return;
     }
 
@@ -963,7 +965,7 @@ export class Dashboard {
       .postmethod(this.comm.routeEndpoint + 'AddScheduleNotesAction', obj)
       .subscribe((res: any) => {
         if (res.status == 200) {
-          alert('Notes Added Successfully');
+          this.toast.show('Notes Added Successfully','success','Success');
           this.callLoadingState = 'ANS';
           (document.getElementById('close') as HTMLInputElement)?.click();
           this.oncloseone();
@@ -998,7 +1000,7 @@ export class Dashboard {
           this.selecteddata.duplicateNotes.unshift(newNote);
           this.selecteddata.NotesStatus = 'Y';
         } else {
-          alert('Something went wrong. Please try again.');
+          this.toast.show('Something went wrong. Please try again.','danger','Error');
         }
       });
   }
@@ -1008,7 +1010,7 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any, refval: any) {
     if (ref === 'multi') {
       if (this.hideRecords.length === 0) {
-        alert('Please select at least one record to hide');
+        this.toast.show('Please select atleast one record to hide','warning','Warning');
         (document.getElementById('symbol') as HTMLInputElement).checked = false;
         return;
       }
@@ -1038,7 +1040,7 @@ export class Dashboard {
 
   hideAdd() {
     if (this.hideRecords.length === 0) {
-      alert('Please select at least one record to hide');
+      this.toast.show('Please select atleast one record to hide','warning','Warning');
       return;
     }
 
@@ -1058,14 +1060,14 @@ export class Dashboard {
 
     this.shared.api.postmethod('ReceivableExcludeControls', obj).subscribe((res) => {
       if (res.status == 200) {
-        alert('This Control Hidden Successfully');
+        this.toast.show('This Control Hidden Successfully','success','Success');
         (document.getElementById('closeone') as HTMLElement).click();
         this.oncloseone();
         this.Getfloorplansdata(this.selectedreceviabe);
         this.hideRecords = [];
         this.hideVisibility = false;
       } else {
-        alert('Failed to hide control.');
+        this.toast.show('Failed to hide control.','danger','Error');
       }
     });
   }
@@ -1155,7 +1157,7 @@ export class Dashboard {
           // }
           // }
         } else {
-          alert('Invalid Details');
+          this.toast.show('Invalid Details','danger','Error');
         }
       },
       (error: any) => {

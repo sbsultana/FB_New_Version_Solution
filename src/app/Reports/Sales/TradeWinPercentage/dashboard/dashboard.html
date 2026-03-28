@@ -147,7 +147,7 @@
                             <th colspan="3" class="boxshadow-none"></th>
                         </tr>
                         <tr>
-                            <th>
+                            <!-- <th>
                                 <span>{{DupFromDate |date:'dd'}} <span
                                         *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
@@ -157,6 +157,9 @@
                                         *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
                             <th class="bdr-rt" (click)="sort('dealername')" style="cursor: pointer;">New </th>
                             <th class="bdr-rt" (click)="sort('Svc Gross')" style="cursor: pointer;">Trades</th>

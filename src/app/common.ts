@@ -15,7 +15,7 @@ export class common {
   public excelName: any = 'Fred Beans';
   public solutionurl: any = 'https://fredbeans.axelautomotive.com/'
   public axelonedashboard: any = 'https://fredbeans.axelautomotive.com/dashboard'
-  public logo: any = '../../../assets/images/Logo.png'
+  public logo: any = 'images/Logo.png'
   public firststore: any = [{ "storename": "FORD OF DOYLESTOWN", "ID": 1, "storecode": "FB-A", "sg_id": 1, "sg_name": "Fred Beans " }]
   public menuUrl: any = 'https://fbxtract.axelautomotive.com/';
   public redirectionFrom: any = '';

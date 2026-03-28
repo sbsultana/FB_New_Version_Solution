@@ -54,6 +54,12 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(4)">
+                        <div *ngIf="spinnerLoader"
+                            class="graph-loader d-flex align-items-center justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
                         People
                         <span class="light-font">
                             (
@@ -83,13 +89,13 @@
                                 </div>
                                 <div class="store-columns flex-grow-1">
 
-                                    <ng-container *ngIf="storeIds.length > 0">
+                                    <!-- <ng-container *ngIf="storeIds.length > 0">
                                         <div class="allstores text-start" *ngIf="selectedFiManagersvalues.length == 0">
                                             <a class="text-primary text-decoration-none cursor-pointer me-2"
                                                 style="pointer-events: none;">No Records Found
                                             </a>
                                         </div>
-                                    </ng-container>
+                                    </ng-container> -->
 
 
                                     <ng-container *ngIf="activePopover==4">
@@ -97,7 +103,7 @@
                                             <button class="btn btn-outline-primary store-button"
                                                 (click)="employees('FM',fm.FiId,fm.FiName)"
                                                 [ngClass]="{'active':selectedFiManagersvalues.indexOf(fm.FiId)>=0,'inactive':selectedFiManagersvalues.indexOf(fm.FiId)<0}">
-                                                <span> {{fm.FiName}}</span>
+                                                <span ngbTooltip="{{fm.FiName}}"> {{fm.FiName}}</span>
                                             </button>
                                         </ng-container>
                                     </ng-container>
@@ -192,7 +198,8 @@
                 &nbsp;
                 <!-- ========== Apply Button ========== -->
                 <div class="dropdown">
-                    <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+                        [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
                 </div>
 
                 <div class="search ms-auto me-2">
@@ -394,11 +401,11 @@
                                 Control 2
                             </th>
 
-                            <th (click)="sortTable('BalCIT')" style="cursor:pointer;text-align:right;">
+                            <th (click)="sortTable('BalCIT')">
                                 CIT
                             </th>
 
-                            <th (click)="sortTable('BalFloorplan')" style="cursor:pointer;text-align:right;">
+                            <th (click)="sortTable('BalFloorplan')">
                                 Floorplan
                             </th>
 

@@ -46,7 +46,13 @@
         </div>
 
         <div class="dropdown">
-            <button class="dropdown-toggle" (click)="togglePopover(3)">People <span class="light-font">
+            <button class="dropdown-toggle" (click)="togglePopover(3)">
+                <div *ngIf="spinnerLoader" class="graph-loader d-flex align-items-center justify-content-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                People <span class="light-font">
                     ( {{selectedSalespersonvalues.length>0 ||
                     selectedSalesManagersvalues.length>0 ||
                     selectedFiManagersvalues.length>0
@@ -59,7 +65,8 @@
                     overallSelectedpeople }} )
                 </span>
 
-                <span class="arrow"></span></button>
+                <span class="arrow"></span>
+            </button>
             <div class="reportstores-card my-2" *ngIf="activePopover ===3" [style.margin-left.px]="scrollPosition*-1">
                 <div class="row h-100">
                     <div class="groups pe-2 d-flex flex-column">
@@ -118,7 +125,7 @@
                                         <button class="btn btn-outline-primary store-button"
                                             (click)="employees('SP',sp.SPID)"
                                             [ngClass]="{'active':selectedSalespersonvalues.indexOf( sp.SPID)>=0,'inactive':selectedSalespersonvalues.indexOf(sp.SPID)<0}">
-                                            <span>{{sp.SPName}}</span>
+                                            <span ngbTooltip="{{sp.SPName}}">{{sp.SPName}}</span>
                                         </button>
                                     </ng-container>
                                 </ng-container>
@@ -128,7 +135,7 @@
                                         <button class="btn btn-outline-primary store-button"
                                             (click)="employees('SM',sm.SmId)"
                                             [ngClass]="{'active':selectedSalesManagersvalues.indexOf(sm.SmId)>=0,'inactive':selectedSalesManagersvalues.indexOf(sm.SmId)<0}">
-                                            <span>{{sm.SmName}}</span>
+                                            <span ngbTooltip="{{sm.SmName}}">{{sm.SmName}}</span>
                                         </button>
                                     </ng-container>
                                 </ng-container>
@@ -138,7 +145,7 @@
                                         <button class="btn btn-outline-primary store-button"
                                             (click)="employees('FM',fm.FiId)"
                                             [ngClass]="{'active':selectedFiManagersvalues.indexOf(fm.FiId)>=0,'inactive':selectedFiManagersvalues.indexOf(fm.FiId)<0}">
-                                            <span> {{fm.FiName}}</span>
+                                            <span ngbTooltip="{{fm.FiName}}"> {{fm.FiName}}</span>
                                         </button>
                                     </ng-container>
                                 </ng-container>
@@ -389,6 +396,7 @@
     </div>
     &nbsp;&nbsp;
     <div class="dropdown">
-        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+        <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+            [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
     </div>
 </div>

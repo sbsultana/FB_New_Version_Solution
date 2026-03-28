@@ -659,7 +659,7 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1;
     if (!this.storeIds || this.storeIds.length === 0) {
-      this.toast.show('Please select at least one store', 'warning', 'Warning');
+      this.toast.show('Please select atleast one store', 'warning', 'Warning');
       return;
     }
     else {

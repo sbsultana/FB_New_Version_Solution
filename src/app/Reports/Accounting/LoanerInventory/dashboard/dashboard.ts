@@ -1404,10 +1404,10 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-              // alert(res.response);
+              // this.toast.show(res.response);
               this.toast.success(res.response)
             } else {
-              alert('Invalid Details');
+              this.toast.show('Invalid Details','danger','Error');
             }
           },
           (error) => {

@@ -147,7 +147,7 @@
                             <th>{{stockType}}</th>
                             <th (click)="sort('InStock',order)" class="bdr-rt pointer">In Stock</th>
                             <th class="bdr-rt pointer"> <span> <span (click)="sort('Target',order)" class="fw-bold">Target</span>
-                                    <!-- <span> &nbsp;&nbsp;<img src="../../../../../assets/images/edit_icon.png" class="ms-auto"
+                                    <!-- <span> &nbsp;&nbsp;<img src="images/edit_icon.png" class="ms-auto"
                                         style="cursor: pointer;width:15px;" (click)="getNewdetails(target)"></span> -->
                                 </span>
                             </th>
@@ -304,11 +304,11 @@
                         <ng-container *ngFor="let Ad of inventoryBookDetails;  let i=index">
                             <tr>
                                 <!-- <td>
-                                    <img *ngIf="Ad.NotesStatus=='N'" src="../../../../../assets/images/Actionblack.png "
+                                    <img *ngIf="Ad.NotesStatus=='N'" src="images/Actionblack.png "
                                         (click)="addNotes(Ad,notes)" class="pointer">
 
                                     <img *ngIf="Ad.NotesStatus=='Y'"
-                                        src="../../../../../assets/images/notes_unread.png "
+                                        src="images/notes_unread.png "
                                         (click)="addNotes(Ad,notes)" class="pointer">
                                 </td> -->
                                 <td class="text-start">

@@ -67,62 +67,71 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(4)">
-                        People <span class="light-font">
-                            ({{ financeManagerId.length == 1 ? fiManagersname : 'Selected' }}
-                            <span *ngIf="financeManagerId.length > 1"> {{ financeManagerId.length }}
-                            </span>)
+
+                        <div *ngIf="spinnerLoaderPeople"
+                            class="graph-loader d-flex align-items-center justify-content-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+
+                        People
+                        <span class="light-font">
+                            (
+                            {{
+                            financeManagerId?.length === 0 ? 'Select' :
+                            financeManagerId?.length === 1 ? fiManagersname : 'Selected'
+                            }}
+                            <span *ngIf="financeManagerId?.length > 1">
+                                {{ financeManagerId.length }}
+                            </span>
+                            )
                         </span>
 
                         <span class="arrow"></span>
                     </button>
-                    <div class="reportpeople-card my-3 " *ngIf="activePopover ===4">
-                        <div class="row h-100">
-                            <div class="groups pe-2 d-flex flex-column">
-                                <div class="groups-wrapper flex-grow-1">
-                                    <div class="group-columns">
 
-                                        <button class="btn group-button w-100 text-start active">
-                                            <span>F&I Managers</span>
-                                        </button>
+                    <!-- Updated popup design -->
+                    <div class="reportstores-card mt-2" *ngIf="activePopover === 4">
 
-                                    </div>
+                        <div class="stores d-flex flex-column border-0">
+                            <div class="stores-wrapper flex-grow-1 d-flex flex-column">
+
+                                <!-- Select / Clear -->
+                                <div class="allstores text-start">
+                                    <a class="text-primary text-decoration-none cursor-pointer me-2"
+                                        (click)="employees('AllFM',0)">Select All</a> |
+                                    <a class="text-primary text-decoration-none cursor-pointer ms-2"
+                                        (click)="employees('AllFM',1)">Clear All</a>
                                 </div>
-                            </div>
-                            <div class="stores d-flex flex-column ps-0">
-                                <div class="stores-wrapper flex-grow-1 d-flex flex-column">
 
-                                    <div class="allstores text-start">
-                                        <a class="text-primary text-decoration-none cursor-pointer me-2"
-                                            (click)="employees('AllFM',0)">Select
-                                            All</a> |
-                                        <a class="text-primary text-decoration-none cursor-pointer ms-2"
-                                            (click)="employees('AllFM',1)">Clear
-                                            All</a>
-                                    </div>
-                                    <div class="store-columns flex-grow-1" style="width: 650px;">
+                                <!-- Buttons -->
+                                <div class="store-columns flex-grow-1">
 
-                                        <!-- <ng-container *ngIf="storeIds.length > 0">                               
-                                    <div class="allstores text-start" *ngIf="salesPersons.length == 0">
-                                        <a class="text-primary text-decoration-none cursor-pointer me-2"
-                                            style="pointer-events: none;">No Sales Persons
-                                        </a>
-                                    </div>
-                                </ng-container> -->
+                                    <ng-container *ngIf="activePopover == 4">
+                                        <ng-container *ngFor="let fm of financeManager; let i = index">
 
+                                            <button class="btn btn-outline-primary store-button"
+                                                (click)="employees('FM', fm.FiId)" [ngClass]="{
+                                    'active': financeManagerId.indexOf(fm.FiId) >= 0,
+                                    'inactive': financeManagerId.indexOf(fm.FiId) < 0
+                                }">
 
-                                        <ng-container *ngIf="activePopover==4" >
-                                            <ng-container *ngFor="let fm of financeManager;let i=index">
-                                                <button class="btn btn-outline-primary store-button"
-                                                    (click)="employees('FM',fm.FiId)"
-                                                    [ngClass]="{'active':financeManagerId.indexOf(fm.FiId)>=0,'inactive':financeManagerId.indexOf(fm.FiId)<0}">
-                                                    <span> {{fm.FiName}}</span>
-                                                </button>
-                                            </ng-container>
+                                                <!-- Tooltip added -->
+                                                <span ngbTooltip="{{fm.FiName}}">
+                                                    {{ fm.FiName }}
+                                                </span>
+
+                                            </button>
+
                                         </ng-container>
-                                    </div>
+                                    </ng-container>
+
                                 </div>
+
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -159,7 +168,8 @@
 
 
                 <div class="dropdown">
-                    <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                    <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoaderPeople"
+                        [ngClass]="{ 'disable': spinnerLoaderPeople }"><span>Apply</span></button>
                 </div>
 
             </div>
@@ -242,7 +252,7 @@
                     <ng-container *ngIf="FandIPPData.length > 0; else NoFIPPdata">
                         <ng-container *ngFor="let FIPP of FandIPPData;let i=index;'index' as z">
                             <tr class="title"
-                                [ngClass]="{'maintitle': FIPP.data1 == 'Total','white-bg': FIPP.Dealer !== '-' || path2 == '','lightblue-bg': FIPP.Dealer === '-' && path2 != '' , 'divBold': FIPP.data1 == 'REPORT TOTALS'}"
+                                [ngClass]="{'maintitle': FIPP.data1 == 'Total','white-bg': FIPP.Dealer !== '-' || path2 == '','lightblue-bg': isApplyClicked && FIPP?.data2?.length && FIPP.data1 !== 'REPORT TOTALS', 'divBold': FIPP.data1 == 'REPORT TOTALS'}"
                                 [id]="'D_'+i">
                                 <td [ngStyle]="{ 'cursor': path2 != '' ? 'pointer' : 'default' }">
                                     <span title="{{FIPP.data1}}" [id]="'D_'+i"
@@ -592,7 +602,8 @@
                                                             || Ad.FIManager == undefined ? '-' :
                                                             Ad.FIManager ) }}
                                                         </td>
-                                                        <td> {{ (Ad.Date == 0 || Ad.Date == null || Ad.Date == undefined ? '-' : Ad.Date | date:'MM.dd.yyyy') }}
+                                                        <td> {{ (Ad.Date == 0 || Ad.Date == null || Ad.Date == undefined
+                                                            ? '-' : Ad.Date | date:'MM.dd.yyyy') }}
                                                         </td>
 
                                                         <td class="text-end"

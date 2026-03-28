@@ -439,7 +439,7 @@ export class Dashboard {
   viewreport() {
     if (!this.StoreValues || this.StoreValues.length === 0) {
 
-      this.toast.show('Please select at least one store', 'warning', 'Warning');
+      this.toast.show('Please select atleast one store', 'warning', 'Warning');
       return;
     }
 

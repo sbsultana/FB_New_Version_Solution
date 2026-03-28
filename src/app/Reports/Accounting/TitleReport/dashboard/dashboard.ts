@@ -312,7 +312,7 @@ export class Dashboard {
 
     // this.popup.close()
     if (e == 'S') {
-      // alert(e)
+      // this.toast.show(e)
       this.CurrentPageSetting = this.currentPage
       this.callLoadingState = 'ANS';
       this.notesViewState = true;
@@ -1330,10 +1330,10 @@ export class Dashboard {
           (res: any) => {
             console.log('Response:', res);
             if (res.status === 200) {
-              // alert(res.response);
+              // this.toast.show(res.response);
               this.toast.success(res.response)
             } else {
-              alert('Invalid Details');
+              this.toast.show('Invalid Details','danger','Error');
             }
           },
           (error) => {

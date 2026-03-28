@@ -32,7 +32,21 @@
   text-align: right !important;
 }
 
+.divBold {
+  position: sticky;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  font-family: 'Roboto' !important;
 
+  td {
+    img {
+      display: none;
+    }
+  }
+}
 
 .pointer {
   /* cursor: pointer; */

@@ -48,8 +48,15 @@
             <tr *ngFor="let AR of filteredFloorplanData; let i = index"
               [ngClass]="{ even: i % 2 === 0, odd: i % 2 !== 0 }">
               <td class="text-start">{{ AR.arcompany == null || AR.arcompany == 0 ? '-' : AR.arcompany }}</td>
-              <td class="text-end" [ngClass]="{ negative: !inTheGreen(AR.amount) }">
+              <!-- <td class="text-end" [ngClass]="{ negative: !inTheGreen(AR.amount) }">
                 {{ AR.amount == null || AR.amount == 0 ? '-' : (AR.amount | number: '1.2-2') }}
+              </td> -->
+              <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(AR.amount)}">
+                <span class="d-flex justify-content-between"> {{
+                  ( AR.amount == 0 || AR.amount == null || AR.amount == undefined ? '' :
+                  '$') }} <span> {{
+                    ( AR.amount == 0 || AR.amount== null ? '-' :
+                    AR.amount |number:'1.2-2') }}</span></span>
               </td>
               <td class="text-start">{{ AR.customerName == null || AR.customerName == 0 ? '-' : AR.customerName }}</td>
               <td class="text-start">{{ AR.invoicenumber == null || AR.invoicenumber == 0 ? '-' : AR.invoicenumber }}
@@ -63,12 +70,20 @@
                 AR.targetJRNcompany }}</td>
             </tr>
 
-            <tr class="even divBold sticky-top" style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
+            <tr class="even divBold sticky-top"
+              style="position: sticky; top:0; bottom: 0; left: 0; right: 0;z-index: 995;font-family: 'Roboto' !important;">
               <td class="text-end box-shadow">Total</td>
-              <td class="text-end" [ngClass]="{ negative: !inTheGreen(BalanceTotal) }">
+              <!-- <td class="text-end" [ngClass]="{ negative: !inTheGreen(BalanceTotal) }">
                 <span *ngIf="BalanceTotal != null && BalanceTotal !== 0; else noTotal">{{ BalanceTotal | number: '1.2-2'
                   }}</span>
                 <ng-template #noTotal>-</ng-template>
+              </td> -->
+              <td style="text-align: right;" [ngClass]="{ negative: !inTheGreen(BalanceTotal)}">
+                <span class="d-flex justify-content-between"> {{
+                  ( BalanceTotal == 0 || BalanceTotal == null || BalanceTotal == undefined ? '' :
+                  '$') }} <span> {{
+                    ( BalanceTotal == 0 || BalanceTotal== null ? '-' :
+                    BalanceTotal |number:'1.2-2') }}</span></span>
               </td>
               <td colspan="7"></td>
             </tr>

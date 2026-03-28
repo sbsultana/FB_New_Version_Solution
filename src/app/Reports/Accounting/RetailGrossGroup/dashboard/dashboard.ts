@@ -271,7 +271,13 @@ export class Dashboard {
       }
     );
   }
+  getSubTotal(rows: any[]): number {
+    if (!rows) return 0;
 
+    return rows.reduce((sum, r) => {
+      return sum + (r.Balance ? Number(r.Balance) : 0);
+    }, 0);
+  }
   getAvg(colname: any) {
     let total: any = 0;
     let reportTotal = this.ReconAnalysisData.filter((val: any) => val.Store == 'Report Total');
