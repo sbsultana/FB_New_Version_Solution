@@ -29,19 +29,13 @@
                             </th>
                         </tr>
                         <tr>
-                            <th class="text-center"><label>{{FromDate |date:'dd'}} <label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
-                                        |date:'yyyy'}}</label>
-                                    - {{ToDate |date:'dd'}}<label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
-                                        |date:'yyyy'}}</label><label
-                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                        {{FromDate |
-                                        date:'yyyy'}}</label></label></th>
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
+                            </th>
                             <th style="cursor: pointer;" class="bdr-rt"
                                 (click)="sort('Units_MTD',IndividualSalesGross)">
-                                <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div
-                                        style="line-height: 0 !important;color: #fff !important;">-</div> {{ ToDate |
+                                <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div>-</div> {{ ToDate
+                                    |
                                     date:'MM.dd.yyyy'}} </span>
                                 <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th>
@@ -710,16 +704,7 @@
                                 <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
                             </th> -->
                             <th class="text-center">
-                                <!-- {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }} -->
-                                <label>{{FromDate |date:'dd'}} <label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
-                                        |date:'yyyy'}}</label>
-                                    - {{ToDate |date:'dd'}}<label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
-                                        |date:'yyyy'}}</label><label
-                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                        {{FromDate |
-                                        date:'yyyy'}}</label></label>
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
                             <th style="cursor: pointer;" class="bdr-rt" (click)="sort('BackGross_MTD',BackGross)">
                                 <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div

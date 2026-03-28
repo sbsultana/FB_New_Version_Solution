@@ -90,8 +90,9 @@ export class Dashboard {
       this.setDates(this.DateType);
       this.setHeaderData()
       this.getFandIPPData();
-    } else {
-
+    } else { }
+    if (this.storeIds != '') {
+      this.getEmployees();
     }
   }
 
@@ -105,10 +106,6 @@ export class Dashboard {
       'Prepaid Maintenance',
     ];
     // this.getCategoryDealLevel();
-    this.getEmployees()
-
-
-
     // var curl = 'https://fbxtract.axelautomotive.com/favouritereports/GetFandIProductPenetrationByCategories';
     // this.apiSrvc.logSaving(curl, {}, '', 'Success', 'F & I Product Penetration');
   }
@@ -613,6 +610,7 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.getEmployees();
   }
   ngOnDestroy() {
     // this.reportOpenSub.unsubscribe()
@@ -796,20 +794,22 @@ export class Dashboard {
     this.selectedDataGrouping.push(this.dataGrouping[1]);
 
   }
-
+  spinnerLoaderPeople: boolean = false;
   getEmployees(val?: any, ids?: any, count?: any, bar?: any) {
     const obj = {
       AS_ID: this.storeIds.toString(),
       type: 'F',
     };
+    this.spinnerLoaderPeople = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res: any) => {
         if (res && res.status == 200) {
+          this.spinnerLoaderPeople = false;
           // if (val == 'F') {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
           this.financeManagerId = this.financeManager.map(function (a: any) { return a.FiId; });
         } else {
-
+          this.spinnerLoaderPeople = false;
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -842,8 +842,10 @@ export class Dashboard {
       }
     }
   }
+  isApplyClicked = false;
   viewreport() {
     this.activePopover = -1;
+    this.isApplyClicked = true;
     if (this.storeIds.length == 0) {
       this.toast.show('Please select atleast any one Store', 'warning', 'Warning');
     }

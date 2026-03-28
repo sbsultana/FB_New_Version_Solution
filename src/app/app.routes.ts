@@ -66,7 +66,6 @@ export const routes: Routes = [
   { path: 'BookedToFinalReconciliation', loadComponent: () => import('./Reports/Sales/BookedToClosedReconciliation/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'UsedVehicleStocking', loadComponent: () => import('./Reports/Sales/UsedVehicleStocking/dashboard/dashboard').then(m => m.Dashboard) },
   { path: 'TradeWinPercentage', loadComponent: () => import('./Reports/Sales/TradeWinPercentage/dashboard/dashboard').then(m => m.Dashboard) },
-
   { path: 'UsedWriteDown', loadComponent: () => import('./Reports/Sales/InventoryValuation/dashboard/dashboard').then(m => m.Dashboard) },
 
 

@@ -67,7 +67,7 @@ export class Dashboard {
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
   constructor(
-    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe,private toast: ToastService,
+    public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService,
   ) {
     localStorage.setItem('time', 'MTD');
     this.initializeDates('MTD')
@@ -83,7 +83,7 @@ export class Dashboard {
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
 
-  
+
     if (localStorage.getItem('Fav') != 'Y') {
 
       this.getDataGroupings()
@@ -95,6 +95,9 @@ export class Dashboard {
       this.getProductCategory()
     } else {
 
+    }
+    if (this.storeIds != '') {
+      this.getEmployees();
     }
   }
 
@@ -108,10 +111,6 @@ export class Dashboard {
       'Prepaid Maintenance',
     ];
     // this.getCategoryDealLevel();
-    this.getEmployees()
-
-
-
     // var curl = 'https://fbxtract.axelautomotive.com/favouritereports/GetFandIProductPenetrationByCategories';
     // this.apiSrvc.logSaving(curl, {}, '', 'Success', 'F & I Product Penetration');
   }
@@ -235,7 +234,7 @@ export class Dashboard {
       if (index >= 0) {
         this.selectedProductType.splice(index, 1);
         if (this.selectedProductType.length == 0) {
-       
+
           this.toast.show('Please select atleast on Product Type.', 'danger', 'Error');
         }
       } else {
@@ -247,7 +246,7 @@ export class Dashboard {
       if (index >= 0) {
         this.selectedProductCategory.splice(index, 1);
         if (this.selectedProductCategory.length == 0) {
-         
+
           this.toast.show('Please select atleast on Product Category.', 'danger', 'Error');
         }
       } else {
@@ -335,13 +334,13 @@ export class Dashboard {
                 // this.NoData = true;
               }
             } else {
-              
+
               //  this.toast.error('Empty Response', '');
               // this.shared.spinner.hide();
               // this.NoData = true;
             }
           } else {
-      
+
             // this.toast.error(res.status, '');
 
             this.shared.spinner.hide();
@@ -674,6 +673,7 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
+    this.getEmployees();
   }
   ngOnDestroy() {
     // this.reportOpenSub.unsubscribe()
@@ -844,7 +844,7 @@ export class Dashboard {
       this.selectedDataGrouping.splice(index, 1);
     } else {
       if (this.selectedDataGrouping.length >= 2) {
-        
+
         this.toast.show('Select up to 2 Filters only to Group your data.', 'danger', 'Error');
 
       } else {
@@ -855,21 +855,25 @@ export class Dashboard {
   }
   getDataGroupings() {
     this.selectedDataGrouping.push(this.dataGrouping[0]);
+    // this.selectedDataGrouping.push(this.dataGrouping[1]);
   }
 
+  spinnerLoaderPeople: boolean = false;
   getEmployees(val?: any, ids?: any, count?: any, bar?: any) {
     const obj = {
       AS_ID: this.storeIds.toString(),
       type: 'F',
     };
+    this.spinnerLoaderPeople = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res: any) => {
         if (res && res.status == 200) {
+          this.spinnerLoaderPeople = false;
           // if (val == 'F') {
           this.financeManager = res.response.filter((e: any) => e.FiName != 'Unknown');
           this.financeManagerId = this.financeManager.map(function (a: any) { return a.FiId; });
         } else {
-          
+          this.spinnerLoaderPeople = false;
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -902,8 +906,10 @@ export class Dashboard {
       }
     }
   }
+  isApplyClicked = false;
   viewreport() {
     this.activePopover = -1;
+    this.isApplyClicked = true;
     if (this.storeIds.length == 0) {
       this.toast.show('Please select atleast any one Store', 'warning', 'Warning');
     }
@@ -954,7 +960,7 @@ export class Dashboard {
         }
         else {
           this.toast.show('Invalid Details.', 'danger', 'Error');
-          
+
         }
       },
       (error: any) => {
@@ -1385,8 +1391,10 @@ export class Dashboard {
 
       worksheet.addRow(mainRow).font = { bold: true };
 
-      FIPP.data2?.forEach((dt2: { data1: any; toatlBG: any; TotalPVR: any; TotalProduct: any; Retailcount: any;  totproductpertrans: any;
-         ProfitPerSale: any;fin_DealCount: any;fin_income:any; Finance_pen:any;perFD:any;perRU:any; productdata: any[]; }) => {
+      FIPP.data2?.forEach((dt2: {
+        data1: any; toatlBG: any; TotalPVR: any; TotalProduct: any; Retailcount: any; totproductpertrans: any;
+        ProfitPerSale: any; fin_DealCount: any; fin_income: any; Finance_pen: any; perFD: any; perRU: any; productdata: any[];
+      }) => {
 
         const subRow: any[] = [
           '   ' + (dt2.data1 || '-'),

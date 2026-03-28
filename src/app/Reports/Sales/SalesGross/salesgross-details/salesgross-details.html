@@ -68,7 +68,7 @@
                                             (click)="sortColumn('customername')">Customer
                                             <span class="sort-icon" [ngClass]="getSortIcon('customername')"></span>
                                         </th>
-                                        <th style="width: 20%; " style="cursor: pointer;"
+                                        <!-- <th style="width: 20%; " style="cursor: pointer;"
                                             (click)="sortColumn('ad_Year')">Year
                                             <span class="sort-icon" [ngClass]="getSortIcon('ad_make')"></span>
                                         </th>
@@ -79,11 +79,13 @@
                                         <th style="width: 20%; " style="cursor: pointer;"
                                             (click)="sortColumn('ad_model')">Model
                                             <span class="sort-icon" [ngClass]="getSortIcon('ad_model')"></span>
-                                        </th>
-
-
+                                        </th> 
                                         <th style="cursor: pointer;" (click)="sortColumn('ad_dealtype')">
                                             New/Used
+                                            <span class="sort-icon" [ngClass]="getSortIcon('ad_dealtype')"></span>
+                                        </th> -->
+                                        <th style="cursor: pointer;" (click)="sortColumn('ad_dealtype')">
+                                            Deal Type
                                             <span class="sort-icon" [ngClass]="getSortIcon('ad_dealtype')"></span>
                                         </th>
                                         <th style="cursor: pointer;" (click)="sortColumn('vin')">VIN
@@ -178,7 +180,8 @@
                                                     (det.customername.toString() | slice:0:20) +
                                                     (det.customername.toString().length > 20 ? '..' : '') ))}}</td>
 
-                                                <td style="text-align: left !important;">
+
+                                                <!-- <td style="text-align: left !important;">
                                                     {{ (det.ad_Year == 0 || det.ad_Year == null || det.ad_Year ==
                                                     undefined
                                                     ? '
@@ -201,10 +204,8 @@
                                                     ' -
                                                     ' :
                                                     det.ad_model ) }}
-                                                </td>
-
-
-                                                <td>
+                                                </td> -->
+                                                <td class="text-center">
                                                     {{ ( det.ad_dealtype == null || det.ad_dealtype == undefined ? '-' :
                                                     det.ad_dealtype
                                                     ) }}
@@ -231,6 +232,54 @@
 
                                                 </td>
                                                 <td style="text-align: right !important;"
+                                                    [ngClass]="{ negative: !inTheGreen(det.frontgross)}">
+                                                    <span class="d-flex justify-content-between">
+                                                        {{ (det.frontgross == 0 || det.frontgross == null ||
+                                                        det.frontgross ==
+                                                        undefined ?
+                                                        '' :'$' ) }}
+                                                        <span>
+                                                            {{ (det.frontgross == 0 || det.frontgross == null ||
+                                                            det.frontgross ==
+                                                            undefined ?
+                                                            '-' :
+                                                            det.frontgross | number:'1.0-0' ) }}
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                                <td style="text-align: right !important;" 
+                                                    [ngClass]="{ negative: !inTheGreen(det.backgross)}">
+                                                    <span class="d-flex justify-content-between">
+                                                        {{ (det.backgross == 0 || det.backgross == null || det.backgross
+                                                        ==
+                                                        undefined ? ''
+                                                        : '$' ) }}
+                                                        <span>
+                                                            {{ (det.backgross == 0 || det.backgross == null ||
+                                                            det.backgross ==
+                                                            undefined ? '-'
+                                                            : det.backgross |
+                                                            number:'1.0-0' ) }}
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                                <td style="text-align: right !important;"
+                                                    [ngClass]="{ negative: !inTheGreen(det.totalgross)}">
+                                                    <span class="d-flex justify-content-between">
+                                                        {{ (det.totalgross == 0 || det.totalgross == null ||
+                                                        det.totalgross ==
+                                                        undefined ?
+                                                        '-' :'$' ) }}
+                                                        <span>
+                                                            {{ (det.totalgross == 0 || det.totalgross == null ||
+                                                            det.totalgross ==
+                                                            undefined ?
+                                                            '-' :
+                                                            det.totalgross | number:'1.0-0' ) }}
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                                <!-- <td style="text-align: right !important;"
                                                     [ngClass]="{ negative: !inTheGreen(det.frontgross_decimal)}">
                                                     <span class="d-flex justify-content-between">
                                                         {{ (det.frontgross_decimal == 0 || det.frontgross_decimal ==
@@ -280,7 +329,7 @@
                                                             det.totalgross_decimal | number:'1.2-2' ) }}
                                                         </span>
                                                     </span>
-                                                </td>
+                                                </td> -->
                                                 <td title="{{det.salesperson1}}"
                                                     style="cursor: default;white-space: nowrap;text-align: left !important;">
 

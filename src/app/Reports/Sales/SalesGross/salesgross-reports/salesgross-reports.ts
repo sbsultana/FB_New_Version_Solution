@@ -8,9 +8,10 @@ import { Stores } from '../../../../CommonFilters/stores/stores';
 
 import { ToastService } from '../../../../Core/Providers/Shared/toast.service';
 import { ToastContainer } from '../../../../Layout/toast-container/toast-container';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-salesgross-reports',
-  imports: [SharedModule, DateRangePicker, Stores, ToastContainer],
+  imports: [SharedModule, DateRangePicker, Stores, ToastContainer,NgbModule],
   templateUrl: './salesgross-reports.html',
   styleUrl: './salesgross-reports.scss'
 })
@@ -32,7 +33,7 @@ export class SalesgrossReports {
   groupName: any = '';
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': this.storeIds, 'type': 'M', 'others': 'N',
-    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,'DefaultLoad':this.DefaultLoad
+    'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
   Performance: string = 'Load';
 
@@ -245,7 +246,8 @@ export class SalesgrossReports {
     this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
   }
-  spinnerLoaderteams: boolean = false
+  spinnerLoaderteams: boolean = false;
+  spinnerLoader: boolean = false;
   getEmployees(val: any, barorpopup?: any) {
     this.salesManagers = []
     this.salesPersons = []
@@ -254,10 +256,12 @@ export class SalesgrossReports {
       AS_ID: this.storeIds,
       type: val,
     };
-    this.spinnerLoaderteams = true
+    this.spinnerLoaderteams = true;
+    this.spinnerLoader = true;
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetEmployeesDev', obj).subscribe(
       (res) => {
         if (res.status == 200) {
+          this.spinnerLoader = false;
           if (val == 'SP') {
             this.salesPersons = res.response.filter((e: any) => e.SPName != 'Unknown' && e.SPName != '');
             this.selectedSalespersonvalues = this.salesPersons.map(function (a: any) { return a.SPID; });
@@ -313,7 +317,7 @@ export class SalesgrossReports {
           this.overallSelectedpeople = this.selectedFiManagersvalues.length + this.selectedSalesManagersvalues.length + this.selectedSalespersonvalues.length
 
         } else {
-
+          this.spinnerLoader = false;
           this.toast.show('Invalid Details.', 'danger', 'Error');
         }
       },
@@ -386,7 +390,7 @@ export class SalesgrossReports {
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M', 'others': 'N', 'DefaultLoad':this.DefaultLoad
+      'type': 'M', 'others': 'N', 'DefaultLoad': this.DefaultLoad
     };
     console.log(this.storesFilterData, 'Store FIlter Data');
     let allstrids = [];

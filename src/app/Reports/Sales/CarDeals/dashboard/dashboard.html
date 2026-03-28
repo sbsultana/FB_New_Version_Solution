@@ -120,7 +120,7 @@
                             <th (click)="sort('ad_year')" style="cursor: pointer;">Year</th>
                             <th (click)="sort('ad_make')" style="cursor: pointer;">Make</th>
                             <th (click)="sort('ad_model')" style="cursor: pointer;">Model</th>
-                            <th (click)="sort('VehicleAge')" style="cursor: pointer;">Vehicle Age</th>
+                            <!-- <th (click)="sort('VehicleAge')" style="cursor: pointer;">Vehicle Age</th> -->
 
                             <th (click)="sort('TradeACV')" style="cursor: pointer;">Trade</th>
                             <th (click)="sort('VIN')" style="cursor: pointer;">
@@ -147,7 +147,7 @@
                                     <td class="text-start">{{i+1}}</td>
                                     <td class="text-center">{{cardeals.contractdate == 0 || cardeals.contractdate ==
                                         null ? '-' :
-                                        cardeals.contractdate | date:'MM/dd/yyyy'}}</td>
+                                        cardeals.contractdate | date:'MM.dd.yyyy'}}</td>
                                     <td class="PrintHide text-center">
                                         <img *ngIf="cardeals.NotesStatus=='N'" src="images/Actionblack.png "
                                             (click)="addNotes(cardeals,notes)" style="cursor: pointer;">
@@ -186,10 +186,10 @@
                                         null ?
                                         '-' :
                                         cardeals.ad_model }}</td>
-                                    <td>{{cardeals.VehicleAge == 0 || cardeals.VehicleAge
+                                    <!-- <td>{{cardeals.VehicleAge == 0 || cardeals.VehicleAge
                                         == null
                                         ? '-' :
-                                        cardeals.VehicleAge}}</td>
+                                        cardeals.VehicleAge}}</td> -->
                                     <td>
                                         <span class="d-flex justify-content-between anchor-tag popuppointer" *ngIf="cardeals.TradeACV != 0 && cardeals.TradeACV !=
                                                     null && cardeals.TradeACV != undefined && cardeals.TradeACV != ''"

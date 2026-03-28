@@ -124,7 +124,7 @@ export class Dashboard implements OnInit {
     this.shared.datePipe.transform(this.date, 'yyyy-MM') == this.shared.datePipe.transform(enddate, 'yyyy-MM') ? this.Datebinding = 'MTD' : this.Datebinding = this.shared.datePipe.transform(this.date, 'MMM yy')
     const obj = {
       DATE: this.shared.datePipe.transform(this.date, 'yyyy-MM') + '-' + ('0' + enddate.getDate()).slice(-2),
-      AS_IDS: this.storeIds,
+      AS_IDS: this.storeIds.toString(),
       DEALTYPE: this.Department.indexOf('New') >= 0 && this.Department.indexOf('Used') >= 0 ? '' : this.Department.toString(),
       SALETYPE: this.saleType.toString() == 'All' ? '' : this.saleType.toString()
     };
