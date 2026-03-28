@@ -565,19 +565,20 @@ export class Dashboard {
         this.stockType.splice(index, 1);
       } else {
         this.stockType = []
-        // if(e=='New'){
-        // this.aged = []
-        // this.aged.push('MNM');
-        // }
-        // // if(e=='Used'){
-        // //   this.aged = []
-        // //   this.aged.push('AUY');
-        // // }
+
         if (e == 'Fleet') {
           this.aged = []
           this.aged.push('MNM');
         }
         this.stockType.push(e);
+        if (this.status.indexOf('Stock_Transit') >= 0 || this.status.indexOf('Stock') >= 0 || this.status.indexOf('Transit') >= 0) {
+          this.status = []
+        }
+        console.log(this.status);
+        
+        (this.status.length == 0) && this.stockType.indexOf('New') >= 0 ? (this.status.push('Stock_Transit')) : ''
+        this.status.length == 0 && this.stockType.indexOf('New') < 0 ? this.status.push('Stock') : ''
+
       }
     }
     if (block == 'A') {
@@ -606,13 +607,10 @@ export class Dashboard {
       this.wholesale.push(e);
     }
     if (block == 'S') {
-      const index = this.status.findIndex((i: any) => i == e);
-      if (index >= 0) {
-        this.status.splice(index, 1);
-      } else {
-        this.status.push(e);
-      }
+      this.status = [];
+      this.status.push(e);
     }
+
   }
   getStockTypeLabel() {
     if (this.stockType == 'Stock_Transit') {

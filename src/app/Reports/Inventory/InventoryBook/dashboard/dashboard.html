@@ -75,28 +75,28 @@
                                         <div class="store-columns flex-grow-1"
                                             style="grid-template-rows: repeat(6, auto);">
                                             <ng-container>
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Stock_Transit')>=0,'inactive':status.indexOf('Stock_Transit')<0}"
-                                                    (click)="multipleorsingle('S','Stock_Transit')">Stock &
-                                                    Transit</button>
-                                                <!-- <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Stock')>=0,'inactive':status.indexOf('Stock')<0}"
-                                                    (click)="multipleorsingle('S','Stock')">Stock</button>
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Transit')>=0,'inactive':status.indexOf('Transit')<0}"
-                                                    (click)="multipleorsingle('S','Transit')">Transit</button> -->
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Hold')>=0,'inactive':status.indexOf('Hold')<0}"
-                                                    (click)="multipleorsingle('S','Hold')">Hold</button>
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Production')>=0,'inactive':status.indexOf('Production')<0}"
-                                                    (click)="multipleorsingle('S','Production')">Production</button>
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Retired')>=0,'inactive':status.indexOf('Retired')<0}"
-                                                    (click)="multipleorsingle('S','Retired')">Retired</button>
-                                                <button class="btn btn-outline-primary store-button"
-                                                    [ngClass]="{'active':status.indexOf('Ordered')>=0,'inactive':status.indexOf('Ordered')<0}"
-                                                    (click)="multipleorsingle('S','Ordered')">Ordered</button>
+                                                <button class="btn btn-outline-primary store-button" *ngIf="stockType.indexOf('New')>=0"
+                                    [ngClass]="{'active':status.indexOf('Stock_Transit')>=0,'inactive':status.indexOf('Stock_Transit')<0}"
+                                    (click)="multipleorsingle('S','Stock_Transit')">STOCK & TRANSIT</button>
+                                    <button class="btn btn-outline-primary store-button" *ngIf="stockType.indexOf('New')<0"
+                                        [ngClass]="{'active':status.indexOf('Stock')>=0,'inactive':status.indexOf('Stock')<0}"
+                                        (click)="multipleorsingle('S','Stock')">STOCK</button>
+                                    <button class="btn btn-outline-primary store-button" *ngIf="stockType.indexOf('New')<0"
+                                        [ngClass]="{'active':status.indexOf('Transit')>=0,'inactive':status.indexOf('Transit')<0}"
+                                        (click)="multipleorsingle('S','Transit')">TRANSIT</button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':status.indexOf('Hold')>=0,'inactive':status.indexOf('Hold')<0}"
+                                        (click)="multipleorsingle('S','Hold')">HOLD</button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':status.indexOf('Production')>=0,'inactive':status.indexOf('Production')<0}"
+                                        (click)="multipleorsingle('S','Production')">Production</button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':status.indexOf('Retired')>=0,'inactive':status.indexOf('Retired')<0}"
+                                        (click)="multipleorsingle('S','Retired')">Retired</button>
+                                    <button class="btn btn-outline-primary store-button"
+                                        [ngClass]="{'active':status.indexOf('Ordered')>=0,'inactive':status.indexOf('Ordered')<0}"
+                                        (click)="multipleorsingle('S','Ordered')">Ordered</button>
+
                                             </ng-container>
                                         </div>
                                     </div>
