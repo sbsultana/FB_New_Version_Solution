@@ -882,7 +882,7 @@ export class Dashboard implements OnInit {
     this.cdRef.detectChanges();
   }
   viewDeal(dealData: any) {
-    // const modalRef = this.ngbmodal.open(DealRecapComponent, { size: 'md', windowClass: 'compModal' });
+    // const modalRef = this.ngbmodal.open(DealRecapComponent, { size: 'md', windowClass: 'connectedmodal' });
     // modalRef.componentInstance.data = { dealno: dealData.Deal, storeid: dealData.storeid, stock: dealData.StockNumner, vin: dealData.vin, custno: dealData?.CustomerNumber }; // Pass data to the modal component    
     // modalRef.result.then((result) => {
     //   console.log(result); // Handle modal close result

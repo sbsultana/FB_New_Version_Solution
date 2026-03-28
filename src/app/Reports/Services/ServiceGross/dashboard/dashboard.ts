@@ -159,7 +159,7 @@ export class Dashboard {
       if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
         this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
         this.storeIds = ''
-        this.otherStoreIds = '';
+        this.otherStoreIds = [];
 
         this.actionType = 'N';
         this.Department = ['Service', 'Parts', 'Quicklube'] 

@@ -122,7 +122,7 @@ export class Dashboard {
         localStorage.setItem('flag', 'M')
       } else {
         this.groups = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences;
-        this.otherstoreids = '';
+        this.otherstoreids = [];
         //this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
         this.storeIds = []
         this.DefaultLoad = 'E'

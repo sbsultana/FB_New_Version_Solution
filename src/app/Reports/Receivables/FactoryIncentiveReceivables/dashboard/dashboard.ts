@@ -1058,7 +1058,7 @@ export class Dashboard {
   viewDeal(dealData: any) {
     // const modalRef = this.ngbmodal.open(DealRecapComponent, {
     //   size: 'md',
-    //   windowClass: 'compModal'
+    //   windowClass: 'connectedmodal'
     // });
     // modalRef.componentInstance.data = {
     //   dealno: dealData.DealNo,

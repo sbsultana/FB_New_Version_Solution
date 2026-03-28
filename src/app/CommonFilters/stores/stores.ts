@@ -116,12 +116,16 @@ export class Stores {
   }
 
   individualotherStores(e: any) {
-    const index = this.otherStoreIds.findIndex((i: any) => i == e.ID);
+    let index: any = -1
+    if (this.otherStoreIds.length > 0) {
+      index = this.otherStoreIds?.findIndex((i: any) => i == e.ID);
+    }
     if (index >= 0) {
       this.otherStoreIds.splice(index, 1);
     } else {
       this.otherStoreIds.push(e.ID);
     }
+    console.log(e, this.otherStoreIds, '................');
 
     this.setValues()
   }
@@ -147,20 +151,20 @@ export class Stores {
         this.storename = ''
 
       }
-    else  if (combineStores.length == 1) {
+      else if (combineStores.length == 1) {
         this.storecount = null
         this.storeIds.length == 1 ? this.storename = this.stores.filter((val: any) => val.ID == this.storeIds.toString())[0].storename :
           this.storename = this.otherstoresArray.filter((val: any) => val.ID == this.otherStoreIds.toString())[0].storename
         this.storedisplayname = this.storename
       }
-     else if (combineStores.length > 1) {
+      else if (combineStores.length > 1) {
         this.storecount = combineStores.length
         this.storedisplayname = 'Selected'
       }
-      else{
-        this.storecount=null;
-        this.storename=''
-        this.storedisplayname='Select'
+      else {
+        this.storecount = null;
+        this.storename = ''
+        this.storedisplayname = 'Select'
       }
     } else {
       if (this.storeIds.length == 1) {
