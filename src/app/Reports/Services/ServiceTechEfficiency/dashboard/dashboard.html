@@ -610,7 +610,7 @@
                                                     <tr [ngClass]="{'title' : i % 2 == 0 , 'titleOdd' : i % 2 != 0 }">
                                                         <td id="DataBody2" class="text-center" [id]="'D_'+i"
                                                             style="border-right: none !important;color: #0554ef;cursor: pointer;"
-                                                            (click)="viewRO(ServiceInfo)"
+                                                            (click)="openServiceModal(ServiceInfo.RO,ServiceInfo.vin,ServiceInfo.StoreID,ServiceInfo.vehicleid,ServiceInfo?.source ,ServiceInfo?.customernumber)"
                                                             [ngClass]="[ServiceInfo.RO != 0 && ServiceInfo.RO != null && ServiceInfo.RO != undefined && ServiceInfo.RO != '' && ServiceInfo.RO != '-' ? 'popuppointer' : 'popupdisable']">
                                                             {{
                                                             ServiceInfo.RO == 0 || ServiceInfo.RO == null ? '-' :

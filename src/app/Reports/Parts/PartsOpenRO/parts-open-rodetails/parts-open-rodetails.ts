@@ -264,7 +264,17 @@ export class PartsOpenRODetails {
   openComments() {
     this.commentsVisibility = !this.commentsVisibility
   }
-
+async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, source: any, custno: any) {
+    const module = await import('../../../../Layout/cdpdataview/repair/repair-module');
+    const component = module.Repair;
+    const modalRef = this.shared.ngbmodal.open(component, { size: 'xl', windowClass: 'compModal' });
+    modalRef.componentInstance.data = { ro: roNumber, vin: vin, storeid: storeid, vehicleid: vehicleid, source: source, custno: custno }; // Pass data to the modal component
+    modalRef.result.then((result) => {
+      console.log(result); // Handle modal close result
+    }, (reason) => {
+      console.log(`Dismissed: ${reason}`); // Handle dismiss reason
+    });
+  }
   exportAsXLSX() {
     this.shared.spinner.show()
     const obj = {

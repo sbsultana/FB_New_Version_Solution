@@ -121,7 +121,7 @@
                                     <tr *ngFor="let det of ServicePersonDetails;let i=index" [id]="'SD_'+i"
                                         (mouseover)="hoverclass($event,i)">
 
-                                        <td [id]="'SD_'+i" (click)="viewRO(det)"
+                                        <td [id]="'SD_'+i" (click)="openServiceModal(det.ronumber,det.vin,det.StoreID,det.vehicleid,det?.source ,det?.customernumber)"
                                             [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
                                             {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber == undefined ?
                                             '-' :

@@ -138,7 +138,8 @@
 
                             </td>
                             <!-- (click)="openDetails(det.ronumber)"  style="color: #2d91f1;cursor: pointer;" -->
-                            <td class="text-start" (click)="viewRO(det)"
+                            <td class="text-start" (click)="openServiceModal(det.ronumber,det.vin,det.StoreID,det.vehicleid,det?.source ,det?.customernumber)"
+                                                        
                                 [ngClass]="[det.ronumber != 0 && det.ronumber != null && det.ronumber != undefined && det.ronumber != '' && det.ronumber != '-' ? 'popuppointer' : 'popupdisable']">
                                 {{ (det.ronumber == 0 || det.ronumber == null || det.ronumber ==
                                 undefined ? '-' :

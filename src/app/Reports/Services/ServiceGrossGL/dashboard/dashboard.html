@@ -722,7 +722,7 @@
 
                                             <tbody>
                                                 <tr *ngFor="let Ad of ServicePersonDetails;  let i=index">
-                                                    <td class="text-center" (click)="viewRO(Ad)"
+                                                    <td class="text-center" (click)="openServiceModal(Ad.ASG_Ronumber,Ad.vin,Ad.storeid,Ad.vehicleid,Ad?.source ,Ad?.customernumber)"
                                                         [ngClass]="[Ad.ASG_Ronumber != 0 && Ad.ASG_Ronumber != null && Ad.ASG_Ronumber != undefined && Ad.ASG_Ronumber != '' && Ad.ASG_Ronumber != '-' ? 'popuppointer' : 'popupdisable']">
                                                         {{(Ad.ASG_Ronumber == undefined || Ad.ASG_Ronumber == null ||
                                                         Ad.ASG_Ronumber ==
