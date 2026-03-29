@@ -927,7 +927,7 @@ export class Dashboard {
     // if (e == 'All') {
     //   if (this.dealStatus.length == 3) {
     //     this.dealStatus = []
-    //     this.toast.warning('Please select atleast one dealStatus', '');
+    //     this.toast.warning('Please Select Atleast One dealStatus', '');
 
     //   } else {
     //     this.dealStatus = []
@@ -1055,7 +1055,7 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any, refval: any) {
     if (ref === 'multi') {
       if (this.hideRecords.length === 0) {
-        this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
         (document.getElementById('symbol') as HTMLInputElement).checked = false;
         return;
       }
@@ -1085,7 +1085,7 @@ export class Dashboard {
 
   hideAdd() {
     if (this.hideRecords.length === 0) {
-      this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
       return;
     }
 

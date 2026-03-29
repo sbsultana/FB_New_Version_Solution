@@ -530,7 +530,7 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     // if (this.storeIds.length == 0) {
-    //   this.toast.warning('Please select atleast one store');
+    //   this.toast.warning('Please Select Atleast One Store');
     // }
     // else {
     // const data = {

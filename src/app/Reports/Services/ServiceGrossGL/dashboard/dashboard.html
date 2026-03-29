@@ -131,7 +131,7 @@
                             <th colspan="3">Performance</th>
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
+                            <!-- <th><span>{{FromDate |date:'dd'}}
                                     <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
                                         |date:'yyyy'}}</span>
                                     - {{ToDate |date:'dd'}},
@@ -140,12 +140,21 @@
                                     <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
                                         date:'yyyy'}}</span>
                                 </span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
                             <th (click)="sort('totalsale',ServiceData)" style="cursor: pointer;">Total</th>
                             <th (click)="sort('Total',ServiceData)" style="cursor: pointer;">Total</th>
                             <th (click)="sort('TotalGross_Pace',ServiceData)" style="cursor: pointer;">Pace</th>
                             <th (click)="sort('Gross_Target',ServiceData)" style="cursor: pointer;">Target</th>
                             <th (click)="sort('Diff',ServiceData)" style="cursor: pointer;">Diff</th>
+                            <!-- <th (click)="sort('Lmonth',ServiceData)" style="cursor: pointer;"><span>{{FromDate
+                                    |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
+                                        {{ToDate
+                                        |date:'MMM'}} </span>
+                                </span> {{lastyearDate |
+                                date:'YYYY'}}</th> -->
                             <th (click)="sort('Lmonth',ServiceData)" style="cursor: pointer;"><span>{{FromDate
                                     |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
                                         {{ToDate
@@ -722,7 +731,8 @@
 
                                             <tbody>
                                                 <tr *ngFor="let Ad of ServicePersonDetails;  let i=index">
-                                                    <td class="text-center" (click)="openServiceModal(Ad.ASG_Ronumber,Ad.vin,Ad.storeid,Ad.vehicleid,Ad?.source ,Ad?.customernumber)"
+                                                    <td class="text-center"
+                                                        (click)="openServiceModal(Ad.ASG_Ronumber,Ad.vin,Ad.storeid,Ad.vehicleid,Ad?.source ,Ad?.customernumber)"
                                                         [ngClass]="[Ad.ASG_Ronumber != 0 && Ad.ASG_Ronumber != null && Ad.ASG_Ronumber != undefined && Ad.ASG_Ronumber != '' && Ad.ASG_Ronumber != '-' ? 'popuppointer' : 'popupdisable']">
                                                         {{(Ad.ASG_Ronumber == undefined || Ad.ASG_Ronumber == null ||
                                                         Ad.ASG_Ronumber ==

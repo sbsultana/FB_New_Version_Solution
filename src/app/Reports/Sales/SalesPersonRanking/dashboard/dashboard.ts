@@ -924,7 +924,7 @@ export class Dashboard {
 
     if ((!this.storeIds || this.storeIds.length === 0) && (this.otherStoreIds.length ===0)) {
 
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       return;
     }
     else if (this.retailorlease.length == 0) {
@@ -933,7 +933,7 @@ export class Dashboard {
     }
     else if (this.dealStatus.length == 0) {
 
-      this.toast.show('Please select atleast one Deal Status', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Deal Status', 'warning', 'Warning');
     }
     else {
       const data = {

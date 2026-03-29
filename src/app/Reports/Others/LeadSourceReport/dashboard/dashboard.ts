@@ -62,7 +62,7 @@ export class Dashboard {
       // { 'code': 'PM', 'name': 'Same Month PY' },
     ]
   }
-  StoreValues: any = '0';
+  StoreValues: any = 0;
   popup: any = [{ type: 'Popup' }];
   groups: any = 1;
   gridvisibility: any;
@@ -248,48 +248,13 @@ export class Dashboard {
     this.NoData = false;
     this.shared.spinner.show();
     let obj = {};
-    if (localStorage.getItem('DetailsObject') != null) {
-      // console.log('locstg', JSON.parse(localStorage.getItem('DetailsObject')!));
-      const InvObj = JSON.parse(localStorage.getItem('DetailsObject')!);
-      obj = {
-        DealerId: InvObj.dataobj.Data1,
-        StartDate: InvObj.dataobj.Data2,
-        EndDate: InvObj.dataobj.Data2,
-      };
-      this.FromDate = InvObj.dataobj.Data2
-      this.ToDate = InvObj.dataobj.Data2
-      this.storeIds = InvObj.dataobj.Data1
-      console.log(this.todaytitle);
-
-      // if ((this.todaytitle == this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy')) && (this.todaytitle == this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy'))) {
-      //   this.dynamicTitle = 'Today Lead Source Report'
-      // }
-      // else {
-      this.dynamicTitle = 'Lead Source Report'
-      // }
-      const data = {
-        title: this.dynamicTitle,
-
-        stores: this.StoreValues,
-        groups: 1,
-        count: 0,
-        fromdate: this.FromDate,
-        todate: this.ToDate,
-      };
-      this.shared.api.SetHeaderData({
-        obj: data,
-      });
-
-    } else {
-      obj = {
-        DEALERID: this.StoreValues.toString(),
-        StartDate: this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy'),
-        EndDate: this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy'),
-        UserID: JSON.parse(localStorage.getItem('UserDetails')!).userid || 0,
-      };
-      console.log(obj);
-
-    }
+    obj = {
+      DEALERID: this.StoreValues.toString(),
+      StartDate: this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy'),
+      EndDate: this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy'),
+      UserID: JSON.parse(localStorage.getItem('UserDetails')!).userid || 0,
+    };
+    console.log(obj);
     // const curl = this.shared.getEnviUrl() +this.shared.common.routeEndpoint+'GetDrivecentricAppointments';
     this.shared.api.postmethod(this.shared.common.routeEndpoint + 'GetLeadSourceStatusTypes', obj).subscribe(
       (res) => {
@@ -329,7 +294,7 @@ export class Dashboard {
             this.NoData = true;
           }
         } else {
-          this.toast.show('Invalid Details','danger','Error');
+          alert('Invalid Details');
           this.shared.spinner.hide();
         }
       },
@@ -460,7 +425,7 @@ export class Dashboard {
     this.setDates(this.DateType)
   }
   setDates(type: any) {
-    this.DateType == 'C' ? this.displaytime = this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy') :
+    this.DateType == 'C' ? this.displaytime = '( ' + this.shared.datePipe.transform(this.FromDate, 'MM/dd/yyyy') + ' - ' + this.shared.datePipe.transform(this.ToDate, 'MM/dd/yyyy') + ' )' :
       this.displaytime = 'Time Frame (' + this.Dates.Types.filter((val: any) => val.code == type)[0].name + ')';
     // this.maxDate = new Date();
     // this.minDate = new Date();
@@ -489,7 +454,7 @@ export class Dashboard {
   viewreport() {
     if (!this.StoreValues || this.StoreValues.length === 0) {
 
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       return;
     }
 

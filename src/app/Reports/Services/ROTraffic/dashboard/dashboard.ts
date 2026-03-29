@@ -364,7 +364,7 @@ export class Dashboard {
       if (index >= 0) {
         this.department.splice(index, 1);
         if (this.department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.department.push(e);
@@ -392,10 +392,10 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     if (this.storeIds.length == 0) {
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     }
     else if (this.department.length == 0) {
-      this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
     }
     else {
       this.responcestatus = ''

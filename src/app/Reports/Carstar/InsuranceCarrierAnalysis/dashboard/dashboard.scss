@@ -1,0 +1,8 @@
+.rl-columns {
+    display: grid;
+    grid-auto-flow: column; 
+    grid-template-rows: repeat(6, auto);
+    grid-auto-columns: 150px; 
+    gap: 0.5rem 1rem;
+    overflow-x: auto;
+}

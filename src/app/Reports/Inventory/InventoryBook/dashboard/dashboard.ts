@@ -12,7 +12,7 @@ import { Notes } from '../../../../Layout/notes/notes';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SharedModule, Stores,Notes],
+  imports: [SharedModule, Stores, Notes],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -53,7 +53,7 @@ export class Dashboard {
       this.activePopover = -1;
     }
   }
-  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, public ngbModalActive: NgbActiveModal,    private ngbmodal: NgbModal, private toast: ToastService,
+  constructor(public shared: Sharedservice, public setdates: Setdates, private router: Router, public ngbModalActive: NgbActiveModal, private ngbmodal: NgbModal, private toast: ToastService,
   ) {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
@@ -397,7 +397,7 @@ export class Dashboard {
   CompleteComponentState: boolean = true;
   subdataindex: any = 0;
   openDetails(data2: any, data3: any, store: any, block: any, newAge: any, usedAge: any,) {
-    console.log(data2,data3,store,block,newAge,usedAge);
+    console.log(data2, data3, store, block, newAge, usedAge);
     this.MainGrid = 'N'
     this.Block = block;
     this.var3 = data3;
@@ -575,7 +575,7 @@ export class Dashboard {
           this.status = []
         }
         console.log(this.status);
-        
+
         (this.status.length == 0) && this.stockType.indexOf('New') >= 0 ? (this.status.push('Stock_Transit')) : ''
         this.status.length == 0 && this.stockType.indexOf('New') < 0 ? this.status.push('Stock') : ''
 
@@ -638,23 +638,25 @@ export class Dashboard {
     }
   }
   viewreport() {
-    this.activePopover = -1
-    if (this.stockType.length == 0) {
+    this.activePopover = -1;
 
-      this.toast.show('Please select atleast one stocktype', 'warning', 'Warning');
+    if (!this.storeIds?.length) {
+      return this.toast.show('Please Select At least One Store', 'warning', 'Warning');
     }
-    if (this.status.length == 0) {
+    if (!this.stockType?.length) {
+      return this.toast.show('Please Select At least One Stock Type', 'warning', 'Warning');
+    }
 
-      this.toast.show('Please select atleast one status', 'warning', 'Warning');
+    if (!this.status?.length) {
+      return this.toast.show('Please Select At least One Status', 'warning', 'Warning');
     }
-    if (this.aged.length == 0) {
 
-      this.toast.show('Please select atleast one additional', 'warning', 'Warning');
+    if (!this.aged?.length) {
+      return this.toast.show('Please Select At least One Additional', 'warning', 'Warning');
     }
-    else {
-      this.setHeaderData()
-      this.GetInventorySummaryReport();
-    }
+
+    this.setHeaderData();
+    this.GetInventorySummaryReport();
   }
   notesViewState: boolean = true
   notesView() {

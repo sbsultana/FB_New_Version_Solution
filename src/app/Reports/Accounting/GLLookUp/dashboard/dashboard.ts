@@ -265,7 +265,7 @@ export class Dashboard {
     console.log(this.storeIds);
     this.activePopover = -1
     if (this.storeIds.length == 0) {
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     }
     if (!this.accountNumber) {
       this.toast.show('Please enter an account number', 'warning', 'Warning');

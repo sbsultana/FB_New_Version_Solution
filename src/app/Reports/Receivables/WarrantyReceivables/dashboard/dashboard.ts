@@ -336,7 +336,7 @@ export class Dashboard {
         this.toast.show('Extended must be greaterthan 0', 'warning', 'Warning');
       }
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       }
     }
     else {
@@ -705,7 +705,7 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any) {
     if (ref == 'multi') {
       if (this.hideRecords.length == 0) {
-        this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
         var element = <HTMLInputElement>document.getElementById('symbol');
         element.checked = false;
       } else {
@@ -759,7 +759,7 @@ export class Dashboard {
       });
     }
     if (this.FinalArray.length == 0) {
-      this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
     }
     else {
       const obj = {

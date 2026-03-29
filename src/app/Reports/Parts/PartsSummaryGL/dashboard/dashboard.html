@@ -103,7 +103,7 @@
                             <th colspan="8">Gross</th>
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
+                            <!-- <th><span>{{FromDate |date:'dd'}}
                                     <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
                                         |date:'yyyy'}}</span>
                                     - {{ToDate |date:'dd'}},
@@ -112,6 +112,9 @@
                                     <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
                                         date:'yyyy'}}</span>
                                 </span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
 
                             <th (click)="sort('UNITS',ServiceData)" style="cursor: pointer;">GL CNT</th>

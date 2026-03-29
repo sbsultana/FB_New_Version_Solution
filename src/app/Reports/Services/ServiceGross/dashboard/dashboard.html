@@ -5,7 +5,7 @@
     <div>
         <div class="container-fluid">
             <div class="reports-bar">
-                <div class="filter-dropdowns">
+                <div class="filter-dropdowns" (scroll)="getScrollPosition($event)">
 
                     <!-- Store Dropdown -->
                     <div class="dropdown">
@@ -27,7 +27,8 @@
                             </span>
 
                             <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" *ngIf="activePopover ===4">
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===4"
+                            [style.margin-left.px]="scrollPosition*-1">
                             <div class="row h-100">
                                 <div class="stores d-flex flex-column border-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
@@ -58,20 +59,28 @@
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
                             Time Frame <span class="light-font"> {{displaytime}}</span>
                             <span class="arrow"></span></button>
-                        <div class="timeframe" *ngIf="activePopover === 1">
+                        <div class="timeframe" *ngIf="activePopover === 1" [style.margin-left.px]="scrollPosition*-1">
                             <app-date-range-picker [Dates]="Dates"
                                 (updatedDates)="updatedDates($event)"></app-date-range-picker>
                         </div>
                     </div>
 
                     <div class="dropdown">
-                        <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types <span
-                                class="light-font"> ( {{ labourType
+                        <button class="dropdown-toggle" (click)="togglePopover(8)">
+                            <div *ngIf="spinnerLoader"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            Labor Types <span class="light-font"> ( {{ labourType
                                 == 'S' ? 'All Labor Types W/O Details' : labourType=='N' ? 'All Labor Types' :
                                 (LaborTypeVal.length > 0 ? LaborTypeVal.join(', ') : 'SELECT') }}
                                 <span>{{labortypes.length}}</span> ) </span>
-                            <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" *ngIf="activePopover ===8">
+                            <span class="arrow"></span>
+                        </button>
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===8"
+                            [style.margin-left.px]="scrollPosition*-1">
                             <div class="row h-100">
                                 <div class="groups pe-2 d-flex flex-column">
                                     <div class="groups-wrapper flex-grow-1">
@@ -96,14 +105,14 @@
                                     </div>
                                 </div>
                                 <div class="stores d-flex flex-column ps-0">
-                                    <div *ngIf="labortypes != undefined">
+                                    <!-- <div *ngIf="labortypes != undefined">
                                         <div *ngIf="labortypes.length == 0"
                                             class="graph-loader d-flex align-items-center justify-content-center">
                                             <div class="spinner-border text-primary" role="status">
                                                 <span class="visually-hidden">Loading...</span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column"
                                         *ngIf="activePopover==8 && (labourType=='S' || labourType=='N')">
                                         <div class="allstores text-start">
@@ -141,7 +150,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 3">
+                        <div class="timeframe" *ngIf="activePopover === 3" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
                                     [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
@@ -173,7 +182,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 7">
+                        <div class="timeframe" *ngIf="activePopover === 7" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
 
                                 <button class="outline-button" (click)="multipleorsingle('PT','Customerpay_0')"
@@ -203,24 +212,44 @@
                                 )</span>
                             <span class="arrow"></span>
                         </button>
+                        <div class="timeframe" *ngIf="activePopover === 5" [style.margin-left.px]="scrollPosition * -1">
 
-                        <div class="timeframe" *ngIf="activePopover === 5">
-                            <div class="date-filter-card mt-2">
-                                <input type="checkbox" id='99Z' [(ngModel)]="zeroHours" (change)="includes($event)">
-                                <label class="m-0 btn-check-label" for="99Z" style="color: #000;"> Zero
-                                    Hours</label>
-                                <input type="checkbox" [(ngModel)]="Sublet" id='100S' (change)="includes($event)">
-                                <label class="m-0 btn-check-label" for="100S" style="color: #000;">Sublet</label>
-                                <input type="checkbox" [(ngModel)]="Misc" id='101M' (change)="includes($event)">
-                                <label class="m-0 btn-check-label" for="101M" style="color: #000;">Misc</label>
-                                <input type="checkbox" [(ngModel)]="Lube" id='102L' (change)="includes($event)">
-                                <label class="m-0 btn-check-label" for="102L" style="color: #000;">Lube</label>
+                            <div class="date-filter-card text-start mt-2">
+                                <div class="form-check d-flex justify-content-flex-start">
+                                    <input class="form-check-input me-2" type="checkbox" id="99Z"
+                                        [(ngModel)]="zeroHours" (change)="includes($event)">
+                                    <label class="form-check-label w-100 text-end" for="99Z">
+                                        Zero Hours
+                                    </label>
+                                </div>
+
+                                <div class="form-check d-flex justify-content-flex-start">
+                                    <input class="form-check-input me-2" type="checkbox" id="100S" [(ngModel)]="Sublet"
+                                        (change)="includes($event)">
+                                    <label class="form-check-label w-100 text-end" for="100S">
+                                        Sublet
+                                    </label>
+                                </div>
+
+                                <div class="form-check d-flex justify-content-flex-start">
+                                    <input class="form-check-input me-2" type="checkbox" id="101M" [(ngModel)]="Misc"
+                                        (change)="includes($event)">
+                                    <label class="form-check-label w-100 text-end" for="101M">
+                                        Misc
+                                    </label>
+                                </div>
+
+                                <div class="form-check d-flex justify-content-flex-start">
+                                    <input class="form-check-input me-2" type="checkbox" id="102L" [(ngModel)]="Lube"
+                                        (change)="includes($event)">
+                                    <label class="form-check-label w-100 text-end" for="102L">
+                                        Lube
+                                    </label>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-
-
-
 
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(6)">
@@ -229,7 +258,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 6">
+                        <div class="timeframe" *ngIf="activePopover === 6" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('TB','T')"
                                     [class.active]="TotalReport=='T'">
@@ -246,7 +275,8 @@
 
                     <!-- Apply Button -->
                     <div class="dropdown">
-                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                        <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+                            [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
                     </div>
 
                 </div>

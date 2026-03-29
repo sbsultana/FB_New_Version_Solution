@@ -55,16 +55,16 @@ export class Dashboard {
   loadbtnFlag = ''
   selectedDataGrouping: any = [];
   dataGrouping: any = [
-    
-      { "ARG_ID": 60, "ARG_LABEL": "Store", "ARG_SEQ": 0, "id": 60, "columnname": "DealerName", "Active": "Y" },
-      { "ARG_ID": 54, "ARG_LABEL": "Counter Person", "ARG_SEQ": 1, "id": 54, "columnname": "AP_CounterPerson", "Active": "Y" },
-      { "ARG_ID": 55, "ARG_LABEL": "Sale Type", "ARG_SEQ": 2, "id": 55, "columnname": "AP_PARTS_TYPE", "Active": "Y" },
-      { "ARG_ID": 56, "ARG_LABEL": "Customer Name", "ARG_SEQ": 3, "id": 56, "columnname": "Customername", "Active": "Y" },
-      { "ARG_ID": 57, "ARG_LABEL": "Customer Zip", "ARG_SEQ": 4, "id": 57, "columnname": "CustomerZip", "Active": "Y" },
-      { "ARG_ID": 58, "ARG_LABEL": "Customer State", "ARG_SEQ": 5, "id": 58, "columnname": "CustomerState", "Active": "Y" },
-      { "ARG_ID": 59, "ARG_LABEL": "RO Open Date", "ARG_SEQ": 6, "id": 59, "columnname": "ODate", "Active": "Y" },
-      { "ARG_ID": 61, "ARG_LABEL": "Source", "ARG_SEQ": 7, "id": 61, "columnname": "AP_source", "Active": "Y" }
-    
+
+    { "ARG_ID": 60, "ARG_LABEL": "Store", "ARG_SEQ": 0, "id": 60, "columnname": "DealerName", "Active": "Y" },
+    { "ARG_ID": 54, "ARG_LABEL": "Counter Person", "ARG_SEQ": 1, "id": 54, "columnname": "AP_CounterPerson", "Active": "Y" },
+    { "ARG_ID": 55, "ARG_LABEL": "Sale Type", "ARG_SEQ": 2, "id": 55, "columnname": "AP_PARTS_TYPE", "Active": "Y" },
+    { "ARG_ID": 56, "ARG_LABEL": "Customer Name", "ARG_SEQ": 3, "id": 56, "columnname": "Customername", "Active": "Y" },
+    { "ARG_ID": 57, "ARG_LABEL": "Customer Zip", "ARG_SEQ": 4, "id": 57, "columnname": "CustomerZip", "Active": "Y" },
+    { "ARG_ID": 58, "ARG_LABEL": "Customer State", "ARG_SEQ": 5, "id": 58, "columnname": "CustomerState", "Active": "Y" },
+    { "ARG_ID": 59, "ARG_LABEL": "RO Open Date", "ARG_SEQ": 6, "id": 59, "columnname": "ODate", "Active": "Y" },
+    { "ARG_ID": 61, "ARG_LABEL": "Source", "ARG_SEQ": 7, "id": 61, "columnname": "AP_source", "Active": "Y" }
+
   ]
 
   optionProx: Options = {
@@ -90,13 +90,13 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
-     otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
   };
 
   FromDate: any = '';
@@ -134,12 +134,12 @@ otherStoresArray: any = [];
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
-        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+      this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
 
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -174,7 +174,7 @@ otherStoresArray: any = [];
       AgeFrom: this.AgeFrom,
       AgeTo: this.AgeTo,
       inventory: this.inventory,
-otherstoreids: this.otherStoreIds
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -208,8 +208,8 @@ otherstoreids: this.otherStoreIds
     }
   }
   GetData() {
-    console.log(this.selectedDataGrouping,'........');
-    
+    console.log(this.selectedDataGrouping, '........');
+
     this.IndividualPartsGross = [];
     this.shared.spinner.show();
     const obj = {
@@ -503,7 +503,7 @@ otherstoreids: this.otherStoreIds
     }
   }
 
-    isDesc: boolean = false;
+  isDesc: boolean = false;
   column: string = 'CategoryName';
   sort(property: any) {
     this.isDesc = !this.isDesc; //change the direction
@@ -677,7 +677,7 @@ otherstoreids: this.otherStoreIds
     if (index >= 0) {
       this.selectedDataGrouping.splice(index, 1);
     } else {
-      if (this.selectedDataGrouping.length >= 3) {
+      if (this.selectedDataGrouping.length >= 2) {
         this.toast.show('Select up to 2 Filters only to Group your data', 'warning', 'Warning');
       } else {
         this.selectedDataGrouping.push(val);
@@ -694,10 +694,10 @@ otherstoreids: this.otherStoreIds
     this.activePopover = -1
 
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else {
 
         this.setHeaderData()
@@ -766,7 +766,7 @@ otherstoreids: this.otherStoreIds
     };
     const groupings = worksheet.getCell('B6');
     groupings.value =
-     this.selectedDataGrouping[0]?.ARG_LABEL + ', ' + this.selectedDataGrouping[1]?.ARG_LABEL + ', ' + this.selectedDataGrouping[2]?.ARG_LABEL
+      this.selectedDataGrouping[0]?.ARG_LABEL + ', ' + this.selectedDataGrouping[1]?.ARG_LABEL + ', ' + this.selectedDataGrouping[2]?.ARG_LABEL
     groupings.font = { name: 'Arial', family: 4, size: 9 };
     const Timeframe = worksheet.addRow(['Timeframe :']);
     Timeframe.getCell(1).font = {

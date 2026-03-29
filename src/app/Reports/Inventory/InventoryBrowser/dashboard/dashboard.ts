@@ -950,7 +950,7 @@ export class Dashboard {
     // if (e == 'All') {
     //   if (this.StockType.length == 3) {
     //     this.StockType = []
-    //     this.toast.warning('Please select atleast one StockType', '');
+    //     this.toast.warning('Please Select Atleast One StockType', '');
 
     //   } else {
     //     this.StockType = []
@@ -1072,7 +1072,7 @@ export class Dashboard {
   collectHidevalues(e: any, val: any, confirmtemplate: any, ref: any, refval: any) {
     if (ref === 'multi') {
       if (this.hideRecords.length === 0) {
-        this.toast.show('Please select atleast one record to hide','warning','Warning');
+        this.toast.show('Please Select Atleast One Record to Hide','warning','Warning');
         (document.getElementById('symbol') as HTMLInputElement).checked = false;
         return;
       }
@@ -1102,7 +1102,7 @@ export class Dashboard {
 
   hideAdd() {
     if (this.hideRecords.length === 0) {
-      this.toast.show('Please select atleast one record to hide','warning','Warning');
+      this.toast.show('Please Select Atleast One Record to Hide','warning','Warning');
       return;
     }
 

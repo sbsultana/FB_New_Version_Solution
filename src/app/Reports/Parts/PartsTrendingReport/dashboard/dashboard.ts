@@ -52,6 +52,13 @@ export class Dashboard {
     dateInputFormat: 'MMMM/YYYY',
     minMode: 'month'
   };
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
   constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService, private router: Router) {
     let today = new Date();
     let enddate = new Date(today.setDate(today.getDate() - 1));
@@ -77,6 +84,11 @@ export class Dashboard {
     this.DataSelection(this.Filter);
   }
   ngOnInit(): void { }
+  scrollPosition = 0;
+
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   setHeaderData() {
     const data = {
       title: 'Parts Trending Report',
@@ -408,7 +420,7 @@ export class Dashboard {
     this.activePopover = -1
     if (this.Filter === 'PartsTrend') {
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else {
         this.setHeaderData();
         this.DataSelection(this.Filter);

@@ -626,7 +626,6 @@ export class Dashboard {
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
     this.getlabourTypesData('FR', this.labourType)
-
   }
 
   getStoresandGroupsValues() {
@@ -686,15 +685,11 @@ export class Dashboard {
   }
   multipleorsingle(block: any, e: any) {
 
-
     if (block == 'LT') {
       this.labourType = e
       this.getlabourTypesData('FR', e)
     }
-
-
   }
-
   getlabourTypesData(block: any, type: any) {
     if (this.storeIds != '') {
       this.spinnerLoaderlabor = true;
@@ -753,10 +748,10 @@ export class Dashboard {
     this.activePopover = -1
     if (this.selectedDataGrouping.length == 0 || this.LaborTypeVal.length == 0 || this.storeIds.length == 0) {
       if (this.selectedDataGrouping.length == 0) {
-        this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Value From Grouping', 'warning', 'Warning');
       }
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       }
       if (this.LaborTypeVal.length == 0) {
         this.toast.show('Please select any labor type', 'warning', 'Warning');

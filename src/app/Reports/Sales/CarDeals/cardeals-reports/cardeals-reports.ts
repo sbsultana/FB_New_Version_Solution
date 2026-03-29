@@ -247,7 +247,7 @@ export class CardealsReports {
         if (e == 'All') {
           // this.retailorlease.splice(index, 1);
           this.retailorlease = []
-          // alert('Please select atleast one Deal Type');
+          // alert('Please Select Atleast One Deal Type');
 
         } else {
           this.retailorlease.splice(index, 1);
@@ -264,7 +264,7 @@ export class CardealsReports {
         } else {
           this.retailorlease.push(e);
           // if (this.retailorlease.length == 0) {
-          //   alert('Please select atleast one Deal Type');
+          //   alert('Please Select Atleast One Deal Type');
 
           // }
         }
@@ -362,7 +362,7 @@ export class CardealsReports {
       );
 
     } else if (this.Acquisition.length == 0) {
-      this.toast.show('Please select atleast one Acquisition Source', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Acquisition Source', 'warning', 'Warning');
     }
     else {
       const data = {

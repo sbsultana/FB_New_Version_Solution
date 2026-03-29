@@ -170,13 +170,13 @@
     .other-groups {
         width: auto;
         flex-shrink: 0;
-        border-right: 1px solid #dbe7ff !important;
+        border-right: none;
     }
 
     .other-stores {
         flex: 1;
         overflow-x: auto;
-        border-left: none;
+        border-left: 1px solid #dbe7ff !important;
     }
 
     .other-groups-wrapper,
@@ -203,8 +203,8 @@
         .other-store-columns {
             display: grid;
             grid-auto-flow: column;
-            grid-template-rows: repeat(1, auto); 
-            grid-auto-columns: 175px; 
+            grid-template-rows: repeat(1, auto);
+            grid-auto-columns: 175px;
             gap: 0.5rem 1rem;
             overflow-x: auto;
 
@@ -253,9 +253,9 @@
     .other-groups-wrapper {
         .other-group-columns {
             display: grid;
-            grid-auto-flow: column; 
-            grid-template-rows: repeat(1, auto); 
-            grid-auto-columns: 140px; 
+            grid-auto-flow: column;
+            grid-template-rows: repeat(1, auto);
+            grid-auto-columns: 140px;
             gap: 0.5rem 1rem;
             overflow-x: auto;
         }

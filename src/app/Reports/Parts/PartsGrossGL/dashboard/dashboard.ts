@@ -789,7 +789,7 @@ otherStoresArray: any = [];
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -801,7 +801,7 @@ otherStoresArray: any = [];
         if (index >= 0) {
           this.saletype.splice(index, 1);
           if (this.saletype.length == 0) {
-            this.toast.show('Please select atleast one Saletype', 'warning', 'Warning');
+            this.toast.show('Please Select Atleast One Saletype', 'warning', 'Warning');
           }
         } else {
           this.saletype.push(e);
@@ -862,12 +862,12 @@ otherStoresArray: any = [];
   viewreport() {
     this.activePopover = -1
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else if (this.Department.length == 0) {
-        this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Department Type', 'warning', 'Warning');
       }
 
       else {

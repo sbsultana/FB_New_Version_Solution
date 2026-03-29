@@ -50,7 +50,7 @@ export class Dashboard {
 
   responcestatus: any = '';
   CurrentDate = new Date();
-
+  spinnerLoader: boolean = false;
   getState: any = '';
   zeroHours: any = true;
   Sublet: any = false;
@@ -76,12 +76,12 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-  			  otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',  otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname, 'DefaultLoad': this.DefaultLoad
   };
 
@@ -152,7 +152,7 @@ export class Dashboard {
         this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).store.split(',') :
         this.storeIds.push(JSON.parse(localStorage.getItem('userInfo')!).store)
       this.actionType = 'Y';
-      this.Department =  ['Service'];
+      this.Department = ['Service'];
       this.zeroHours = false;
       localStorage.setItem('flag', 'M')
     } else {
@@ -162,13 +162,13 @@ export class Dashboard {
         this.otherStoreIds = '';
 
         this.actionType = 'N';
-        this.Department = ['Service', 'Parts', 'Quicklube'] 
-        this.zeroHours =  true ;
+        this.Department = ['Service', 'Parts', 'Quicklube']
+        this.zeroHours = true;
       }
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -189,6 +189,10 @@ export class Dashboard {
     this.getlabourTypesData('FL', 'N');
 
   }
+  scrollPosition = 0;
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   labortypes: any = []
   getlabourTypesData(block: any, type: any) {
     if (this.storeIds != '') {
@@ -200,8 +204,10 @@ export class Dashboard {
         StoreID: [...this.storeIds, ...this.otherStoreIds],
         type: type == 'N' ? 'A' : type
       };
+      this.spinnerLoader = true;
       this.shared.api.postmethod(this.comm.routeEndpoint + 'GetLaborTypesTechEfficiency', obj).subscribe((res) => {
         this.spinnerLoaderlabor = false;
+        this.spinnerLoader = false;
         this.labortypes = res.response;
         this.LaborTypeVal = res.response.map(function (a: any) {
           return a.ASD_labortype;
@@ -484,7 +490,7 @@ export class Dashboard {
     }
     return value > 0 ? 'positivebg' : 'negativebg';
   }
-  
+
   expandorcollapse(ind: any, e: any, ref: any, Item: any, parentData: any) {
     let id = (e.target as Element).id;
     if (id == 'D_' + ind) {
@@ -1474,7 +1480,7 @@ export class Dashboard {
     this.otherStoreIds = data.otherStoreIds;
     this.storedisplayname = data.storedisplayname;
 
-    
+
     this.getlabourTypesData('FR', this.labourType)
 
   }
@@ -1544,7 +1550,7 @@ export class Dashboard {
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -1568,7 +1574,7 @@ export class Dashboard {
         this.Paytype[spliting[1]] = '';
         let arr = this.Paytype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
         }
       } else {
         this.Paytype[spliting[1]] = e;
@@ -1583,7 +1589,7 @@ export class Dashboard {
         this.Grosstype[spliting[1]] = '';
         let arr = this.Grosstype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
         }
       } else {
         this.Grosstype[spliting[1]] = e;
@@ -1635,41 +1641,79 @@ export class Dashboard {
   togglePopover(popoverIndex: number) {
     this.activePopover = this.activePopover === popoverIndex ? -1 : popoverIndex;
   }
-  viewreport() {
-    this.activePopover = -1
-    if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
-    } else {
-      if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
-      } else {
-        let gt = this.Grosstype.filter((e: any) => e != '');
-        let pt = this.Paytype.filter((e: any) => e != '');
-        if (pt.length == 0 || gt.length == 0 || this.Department.length == 0) {
+  // viewreport() {
+  //   this.activePopover = -1
+  //   if (this.selectedDataGrouping.length == 0) {
+  //     this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
+  //   } else {
+  //     if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
+  //       this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
+  //     } else {
+  //       let gt = this.Grosstype.filter((e: any) => e != '');
+  //       let pt = this.Paytype.filter((e: any) => e != '');
+  //       if (pt.length == 0 || gt.length == 0 || this.Department.length == 0) {
 
-          if (this.Department.length == 0) {
-            this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
-          }
-          if (pt.length == 0) {
-            this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
-          }
-          if (gt.length == 0) {
-            this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
-          }
-        } else {
-          this.getState = ''
-          this.headervalues();
-          if (this.GridView == 'Global') {
-            this.getServiceData();
-          } else if (this.GridView == 'Gross') {
-            this.GetGrossData();
-          } else if (this.GridView == 'Hours') {
-            this.GetHoursData();
-          } else if (this.GridView == 'RO') {
-            this.GetROData();
-          }
-        }
-      }
+  //         if (this.Department.length == 0) {
+  //           this.toast.show('Please Select Atleast One Department Type', 'warning', 'Warning');
+  //         }
+  //         if (pt.length == 0) {
+  //           this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
+  //         }
+  //         if (gt.length == 0) {
+  //           this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
+  //         }
+  //       } else {
+  //         this.getState = ''
+  //         this.headervalues();
+  //         if (this.GridView == 'Global') {
+  //           this.getServiceData();
+  //         } else if (this.GridView == 'Gross') {
+  //           this.GetGrossData();
+  //         } else if (this.GridView == 'Hours') {
+  //           this.GetHoursData();
+  //         } else if (this.GridView == 'RO') {
+  //           this.GetROData();
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+  viewreport() {
+    this.activePopover = -1;
+    if (!this.selectedDataGrouping || this.selectedDataGrouping.length === 0) {
+      return this.toast.show('Please Select Atleast One Grouping', 'warning', 'Warning');
+    }
+    if ((!this.storeIds || this.storeIds.length === 0) &&
+      (!this.otherStoreIds || this.otherStoreIds.length === 0)) {
+      return this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
+    }
+    const gt = this.Grosstype?.filter((e: any) => e);
+    const pt = this.Paytype?.filter((e: any) => e);
+    if (!this.Department || this.Department.length === 0) {
+      return this.toast.show('Please Select Atleast One Department Type', 'warning', 'Warning');
+    }
+    if (!pt || pt.length === 0) {
+      return this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
+    }
+    if (!gt || gt.length === 0) {
+      return this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
+    }
+    this.getState = '';
+    this.headervalues();
+
+    switch (this.GridView) {
+      case 'Global':
+        this.getServiceData();
+        break;
+      case 'Gross':
+        this.GetGrossData();
+        break;
+      case 'Hours':
+        this.GetHoursData();
+        break;
+      case 'RO':
+        this.GetROData();
+        break;
     }
   }
 

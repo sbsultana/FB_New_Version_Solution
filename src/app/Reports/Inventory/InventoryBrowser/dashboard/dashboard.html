@@ -118,35 +118,35 @@
                 (click)="notesView()"></i>
               <i alt="" class="fa-solid fa-eye-slash" *ngIf="notesViewState" (click)="notesView()"></i>
             </th>
-            <th class="text-start" (click)="sort('Store',filteredFloorplanData)" style="cursor: pointer;">
+            <th class="text-start" (click)="sortTable('Store')" style="cursor: pointer;">
               Store
             </th>
-            <th class="text-start" (click)="sort('StockNo',filteredFloorplanData)" style="cursor: pointer;">
+            <th class="text-start" (click)="sortTable('StockNo')" style="cursor: pointer;">
               Stock No</th>
-            <th (click)="sort('DealType',filteredFloorplanData)" style="cursor: pointer;">Stock
+            <th (click)="sortTable('DealType')" style="cursor: pointer;">Stock
               Type</th>
-            <th (click)="sort('Year',filteredFloorplanData)" style="cursor: pointer;">Year</th>
-            <th class="text-start" (click)="sort('Make',filteredFloorplanData)" style="cursor: pointer;">
+            <th (click)="sortTable('Year')" style="cursor: pointer;">Year</th>
+            <th class="text-start" (click)="sortTable('Make')" style="cursor: pointer;">
               Make
             </th>
-            <th class="text-start" (click)="sort('Model',filteredFloorplanData)" style="cursor: pointer;">
+            <th class="text-start" (click)="sortTable('Model')" style="cursor: pointer;">
               Model
             </th>
-            <th class="text-start" (click)="sort('Color',filteredFloorplanData)" style="cursor: pointer;">
+            <th class="text-start" (click)="sortTable('Color')" style="cursor: pointer;">
               Color
             </th>
-            <th class="text-start" (click)="sort('Interior Color',filteredFloorplanData)" style="cursor: pointer;">
+            <th class="text-start" (click)="sortTable('Interior Color')" style="cursor: pointer;">
               Interior Color
             </th>
-            <th (click)="sort('Age',filteredFloorplanData)" style="cursor: pointer;">Age</th>
-            <th (click)="sort('ListPrice',filteredFloorplanData)" style="cursor: pointer;">List
+            <th (click)="sortTable('Age')" style="cursor: pointer;">Age</th>
+            <th (click)="sortTable('ListPrice')" style="cursor: pointer;">List
               Price</th>
 
-            <th (click)="sort('Internet',filteredFloorplanData)" style="cursor: pointer;">MSRP
+            <th (click)="sortTable('Internet')" style="cursor: pointer;">MSRP
             </th>
 
-            <th (click)="sort('Miles',filteredFloorplanData)" style="cursor: pointer;">Miles</th>
-            <th class="text-start" (click)="sort('VIN',filteredFloorplanData)" style="cursor: pointer;">VIN
+            <th (click)="sortTable('Miles')" style="cursor: pointer;">Miles</th>
+            <th class="text-start" (click)="sortTable('VIN')" style="cursor: pointer;">VIN
             </th>
           </tr>
         </thead>

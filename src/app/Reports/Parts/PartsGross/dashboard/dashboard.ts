@@ -34,7 +34,7 @@ export class Dashboard {
   groups: any = 1;
   servicetype: any = ['C', 'T', 'I', 'E']
   GridView = 'Global';
-otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
   selectedDataGrouping: any = [];
@@ -64,7 +64,7 @@ otherStoresArray: any = [];
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname,
-     otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
+    otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
   };
 
   FromDate: any = '';
@@ -129,7 +129,7 @@ otherStoresArray: any = [];
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -163,7 +163,7 @@ otherStoresArray: any = [];
       servicetype: this.servicetype,
       GridView: this.GridView,
       partsSource: this.partsSource,
-  otherstoreids: this.otherStoreIds
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -171,7 +171,11 @@ otherStoresArray: any = [];
 
 
   }
+  scrollPosition = 0;
 
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   initializeDates(type: any) {
     let dates: any = this.setdates.setDates(type)
     this.FromDate = dates[0];
@@ -912,8 +916,9 @@ otherStoresArray: any = [];
       storename: this.storename,
       storecount: this.storecount,
       storedisplayname: this.storedisplayname,
-      'type': 'M','others': 'Y', otherStoresArray: this.otherStoresArray,
-      otherStoreIds: this.otherStoreIds    };
+      'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray,
+      otherStoreIds: this.otherStoreIds
+    };
   }
   updatedDates(data: any) {
     // console.log(data);
@@ -1093,29 +1098,38 @@ otherStoresArray: any = [];
   }
   viewreport() {
 
-    this.activePopover = -1
-    if (this.selectedDataGrouping.length == 0 || (this.storeIds.length == 0 && this.otherStoreIds.length == 0) || this.DateType.length == 0 || this.DateType == undefined) {
-      if (this.selectedDataGrouping.length == 0) {
-        this.toast.show('Please select atleast one Grouping', 'warning', 'Warning');
-      }
-      if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
-      }
-      if (this.DateType.length == 0 || this.DateType == undefined) {
-        this.toast.show('Please select atleast one Time Frame', 'warning', 'Warning');
-      }
+    this.activePopover = -1;
+    if (!this.selectedDataGrouping?.length) {
+      return this.toast.show('Please Select At least One Grouping', 'warning', 'Warning');
+    }
+    if ((!this.storeIds?.length) && (!this.otherStoreIds?.length)) {
+      return this.toast.show('Please Select At least One Store', 'warning', 'Warning');
+    }
+    if (!this.DateType?.length) {
+      return this.toast.show('Please Select At least One Time Frame', 'warning', 'Warning');
+    }
+    if (!this.Department?.length) {
+      return this.toast.show('Please Select At least One Department', 'warning', 'Warning');
+    }
+    if (!this.saleandservice?.length) {
+      return this.toast.show('Please Select At least One Sale Type', 'warning', 'Warning');
+    }
+    console.log(this.selectedDataGrouping, '........... Values');
 
-    } else {
-      console.log(this.selectedDataGrouping, '........... Values');
+    this.setHeaderData();
 
-      this.setHeaderData();
-      if (this.GridView == 'Global') {
+    switch (this.GridView) {
+      case 'Global':
         this.getPartsData();
-      } else if (this.GridView == 'Service') {
+        break;
+
+      case 'Service':
         this.GetServicedata();
-      } else if (this.GridView == 'Parts') {
+        break;
+
+      case 'Parts':
         this.GetPartsDrilldata();
-      }
+        break;
     }
   }
   ExcelStoreNames: any = [];

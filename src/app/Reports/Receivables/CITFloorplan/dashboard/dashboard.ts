@@ -418,7 +418,7 @@ export class Dashboard implements OnInit {
 
   }
 
-    async openSalesModal(dealnumber: any, vin: any, storeid: any, stock: any, source: any, custno: any) {
+  async openSalesModal(dealnumber: any, vin: any, storeid: any, stock: any, source: any, custno: any) {
     const module = await import('../../../../Layout/cdpdataview/deal/deal-module');
     const component = module.Deal;
 
@@ -522,7 +522,7 @@ export class Dashboard implements OnInit {
     if (ref == 'multi') {
       if (this.priorityRecords.length == 0) {
         this.toast.show(
-          'Please select atleast one record to prioritize',
+          'Please Select Atleast One record to prioritize',
           'warning',
           'Warning'
         );
@@ -634,7 +634,7 @@ export class Dashboard implements OnInit {
     }
     if (payload.schedulecontrolpriority.length == 0) {
       this.toast.show(
-        'Please select atleast one record to prioritize',
+        'Please Select Atleast One record to prioritize',
         'warning',
         'Warning'
       );
@@ -813,7 +813,7 @@ export class Dashboard implements OnInit {
     // if (e == 'All') {
     //   if (this.dealStatus.length == 3) {
     //     this.dealStatus = []
-    //     this.toast.warning('Please select atleast one dealStatus', '');
+    //     this.toast.warning('Please Select Atleast One dealStatus', '');
 
     //   } else {
     //     this.dealStatus = []
@@ -1101,7 +1101,7 @@ export class Dashboard implements OnInit {
     if (ref == 'multi') {
       if (this.hideRecords.length == 0) {
 
-        this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
         const element = <HTMLInputElement>document.getElementById('symbol');
         if (element) element.checked = false;
       } else {
@@ -1142,7 +1142,7 @@ export class Dashboard implements OnInit {
     }
     if (this.FinalArray.length == 0) {
 
-      this.toast.show('Please select atleast one record to hide', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Record to Hide', 'warning', 'Warning');
       return;
     }
     const obj = { receivableexcludecontrol: this.FinalArray };

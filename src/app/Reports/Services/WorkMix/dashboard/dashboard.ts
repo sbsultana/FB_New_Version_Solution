@@ -407,7 +407,7 @@ export class Dashboard {
     this.activePopover = -1;
 
     if (!this.storeIds || this.storeIds.length === 0) {
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       return;
     }
 

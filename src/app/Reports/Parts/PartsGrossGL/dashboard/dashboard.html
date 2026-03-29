@@ -70,7 +70,7 @@
                     <div class="dropdown">
                         <button class="dropdown-toggle" (click)="togglePopover(5)">
                             Sale Type <span class="light-font">( {{ saletype.length ==
-                                1 ? saletype : (saletype.length == partsSaleType.length ? 'All' : 'SELECTED')
+                                1 ? saletype : (saletype.length == partsSaleType.length ? 'All' : 'Selected')
                                 }}
                                 {{saletype.length == 1 || saletype.length == partsSaleType.length ? '':
                                 saletype.length }}
@@ -83,7 +83,7 @@
                                 <button class="outline-button" (click)="multipleorsingle('Parts','All')"
                                     [ngClass]="{'active':saletype.length == partsSaleType.length ,'inactive':saletype.length != partsSaleType.length}">
                                     All Sale Types</button>
-                                <button class="outline-button" ngbTooltip ="{{s.ASG_Subtype_Detail}}"
+                                <button class="outline-button" ngbTooltip="{{s.ASG_Subtype_Detail}}"
                                     (click)="multipleorsingle('Parts',s.ASG_Subtype_Detail)"
                                     *ngFor="let s of partsSaleType;let i=index"
                                     [ngClass]="{'active':saletype.indexOf(s.ASG_Subtype_Detail)>=0, 'inactive':saletype.indexOf(s.ASG_Subtype_Detail)<0}">{{s.ASG_Subtype_Detail}}</button>
@@ -140,7 +140,7 @@
                             <th colspan="3">Performance</th>
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
+                            <!-- <th><span>{{FromDate |date:'dd'}}
                                     <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
                                         |date:'yyyy'}}</span>
                                     - {{ToDate |date:'dd'}},
@@ -149,6 +149,9 @@
                                     <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
                                         date:'yyyy'}}</span>
                                 </span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
 
                             <th (click)="sort('totalsale',ServiceData)" style="cursor: pointer;">Total</th>
@@ -199,7 +202,7 @@
                                     </span>
                                 </td>
 
-                                <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.totalsale)}">
+                                <td id="DataBody2" [ngClass]="{negative: !inTheGreen(ServiceInfo.totalsale)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.totalsale == 0 || ServiceInfo.totalsale == null ? '' :
@@ -211,7 +214,7 @@
                                     </span>
                                 </td>
 
-                                <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total)}">
+                                <td id="DataBody2" [ngClass]="{negative: !inTheGreen(ServiceInfo.Total)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.Total == 0 || ServiceInfo.Total == null ? '' :
@@ -222,7 +225,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalGross_Pace)}">
+                                <td id="DataBody3" [ngClass]="{negative: !inTheGreen(ServiceInfo.TotalGross_Pace)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.TotalGross_Pace == 0 || ServiceInfo.TotalGross_Pace == null
@@ -235,7 +238,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Gross_Target)}">
+                                <td id="DataBody4" [ngClass]="{negative: !inTheGreen(ServiceInfo.Gross_Target)}">
                                     <span class="d-flex justify-content-between">{{
                                         ServiceInfo.Gross_Target == 0 || ServiceInfo.Gross_Target == null
                                         ? '' :
@@ -260,7 +263,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Lmonth)}">
+                                <td id="DataBody5" [ngClass]="{negative: !inTheGreen(ServiceInfo.Lmonth)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.Lmonth == 0 || ServiceInfo.Lmonth == null
@@ -290,14 +293,14 @@
                                     ? '-' : (ServiceInfo.YOY
                                     |number:'1.2-2')+'%'}}</td>
 
-                                <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RoToal)}">{{
+                                <td id="DataBody11" [ngClass]="{negative: !inTheGreen(ServiceInfo.RoToal)}">{{
                                     (ServiceInfo.RoToal == 0 || ServiceInfo.RoToal == null ? '-' :
                                     ServiceInfo.RoToal |number:'1.0-0' ) }}</td>
-                                <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_ROPACE)}">{{
+                                <td id="DataBody12" [ngClass]="{negative: !inTheGreen(ServiceInfo.Total_ROPACE)}">{{
                                     (ServiceInfo.Total_ROPACE == 0 || ServiceInfo.Total_ROPACE == null
                                     ? '-' :
                                     ServiceInfo.Total_ROPACE |number:'1.0-0' ) }}</td>
-                                <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_Target)}">{{
+                                <td id="DataBody13" [ngClass]="{negative: !inTheGreen(ServiceInfo.RO_Target)}">{{
                                     (ServiceInfo.RO_Target == 0 || ServiceInfo.RO_Target == null ? '-' :
                                     ServiceInfo.RO_Target |number:'1.0-0' ) }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.ROCountDiff)">
@@ -305,7 +308,7 @@
                                     (ServiceInfo.ROCountDiff == 0 || ServiceInfo.ROCountDiff == null ? '-' :
                                     ServiceInfo.ROCountDiff |number:'1.0-0' ) }}</td>
 
-                                <td id="DataBody16" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Sales_Per_RO)}">
+                                <td id="DataBody16" [ngClass]="{negative: !inTheGreen(ServiceInfo.Sales_Per_RO)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (ServiceInfo.Sales_Per_RO == 0 || ServiceInfo.Sales_Per_RO == null ? '' :
@@ -317,7 +320,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td id="DataBody18" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Average_RO)}">
+                                <td id="DataBody18" [ngClass]="{negative: !inTheGreen(ServiceInfo.Average_RO)}">
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (ServiceInfo.Average_RO == 0 || ServiceInfo.Average_RO == null ? '' :
@@ -329,7 +332,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.GP)}">{{
+                                <td id="DataBody9" [ngClass]="{negative: !inTheGreen(ServiceInfo.GP)}">{{
                                     (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '-' :
                                     ServiceInfo.GP |number:'1.1-1' ) }}{{
                                     (ServiceInfo.GP == 0 || ServiceInfo.GP == null ? '' : '%'
@@ -342,21 +345,21 @@
                                         <td style=" padding-left: 2rem !important; ">
                                             <span title="{{dt2.data2}}"
                                                 (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo,tmp)"
-                                                class="cursor-pointer" *ngIf="selectedDataGrouping[1].columnName != 'cdate'"
-                                                [id]="'DVN_'+k">
+                                                class="cursor-pointer"
+                                                *ngIf="selectedDataGrouping[1].columnName != 'cdate'" [id]="'DVN_'+k">
                                                 {{(dt2.data2 == undefined ? '--' : ( (dt2.data2.toString() | slice:0:30)
                                                 + (dt2.data2.toString().length > 30 ? '...' : '') ))}}
                                             </span>
                                             <span title="{{dt2.data2}}"
                                                 (click)="expandorcollapse(k,$event,dt2.data2sign,dt2,ServiceInfo,tmp)"
-                                                class="cursor-pointer" *ngIf="selectedDataGrouping[1].columnName == 'cdate'"
-                                                [id]="'DVN_'+k">
+                                                class="cursor-pointer"
+                                                *ngIf="selectedDataGrouping[1].columnName == 'cdate'" [id]="'DVN_'+k">
                                                 {{( dt2.data2 == undefined || dt2.data2 == '' || dt2.data2 ==
                                                 null ? '-' : dt2.data2 | date:'MM/dd/YYYY' )}}
                                             </span>
                                         </td>
 
-                                        <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt2.totalsale)}">
+                                        <td id="DataBody2" [ngClass]="{negative: !inTheGreen(dt2.totalsale)}">
                                             <span class="d-flex justify-content-between">
                                                 {{
                                                 dt2.totalsale == 0 || dt2.totalsale == null ? '' :
@@ -368,7 +371,7 @@
                                             </span>
                                         </td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Total)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.Total)}">
                                             <span class="d-flex justify-content-between">
                                                 {{dt2.Total == undefined ? '' : (dt2.Total == 0 ||
                                                 dt2.Total == null ? '': '$')}}
@@ -378,7 +381,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.TotalGross_Pace)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.TotalGross_Pace)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ dt2.TotalGross_Pace == undefined ? '' :
                                                 (dt2.TotalGross_Pace == 0 || dt2.TotalGross_Pace == null ? '' :
@@ -392,7 +395,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Gross_Target)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.Gross_Target)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ dt2.Gross_Target == undefined ? '' :
                                                 (dt2.Gross_Target == 0 || dt2.Gross_Target == null ? '' :
@@ -421,7 +424,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(dt2.Lmonth)}">
+                                        <td id="DataBody5" [ngClass]="{negative: !inTheGreen(dt2.Lmonth)}">
                                             <span class="d-flex justify-content-between">
                                                 {{
                                                 dt2.Lmonth == 0 || dt2.Lmonth == null
@@ -453,11 +456,11 @@
                                             ? '-' : (dt2.YOY
                                             |number:'1.2-2')+'%'}}</td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.RoToal)}">{{
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.RoToal)}">{{
                                             dt2.RoToal == undefined ? '' :
                                             (dt2.RoToal == 0 ||
                                             dt2.RoToal == null ? '-' : dt2.RoToal |number:'1.0-0') }}</td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Total_ROPACE)}">{{dt2.Total_ROPACE ==
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.Total_ROPACE)}">{{dt2.Total_ROPACE ==
                                             undefined ? '' : (dt2.Total_ROPACE
                                             == 0 || dt2.Total_ROPACE == null ? '-' :
                                             dt2.Total_ROPACE |number:'1.0-0' ) }}</td>
@@ -470,7 +473,7 @@
                                             <span *ngIf="selectedDataGrouping.length == 3"></span>
                                         </td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Sales_Per_RO)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.Sales_Per_RO)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ dt2.Sales_Per_RO==
                                                 undefined ? '' : (dt2.Sales_Per_RO
@@ -481,7 +484,7 @@
                                                     |number:'1.2-2' ) }} </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.Average_RO)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.Average_RO)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ dt2.Average_RO ==
                                                 undefined ? '' : (dt2.Average_RO == 0
@@ -494,7 +497,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt2.GP)}">{{ dt2.GP == undefined ? '':
+                                        <td [ngClass]="{negative: !inTheGreen(dt2.GP)}">{{ dt2.GP == undefined ? '':
                                             (dt2.GP == 0 ||
                                             dt2.GP == null ? '-' : dt2.GP | number : '1.1-1' )}}{{ (dt2.GP == 0 ||
                                             dt2.GP == null ? '' : '%' )}}</td>
@@ -516,7 +519,7 @@
                                             </span>
                                         </td>
 
-                                        <td id="DataBody2" [ngClass]="{ negative: !inTheGreen(dt3.totalsale)}">
+                                        <td id="DataBody2" [ngClass]="{negative: !inTheGreen(dt3.totalsale)}">
                                             <span class="d-flex justify-content-between">
                                                 {{
                                                 dt3.totalsale == 0 || dt3.totalsale == null ? '' :
@@ -528,7 +531,7 @@
                                             </span>
                                         </td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Total)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.Total)}">
                                             <span class="d-flex justify-content-between">
                                                 {{dt3.Total == 0 ||
                                                 dt3.Total == null ? '' : '$'}}
@@ -538,7 +541,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_Pace)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.TotalGross_Pace)}">
                                             <span class="d-flex justify-content-between">
                                                 {{dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ||
                                                 dt3.TotalGross_Pace == undefined ? '' : '$'}}
@@ -549,7 +552,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Gross_Target)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.Gross_Target)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ dt3.Gross_Target == undefined ? '' :
                                                 (dt3.Gross_Target == 0 || dt3.Gross_Target == null ? '' :
@@ -578,7 +581,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(dt3.Lmonth)}">
+                                        <td id="DataBody5" [ngClass]="{negative: !inTheGreen(dt3.Lmonth)}">
                                             <span class="d-flex justify-content-between">
                                                 {{
                                                 dt3.Lmonth == 0 || dt3.Lmonth == null
@@ -610,17 +613,17 @@
                                             ? '-' : (dt3.YOY
                                             |number:'1.2-2')+'%'}}</td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.RoToal)}">{{ (dt3.RoToal == 0
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.RoToal)}">{{ (dt3.RoToal == 0
                                             ||
                                             dt3.RoToal == null ? '-' : dt3.RoToal |number:'1.0-0' ) }}</td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Total_ROPACE)}">{{ (dt3.Total_ROPACE
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.Total_ROPACE)}">{{ (dt3.Total_ROPACE
                                             == 0 || dt3.Total_ROPACE == null || dt3.Total_ROPACE == undefined
                                             ? '-' :
                                             dt3.Total_ROPACE |number:'1.0-0' ) }}</td>
                                         <td>-</td>
                                         <td>-</td>
 
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Sales_Per_RO)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.Sales_Per_RO)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ (dt3.Sales_Per_RO
                                                 == 0 ||
@@ -635,7 +638,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.Average_RO)}">
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.Average_RO)}">
                                             <span class="d-flex justify-content-between">
                                                 {{ (dt3.Average_RO == 0
                                                 || dt3.Average_RO == null ? '' : '$' )}}
@@ -646,7 +649,7 @@
                                                 </span>
                                             </span>
                                         </td>
-                                        <td [ngClass]="{ negative: !inTheGreen(dt3.GP)}">{{ (dt3.GP == 0 ||
+                                        <td [ngClass]="{negative: !inTheGreen(dt3.GP)}">{{ (dt3.GP == 0 ||
                                             dt3.GP == null ? '-' : dt3.GP | number : '1.1-1' )}}{{ (dt3.GP == 0 ||
                                             dt3.GP == null ? '' : '%' )}}</td>
                                     </tr>
@@ -777,7 +780,7 @@
                                                     </td>
 
                                                     <td class=" text-end"
-                                                        [ngClass]="{ negative: !inTheGreen(Ad.ASG_postingamount)}" > {{
+                                                        [ngClass]="{negative: !inTheGreen(Ad.ASG_postingamount)}"> {{
                                                         (Ad.ASG_postingamount == 0 ||
                                                         Ad.ASG_postingamount == null || Ad.ASG_postingamount ==
                                                         undefined ? '-' :

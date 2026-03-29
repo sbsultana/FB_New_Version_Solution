@@ -52,6 +52,13 @@ export class Dashboard {
     dateInputFormat: 'MMMM/YYYY',
     minMode: 'month'
   };
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.dropdown-toggle, .reportstores-card, .timeframe');
+    if (!clickedInside) {
+      this.activePopover = -1;
+    }
+  }
   constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private cp: CurrencyPipe, private toast: ToastService, private router: Router) {
     let today = new Date();
     let enddate = new Date(today.setDate(today.getDate() - 1));
@@ -77,6 +84,11 @@ export class Dashboard {
     this.DataSelection(this.Filter);
   }
   ngOnInit(): void { }
+  scrollPosition = 0;
+
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   setHeaderData() {
     const data = {
       title: 'Service Trending Report',
@@ -299,7 +311,7 @@ export class Dashboard {
   }
   DataSelection(Val: any) {
     if (this.Filter == 'ServiceTrend') {
-      if (this.storeIds != '' ) {
+      if (this.storeIds != '') {
         this.GetDataByMonths();
       }
     }
@@ -389,7 +401,7 @@ export class Dashboard {
     this.activePopover = -1
     if (this.Filter === 'ServiceTrend') {
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else {
         this.setHeaderData();
         this.DataSelection(this.Filter);
@@ -399,19 +411,19 @@ export class Dashboard {
     }
   }
   ExcelStoreNames: any = []
- exportAsXLSX(): void {
+  exportAsXLSX(): void {
     let storeNames: any = [];
     let store = this.storeIds
-        storeNames = this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores.filter((item: any) =>
-          store.some((cat: any) => cat === item.ID.toString())
-        );
-        if (store.length == this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores.length) {
-          this.ExcelStoreNames = 'All Stores';
-        } else {
-          this.ExcelStoreNames = storeNames.map(function (a: any) {
-            return a.storename;
-          });
-        }
+    storeNames = this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores.filter((item: any) =>
+      store.some((cat: any) => cat === item.ID.toString())
+    );
+    if (store.length == this.comm.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores.length) {
+      this.ExcelStoreNames = 'All Stores';
+    } else {
+      this.ExcelStoreNames = storeNames.map(function (a: any) {
+        return a.storename;
+      });
+    }
     const workbook = this.shared.getWorkbook();
     const worksheet = workbook.addWorksheet('Service Trending Report');
     worksheet.views = [
@@ -473,7 +485,7 @@ export class Dashboard {
     Groups.value = 'Group :';
     const groups = worksheet.getCell('B8');
     groups.value =
-    this.comm.groupsandstores.filter((val: any) => val.sg_id == this.groupId.toString())[0].sg_name;
+      this.comm.groupsandstores.filter((val: any) => val.sg_id == this.groupId.toString())[0].sg_name;
     groups.font = { name: 'Arial', family: 4, size: 9 };
     groups.alignment = {
       vertical: 'middle',
@@ -485,12 +497,12 @@ export class Dashboard {
     Stores.value = 'Stores :';
     const stores = worksheet.getCell('B9');
     stores.value =
-    stores.value =
-          this.ExcelStoreNames == 0
-            ? '-'
-            : this.ExcelStoreNames == null
-            ? '-'
-            : this.ExcelStoreNames.toString().replaceAll(',', ', ');
+      stores.value =
+      this.ExcelStoreNames == 0
+        ? '-'
+        : this.ExcelStoreNames == null
+          ? '-'
+          : this.ExcelStoreNames.toString().replaceAll(',', ', ');
     stores.font = { name: 'Arial', family: 4, size: 9 };
     stores.alignment = {
       vertical: 'top',
@@ -537,11 +549,11 @@ export class Dashboard {
         vertical: 'middle',
         horizontal: 'left',
       };
-      StoreNameRow.font = { name: 'Arial', family: 4, bold: true, size: 9};
+      StoreNameRow.font = { name: 'Arial', family: 4, bold: true, size: 9 };
       if (d.sub != undefined) {
-        for (const d1 of d.sub) {       
+        for (const d1 of d.sub) {
           let formattedPaytype: string;
-          switch(d1.paytype) {
+          switch (d1.paytype) {
             case 'Totals':
               formattedPaytype = 'TOTAL';
               break;
@@ -567,7 +579,7 @@ export class Dashboard {
           }
           const PaytypeRow = worksheet.addRow([formattedPaytype]);
           PaytypeRow.outlineLevel = 1;
-          PaytypeRow.font = { name: 'Arial', family: 4, bold: true, size: 9,color: { argb: '2a91f0' } };
+          PaytypeRow.font = { name: 'Arial', family: 4, bold: true, size: 9, color: { argb: '2a91f0' } };
           PaytypeRow.alignment = { vertical: 'middle', horizontal: 'center' };
           PaytypeRow.getCell(1).alignment = {
             indent: 2,
@@ -579,12 +591,12 @@ export class Dashboard {
             const row = [variableValue];
             for (const item of this.ServiceTrendingKeys) {
               row.push(d2[item] === '' || d2[item] === null ? '-' : d2[item]);
-            }        
-            const Data2 = worksheet.addRow(row);        
+            }
+            const Data2 = worksheet.addRow(row);
             Data2.eachCell((cell: any, number: any) => {
               cell.state = {
-                state: 'show', 
-                collapsed: false 
+                state: 'show',
+                collapsed: false
               };
               if (!(d2.variable === 'RO COUNT' || d2.variable === 'HOURS' || d2.variable === 'HOURS / RO' || d2.variable === 'VIN COUNT' || d2.variable === 'GP')) {
                 cell.numFmt = '$#,##0';
@@ -593,7 +605,7 @@ export class Dashboard {
               }
             });
             Data2.font = { name: 'Arial', family: 4, size: 8 };
-            Data2.alignment = { vertical: 'middle', horizontal: 'right',indent:1};
+            Data2.alignment = { vertical: 'middle', horizontal: 'right', indent: 1 };
             Data2.getCell(1).alignment = { indent: 3, vertical: 'middle', horizontal: 'left' };
             if (Data2.number % 2) {
               Data2.eachCell((cell: any, number: any) => {
@@ -605,7 +617,7 @@ export class Dashboard {
                 };
               });
             }
-          }                 
+          }
         }
       }
     }
@@ -641,6 +653,6 @@ export class Dashboard {
     worksheet.getColumn(14).width = 15;
     worksheet.getColumn(15).width = 15;
     worksheet.addRow([]);
-      this.shared.exportToExcel(workbook, 'Service Trending Report' );
+    this.shared.exportToExcel(workbook, 'Service Trending Report');
   }
 }
