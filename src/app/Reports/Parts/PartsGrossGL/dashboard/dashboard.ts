@@ -569,7 +569,7 @@ otherStoresArray: any = [];
   }
 
   viewRO(roData: any) {
-    // const modalRef = this.ngbmodel.open(RepairOrderComponent, { size: 'md', windowClass: 'compModal' });
+    // const modalRef = this.ngbmodel.open(RepairOrderComponent, { size: 'md', windowClass: 'connectedmodal' });
     // modalRef.componentInstance.data = { ro: roData.ASG_Ronumber, storeid: roData.storeid, vin: roData.vin, vehicleid: roData.vehicleid,custno: roData?.customernumber }; // Pass data to the modal component    
     // modalRef.result.then((result) => {
     //   console.log(result); // Handle modal close result

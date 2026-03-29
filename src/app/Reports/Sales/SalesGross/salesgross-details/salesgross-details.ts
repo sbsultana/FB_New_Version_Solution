@@ -96,7 +96,7 @@ export class SalesgrossDetails {
   }
 
   viewDeal(dealData: any) {
-    //   const modalRef = this.ngbmodel.open(DealRecapComponent, { size: 'md', windowClass: 'compModal' });
+    //   const modalRef = this.ngbmodel.open(DealRecapComponent, { size: 'md', windowClass: 'connectedmodal' });
     //   modalRef.componentInstance.data = {  dealno: dealData.dealid, storeid: dealData.dealerid,stock:dealData.Stock,vin:dealData.vin,source:dealData.source,custno: dealData?.customernumber }; // Pass data to the modal component    
     //   modalRef.result.then((result) => {
     //     console.log(result); // Handle modal close result

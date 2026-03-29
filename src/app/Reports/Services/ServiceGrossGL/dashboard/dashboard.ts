@@ -386,7 +386,7 @@ export class Dashboard {
   async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, source: any, custno: any) {
     const module = await import('../../../../Layout/cdpdataview/repair/repair-module');
     const component = module.Repair;
-    const modalRef = this.shared.ngbmodal.open(component, { size: 'xl', windowClass: 'compModal' });
+    const modalRef = this.shared.ngbmodal.open(component, { size: 'xl', windowClass: 'connectedmodal' });
     modalRef.componentInstance.data = { ro: roNumber, vin: vin, storeid: storeid, vehicleid: vehicleid, source: source, custno: custno }; // Pass data to the modal component
     modalRef.result.then((result) => {
       console.log(result); // Handle modal close result
@@ -582,7 +582,7 @@ export class Dashboard {
   }
 
   viewRO(roData: any) {
-    // const modalRef = this.ngbmodel.open(RepairOrderComponent, { size: 'md', windowClass: 'compModal' });
+    // const modalRef = this.ngbmodel.open(RepairOrderComponent, { size: 'md', windowClass: 'connectedmodal' });
     // modalRef.componentInstance.data = { ro: roData.ASG_Ronumber, storeid: roData.storeid, vin: roData.vin, vehicleid: roData.vehicleid,custno: roData?.customernumber }; // Pass data to the modal component    
     // modalRef.result.then((result) => {
     //   console.log(result); // Handle modal close result

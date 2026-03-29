@@ -1152,17 +1152,7 @@ export class Dashboard {
     (document.getElementById('close') as HTMLInputElement)?.click();
   }
   viewDeal(dealData: any) {
-    // const modalRef = this.ngbmodal.open(DealRecapComponent, {
-    //   size: 'md',
-    //   windowClass: 'compModal'
-    // });
-    // modalRef.componentInstance.data = {
-    //   dealno: dealData.DealNo,
-    //   storeid: dealData.storeid,
-    //   stock: dealData.StockNo,
-    //   vin: dealData.vin,
-    //   custno: dealData.CustomerNumber
-    // };
+
   }
 
   openComments() {

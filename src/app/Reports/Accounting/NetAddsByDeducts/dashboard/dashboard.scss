@@ -24,20 +24,7 @@
     font-weight: 700;
 }
 
-::ng-deep .compModal .modal-content {
-    border-radius: 20px !important;
-    width: 100% !important;
-    background-color: #fff !important;
-}
 
-::ng-deep .compModal .modal-dialog {
-    max-width: 90% !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: auto;
-}
 
 // Dragable Modal
 .rec-draggable-modal {
@@ -350,20 +337,7 @@
 
 
 
-::ng-deep .compModal .modal-content {
-    border-radius: 20px !important;
-    width: 100% !important;
-    background-color: #fff !important;
-}
 
-::ng-deep .compModal .modal-dialog {
-    max-width: 90% !important;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: auto;
-}
 
 // Dragable Modal
 .rec-draggable-modal {
