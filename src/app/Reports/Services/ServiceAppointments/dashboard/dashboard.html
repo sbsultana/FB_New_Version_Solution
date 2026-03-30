@@ -54,14 +54,14 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th class="text-start" (click)="sort(['AS_COMPANYNAME'])" style="cursor: pointer;"
+                            <th class="text-center" (click)="sort(['AS_COMPANYNAME'])" style="cursor: pointer;"
                                 *ngIf="storeIds.toString().indexOf(',')> 0 || storeIds == 0 ">Dealer</th>
                             <th (click)="sort('CUSTOMER')" style="cursor: pointer;">Customer</th>
                             <th (click)="sort('CONTACT NUMBER')" style="cursor: pointer;"> Contact Number</th>
                             <th (click)="sort('APPTDate')" style="cursor: default;"> Date</th>
                             <th (click)="sort('APPOINTMENT TIME')" style="cursor: pointer;"> Time</th>
                             <!-- <th (click)="sort('CHECKED IN TIME')"  style="cursor: pointer;">Checked In Time</th> -->
-                            <th (click)="sort('NO SHOW')" style="cursor: pointer;">NoShow</th>
+                            <th (click)="sort('NO SHOW')" style="cursor: pointer;">No Show</th>
                             <th (click)="sort('ASSIGNED USER')" style="cursor: pointer;">Assigned User</th>
                             <th (click)="sort('STOCK NUMBER')" style="cursor: pointer;">Stock Number</th>
                             <th (click)="sort('MODELYEAR')" style="cursor: pointer;">Year</th>

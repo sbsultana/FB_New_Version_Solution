@@ -132,7 +132,11 @@ export class Dashboard {
     this.setHeaderData()
 
   }
+  scrollPosition = 0;
 
+  getScrollPosition(event: any): void {
+    this.scrollPosition = event.target.scrollLeft;
+  }
   setHeaderData() {
     const data = {
       title: 'OP Code Tracker',

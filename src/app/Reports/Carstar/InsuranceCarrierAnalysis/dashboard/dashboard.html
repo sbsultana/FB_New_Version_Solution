@@ -34,16 +34,20 @@
                                                 style="pointer-events: none;">Choose up to 2 Filters to Group Your
                                                 Data</a>
                                         </div>
-                                        <div class="store-columns flex-grow-1">
-                                            <ng-container *ngFor="let grp of dataGrouping;let i=index">
-                                                <button class="outline-button" *ngFor="let grp of dataGrouping"
-                                                    [ngClass]="{'active':grouping.indexOf(grp)>=0,'inactive':grouping.indexOf(grp)<0}"
-                                                    (click)="multipleorsingle('GRP',grp)">{{grp.ARG_LABEL}}
-                                                    <span *ngIf="grouping.indexOf(grp)>=0" style="float:right">
-                                                        {{grouping.indexOf(grp)+1}}
+                                        <div class="store-columns flex-grow-1"
+                                            style="grid-template-rows: repeat(2, auto);">
+                                            <ng-container *ngFor="let grp of dataGrouping">
+                                                <button class="btn btn-outline-primary store-button" [ngClass]="{
+                                                    'active': grouping.includes(grp),
+                                                    'inactive': !grouping.includes(grp)
+                                                }" (click)="multipleorsingle('GRP', grp)">
+                                                    {{ grp.ARG_LABEL }}
+                                                    <span *ngIf="grouping.includes(grp)">
+                                                        {{ grouping.indexOf(grp) + 1 }}
                                                     </span>
                                                 </button>
                                             </ng-container>
+
                                         </div>
                                     </div>
                                 </div>
@@ -101,32 +105,43 @@
                         </button>
 
                         <div class="timeframe" *ngIf="activePopover === 7">
-                            <div class="date-filter-card mt-2">
+
+                            <div class="date-filter-card mt-2 rl-columns">
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','All')"
-                                    [ngClass]="{'active':retailorlease.indexOf('All')>=0, 'inactive':retailorlease.indexOf('All')<0}">ALL</button>
-                                <!-- <button class="outline-button" (click)="multipleorsingle('RL','Retail and Lease')"
-                                            [ngClass]="{'active':retailorlease.indexOf('Retail and Lease')>=0, 'inactive':retailorlease.indexOf('Retail and Lease')<0}">RETAIL
-                                            & LEASE</button> -->
+                                    [ngClass]="{'active': retailorlease?.includes('All'), 'inactive': !retailorlease?.includes('All')}">ALL</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Retail')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Retail')>=0, 'inactive':retailorlease.indexOf('Retail')<0}">RETAIL</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Retail'), 'inactive': !retailorlease?.includes('Retail')}">RETAIL</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Lease')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Lease')>=0, 'inactive':retailorlease.indexOf('Lease')<0}">LEASE</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Lease'), 'inactive': !retailorlease?.includes('Lease')}">LEASE</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Wholesale')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Wholesale')>=0, 'inactive':retailorlease.indexOf('Wholesale')<0}">WHOLESALE</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Wholesale'), 'inactive': !retailorlease?.includes('Wholesale')}">WHOLESALE</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Misc')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Misc')>=0, 'inactive':retailorlease.indexOf('Misc')<0}">MISC.</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Misc'), 'inactive': !retailorlease?.includes('Misc')}">MISC.</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Fleet')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Fleet')>=0, 'inactive':retailorlease.indexOf('Fleet')<0}">FLEET</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Fleet'), 'inactive': !retailorlease?.includes('Fleet')}">FLEET</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Demo')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Demo')>=0, 'inactive':retailorlease.indexOf('Demo')<0}">DEMO</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Demo'), 'inactive': !retailorlease?.includes('Demo')}">DEMO</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Special Order')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Special Order')>=0, 'inactive':retailorlease.indexOf('Special Order')<0}">SPECIAL
-                                    ORDER</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Special Order'), 'inactive': !retailorlease?.includes('Special Order')}">
+                                    SPECIAL ORDER
+                                </button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Rental')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Rental')>=0, 'inactive':retailorlease.indexOf('Rental')<0}">RENTAL</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Rental'), 'inactive': !retailorlease?.includes('Rental')}">RENTAL</button>
+
                                 <button class="outline-button" (click)="multipleorsingle('RL','Dealer Trade')"
-                                    [ngClass]="{'active':retailorlease.indexOf('Dealer Trade')>=0, 'inactive':retailorlease.indexOf('Dealer Trade')<0}">DEALER
-                                    TRADE</button>
+                                    [ngClass]="{'active': retailorlease?.includes('Dealer Trade'), 'inactive': !retailorlease?.includes('Dealer Trade')}">
+                                    DEALER TRADE
+                                </button>
+
                             </div>
                         </div>
                     </div>

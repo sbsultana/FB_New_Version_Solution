@@ -17,7 +17,7 @@
 
                 <div class="dropdown">
                     <button class="dropdown-toggle" (click)="togglePopover(1)">
-                        Time Frame <span class="light-font"> ( {{displaytime}} )</span>
+                        Time Frame <span class="light-font"> {{displaytime}} </span>
                         <span class="arrow"></span></button>
                     <div class="timeframe" *ngIf="activePopover === 1">
                         <app-date-range-picker [Dates]="Dates"
@@ -100,7 +100,8 @@
                                         subcat.StoreName)}}
                                     </span></td>
 
-                                <td class="text-center" class="text-center" [ngClass]="{ negative: !inTheGreen(subcat.Active)}"><span>{{
+                                <td class="text-center" class="text-center"
+                                    [ngClass]="{ negative: !inTheGreen(subcat.Active)}"><span>{{
                                         subcat.Active == 0 || subcat.Active == null ? '-' :
                                         subcat.Active | number}}</span></td>
                                 <td class="text-center" [ngClass]="{ negative: !inTheGreen(subcat.Sold)}"><span>{{

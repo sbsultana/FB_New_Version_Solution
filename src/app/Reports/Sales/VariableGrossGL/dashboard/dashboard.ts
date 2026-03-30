@@ -606,7 +606,7 @@ export class Dashboard implements OnInit {
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -629,10 +629,10 @@ export class Dashboard implements OnInit {
     this.activePopover = -1
     if (this.storeIds.length == 0 || this.Department.length == 0) {
       if (this.Department.length == 0) {
-        this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
       }
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       }
     } else {
       this.setHeaderData()

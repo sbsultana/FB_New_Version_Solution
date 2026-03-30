@@ -338,7 +338,7 @@ export class Dashboard {
     viewreport() {
     this.activePopover = -1
     if (this.storeIds.length == 0 ) {
-      this.toast.show('Please select atleast one Store', 'warning','Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning','Warning');
     }
    
     else {

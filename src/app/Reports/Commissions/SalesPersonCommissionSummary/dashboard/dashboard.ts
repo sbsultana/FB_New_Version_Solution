@@ -379,7 +379,7 @@ export class Dashboard {
   //     this.GetData();
   //   } else {
   
-  //     this.toast.show('Please select atleast one store', 'warning', 'Warning');
+  //     this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
   //   }
 
 

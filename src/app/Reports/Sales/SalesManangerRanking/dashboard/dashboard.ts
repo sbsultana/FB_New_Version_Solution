@@ -865,7 +865,7 @@ DupFromDate: any = '';
 
     if (!this.storeIds || this.storeIds.length === 0) {
 
-      this.toast.show('Please select atleast one store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       return;
     } else
       if (this.retailorlease.length == 0) {
@@ -874,11 +874,11 @@ DupFromDate: any = '';
       }
       else if (this.neworused.length == 0) {
 
-        this.toast.show('Please select atleast one Sale Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Sale Type', 'warning', 'Warning');
       }
       else if (this.financetype.length == 0) {
 
-        this.toast.show('Please select atleast one Finance Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Finance Type', 'warning', 'Warning');
       }
       else {
         const data = {

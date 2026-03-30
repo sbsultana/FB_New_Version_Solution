@@ -62,12 +62,19 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <button class="dropdown-toggle" (click)="togglePopover(8)"> Labor Types <span
-                                class="light-font"> ( {{ labourType
+                        <button class="dropdown-toggle" (click)="togglePopover(8)">
+                            <div *ngIf="spinnerLoaderlabor"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            Labor Types <span class="light-font"> ( {{ labourType
                                 == 'S' ? 'All Labor Types W/O Details' : labourType=='N' ? 'All Labor Types' :
                                 (LaborTypeVal.length > 0 ? LaborTypeVal.join(', ') : 'SELECT') }}
                                 <span>{{labortypes.length}}</span> ) </span>
-                            <span class="arrow"></span></button>
+                            <span class="arrow"></span>
+                        </button>
                         <div class="reportstores-card my-2" *ngIf="activePopover ===8">
                             <div class="row h-100">
                                 <div class="groups pe-2 d-flex flex-column">
@@ -83,10 +90,10 @@
                                                 (click)="multipleorsingle('LT','S')">
                                                 All Labor Types W/O Details
                                             </button>
-                                            <button class="btn group-button w-100 text-start"
+                                            <!-- <button class="btn group-button w-100 text-start"
                                                 (click)="multipleorsingle('LT','Y')"
                                                 [ngClass]="{'active':labourType=='Y', 'inactive':labourType!='Y'}">Policy
-                                                Account</button>
+                                                Account</button> -->
                                         </div>
                                     </div>
                                 </div>
@@ -124,7 +131,8 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <button class="apply-button" (click)="viewreport()"><span>Apply</span></button>
+                        <button class="apply-button" (click)="viewreport()" [disabled]="spinnerLoader"
+                            [ngClass]="{ 'disable': spinnerLoader }"><span>Apply</span></button>
                     </div>
                 </div>
             </div>

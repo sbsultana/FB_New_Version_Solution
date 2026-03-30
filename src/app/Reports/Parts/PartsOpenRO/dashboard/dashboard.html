@@ -165,23 +165,23 @@
                             <th class="text-center">{{DupFromDate |date:'MMMM'}} <span
                                     *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
-                            
+
                             <th colspan="11">Total Parts</th>
-                            
+
                             <th colspan="4">
                                 <!--  -->Mechanical
 
                             </th>
-                            
+
                             <th colspan="4">Retail/Wholesale
 
                             </th>
-                            
+
                             <th colspan="3">Performance</th>
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span>{{DupFromDate |date:'dd'}} </span> <span
+                            <!-- <th><span>{{DupFromDate |date:'dd'}} </span> <span
                                     *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
                                 <span>
@@ -191,8 +191,11 @@
                                     |date:'yyyy'}}</span><span
                                     *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
-                            
+
                             <!-- <th></th> -->
                             <th (click)="sort('Total_Quantity')" style="cursor: pointer;" class="bdr-rt">Quantity
                             </th>
@@ -241,7 +244,7 @@
                                 Target</th>
                             <th (click)="sort('Total_PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
                             </th>
-                            
+
 
                             <th (click)="sort('ServiceGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
                             <th (click)="sort('ServiceGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace
@@ -250,14 +253,14 @@
                             </th>
                             <th (click)="sort('ServiceGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff
                             </th>
-                            
+
 
                             <th (click)="sort('PartsGross')" style="cursor: pointer;" class="bdr-rt">Gross</th>
                             <th (click)="sort('PartsGross_Pace')" style="cursor: pointer;" class="bdr-rt">Pace</th>
                             <th (click)="sort('PartsGross_Target')" style="cursor: pointer;" class="bdr-rt">Target
                             </th>
                             <th (click)="sort('PartsGross_Diff')" style="cursor: pointer;" class="bdr-rt">Diff</th>
-                            
+
                             <th (click)="sort('Parts_RO')" style="cursor: pointer;" class="bdr-rt">Parts/RO</th>
                             <th (click)="sort('Lost_PerDay')" style="cursor: pointer;" class="bdr-rt">Lost/day</th>
                             <th (click)="sort('Retention')" style="cursor: pointer;" class="bdr-rt">GP%</th>
@@ -272,8 +275,7 @@
                                 [id]="'DV_'+i">
                                 <td id="DataBody1" [id]="'D_'+i"
                                     [ngStyle]="{'pointer-events': PartsInfo.data1 == 'Reports Total' ? 'none':'visible'}">
-                                    <span
-                                        (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')"
+                                    <span (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')"
                                         [id]="'D_'+i"></span>
                                     <span [id]="'D_'+i" title="{{PartsInfo.data1}}" class="cursor-pointer"
                                         (click)="expandorcollapse(i,$event,PartsInfo.Dealer,PartsInfo,'')">
@@ -297,7 +299,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                
+
 
 
                                 <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(PartsInfo.Total_Quantity)}">
@@ -461,7 +463,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                
+
 
                                 <td id="DataBody10" [ngClass]="{ negative: !inTheGreen(PartsInfo.ServiceGross)}">
                                     <span class="d-flex justify-content-between">
@@ -514,7 +516,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                
+
                                 <td id="DataBody14" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross)}">
                                     <span class="d-flex justify-content-between">
                                         {{
@@ -567,7 +569,7 @@
                                         </span>
                                     </span>
                                 </td>
-                                
+
                                 <td id="DataBody2">{{ PartsInfo.Parts_RO == 0 || PartsInfo.Parts_RO == null ? '-' :
                                     PartsInfo.Parts_RO | number:'1.2-2'}}</td>
                                 <td id="DataBody3">{{ PartsInfo.Lost_PerDay == 0 || PartsInfo.Lost_PerDay == null ?
@@ -585,8 +587,9 @@
                                 <td>
                                     &nbsp;
                                 </td>
-                                
-                                <td colspan="25" style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+
+                                <td colspan="25"
+                                    style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                     <app-parts-open-rodetails
                                         [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
                                 </td>
@@ -621,7 +624,7 @@
 
                                         </span>
                                     </td>
-                                    
+
                                     <td> {{ data2.Total_Quantity == 0 || data2.Total_Quantity == null ?
                                         '-' :
                                         data2.Total_Quantity | number:'1.0-0'}}</td>
@@ -708,7 +711,7 @@
                                     </td>
                                     <td>-</td>
                                     <td>-</td>
-                                    
+
                                     <td [ngClass]="{ negative: !inTheGreen(data2.ServiceGross)}">
                                         <span class="d-flex justify-content-between">
                                             {{
@@ -766,7 +769,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    
+
                                     <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross)}">
                                         <span class="d-flex justify-content-between">
 
@@ -820,7 +823,7 @@
                                             </span>
                                         </span>
                                     </td>
-                                    
+
                                     <td>{{data2.Parts_RO == 0 || data2.Parts_RO == null ? '-' : data2.Parts_RO |
                                         number:'1.2-2'}}</td>
                                     <td>{{data2.Lost_PerDay == 0 || data2.Lost_PerDay == null ? '-' :
@@ -837,8 +840,9 @@
                                     <td>
                                         &nbsp;
                                     </td>
-                                    
-                                    <td colspan="26" style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+
+                                    <td colspan="26"
+                                        style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                         <app-parts-open-rodetails
                                             [RODetailsObject]="RODetailsObject"></app-parts-open-rodetails>
                                     </td>
@@ -852,7 +856,7 @@
                     <tbody *ngIf="NoData">
                         <tr>
                             <td colspan="1"></td>
-                            
+
                             <td colspan="26" style="color: black;pointer-events:none ; text-align: center !important;">
                                 No
                                 Records Found</td>

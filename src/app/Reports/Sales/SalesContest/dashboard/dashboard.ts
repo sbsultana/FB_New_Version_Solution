@@ -347,10 +347,10 @@ export class Dashboard {
 
     if (this.storeIds.length == 0 || this.filtertype.length == 0) {
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       }
       if (this.filtertype.length == 0) {
-        this.toast.show('Please select atleast one Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Type', 'warning', 'Warning');
       }
     } else {
       this.setHeaderData()

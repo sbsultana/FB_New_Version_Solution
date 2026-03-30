@@ -179,7 +179,7 @@ export class Dashboard {
     }
   }
   applyFilterAndYear() {
-    if (!this.selectedYear) {
+    if (!this.storeIds?.length) {
       this.toast.show(
         'Please Select Atleast One Store',
         'warning',

@@ -27,12 +27,15 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <!-- <th class="text-center">  </th> -->
-                            <th colspan="21" class="boxshadow-none" style="text-align: center;">Parts Gross Profit
+                            <th> <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
+                                        |date:'MMMM'}} </span> </span></th>
+                            <th colspan="20" class="boxshadow-none" style="text-align: center;">Parts Gross Profit
                                 Performance Scorecard</th>
                         </tr>
                         <tr class="bdr-btm">
-                            <th> <span>{{DupFromDate |date:'MMMM'}} <span
+                            <!-- <th> <span>{{DupFromDate |date:'MMMM'}} <span
                                         *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
                                         {{DupToDate
                                         |date:'MMMM'}} </span> </span> <span>{{DupFromDate |date:'dd'}} <span
@@ -43,9 +46,11 @@
                                         |date:'yyyy'}}</span><span
                                         *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
                                         {{DupFromDate |
-                                        date:'yyyy'}}</span></span></th>
+                                        date:'yyyy'}}</span></span></th> -->
 
-
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
+                            </th>
                             <td class="text-center ">
                                 <span (click)="sort('GUIDE')"> Guide</span>
                                 &nbsp;&nbsp;<img src="images/Edit_Icon.svg" class="ms-auto" *ngIf="RepairData == 'Y'"

@@ -23,7 +23,7 @@ export class Dashboard {
   TotalServiceGross: any = [];
   type: any = 'A';
   TotalReport: string = 'T';
-  DummyReportType:String= 'T';
+  DummyReportType: String = 'T';
   ReportType: any = 'T';
   NoData: boolean = false;
   Paytype: any = ['C', 'W', 'I', 'EW'];
@@ -109,7 +109,7 @@ export class Dashboard {
   }
   detailHeaders: any = [];
   GetData() {
-    console.log(this.detailHeaders,'..................');
+    console.log(this.detailHeaders, '..................');
     this.DummyReportType = this.ReportType
     this.responcestatus = '';   // ✅ RESET STATUS
     this.servicegrossprofitdata = [];
@@ -480,7 +480,7 @@ export class Dashboard {
   setSubTypeOverallData: any = [];
   mainSubType: any = [];
   singleSubType: any = '';
-  spinnerLoader: boolean = false
+  spinnerLoader: boolean = false;
   getSubTypeDetail(data?: any) {
     const obj = {
       "AS_IDS": this.storeIds.toString(),
@@ -489,9 +489,11 @@ export class Dashboard {
     this.spinLoader = true;
     this.subTypeDetails = [];
     this.subtypeaction = 'Y'
+    this.spinnerLoader = true;
     this.shared.api.postmethod(this.comm.routeEndpoint + '/GetSubtypeDetailTypes', obj).subscribe((res: any) => {
       if (res.status == 200) {
         this.spinLoader = false;
+        this.spinnerLoader = false;
         this.subtypeaction = 'N'
         this.setSubTypeOverallData = res.response;
         let a = res.response.map(function (a: any) {
@@ -516,7 +518,10 @@ export class Dashboard {
         // else{
         //   this.selectedSubType = []
         // }
+      } else {
+        this.spinnerLoader = false;
       }
+
     })
   }
   AllSubType(Data: any) {
@@ -597,7 +602,7 @@ export class Dashboard {
           }
         }
         if (this.selectedSubType.length === 0 && this.subTypeDetails?.length > 0) {
-          this.toast.show('Please select atleast one subtype from each Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One subtype from each Department', 'warning', 'Warning');
           this.alertState = true;
         } else if (data.length === Data.SubData.length) {
           this.toast.show('Please select any one subtype from ' + Data.Dept + ' Department', 'warning', 'Warning');
@@ -631,15 +636,15 @@ export class Dashboard {
   viewreport() {
     this.activePopover = -1
     // if (this.selectedDataGrouping.length == 0) {
-    //   this.toast.warning('Please select atleast one Value from Grouping', '');
+    //   this.toast.warning('Please Select Atleast One Value from Grouping', '');
     // } else {
     if (this.storeIds.length == 0) {
-      this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     } else if (this.selectedSubType.length <= 3) {
       this.toast.show('Please select atleast 3 Sub type', 'warning', 'Warning');
     } else {
       if (this.Paytype.length == 0) {
-        this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
       } else {
         this.setHeaderData();
         this.getServiceData()
@@ -710,7 +715,7 @@ export class Dashboard {
       firstHeaderRow.getCell(1).value = 'Store Totals';
       worksheet.mergeCells(`A${firstHeaderRow.number}:E${firstHeaderRow.number}`);
       let colIndex = 5;
-      this.detailHeaders.forEach((header:any) => {
+      this.detailHeaders.forEach((header: any) => {
         colIndex++; // spacer
         const startCol = colIndex;
         const endCol = colIndex + 1; // 2 columns per header
@@ -792,7 +797,7 @@ export class Dashboard {
           );
         });
       } else if (this.ReportType === 'G') {
-        this.detailHeaders.forEach((_:any, i:any) => {
+        this.detailHeaders.forEach((_: any, i: any) => {
           row.push(
             sgp.Details?.[i]?.hourscp || 0,
             sgp.Details?.[i]?.GrossProfitCP || 0

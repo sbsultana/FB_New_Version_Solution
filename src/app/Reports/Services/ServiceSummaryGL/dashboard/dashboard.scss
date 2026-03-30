@@ -25,12 +25,18 @@
     }
 }
 
+.negative {
+    color: red;
+}
+
 .text-bold {
     background-color: #fff !important;
     color: #000;
     font-family: "Roboto";
     font-weight: 700;
-    td{
+    text-align: end;
+
+    td:first-child {
         text-align: left !important;
     }
 }

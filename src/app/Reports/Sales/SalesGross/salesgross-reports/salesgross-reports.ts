@@ -576,14 +576,14 @@ export class SalesgrossReports {
     }
     else if (peoples == 0) {
       this.toast.show(
-        'Please Select Atleast One from People Filter',
+        'Please Select Atleast One From People Filter',
         'warning',
         'Warning'
       );
 
     }
     else if (this.Acquisition.length == 0) {
-      this.toast.show('Please select atleast one Acquisition Source', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Acquisition Source', 'warning', 'Warning');
     }
     else {
       const data = {

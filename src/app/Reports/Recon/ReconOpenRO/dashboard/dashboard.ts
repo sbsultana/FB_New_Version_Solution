@@ -733,7 +733,7 @@ export class Dashboard {
         this.Paytype[spliting[1]] = '';
         let arr = this.Paytype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
         }
       } else {
         this.Paytype[spliting[1]] = e;
@@ -749,7 +749,7 @@ export class Dashboard {
         this.Grosstype[spliting[1]] = '';
         let arr = this.Grosstype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
         }
       } else {
         this.Grosstype[spliting[1]] = e;
@@ -813,19 +813,19 @@ export class Dashboard {
     this.activePopover = -1
 
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 ) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else {
         let gt = this.Grosstype.filter((e: any) => e != '');
         let pt = this.Paytype.filter((e: any) => e != '');
         if (pt.length == 0 || gt.length == 0) {
           if (pt.length == 0) {
-            this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+            this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
           }
           if (gt.length == 0) {
-            this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
+            this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
           }
         } else {
           this.setHeaderData()

@@ -34,7 +34,7 @@ export class Dashboard {
   print!: Subscription;
   email!: Subscription;
   excel!: Subscription;
-  
+
 
 
   stores: any = []
@@ -45,7 +45,7 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-		  otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
   storesFilterData: any = {
@@ -90,12 +90,12 @@ DupFromDate: any = '';
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
-        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+      this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
 
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -141,7 +141,7 @@ DupFromDate: any = '';
       todate: this.ToDate,
       groups: this.groupId,
       subtype: this.selectedSubType,
-   otherstoreids: this.otherStoreIds
+      otherstoreids: this.otherStoreIds
 
     };
     this.shared.api.SetHeaderData({
@@ -166,7 +166,7 @@ DupFromDate: any = '';
     const obj = {
       "Startdate": this.FromDate.replaceAll('/', '-'),
       "Enddate": this.ToDate.replaceAll('/', '-'),
-      "AS_IDS":[...this.storeIds, ...this.otherStoreIds],
+      "AS_IDS": [...this.storeIds, ...this.otherStoreIds],
       "DEPTTYPE": 'Parts',
       "SUBTYPE": this.selectedSubType.toString(),
       "Details": this.Department.indexOf('Details') >= 0 ? 'Details' : ''
@@ -361,8 +361,7 @@ DupFromDate: any = '';
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-	      this.otherStoreIds = data.otherStoreIds;
-
+    this.otherStoreIds = data.otherStoreIds;
     this.getSubTypeDetail()
   }
 
@@ -455,7 +454,7 @@ DupFromDate: any = '';
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -475,7 +474,7 @@ DupFromDate: any = '';
         }
 
         if (this.selectedSubType.length == 0 && this.subTypeDetails.length > 0) {
-          this.toast.show('Please select atleast one subtype from each Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Sub Type From Each Department', 'warning', 'Warning');
           this.alertState = true;
         } else if (data.length == Data.SubData.length) {
           this.toast.show('Please select any one subtype from ' + Data.Dept + ' Department')
@@ -579,9 +578,9 @@ DupFromDate: any = '';
     this.activePopover = -1
 
     if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-      this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     } else if (this.Department.length == 0) {
-      this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Department Type', 'warning', 'Warning');
     }
 
     else {
@@ -687,7 +686,7 @@ DupFromDate: any = '';
     stores1.font = { name: 'Arial', family: 4, size: 9 };
 
     worksheet.addRow('');
-   let dateYear = worksheet.getCell('A11');
+    let dateYear = worksheet.getCell('A11');
     dateYear.value = PresentMonth;
     dateYear.alignment = { vertical: 'middle', horizontal: 'center' };
     dateYear.font = {

@@ -26,6 +26,12 @@
                     </div>
                     <div class="dropdown" *ngIf="ReportType?.toString() === 'T'">
                         <button class="dropdown-toggle" (click)="togglePopover(3)">
+                            <div *ngIf="spinnerLoader"
+                                class="graph-loader d-flex align-items-center justify-content-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
                             Pay Type <span class="light-font">(
                                 {{Paytype.length == 0 ? 'Select' : (Paytype.length == 1 ? (Paytype.toString() == 'C' ?
                                 'Customer Pay' : (Paytype.toString() == 'W' ? 'Warranty' : (Paytype.toString() == 'I' ?
@@ -205,20 +211,31 @@
                                     :sgp.Store_Name }}</td>
                                 <td class="text-end">{{sgp.Hours == 0 || sgp.Hours == null ? '-' :sgp.Hours
                                     |number:'1.2-2'}}</td>
-                                <td class="text-end">
-                                    <!-- {{sgp.GrossProfit == 0 || sgp.GrossProfit == null ? '-' :sgp.GrossProfit | currency:'USD':'symbol':'1.0-0'}} -->
-                                    {{
-                                    (sgp.GrossProfit == 0 || sgp.GrossProfit == null ?
-                                    '-' :
-                                    sgp.GrossProfit | currency:'USD':'symbol':'1.0-0')
-                                    }}
+                                <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.GrossProfit)}">
+                                    <span class="d-flex justify-content-between">
+                                        <span>
+                                            {{ (sgp.GrossProfit == 0 || sgp.GrossProfit == null) ? '' : '$' }}
+                                        </span>
+                                        <span>
+                                            {{ (sgp.GrossProfit == 0 || sgp.GrossProfit == null)
+                                            ? 0
+                                            : (sgp.GrossProfit | number:'1.0-0') }}
+                                        </span>
+
+                                    </span>
                                 </td>
                                 <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
-                                    <!-- {{sgp.Discount == 0 || sgp.Discount == null ? '-' :sgp.Discount | currency:'USD':'symbol':'1.0-0' }} -->
-                                    {{
-                                    (sgp.Discount == 0 || sgp.Discount == null ?
-                                    '-' :
-                                    sgp.Discount | currency:'USD':'symbol':'1.0-0') }}
+                                    <span class="d-flex justify-content-between">
+                                        <span>
+                                            {{ (sgp.Discount == 0 || sgp.Discount == null) ? '' : '$' }}
+                                        </span>
+                                        <span>
+                                            {{ (sgp.Discount == 0 || sgp.Discount == null)
+                                            ? 0
+                                            : (sgp.Discount | number:'1.0-0') }}
+                                        </span>
+
+                                    </span>
                                 </td>
                                 <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
                                                 :sgp.actualtime |number:'1.2-2'}}</td> -->
@@ -232,7 +249,7 @@
                                             ? '-'
                                             :sgp.CP[0].HoursCP
                                             |number:'1.2-2'}}</td>
-                                        <td class="text-end">
+                                        <!-- <td class="text-end">
                                             {{
                                             (sgp.CP[0].GrossProfitCP == 0 || sgp.CP[0].GrossProfitCP
                                             ==
@@ -242,14 +259,43 @@
                                             sgp.CP[0].GrossProfitCP |
                                             currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.CP[0].HoursCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.CP[0].HoursCP == 0 || sgp.CP[0].HoursCP == null) ? '' : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.CP[0].HoursCP == 0 || sgp.CP[0].HoursCP == null)
+                                                    ? 0
+                                                    : (sgp.CP[0].HoursCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
-                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                        <!-- <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
                                             {{
                                             (sgp.CP[0].DiscountCP == 0 || sgp.CP[0].DiscountCP ==
                                             null ?
                                             '-' :
                                             sgp.CP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.CP[0].DiscountCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.CP[0].DiscountCP == 0 || sgp.CP[0].DiscountCP == null) ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.CP[0].DiscountCP == 0 || sgp.CP[0].DiscountCP == null)
+                                                    ? 0
+                                                    : (sgp.CP[0].DiscountCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
                                         <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
                                                     :sgp.actualtime |number:'1.2-2'}}</td> -->
@@ -266,7 +312,7 @@
                                             ? '-'
                                             :sgp.WP[0].HoursCP
                                             |number:'1.2-2'}}</td>
-                                        <td class="text-end">
+                                        <!-- <td class="text-end">
                                             {{
                                             (sgp.WP[0].GrossProfitCP == 0 || sgp.WP[0].GrossProfitCP
                                             ==
@@ -276,14 +322,47 @@
                                             sgp.WP[0].GrossProfitCP |
                                             currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end"
+                                            [ngClass]="{ negative: !inTheGreen(sgp.WP[0].GrossProfitCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.WP[0].GrossProfitCP == 0 || sgp.WP[0].GrossProfitCP == null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.WP[0].GrossProfitCP == 0 || sgp.WP[0].GrossProfitCP == null)
+                                                    ? 0
+                                                    : (sgp.WP[0].GrossProfitCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
-                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                        <!-- <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
                                             {{
                                             (sgp.WP[0].DiscountCP == 0 || sgp.WP[0].DiscountCP ==
                                             null ?
                                             '-' :
                                             sgp.WP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.WP[0].DiscountCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.WP[0].DiscountCP == 0 || sgp.WP[0].DiscountCP == null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.WP[0].DiscountCP == 0 || sgp.WP[0].DiscountCP == null)
+                                                    ? 0
+                                                    : (sgp.WP[0].DiscountCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
                                         <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
     :sgp.actualtime |number:'1.2-2'}}</td> -->
@@ -299,12 +378,31 @@
                                             ==
                                             null ? '-'
                                             :sgp.EWP[0].HoursCP |number:'1.2-2'}}</td>
-                                        <td class="text-end">{{sgp.EWP[0].GrossProfitCP == 0 ||
+                                        <!-- <td class="text-end">{{sgp.EWP[0].GrossProfitCP == 0 ||
                                             sgp.EWP[0].GrossProfitCP
                                             ==
                                             null ? '-'
-                                            :sgp.EWP[0].GrossProfitCP |number:'1.2-2'}}</td>
+                                            :sgp.EWP[0].GrossProfitCP |number:'1.2-2'}}</td> -->
                                         <td class="text-end"
+                                            [ngClass]="{ negative: !inTheGreen(sgp.EWP[0].GrossProfitCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.EWP[0].GrossProfitCP == 0 || sgp.EWP[0].GrossProfitCP ==
+                                                    null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.EWP[0].GrossProfitCP == 0 || sgp.EWP[0].GrossProfitCP ==
+                                                    null)
+                                                    ? 0
+                                                    : (sgp.EWP[0].GrossProfitCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
+                                        </td>
+                                        <!-- <td class="text-end"
                                             [ngClass]="{ negative: !inTheGreen(sgp.EWP[0].DiscountCP)}">
                                             {{
                                             (sgp.EWP[0].DiscountCP == 0 || sgp.EWP[0].DiscountCP ==
@@ -312,6 +410,23 @@
                                             '-' :
                                             sgp.EWP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end"
+                                            [ngClass]="{ negative: !inTheGreen(sgp.EWP[0].DiscountCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.EWP[0].DiscountCP == 0 || sgp.EWP[0].DiscountCP == null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.EWP[0].DiscountCP == 0 || sgp.EWP[0].DiscountCP == null)
+                                                    ? 0
+                                                    : (sgp.EWP[0].DiscountCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
                                         <!-- <td class="text-end">{{sgp.actualtime == 0 || sgp.actualtime == null ? '-'
 :sgp.actualtime |number:'1.2-2'}}</td> -->
@@ -329,7 +444,7 @@
                                             ==
                                             null ? '-'
                                             :sgp.IP[0].HoursCP |number:'1.2-2'}}</td>
-                                        <td class="text-end">
+                                        <!-- <td class="text-end">
                                             {{
                                             (sgp.IP[0].GrossProfitCP == 0 || sgp.IP[0].GrossProfitCP
                                             ==
@@ -339,14 +454,47 @@
                                             sgp.IP[0].GrossProfitCP |
                                             currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end"
+                                            [ngClass]="{ negative: !inTheGreen(sgp.IP[0].GrossProfitCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.IP[0].GrossProfitCP == 0 || sgp.IP[0].GrossProfitCP == null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.IP[0].GrossProfitCP == 0 || sgp.IP[0].GrossProfitCP == null)
+                                                    ? 0
+                                                    : (sgp.IP[0].GrossProfitCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
-                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                        <!-- <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
                                             {{
                                             (sgp.IP[0].DiscountCP == 0 || sgp.IP[0].DiscountCP ==
                                             null ?
                                             '-' :
                                             sgp.IP[0].DiscountCP | currency:'USD':'symbol':'1.0-0')
                                             }}
+                                        </td> -->
+                                        <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.IP[0].DiscountCP)}">
+                                            <span class="d-flex justify-content-between">
+                                                <span>
+                                                    {{ (sgp.IP[0].DiscountCP == 0 || sgp.IP[0].DiscountCP == null)
+                                                    ? ''
+                                                    : '$'
+                                                    }}
+                                                </span>
+                                                <span>
+                                                    {{ (sgp.IP[0].DiscountCP == 0 || sgp.IP[0].DiscountCP == null)
+                                                    ? 0
+                                                    : (sgp.IP[0].DiscountCP | number:'1.0-0') }}
+                                                </span>
+
+                                            </span>
                                         </td>
                                         <td class="text-end">{{sgp.IP[0].GP_Hourcp == 0 ||
                                             sgp.IP[0].GP_Hourcp ==
@@ -427,22 +575,52 @@
                                 }}
                             </td>
 
-                            <td [ngClass]="{ negative: sgp?.GrossProfit < 0 }">
+                            <!-- <td [ngClass]="{ negative: sgp?.GrossProfit < 0 }">
                                 {{
                                 sgp?.GrossProfit
                                 ? (sgp.GrossProfit | currency:'USD':'symbol':'1.0-0')
                                 : '-'
                                 }}
-                            </td>
+                            </td> -->
+                            <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.GrossProfit)}">
+                                <span class="d-flex justify-content-between">
+                                    <span>
+                                        {{ (sgp.GrossProfit == 0 || sgp.GrossProfit == null)
+                                        ? ''
+                                        : '$'
+                                        }}
+                                    </span>
+                                    <span>
+                                        {{ (sgp.GrossProfit == 0 || sgp.GrossProfit == null)
+                                        ? 0
+                                        : (sgp.GrossProfit | number:'1.0-0') }}
+                                    </span>
 
-                            <td [ngClass]="{ negative: sgp?.Discount < 0 }">
+                                </span>
+                            </td>
+                            <!-- <td [ngClass]="{ negative: sgp?.Discount < 0 }">
                                 {{
                                 sgp?.Discount
                                 ? (sgp.Discount | currency:'USD':'symbol':'1.0-0')
                                 : '-'
                                 }}
-                            </td>
+                            </td> -->
+                            <td class="text-end" [ngClass]="{ negative: !inTheGreen(sgp.Discount)}">
+                                <span class="d-flex justify-content-between">
+                                    <span>
+                                        {{ (sgp.Discount == 0 || sgp.Discount == null)
+                                        ? ''
+                                        : '$'
+                                        }}
+                                    </span>
+                                    <span>
+                                        {{ (sgp.Discount == 0 || sgp.Discount == null)
+                                        ? 0
+                                        : (sgp.Discount | number:'1.0-0') }}
+                                    </span>
 
+                                </span>
+                            </td>
                             <td>
                                 {{
                                 sgp?.GP_Hour
@@ -460,12 +638,31 @@
                                     : '-'
                                     }}
                                 </td>
-                                <td [ngClass]="{ negative: sgp?.Details?.[i]?.GrossProfitCP < 0 }">
+                                <!-- <td [ngClass]="{ negative: sgp?.Details?.[i]?.GrossProfitCP < 0 }">
                                     {{
                                     sgp?.Details?.[i]?.GrossProfitCP
                                     ? (sgp.Details[i].GrossProfitCP | currency:'USD':'symbol':'1.0-0')
                                     : '-'
                                     }}
+                                </td> -->
+                                <td class="text-end"
+                                    [ngClass]="{ negative: !inTheGreen(sgp.Details?.[i]?.GrossProfitCP)}">
+                                    <span class="d-flex justify-content-between">
+                                        <span>
+                                            {{ (sgp.Details?.[i]?.GrossProfitCP == 0 || sgp.Details?.[i]?.GrossProfitCP
+                                            == null)
+                                            ? ''
+                                            : '$'
+                                            }}
+                                        </span>
+                                        <span>
+                                            {{ (sgp.Details?.[i]?.GrossProfitCP == 0 || sgp.Details?.[i]?.GrossProfitCP
+                                            == null)
+                                            ? 0
+                                            : (sgp.Details?.[i]?.GrossProfitCP | number:'1.0-0') }}
+                                        </span>
+
+                                    </span>
                                 </td>
                             </ng-container>
                         </tr>

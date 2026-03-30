@@ -49,12 +49,12 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-  			  otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
 
   storesFilterData: any = {
-    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',  otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
+    'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y', otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds,
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
 
@@ -105,12 +105,12 @@ export class Dashboard {
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
-        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+      this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
 
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -151,7 +151,8 @@ export class Dashboard {
     localStorage.setItem('time', type);
     this.DateType = type
     this.setDates(this.DateType)
-
+    this.lastyearDate = new Date(this.FromDate)
+    this.lastyearDate.setFullYear(this.lastyearDate.getFullYear() - 1);
   }
 
 
@@ -165,7 +166,7 @@ export class Dashboard {
       fromdate: this.FromDate,
       todate: this.ToDate,
       groups: this.groupId,
-    otherstoreids: this.otherStoreIds
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -189,7 +190,7 @@ export class Dashboard {
     const obj = {
       startdate: this.FromDate.replaceAll('/', '-'),
       enddate: this.ToDate.replaceAll('/', '-'),
-      StoreID:[...this.storeIds, ...this.otherStoreIds],
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       PaytypeC: this.Paytype[0] == 'Customerpay_0' ? 'C' : '',
       PaytypeW: this.Paytype[1] == 'Warranty_1' ? 'W' : '',
       PaytypeI: this.Paytype[2] == 'Internal_2' ? 'I' : '',
@@ -386,7 +387,7 @@ export class Dashboard {
       }
     }
   }
-async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, source: any, custno: any) {
+  async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, source: any, custno: any) {
     const module = await import('../../../../Layout/cdpdataview/repair/repair-module');
     const component = module.Repair;
     const modalRef = this.shared.ngbmodal.open(component, { size: 'xl', windowClass: 'connectedmodal' });
@@ -756,7 +757,7 @@ async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, so
     this.otherStoreIds = data.otherStoreIds;
     this.storedisplayname = data.storedisplayname;
 
-    
+
   }
 
   getStoresandGroupsValues() {
@@ -810,7 +811,7 @@ async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, so
       if (index >= 0) {
         this.Department.splice(index, 1);
         if (this.Department.length == 0) {
-          this.toast.show('Please select atleast one Department', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
         }
       } else {
         this.Department.push(e);
@@ -844,12 +845,12 @@ async openServiceModal(roNumber: any, vin: any, storeid: any, vehicleid: any, so
   viewreport() {
     this.activePopover = -1
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
       } else if (this.Department.length == 0) {
-        this.toast.show('Please select atleast one Department Type', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Department Type', 'warning', 'Warning');
       }
 
       else {

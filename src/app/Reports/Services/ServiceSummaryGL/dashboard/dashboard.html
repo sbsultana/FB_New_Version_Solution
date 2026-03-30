@@ -120,7 +120,7 @@
                             <th colspan="8">Gross</th>
                         </tr>
                         <tr>
-                            <th><span>{{DupFromDate |date:'dd'}}
+                         <--   <th><span>{{DupFromDate |date:'dd'}}
                                     <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
                                     - {{DupToDate |date:'dd'}},
@@ -129,8 +129,11 @@
                                     <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
-                            <th (click)="sort('UNITS',ServiceData)" style="cursor: pointer;">GL CNT</th>
+                            <th (click)="sort('UNITS',ServiceData)" style="cursor: pointer;">GL Count</th>
                             <th (click)="sort('SALES_MTD',ServiceData)" style="cursor: pointer;">Actual</th>
                             <th (click)="sort('SALES_PACE',ServiceData)" style="cursor: pointer;">Pace</th>
                             <!-- <th (click)="sort('SALES_TARGET',ServiceData)" style="cursor: pointer;">Forecast</th>

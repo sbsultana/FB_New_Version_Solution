@@ -98,7 +98,7 @@
                             RO Status <span class="light-font">( {{rostatus ? (rostatus.length == 1 ? (rostatus == 'R' ?
                                 'Ready to Post' : (rostatus== 'P' ? 'Pre-Invoiced' : rostatus)) : 'Selected' ) :
                                 'Select'}}
-                                {{rostatus ? (rostatus.length == 1 ? '': '(' +rostatus.length +')' ) : ''}}
+                                {{rostatus ? (rostatus.length == 1 ? '':  rostatus.length  ) : ''}}
                                 )</span>
                             <span class="arrow"></span>
                         </button>
@@ -269,7 +269,7 @@
 
                                 <td id="DataBody2" [id]="'D_'+i"
                                     [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL'? 'none':'visible' }"
-                                    [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders), pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL'}"
+                                    [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders), pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL', 'deal-link': ServiceInfo.data1 !== 'REPORTS TOTAL'}"
                                     (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')">{{
                                     ServiceInfo.Repair_Orders == 0 || ServiceInfo.Repair_Orders == null ? '-' :
                                     ServiceInfo.Repair_Orders | number:'1.0-0' }}</td>

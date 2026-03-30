@@ -5,7 +5,7 @@
   <div class="container-fluid">
     <div class="col-12">
       <div class="reports-bar">
-        <div class="filter-dropdowns">
+        <div class="filter-dropdowns" (scroll)="getScrollPosition($event)">
           <div class="dropdown">
             <button class="dropdown-toggle" (click)="togglePopover(0)">Stores <span class="light-font">(
                 {{storecount}}
@@ -35,7 +35,7 @@
                 PreviousMonths === '13' ? 'Last 13 Months' : 'Select' }} )</span>
               <span class="arrow"></span>
             </button>
-            <div class="timeframe" *ngIf="activePopover === 1">
+            <div class="timeframe" *ngIf="activePopover === 1" [style.margin-left.px]="scrollPosition*-1">
               <div class="date-filter-card mt-2">
                 <button class="outline-button"
                   [ngClass]="{'active': PreviousMonths == '3', 'inactive': PreviousMonths != '3'}"
@@ -56,7 +56,7 @@
                 'Service Trend' : Filter === 'PartsTrend' ? 'Parts Trend' : 'Select' }} )</span>
               <span class="arrow"></span>
             </button>
-            <div class="timeframe" *ngIf="activePopover === 3">
+            <div class="timeframe" *ngIf="activePopover === 3" [style.margin-left.px]="scrollPosition*-1">
               <div class="date-filter-card mt-2">
                 <button class="outline-button"
                   [ngClass]="{'active': Filter === 'PartsTrend','inactive': Filter !== 'PartsTrend'}"
@@ -74,7 +74,7 @@
                 SourceFilter === '120' ? 'Tires' : 'Select' }} )</span>
               <span class="arrow"></span>
             </button>
-            <div class="timeframe" *ngIf="activePopover === 4">
+            <div class="timeframe" *ngIf="activePopover === 4" [style.margin-left.px]="scrollPosition*-1">
               <div class="date-filter-card mt-2">
                 <button class="outline-button"
                   [ngClass]="{'active': SourceFilter === 'All','inactive': SourceFilter !== 'All'}"
@@ -92,7 +92,7 @@
                 ReportTotal === 'T' ? 'Top' : 'Select' }} )</span>
               <span class="arrow"></span>
             </button>
-            <div class="timeframe" *ngIf="activePopover === 2">
+            <div class="timeframe" *ngIf="activePopover === 2" [style.margin-left.px]="scrollPosition*-1">
               <div class="date-filter-card mt-2">
                 <button class="outline-button"
                   [ngClass]="{'active': ReportTotal === 'B','inactive': ReportTotal !== 'B'}"
@@ -201,18 +201,49 @@
                       <img width="17px" src="images/LineChart_Icon2.png" class="HideItems" style="cursor: pointer;"
                         title="Show Graph" (click)="openGraph(Month,PartsTrendingKeys,subcat,'MonthSummary')">
                     </td>
-
                     <ng-container *ngFor="let key of PartsTrendingKeys">
-                      <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }"
-                        *ngIf="subcat.variable === 'RO COUNT' || subcat.variable === 'HOURS' || subcat.variable === 'HOURS / RO'
-                                           || subcat.variable === 'GP' || subcat.variable === 'VIN COUNT' || subcat.variable === 'TECH COUNT'|| subcat.variable === 'TECH HOURS'|| subcat.variable === 'HOURS PER TECH'|| subcat.variable === 'BAY COUNT'">
-                        {{ subcat[key] ? (subcat.variable === 'GP' ? (subcat[key] | number :'1.0-0'):
-                        (subcat[key] | number)) : '-' }}
+                      <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }" *ngIf="subcat.variable === 'RO COUNT' 
+          || subcat.variable === 'HOURS' 
+          || subcat.variable === 'HOURS / RO'
+          || subcat.variable === 'GP' 
+          || subcat.variable === 'VIN COUNT'
+          || subcat.variable === 'TECH COUNT'
+          || subcat.variable === 'TECH HOURS'
+          || subcat.variable === 'HOURS PER TECH'
+          || subcat.variable === 'BAY COUNT'">
+
+                        {{ subcat[key]
+                        ? (subcat.variable === 'GP'
+                        ? (subcat[key] | number:'1.0-0')
+                        : (subcat[key] | number))
+                        : '-'
+                        }}
+
                       </td>
-                      <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }"
-                        *ngIf="subcat.variable !== 'RO COUNT' && subcat.variable !== 'HOURS' && subcat.variable !== 'HOURS / RO' && subcat.variable !== 'VIN COUNT' && subcat.variable !== 'GP'  && subcat.variable !== 'TECH COUNT' && subcat.variable !== 'TECH HOURS' && subcat.variable !== 'HOURS PER TECH' && subcat.variable !== 'BAY COUNT'">
-                        {{ subcat[key] ? (subcat[key] | currency: 'USD':'symbol':'1.0-0') : '-' }}
+                      <td [ngClass]="{ negative: !inTheGreen(subcat[key]) }" *ngIf="subcat.variable !== 'RO COUNT' 
+          && subcat.variable !== 'HOURS' 
+          && subcat.variable !== 'HOURS / RO' 
+          && subcat.variable !== 'VIN COUNT' 
+          && subcat.variable !== 'GP'
+          && subcat.variable !== 'TECH COUNT' 
+          && subcat.variable !== 'TECH HOURS' 
+          && subcat.variable !== 'HOURS PER TECH' 
+          && subcat.variable !== 'BAY COUNT'">
+
+                        <span class="d-flex justify-content-between">
+                          <span>
+                            {{ (subcat[key] == 0 || subcat[key] == null) ? '' : '$' }}
+                          </span>
+                          <span>
+                            {{ (subcat[key] == 0 || subcat[key] == null)
+                            ? '-'
+                            : (subcat[key] | number:'1.0-0') }}
+                          </span>
+
+                        </span>
+
                       </td>
+
                     </ng-container>
                   </ng-container>
                 </tr>

@@ -226,7 +226,7 @@
 
                                 <td id="DataBody2"
                                     [ngStyle]="{'pointer-events': ServiceInfo.data1 == undefined || ServiceInfo.data1 === 'REPORTS TOTAL' ? 'none':'visible'}"
-                                    [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders),pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL'}"
+                                    [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders),pointer : selectedDataGrouping.length < 2 && ServiceInfo.data1 != 'REPORTS TOTAL', 'deal-link': ServiceInfo.data1 !== 'REPORTS TOTAL'}"
                                     [id]="'D_'+i"
                                     (click)="expandorcollapse(i,$event,ServiceInfo.Dealer,ServiceInfo,'')">{{
                                     ServiceInfo.Repair_Orders == 0 || ServiceInfo.Repair_Orders == null ? '-' :
@@ -333,7 +333,8 @@
                                     &nbsp;
                                 </td>
 
-                                <td colspan="15"  style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+                                <td colspan="15"
+                                    style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                     <app-inventory-open-rodetails
                                         [RODetailsObjectMain]="RODetailsObjectMain"></app-inventory-open-rodetails>
                                 </td>
@@ -458,7 +459,8 @@
                                         &nbsp;
                                     </td>
 
-                                    <td colspan="15"  style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
+                                    <td colspan="15"
+                                        style="padding: 2px 1px !important;border: 2px solid #8db4ff !important;border-radius: 12px !important;">
                                         <app-inventory-open-rodetails
                                             [RODetailsObjectMain]="RODetailsObjectMain"></app-inventory-open-rodetails>
                                     </td>

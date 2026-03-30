@@ -142,7 +142,7 @@ export class Dashboard {
       if (index >= 0) {
         this.dealType.splice(index, 1);
         if (this.dealType.length == 0) {
-          // this.toast.warning('Please select atleast one type')
+          // this.toast.warning('Please Select Atleast One type')
         } else {
           this.getServiceData();
         }
@@ -667,11 +667,11 @@ export class Dashboard {
 
     if (this.statustype.length == 0) {
     
-      this.toast.show('Please select atleast one status type', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Status Type', 'warning', 'Warning');
     }
 
     // else if (this.stocktype.length == 0) {
-    //   this.toast.warning('Please select atleast one Stock Type')
+    //   this.toast.warning('Please Select Atleast One Stock Type')
     // }
     // else if(this.AgeTo == 0){
     //   this.toast.warning('Minimum range must be greater then 0')

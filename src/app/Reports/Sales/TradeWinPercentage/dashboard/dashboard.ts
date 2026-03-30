@@ -398,16 +398,16 @@ openSalesModal(){
     this.activePopover = -1
     if (this.storeIds.length == 0 || this.neworused.length == 0 || this.retailorlease.length == 0 || this.dealstatus.length == 0) {
       if (this.storeIds.length == 0) {
-        this.toast.show('Please select atleast one store','warning','Warning');
+        this.toast.show('Please Select Atleast One Store','warning','Warning');
       }
       if (this.neworused.length == 0) {
-        this.toast.show('Please select atleast one from New or Used','warning','Warning');
+        this.toast.show('Please Select Atleast One From New or Used','warning','Warning');
       }
       if (this.retailorlease.length == 0) {
-        this.toast.show('Please select atleast one Deal Type','warning','Warning');
+        this.toast.show('Please Select Atleast One Deal Type','warning','Warning');
       }
       if (this.dealstatus.length == 0) {
-        this.toast.show('Please select atleast one Deal Status','warning','Warning');
+        this.toast.show('Please Select Atleast One Deal Status','warning','Warning');
       }
     }
     else {

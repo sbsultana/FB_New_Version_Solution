@@ -42,7 +42,7 @@ export class Dashboard {
   inventory: any = 'All'
   rostatus: any = ['All'];
   topfive: boolean = false;
- 
+
 
   reportOpenSub!: Subscription;
   reportGetting!: Subscription;
@@ -769,30 +769,28 @@ DupFromDate: any = '';
 
     }
     if (block == 'RO') {
+
+      if (!Array.isArray(this.rostatus)) {
+        this.rostatus = [];
+      }
+
       if (e == 'All') {
-        const index = this.rostatus.findIndex((i: any) => i == e);
-        if (index >= 0) {
-          this.rostatus.splice(index, 1);
+        if (this.rostatus.includes('All')) {
+          this.rostatus = [];
         } else {
-          this.rostatus = []
-          this.rostatus.push(e);
+          this.rostatus = ['All'];
         }
-      }
-      else {
-        const Allindex = this.rostatus.findIndex((i: any) => i == 'All');
-        if (Allindex >= 0) {
-          this.rostatus = []
-        }
-        const index = this.rostatus.findIndex((i: any) => i == e);
-        if (index >= 0) {
-          this.rostatus.splice(index, 1);
-        } else {
-          this.rostatus.push(e);
-        }
-      }
 
+      } else {
+        this.rostatus = this.rostatus.filter((i: any) => i !== 'All');
+        if (this.rostatus.includes(e)) {
+          this.rostatus = this.rostatus.filter((i: any) => i !== e);
+        } else {
+          this.rostatus.push(e);
+        }
+
+      }
     }
-
 
     if (block == 'PT') {
       let spliting = e.split('_');
@@ -801,7 +799,7 @@ DupFromDate: any = '';
         this.Paytype[spliting[1]] = '';
         let arr = this.Paytype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
         }
       } else {
         this.Paytype[spliting[1]] = e;
@@ -815,7 +813,7 @@ DupFromDate: any = '';
         this.Grosstype[spliting[1]] = '';
         let arr = this.Grosstype.filter((e: any) => e != '');
         if (arr.length == 0) {
-          this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
+          this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
         }
       } else {
         this.Grosstype[spliting[1]] = e;
@@ -846,19 +844,21 @@ DupFromDate: any = '';
     this.activePopover = -1
 
     if (this.selectedDataGrouping.length == 0) {
-      this.toast.show('Please select atleast one Value from Grouping', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Value from Grouping', 'warning', 'Warning');
     } else {
       if (this.storeIds.length == 0 && this.otherStoreIds.length == 0) {
-        this.toast.show('Please select atleast one Store', 'warning', 'Warning');
+        this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
+      } if (this.Department.length == 0) {
+        this.toast.show('Please Select Atleast One Department', 'warning', 'Warning');
       } else {
         let gt = this.Grosstype.filter((e: any) => e != '');
         let pt = this.Paytype.filter((e: any) => e != '');
         if (pt.length == 0 || gt.length == 0) {
           if (pt.length == 0) {
-            this.toast.show('Please select atleast one Pay Type', 'warning', 'Warning');
+            this.toast.show('Please Select Atleast One Pay Type', 'warning', 'Warning');
           }
           if (gt.length == 0) {
-            this.toast.show('Please select atleast one Gross Type', 'warning', 'Warning');
+            this.toast.show('Please Select Atleast One Gross Type', 'warning', 'Warning');
           }
         } else {
           this.setHeaderData()

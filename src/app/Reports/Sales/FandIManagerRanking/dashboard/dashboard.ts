@@ -869,11 +869,11 @@ export class Dashboard {
     }
     else if (this.neworused.length == 0) {
 
-      this.toast.show('Please select atleast one Sale Type', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Sale Type', 'warning', 'Warning');
     }
     else if (this.financetype.length == 0) {
 
-      this.toast.show('Please select atleast one Finance Type', 'warning', 'Warning');
+      this.toast.show('Please Select Atleast One Finance Type', 'warning', 'Warning');
     }
     else {
       const data = {

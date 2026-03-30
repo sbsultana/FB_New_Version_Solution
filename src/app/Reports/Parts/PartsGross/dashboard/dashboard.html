@@ -5,7 +5,7 @@
     <div>
         <div class="container-fluid">
             <div class="reports-bar">
-                <div class="filter-dropdowns">
+                <div class="filter-dropdowns" (scroll)="getScrollPosition($event)">
 
                     <!-- Store Dropdown -->
                     <div class="dropdown">
@@ -27,7 +27,7 @@
                             </span>
 
                             <span class="arrow"></span></button>
-                        <div class="reportstores-card my-2" *ngIf="activePopover ===4">
+                        <div class="reportstores-card my-2" *ngIf="activePopover ===4" [style.margin-left.px]="scrollPosition*-1">
                             <div class="row h-100">
                                 <div class="stores d-flex flex-column border-0">
                                     <div class="stores-wrapper flex-grow-1 d-flex flex-column">
@@ -59,7 +59,7 @@
                         <button class="dropdown-toggle" (click)="togglePopover(1)">
                             Time Frame <span class="light-font"> {{displaytime}}</span>
                             <span class="arrow"></span></button>
-                        <div class="timeframe" *ngIf="activePopover === 1">
+                        <div class="timeframe" *ngIf="activePopover === 1" [style.margin-left.px]="scrollPosition*-1">
                             <app-date-range-picker [Dates]="Dates"
                                 (updatedDates)="updatedDates($event)"></app-date-range-picker>
                         </div>
@@ -78,7 +78,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 3">
+                        <div class="timeframe" *ngIf="activePopover === 3" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('Dept','Service')"
                                     [ngClass]="{'active':Department.indexOf('Service')>=0, 'inactive':Department.indexOf('Service')<0}">Service</button>
@@ -98,13 +98,14 @@
                             Sale Type <span class="light-font">( {{saleandservice.length
                                 > 1 ? 'Selected' : (saleandservice == 'W' ? ' Wholesale' :
                                 (saleandservice =='R' ? 'Counter Retail' :(saleandservice =='C' ? 'Customer Pay' :
-                                (saleandservice =='T' ?'Warranty' : (saleandservice =='I' ? 'Internal' : ''))) ))
+                                (saleandservice =='T' ?'Warranty' : (saleandservice =='I' ? 'Internal' : (saleandservice
+                                =='E' ? 'Extended' : '')))) ))
                                 }} {{saleandservice.length > 1 ? saleandservice.length : '' }}
                                 )</span>
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 7">
+                        <div class="timeframe" *ngIf="activePopover === 7" [style.margin-left.px]="scrollPosition*-1"> 
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('PT','R')"
                                     [ngClass]="{ 'disabled':Department.indexOf('Parts')<0, 'enabled':Department.indexOf('Parts')>=0,'active':Paytype.indexOf('R')>=0, 'inactive':Paytype.indexOf('R')<0}">Counter
@@ -136,7 +137,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 5">
+                        <div class="timeframe" *ngIf="activePopover === 5" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('PS','All')"
                                     [ngClass]="{'active': partsSource=='All', 'inactive':partsSource !='All' }">All
@@ -165,7 +166,7 @@
                             <span class="arrow"></span>
                         </button>
 
-                        <div class="timeframe" *ngIf="activePopover === 6">
+                        <div class="timeframe" *ngIf="activePopover === 6" [style.margin-left.px]="scrollPosition*-1">
                             <div class="date-filter-card mt-2">
                                 <button class="outline-button" (click)="multipleorsingle('TB','T')"
                                     [class.active]="TotalReport=='T'">
@@ -231,6 +232,9 @@
                                     |date:'yyyy'}}</span><span
                                     *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
 
                             <!-- <th></th> -->
@@ -311,13 +315,13 @@
 
                                         </span>
 
-                                        <span *ngIf="PartsInfo.data1?.toLowerCase() != 'report totals'">
+                                        <!-- <span *ngIf="PartsInfo.data1?.toLowerCase() != 'report totals'">
                                             <img *ngIf="PartsInfo.Dealer === '+'" src="images/Add_Circle.svg"
                                                 alt="Expand" [id]="'D_'+i">
 
                                             <img *ngIf="PartsInfo.Dealer === '-'" src="images/Minus_CircleIcon.svg"
                                                 alt="Collapse" [id]="'D_'+i">
-                                        </span>
+                                        </span> -->
 
                                     </span>
                                 </td>
@@ -1348,7 +1352,7 @@
                                                 slice:0:26) +
                                                 (data2.data2.toString().length > 26 ? '...' : '') ) ))))))}} -->
 
-                                                  {{
+                                                {{
                                                 (data2.data2 == undefined || data2.data2 == '' ? '--' :
                                                 (data2.data2 == 'C' ? 'Customer Pay' :
                                                 (data2.data2 == 'T' ? 'Warranty' :

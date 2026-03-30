@@ -167,7 +167,7 @@
 
                         </tr>
                         <tr>
-                            <th class="text-center">
+                            <!-- <th class="text-center">
                                 <span>{{DupFromDate |date:'dd'}} <span
                                         *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
@@ -177,37 +177,40 @@
                                         *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
                                         {{DupFromDate |
                                         date:'yyyy'}}</span></span>
+                            </th> -->
+                            <th class="text-center">
+                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
                             </th>
-                            <th (click)="sort('Retail_Tire_Sale')" style="cursor: pointer; text-align: right; ">Sales $
+                            <th (click)="sort('Retail_Tire_Sale')" style="cursor: pointer; ">Sales $
                             </th>
-                            <th (click)="sort('Retail_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross $
+                            <th (click)="sort('Retail_Tire_Gross')" style="cursor: pointer; ">Gross $
                             </th>
-                            <th (click)="sort('Retail_GP_Per')" style="cursor: pointer; text-align: right; ">GP %
+                            <th (click)="sort('Retail_GP_Per')" style="cursor: pointer; ">GP %
                             </th>
-                            <th (click)="sort('Retail_CarCount')" style="cursor: pointer; text-align: right; ">Car Count
+                            <th (click)="sort('Retail_CarCount')" style="cursor: pointer; ">Car Count
                             </th>
-                            <th (click)="sort('Retail_TireGoal')" style="cursor: pointer; text-align: right; ">Tire
+                            <th (click)="sort('Retail_TireGoal')" style="cursor: pointer; ">Tire
                                 Goal</th>
-                            <th (click)="sort('Retail_Tires_Sold')" style="cursor: pointer; text-align: right; ">Tires
+                            <th (click)="sort('Retail_Tires_Sold')" style="cursor: pointer; ">Tires
                                 Sold</th>
-                            <th (click)="sort('Retail_Goal_Per')" style="cursor: pointer; text-align: right; ">% of
+                            <th (click)="sort('Retail_Goal_Per')" style="cursor: pointer; ">% of
                                 Goal</th>
-                            <th (click)="sort('Retail_AvgCost')" style="cursor: pointer; text-align: right; ">AVG Cost
+                            <th (click)="sort('Retail_AvgCost')" style="cursor: pointer; ">AVG Cost
                             </th>
-                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; text-align: right; ">AVG
+                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; ">AVG
                                 Profit</th>
-                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; text-align: right; ">Missed
+                            <th (click)="sort('Retail_AvgProfit')" style="cursor: pointer; ">Missed
                                 Opportunity</th>
 
-                            <th (click)="sort('Interal_Tire_sale')" style="cursor: pointer; text-align: right; ">Sales $
+                            <th (click)="sort('Interal_Tire_sale')" style="cursor: pointer; ">Sales $
                             </th>
-                            <th (click)="sort('Interal_Tire_Gross')" style="cursor: pointer; text-align: right; ">Gross
+                            <th (click)="sort('Interal_Tire_Gross')" style="cursor: pointer; ">Gross
                                 $</th>
-                            <th (click)="sort('Internal_GP_Per')" style="cursor: pointer; text-align: right; ">GP %
+                            <th (click)="sort('Internal_GP_Per')" style="cursor: pointer; ">GP %
                             </th>
-                            <th (click)="sort('Internal_Tires_Sold')" style="cursor: pointer; text-align: right; ">Tires
+                            <th (click)="sort('Internal_Tires_Sold')" style="cursor: pointer; ">Tires
                                 Sold</th>
-                            <th (click)="sort('Internal_AvgCost')" style="cursor: pointer; text-align: right; ">AVG Cost
+                            <th (click)="sort('Internal_AvgCost')" style="cursor: pointer; ">AVG Cost
                             </th>
 
 
