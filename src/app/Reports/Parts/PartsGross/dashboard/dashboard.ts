@@ -73,6 +73,8 @@ otherStoresArray: any = [];
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
+DupFromDate: any = '';
+  DupToDate: any = ''
 
 
   Dates: any = {
@@ -200,6 +202,8 @@ otherStoresArray: any = [];
     }
   }
   GetData() {
+     this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.IndividualPartsGross = [];
     this.shared.spinner.show();
     const obj = {

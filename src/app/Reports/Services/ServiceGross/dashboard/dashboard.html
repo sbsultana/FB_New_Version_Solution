@@ -256,8 +256,8 @@
                     *ngIf="GridView== 'Global' && actionType == 'Y'">
                     <thead>
                         <tr>
-                            <th class="text-center "> <span>{{FromDate |date:'MMMM'}} <span
-                                        *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center "> <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                         |date:'MMMM'}} </span>
                                 </span></th>
 
@@ -301,13 +301,13 @@
                             <!--  -->
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span>{{FromDate |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
@@ -409,12 +409,12 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.TotalGross_Pace == 0 || ServiceInfo.TotalGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                         '$'}}
                                         <span>
                                             {{(ServiceInfo.TotalGross_Pace == 0 ||
-                                            ServiceInfo.TotalGross_Pace == null || (FromDate | date: 'MMMM') !=
-                                            (ToDate |
+                                            ServiceInfo.TotalGross_Pace == null || (DupFromDate | date: 'MMMM') !=
+                                            (DupToDate |
                                             date: 'MMMM') ? '-' :ServiceInfo.TotalGross_Pace |
                                             number:'1.0-0' )}}
                                         </span>
@@ -424,12 +424,12 @@
                                         class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.Gross_Target == 0 || ServiceInfo.Gross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                         '$'}}
                                         <span>
                                             {{(ServiceInfo.Gross_Target == 0 ||
-                                            ServiceInfo.Gross_Target == null || (FromDate | date: 'MMMM') !=
-                                            (ToDate |
+                                            ServiceInfo.Gross_Target == null || (DupFromDate | date: 'MMMM') !=
+                                            (DupToDate |
                                             date: 'MMMM') ? '-' :ServiceInfo.Gross_Target |
                                             number:'1.0-0' )}}
                                         </span>
@@ -438,12 +438,12 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.Diff == 0 || ServiceInfo.Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                         '$'}}
                                         <span>
                                             {{(ServiceInfo.Diff == 0 ||
-                                            ServiceInfo.Diff == null || (FromDate | date: 'MMMM') !=
-                                            (ToDate |
+                                            ServiceInfo.Diff == null || (DupFromDate | date: 'MMMM') !=
+                                            (DupToDate |
                                             date: 'MMMM') ? '-' :ServiceInfo.Diff |
                                             number:'1.0-0' )}}
                                         </span>
@@ -453,12 +453,12 @@
                                         class="d-flex justify-content-between">
                                         {{
                                         ServiceInfo.Discount == 0 || ServiceInfo.Discount == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                         '$'}}
                                         <span>
                                             {{(ServiceInfo.Discount == 0 ||
-                                            ServiceInfo.Discount == null || (FromDate | date: 'MMMM') !=
-                                            (ToDate |
+                                            ServiceInfo.Discount == null || (DupFromDate | date: 'MMMM') !=
+                                            (DupToDate |
                                             date: 'MMMM') ? '-' :ServiceInfo.Discount |
                                             number:'1.0-0' )}}
                                         </span>
@@ -470,16 +470,16 @@
                                     ServiceInfo.Total_Hours |number:'1.1-1') }}</td>
                                 <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalHours_PACE)}">{{
                                     (ServiceInfo.TotalHours_PACE == 0 || ServiceInfo.TotalHours_PACE == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalHours_PACE |number:'1.0-0' ) }}</td>
                                 <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target)}"> {{
                                     (ServiceInfo.ROHours_Target == 0 || ServiceInfo.ROHours_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target |number:'1.0-0') }}</td>
                                 <td id="DataBody10" [ngClass]="getColorClass(ServiceInfo.HoursDiff)">
                                     {{
                                     (ServiceInfo.HoursDiff == 0 || ServiceInfo.HoursDiff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff |number:'1.0-0') }}</td>
 
                                 <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Repair_Orders)}">{{
@@ -487,16 +487,16 @@
                                     ServiceInfo.Repair_Orders |number:'1.0-0' ) }}</td>
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_ROPACE)}">{{
                                     (ServiceInfo.Total_ROPACE == 0 || ServiceInfo.Total_ROPACE == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.Total_ROPACE |number:'1.0-0' ) }}</td>
                                 <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_Target)}">{{
                                     (ServiceInfo.RO_Target == 0 || ServiceInfo.RO_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.RO_Target |number:'1.0-0' ) }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.ROCountDiff)">
                                     {{
                                     (ServiceInfo.ROCountDiff == 0 || ServiceInfo.ROCountDiff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROCountDiff |number:'1.0-0' ) }}</td>
 
                                 <td id="DataBody15" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Hours_per_RO)}">
@@ -587,12 +587,12 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             dt2.TotalGross_Pace == 0 || dt2.TotalGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                             '$'}}
                                             <span>
                                                 {{(dt2.TotalGross_Pace == 0 ||
-                                                dt2.TotalGross_Pace == null || (FromDate | date: 'MMMM') !=
-                                                (ToDate |
+                                                dt2.TotalGross_Pace == null || (DupFromDate | date: 'MMMM') !=
+                                                (DupToDate |
                                                 date: 'MMMM') ? '-' :dt2.TotalGross_Pace |
                                                 number:'1.0-0' )}}
                                             </span>
@@ -601,12 +601,12 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             dt2.Gross_Target == 0 || dt2.Gross_Target == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                             '$'}}
                                             <span>
                                                 {{(dt2.Gross_Target == 0 ||
-                                                dt2.Gross_Target == null || (FromDate | date: 'MMMM') !=
-                                                (ToDate |
+                                                dt2.Gross_Target == null || (DupFromDate | date: 'MMMM') !=
+                                                (DupToDate |
                                                 date: 'MMMM') ? '-' :dt2.Gross_Target |
                                                 number:'1.0-0' )}}
                                             </span>
@@ -615,12 +615,12 @@
                                         <span class="d-flex justify-content-between">
                                             {{
                                             dt2.Diff == 0 || dt2.Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                             '$'}}
                                             <span>
                                                 {{(dt2.Diff == 0 ||
-                                                dt2.Diff == null || (FromDate | date: 'MMMM') !=
-                                                (ToDate |
+                                                dt2.Diff == null || (DupFromDate | date: 'MMMM') !=
+                                                (DupToDate |
                                                 date: 'MMMM') ? '-' :dt2.Diff |
                                                 number:'1.0-0' )}}
                                             </span>
@@ -638,19 +638,19 @@
                                         dt2.Total_Hours == null ? '-' : dt2.Total_Hours |number:'1.1-1' ) }}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACE)}">
                                         {{(dt2.TotalHours_PACE == 0 ||
-                                        dt2.TotalHours_PACE == null || (FromDate | date: 'MMMM') !=
-                                        (ToDate |
+                                        dt2.TotalHours_PACE == null || (DupFromDate | date: 'MMMM') !=
+                                        (DupToDate |
                                         date: 'MMMM') ? '-' :dt2.TotalHours_PACE |
                                         number:'1.0-0' )}}
                                     </td>
                                     <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(dt2.ROHours_Target)}"> {{
                                         (dt2.ROHours_Target == 0 || dt2.ROHours_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.ROHours_Target |number:'1.0-0') }}</td>
                                     <td id="DataBody10" [ngClass]="getColorClass(dt2.HoursDiff)">
                                         {{
                                         (dt2.HoursDiff == 0 || dt2.HoursDiff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.HoursDiff |number:'1.0-0') }}</td>
 
                                     <td [ngClass]="{ negative: !inTheGreen(dt2.Repair_Orders)}">{{ (dt2.Repair_Orders ==
@@ -661,12 +661,12 @@
                                         ||
                                         dt2.Total_ROPACE ==
                                         null || dt2.Total_ROPACE == undefined ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt2.Total_ROPACE
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt2.Total_ROPACE
                                         |number:'1.0-0'
                                         ) }}</td>
                                     <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(dt2.RO_Target)}">{{
                                         (dt2.RO_Target == 0 || dt2.RO_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.RO_Target |number:'1.0-0' ) }}</td>
                                     <td id="DataBody14" [ngClass]="getColorClass(dt2.ROCountDiff)">
                                         {{
@@ -758,12 +758,12 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '' :
                                             '$'}}
                                             <span>
                                                 {{(dt3.TotalGross_Pace == 0 ||
-                                                dt3.TotalGross_Pace == null || (FromDate | date: 'MMMM') !=
-                                                (ToDate |
+                                                dt3.TotalGross_Pace == null || (DupFromDate | date: 'MMMM') !=
+                                                (DupToDate |
                                                 date: 'MMMM') ? '-' :dt3.TotalGross_Pace |
                                                 number:'1.0-0' )}}
                                             </span>
@@ -782,8 +782,8 @@
                                         dt3.Total_Hours == null ? '-' : dt3.Total_Hours |number:'1.1-1' ) }}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACE)}">
                                         {{(dt3.TotalHours_PACE == 0 ||
-                                        dt3.TotalHours_PACE == null || (FromDate | date: 'MMMM') !=
-                                        (ToDate |
+                                        dt3.TotalHours_PACE == null || (DupFromDate | date: 'MMMM') !=
+                                        (DupToDate |
                                         date: 'MMMM') ? '-' :dt3.TotalHours_PACE |
                                         number:'1.0-0' )}}
                                     </td>
@@ -798,7 +798,7 @@
                                         ||
                                         dt3.RO_PACE ==
                                         null || dt3.RO_PACE == undefined ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt3.RO_PACE
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt3.RO_PACE
                                         |number:'1.0-0'
                                         ) }}</td>
                                     <td>-</td>
@@ -861,8 +861,8 @@
                 <table class="table mb-0 paytypedetails-tbl w-100" *ngIf="GridView== 'Gross' && actionType == 'Y'">
                     <thead>
                         <tr>
-                            <th class="text-center ">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center ">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
                             <th colspan="4">
@@ -895,13 +895,13 @@
                             <!--  -->
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
@@ -982,16 +982,16 @@
                                     ServiceInfo.Total_Gross | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalGross_Pace)}">{{
                                     ServiceInfo.TotalGross_Pace == 0 || ServiceInfo.TotalGross_Pace == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalGross_Pace | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Gross_Target)}">{{
                                     ServiceInfo.Gross_Target == 0 || ServiceInfo.Gross_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.Gross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.Diff)">
                                     {{
                                     ServiceInfo.Diff == 0 || ServiceInfo.Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : ServiceInfo.Diff |
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : ServiceInfo.Diff |
                                     currency:'USD':'symbol':'1.0-0'}}</td>
 
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(ServiceInfo.CPGross)}"> {{
@@ -999,16 +999,16 @@
                                     ServiceInfo.CPGross | currency:'USD':'symbol':'1.0-0') }}</td>
                                 <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(ServiceInfo.CPGrossPace)}">{{
                                     (ServiceInfo.CPGrossPace == 0 || ServiceInfo.CPGrossPace == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.CPGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                 <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.CPGross_Target)}">{{
                                     ServiceInfo.CPGross_Target == 0 || ServiceInfo.CPGross_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.CPGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.CPGross_Diff)">
                                     {{
                                     ServiceInfo.CPGross_Diff == 0 || ServiceInfo.CPGross_Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.CPGross_Diff |
                                     currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1018,17 +1018,17 @@
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.WarrantyGrossPace)}">
                                     {{
                                     (ServiceInfo.WarrantyGrossPace == 0 || ServiceInfo.WarrantyGrossPace == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.WarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                 <td id="DataBody4"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.WarrantyGross_Target)}">{{
                                     ServiceInfo.WarrantyGross_Target == 0 || ServiceInfo.WarrantyGross_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.WarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.WarrantyGross_Diff)">
                                     {{
                                     ServiceInfo.WarrantyGross_Diff == 0 || ServiceInfo.WarrantyGross_Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.WarrantyGross_Diff |
                                     currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1042,19 +1042,19 @@
                                     {{
                                     (ServiceInfo.ExtendedWarrantyGrossPace == 0 || ServiceInfo.ExtendedWarrantyGrossPace
                                     == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ExtendedWarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                 <td id="DataBody4"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.ExtendedWarrantyGross_Target)}">{{
                                     ServiceInfo.ExtendedWarrantyGross_Target == 0 ||
                                     ServiceInfo.ExtendedWarrantyGross_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ExtendedWarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.ExtendedWarrantyGross_Diff)">
                                     {{
                                     ServiceInfo.ExtendedWarrantyGross_Diff == 0 ||
                                     ServiceInfo.ExtendedWarrantyGross_Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ExtendedWarrantyGross_Diff |
                                     currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1069,12 +1069,12 @@
                                 <td id="DataBody4"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.InternalGross_Target)}">{{
                                     ServiceInfo.InternalGross_Target == 0 || ServiceInfo.InternalGross_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.InternalGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.InternalGross_Diff)">
                                     {{
                                     ServiceInfo.InternalGross_Diff == 0 || ServiceInfo.InternalGross_Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.InternalGross_Diff |
                                     currency:'USD':'symbol':'1.0-0'}}</td>
                             </tr>
@@ -1100,16 +1100,16 @@
                                         dt2.Total_Gross | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.TotalGross_Pace)}">{{
                                         dt2.TotalGross_Pace == 0 || dt2.TotalGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalGross_Pace | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.Gross_Target)}">{{
                                         dt2.Gross_Target == 0 || dt2.Gross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.Gross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt2.Diff)">
                                         {{
                                         dt2.Diff == 0 || dt2.Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt2.Diff |
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt2.Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
                                     <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(dt2.CPGross)}"> {{
@@ -1117,16 +1117,16 @@
                                         dt2.CPGross | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt2.CPGrossPace)}">{{
                                         (dt2.CPGrossPace == 0 || dt2.CPGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.CPGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.CPGross_Target)}">{{
                                         dt2.CPGross_Target == 0 || dt2.CPGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.CPGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt2.CPGross_Diff)">
                                         {{
                                         dt2.CPGross_Diff == 0 || dt2.CPGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt2.CPGross_Diff |
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt2.CPGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
                                     <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(dt2.WarrantyGross)}">{{
@@ -1134,16 +1134,16 @@
                                         dt2.WarrantyGross | currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.WarrantyGrossPace)}">{{
                                         (dt2.WarrantyGrossPace == 0 || dt2.WarrantyGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.WarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.WarrantyGross_Target)}">{{
                                         dt2.WarrantyGross_Target == 0 || dt2.WarrantyGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.WarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt2.WarrantyGross_Diff)">
                                         {{
                                         dt2.WarrantyGross_Diff == 0 || dt2.WarrantyGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.WarrantyGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1154,18 +1154,18 @@
                                     <td id="DataBody12"
                                         [ngClass]="{ negative: !inTheGreen(dt2.ExtendedWarrantyGrossPace)}">{{
                                         (dt2.ExtendedWarrantyGrossPace == 0 || dt2.ExtendedWarrantyGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.ExtendedWarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4"
                                         [ngClass]="{ negative: !inTheGreen(dt2.ExtendedWarrantyGross_Target)}">{{
                                         dt2.ExtendedWarrantyGross_Target == 0 || dt2.ExtendedWarrantyGross_Target ==
                                         null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.ExtendedWarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt2.ExtendedWarrantyGross_Diff)">
                                         {{
                                         dt2.ExtendedWarrantyGross_Diff == 0 || dt2.ExtendedWarrantyGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.ExtendedWarrantyGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1178,12 +1178,12 @@
                                         |currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt2.InternalGross_Target)}">{{
                                         dt2.InternalGross_Target == 0 || dt2.InternalGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.InternalGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt2.InternalGross_Diff)">
                                         {{
                                         dt2.InternalGross_Diff == 0 || dt2.InternalGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.InternalGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
                                 </tr>
@@ -1209,16 +1209,16 @@
                                         dt3.Total_Gross | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt3.TotalGross_Pace)}">{{
                                         dt3.TotalGross_Pace == 0 || dt3.TotalGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalGross_Pace | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt3.Gross_Target)}">{{
                                         dt3.Gross_Target == 0 || dt3.Gross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.Gross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt3.Diff)">
                                         {{
                                         dt3.Diff == 0 || dt3.Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt3.Diff |
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt3.Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
                                     <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(dt3.CPGross)}"> {{
@@ -1226,16 +1226,16 @@
                                         dt3.CPGross | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt3.CPGrossPace)}">{{
                                         (dt3.CPGrossPace == 0 || dt3.CPGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.CPGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt3.CPGross_Target)}">{{
                                         dt3.CPGross_Target == 0 || dt3.CPGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.CPGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt3.CPGross_Diff)">
                                         {{
                                         dt3.CPGross_Diff == 0 || dt3.CPGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : dt3.CPGross_Diff |
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : dt3.CPGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
                                     <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(dt3.WarrantyGross)}">{{
@@ -1243,16 +1243,16 @@
                                         dt3.WarrantyGross | currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.WarrantyGrossPace)}">{{
                                         (dt3.WarrantyGrossPace == 0 || dt3.WarrantyGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.WarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt3.WarrantyGross_Target)}">{{
                                         dt3.WarrantyGross_Target == 0 || dt3.WarrantyGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.WarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt3.WarrantyGross_Diff)">
                                         {{
                                         dt3.WarrantyGross_Diff == 0 || dt3.WarrantyGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.WarrantyGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1263,18 +1263,18 @@
                                     <td id="DataBody12"
                                         [ngClass]="{ negative: !inTheGreen(dt3.ExtendedWarrantyGrossPace)}">{{
                                         (dt3.ExtendedWarrantyGrossPace == 0 || dt3.ExtendedWarrantyGrossPace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.ExtendedWarrantyGrossPace | currency:'USD':'symbol':'1.0-0') }}</td>
                                     <td id="DataBody4"
                                         [ngClass]="{ negative: !inTheGreen(dt3.ExtendedWarrantyGross_Target)}">{{
                                         dt3.ExtendedWarrantyGross_Target == 0 || dt3.ExtendedWarrantyGross_Target ==
                                         null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.ExtendedWarrantyGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt3.ExtendedWarrantyGross_Diff)">
                                         {{
                                         dt3.ExtendedWarrantyGross_Diff == 0 || dt3.ExtendedWarrantyGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.ExtendedWarrantyGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
 
@@ -1287,12 +1287,12 @@
                                         |currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(dt3.InternalGross_Target)}">{{
                                         dt3.InternalGross_Target == 0 || dt3.InternalGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.InternalGross_Target | currency:'USD':'symbol':'1.0-0'}}</td>
                                     <td id="DataBody5" [ngClass]="getColorClass(dt3.InternalGross_Diff)">
                                         {{
                                         dt3.InternalGross_Diff == 0 || dt3.InternalGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.InternalGross_Diff |
                                         currency:'USD':'symbol':'1.0-0'}}</td>
                                 </tr>
@@ -1319,8 +1319,8 @@
                 <table class="table mb-0 hourdetails-tbl w-100" *ngIf="GridView == 'Hours' && actionType == 'Y' ">
                     <thead>
                         <tr>
-                            <th class="text-center ">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center ">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
                             <th colspan="4">
@@ -1345,13 +1345,13 @@
                             <!--  -->
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
@@ -1423,16 +1423,16 @@
                                     ServiceInfo.Total_Hours | number:'1.1-1'}}</td>
                                 <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalHours_PACE)}">{{
                                     ServiceInfo.TotalHours_PACE == 0 || ServiceInfo.TotalHours_PACE == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalHours_PACE | number:'1.0-0'}}</td>
                                 <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target)}">{{
                                     ServiceInfo.ROHours_Target == 0 || ServiceInfo.ROHours_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target | number:'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.HoursDiff)">
                                     {{
                                     ServiceInfo.HoursDiff == 0 || ServiceInfo.HoursDiff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : ServiceInfo.HoursDiff |
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : ServiceInfo.HoursDiff |
                                     number:'1.0-0'}}</td>
                                 <!-- <td id="DataBody6">&nbsp;</td> -->
 
@@ -1443,17 +1443,17 @@
                                 <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalHours_PACE_CP)}">
                                     {{
                                     (ServiceInfo.TotalHours_PACE_CP == 0 || ServiceInfo.TotalHours_PACE_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalHours_PACE_CP | number:'1.0-0') }}</td>
                                 <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_CP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_CP == 0 || ServiceInfo.ROHours_Target_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_CP | number:'1.0-0') }}</td>
                                 <td id="DataBody10" [ngClass]="getColorClass(ServiceInfo.HoursDiff_CP)">
                                     {{
                                     (ServiceInfo.HoursDiff_CP == 0 || ServiceInfo.HoursDiff_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_CP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Hours_WP)}">{{
@@ -1462,17 +1462,17 @@
                                 <td id="DataBody12"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalHours_PACE_WP)}">{{
                                     (ServiceInfo.TotalHours_PACE_WP == 0 || ServiceInfo.TotalHours_PACE_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalHours_PACE_WP | number:'1.0-0') }}</td>
                                 <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_WP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_WP == 0 || ServiceInfo.ROHours_Target_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_WP | number:'1.0-0') }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.HoursDiff_WP)">
                                     {{
                                     (ServiceInfo.HoursDiff_WP == 0 || ServiceInfo.HoursDiff_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_WP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Hours_EWP)}">{{
@@ -1481,18 +1481,18 @@
                                 <td id="DataBody12"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.TotalHours_PACE_EWP)}">{{
                                     (ServiceInfo.TotalHours_PACE_EWP == 0 || ServiceInfo.TotalHours_PACE_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.TotalHours_PACE_EWP | number:'1.0-0') }}</td>
                                 <td id="DataBody13"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_EWP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_EWP == 0 || ServiceInfo.ROHours_Target_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_EWP | number:'1.0-0') }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.HoursDiff_EWP)">
                                     {{
                                     (ServiceInfo.HoursDiff_EWP == 0 || ServiceInfo.HoursDiff_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_EWP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody17" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_Hours_IP)}">{{
@@ -1507,13 +1507,13 @@
                                 <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_IP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_IP == 0 || ServiceInfo.ROHours_Target_IP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_IP
                                     | number:'1.0-0' ) }}</td>
                                 <td id="DataBody10" [ngClass]="getColorClass(ServiceInfo.HoursDiff_IP)">
                                     {{
                                     (ServiceInfo.HoursDiff_IP == 0 || ServiceInfo.HoursDiff_IP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_IP
                                     | number:'1.0-0' ) }}</td>
                                 <!-- <td id="DataBody9"> -</td>
@@ -1548,7 +1548,7 @@
                                         dt2.Total_Hours | number:'1.1-1'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACE)}">{{
                                         dt2.TotalHours_PACE == 0 || dt2.TotalHours_PACE == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACE | number:'1.0-0'}}</td>
                                     <td id="DataBody4">
                                         -</td>
@@ -1561,7 +1561,7 @@
                                         dt2.Total_Hourscp | number:'1.2-2') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACEcp)}">{{
                                         (dt2.TotalHours_PACEcp == 0 || dt2.TotalHours_PACEcp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACEcp | number:'1.0-0') }}</td>
                                     <td id="DataBody9"> -</td>
                                     <td id="DataBody10"> -</td>
@@ -1571,7 +1571,7 @@
                                         dt2.Total_Hourswp | number:'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACEwp)}">{{
                                         (dt2.TotalHours_PACEwp == 0 || dt2.TotalHours_PACEwp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACEwp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1581,7 +1581,7 @@
                                         dt2.Total_Hours_EWP | number:'1.2-2' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACE_EWP)}">{{
                                         (dt2.TotalHours_PACE_EWP == 0 || dt2.TotalHours_PACE_EWP == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACE_EWP | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1626,7 +1626,7 @@
                                         dt3.Total_Hours | number:'1.1-1'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACE)}">{{
                                         dt3.TotalHours_PACE == 0 || dt3.TotalHours_PACE == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACE | number:'1.0-0'}}</td>
                                     <td id="DataBody4">
                                         -</td>
@@ -1639,7 +1639,7 @@
                                         dt3.Total_Hourscp | number:'1.2-2') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACEcp)}">{{
                                         (dt3.TotalHours_PACEcp == 0 || dt3.TotalHours_PACEcp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACEcp | number:'1.0-0') }}</td>
                                     <td id="DataBody9"> -</td>
                                     <td id="DataBody10"> -</td>
@@ -1649,7 +1649,7 @@
                                         dt3.Total_Hourswp | number:'1.2-2' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACEwp)}">{{
                                         (dt3.TotalHours_PACEwp == 0 || dt3.TotalHours_PACEwp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACEwp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1659,7 +1659,7 @@
                                         dt3.Total_Hours_EWP | number:'1.2-2' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACE_EWP)}">{{
                                         (dt3.TotalHours_PACE_EWP == 0 || dt3.TotalHours_PACE_EWP == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACE_EWP | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1689,8 +1689,8 @@
                 <table class="table mb-0 rodetails-tbl w-100" *ngIf="GridView == 'RO' && actionType == 'Y' ">
                     <thead>
                         <tr>
-                            <th class="text-center ">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center ">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
                             <th colspan="4">
@@ -1715,13 +1715,13 @@
                             <!--  -->
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
@@ -1793,16 +1793,16 @@
                                     ServiceInfo.Repair_Orders | number:'1.0-0'}}</td>
                                 <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_ROPACE)}">{{
                                     ServiceInfo.Total_ROPACE == 0 || ServiceInfo.Total_ROPACE == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.Total_ROPACE | number:'1.0-0'}}</td>
                                 <td id="DataBody4" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target)}">{{
                                     ServiceInfo.ROHours_Target == 0 || ServiceInfo.ROHours_Target == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target | number:'1.0-0'}}</td>
                                 <td id="DataBody5" [ngClass]="getColorClass(ServiceInfo.Diff)">
                                     {{
                                     ServiceInfo.Diff == 0 || ServiceInfo.Diff == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' : ServiceInfo.Diff |
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' : ServiceInfo.Diff |
                                     number:'1.0-0'}}</td>
                                 <!-- <td id="DataBody6">&nbsp;</td> -->
 
@@ -1812,17 +1812,17 @@
                                     ServiceInfo.Total_RO_CP | number:'1.0-0') }}</td>
                                 <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_PACE_CP)}">{{
                                     (ServiceInfo.RO_PACE_CP == 0 || ServiceInfo.RO_PACE_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.RO_PACE_CP | number:'1.0-0') }}</td>
                                 <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_CP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_CP == 0 || ServiceInfo.ROHours_Target_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_CP | number:'1.0-0') }}</td>
                                 <td id="DataBody10" [ngClass]="getColorClass(ServiceInfo.HoursDiff_CP)">
                                     {{
                                     (ServiceInfo.HoursDiff_CP == 0 || ServiceInfo.HoursDiff_CP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_CP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_RO_WP)}">{{
@@ -1830,17 +1830,17 @@
                                     ServiceInfo.Total_RO_WP | number:'1.0-0' ) }}</td>
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_PACE_WP)}">{{
                                     (ServiceInfo.RO_PACE_WP == 0 || ServiceInfo.RO_PACE_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.RO_PACE_WP | number:'1.0-0') }}</td>
                                 <td id="DataBody13" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_WP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_WP == 0 || ServiceInfo.ROHours_Target_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_WP | number:'1.0-0') }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.HoursDiff_WP)">
                                     {{
                                     (ServiceInfo.HoursDiff_WP == 0 || ServiceInfo.HoursDiff_WP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_WP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody11" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_RO_EWP)}">{{
@@ -1848,18 +1848,18 @@
                                     ServiceInfo.Total_RO_EWP | number:'1.0-0' ) }}</td>
                                 <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(ServiceInfo.RO_PACE_EWP)}">{{
                                     (ServiceInfo.RO_PACE_EWP == 0 || ServiceInfo.RO_PACE_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.RO_PACE_EWP | number:'1.0-0') }}</td>
                                 <td id="DataBody13"
                                     [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_EWP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_EWP == 0 || ServiceInfo.ROHours_Target_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.ROHours_Target_EWP | number:'1.0-0') }}</td>
                                 <td id="DataBody14" [ngClass]="getColorClass(ServiceInfo.HoursDiff_EWP)">
                                     {{
                                     (ServiceInfo.HoursDiff_EWP == 0 || ServiceInfo.HoursDiff_EWP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_EWP | number:'1.0-0') }}</td>
 
                                 <td id="DataBody17" [ngClass]="{ negative: !inTheGreen(ServiceInfo.Total_RO_IP)}">{{
@@ -1872,13 +1872,13 @@
                                 <td id="DataBody9" [ngClass]="{ negative: !inTheGreen(ServiceInfo.ROHours_Target_IP)}">
                                     {{
                                     (ServiceInfo.ROHours_Target_IP == 0 || ServiceInfo.ROHours_Target_IP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     ServiceInfo.ROHours_Target_IP
                                     | number:'1.0-0' ) }}</td>
                                 <td id="DataBody10" [ngClass]="getColorClass(ServiceInfo.HoursDiff_IP)">
                                     {{
                                     (ServiceInfo.HoursDiff_IP == 0 || ServiceInfo.HoursDiff_IP == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     ServiceInfo.HoursDiff_IP
                                     | number:'1.0-0' ) }}</td>
                                 <!-- <td id="DataBody9"> -</td>
@@ -1913,7 +1913,7 @@
                                         dt2.Total_Hours | number:'1.1-1'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACE)}">{{
                                         dt2.TotalHours_PACE == 0 || dt2.TotalHours_PACE == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACE | number:'1.0-0'}}</td>
                                     <td id="DataBody4">
                                         -</td>
@@ -1926,7 +1926,7 @@
                                         dt2.Total_Hourscp | number:'1.0-0') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACEcp)}">{{
                                         (dt2.TotalHours_PACEcp == 0 || dt2.TotalHours_PACEcp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACEcp | number:'1.0-0') }}</td>
                                     <td id="DataBody9"> -</td>
                                     <td id="DataBody10"> -</td>
@@ -1936,7 +1936,7 @@
                                         dt2.Total_Hourswp | number:'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACEwp)}">{{
                                         (dt2.TotalHours_PACEwp == 0 || dt2.TotalHours_PACEwp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACEwp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1946,7 +1946,7 @@
                                         dt2.Total_Hoursewp | number:'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt2.TotalHours_PACEewp)}">{{
                                         (dt2.TotalHours_PACEewp == 0 || dt2.TotalHours_PACEewp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt2.TotalHours_PACEewp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -1991,7 +1991,7 @@
                                         dt3.Total_Hours | number:'1.1-1'}}</td>
                                     <td id="DataBody3" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACE)}">{{
                                         dt3.TotalHours_PACE == 0 || dt3.TotalHours_PACE == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACE | number:'1.0-0'}}</td>
                                     <td id="DataBody4">
                                         -</td>
@@ -2004,7 +2004,7 @@
                                         dt3.Total_Hourscp | number:'1.0-0') }}</td>
                                     <td id="DataBody8" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACEcp)}">{{
                                         (dt3.TotalHours_PACEcp == 0 || dt3.TotalHours_PACEcp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACEcp | number:'1.0-0') }}</td>
                                     <td id="DataBody9"> -</td>
                                     <td id="DataBody10"> -</td>
@@ -2014,7 +2014,7 @@
                                         dt3.Total_Hourswp | number:'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACEwp)}">{{
                                         (dt3.TotalHours_PACEwp == 0 || dt3.TotalHours_PACEwp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACEwp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -2024,7 +2024,7 @@
                                         dt3.Total_Hoursewp | number:'1.0-0' ) }}</td>
                                     <td id="DataBody12" [ngClass]="{ negative: !inTheGreen(dt3.TotalHours_PACEewp)}">{{
                                         (dt3.TotalHours_PACEewp == 0 || dt3.TotalHours_PACEewp == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         dt3.TotalHours_PACEewp | number:'1.0-0') }}</td>
                                     <td id="DataBody13">-</td>
                                     <td id="DataBody14">-</td>
@@ -2051,15 +2051,16 @@
                     </tbody>
                 </table>
 
-
-            </div>
-
-            <div *ngIf="actionType == 'N'" class="d-flex justify-content-center align-items-center p-5 m-5">
+ <div *ngIf="actionType == 'N'" class="d-flex justify-content-center align-items-center p-5 m-5">
                 Please select Store to Fetch data..!
             </div>
+            </div>
+           
 
         </div>
 
 
+
     </div>
+
 </main>

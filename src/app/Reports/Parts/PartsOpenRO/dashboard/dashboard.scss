@@ -5,7 +5,11 @@
     font-family: 'Roboto';
     line-height: 1.5rem;
 }
-
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 20px;
+}
 ::ng-deep .ngx-slider .ngx-slider-pointer {
     background-color: #0554ef !important;
 }

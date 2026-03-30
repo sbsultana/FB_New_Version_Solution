@@ -63,6 +63,8 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
+  DupFromDate: any = '';
+  DupToDate: any = ''
 
 
   Dates: any = {
@@ -161,6 +163,8 @@ export class Dashboard {
   }
   
   GetData() {
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.shared.spinner.show()
     this.IndividualServiceGross = [];
     const obj = {

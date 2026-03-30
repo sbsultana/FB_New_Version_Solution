@@ -162,8 +162,8 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
                             
                             <th colspan="11">Total Parts</th>
@@ -181,15 +181,15 @@
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span>{{FromDate |date:'dd'}} </span> <span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}} </span> <span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
                                 <span>
-                                    - {{ToDate |date:'dd'}}
+                                    - {{DupToDate |date:'dd'}}
                                 </span>
-                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</span><span
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span>
                             </th>
                             

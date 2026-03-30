@@ -192,8 +192,8 @@
                 <table class="table mb-0 w-100 partsgrossdetails-tbl">
                     <thead>
                         <tr>
-                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
                             <th colspan="5">Total Parts</th>
@@ -221,15 +221,15 @@
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span>{{FromDate |date:'dd'}} </span> <span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}} </span> <span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
                                 <span>
-                                    - {{ToDate |date:'dd'}}
+                                    - {{DupToDate |date:'dd'}}
                                 </span>
-                                <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</span><span
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span>
                             </th>
 
@@ -356,14 +356,14 @@
                                         (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace ==
                                         null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' :
                                         '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.Total_PartsGross_Pace == 0 || PartsInfo.Total_PartsGross_Pace
                                             == null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             PartsInfo.Total_PartsGross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -376,7 +376,7 @@
                                         (PartsInfo.Total_PartsGrossTarget == 0 || PartsInfo.Total_PartsGrossTarget
                                         ==
                                         null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
                                             || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
@@ -387,7 +387,7 @@
                                                 (PartsInfo.Total_PartsGrossTarget == 0 ||
                                                 PartsInfo.Total_PartsGrossTarget ==
                                                 null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
@@ -404,13 +404,13 @@
                                         {{
                                         (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff ==
                                         null||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.Total_PartsGross_Diff
                                             ==
                                             null||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             PartsInfo.Total_PartsGross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -431,12 +431,12 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.ServiceGross_Pace == 0 || PartsInfo.ServiceGross_Pace == null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             PartsInfo.ServiceGross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -447,7 +447,7 @@
                                         {{ (PartsInfo.ServiceGross_Target == 0 || PartsInfo.ServiceGross_Target ==
                                         null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
                                             || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
@@ -456,7 +456,7 @@
                                                 {{ (PartsInfo.ServiceGross_Target == 0 ||
                                                 PartsInfo.ServiceGross_Target == null
                                                 ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
@@ -472,12 +472,12 @@
                                         {{
                                         (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff == null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.Total_PartsGross_Diff == 0 || PartsInfo.ServiceGross_Diff ==
                                             null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             PartsInfo.ServiceGross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -499,11 +499,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.PartsGross_Pace == 0 || PartsInfo.PartsGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             PartsInfo.PartsGross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -512,7 +512,7 @@
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(PartsInfo.PartsGross_Target)}">
                                     <span class="d-flex justify-content-between"> {{
                                         (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
                                             || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ?' ' :
@@ -521,7 +521,7 @@
                                                 {{
                                                 (PartsInfo.PartsGross_Target == 0 || PartsInfo.PartsGross_Target ==
                                                 null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
@@ -536,11 +536,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (PartsInfo.PartsGross_Diff == 0 || PartsInfo.PartsGross_Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             PartsInfo.PartsGross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -658,12 +658,12 @@
 
                                             {{
                                             (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' ) }}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' :'$' ) }}
                                             <span>
 
                                                 {{
                                                 (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.ServiceGross_Pace | number:'1.0-0' ) }}
                                             </span>
                                         </span>
@@ -674,7 +674,7 @@
                                             {{
                                             (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
                                             data2.ServiceGross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                             (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                                 (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
                                                 || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
@@ -685,7 +685,7 @@
                                                     (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target ==
                                                     null ||
                                                     data2.ServiceGross_Target == '-' ||
-                                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                                     (Department.indexOf('Service') >= 0 &&
                                                     Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
                                                         < 0 && Department.indexOf('Parts')>= 0 )
@@ -701,12 +701,12 @@
                                             {{
                                             (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
                                             data2.ServiceGross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' ) }}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' :'$' ) }}
                                             <span>
                                                 {{
                                                 (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
                                                 data2.ServiceGross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.ServiceGross_Diff | number:'1.0-0' ) }}
                                             </span>
                                         </span>
@@ -731,11 +731,11 @@
 
                                             {{
                                             (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' :'$' )}}
                                             <span>
                                                 {{
                                                 (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.PartsGross_Pace | number:'1.0-0' )}}
                                             </span>
                                         </span>
@@ -746,7 +746,7 @@
                                             {{
                                             (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ||
                                             data2.PartsGross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                             (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                                 (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
                                                 || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
@@ -756,7 +756,7 @@
                                                     (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null
                                                     ||
                                                     data2.PartsGross_Target == '-' ||
-                                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ||
+                                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                                     (Department.indexOf('Service') >= 0 &&
                                                     Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
                                                         < 0 && Department.indexOf('Parts')>= 0 )
@@ -771,12 +771,12 @@
                                             {{
                                             (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
                                             data2.PartsGross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' :'$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' :'$' )}}
                                             <span>
                                                 {{
                                                 (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
                                                 data2.PartsGross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.PartsGross_Diff | number:'1.0-0' )}}
                                             </span>
                                         </span>
@@ -816,8 +816,8 @@
                 <table class="table mb-0 w-100 servicedetails-tbl">
                     <thead>
                         <tr>
-                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
 
@@ -849,13 +849,13 @@
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th>{{FromDate |date:'dd'}} <span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th>{{DupFromDate |date:'dd'}} <span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
-                                - {{ToDate |date:'dd'}}<span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                - {{DupToDate |date:'dd'}}<span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</span><span
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span></th>
 
 
@@ -989,14 +989,14 @@
                                         ==
                                         null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Total_PartsGross_Pace == 0 ||
                                             serviceInfo.Total_PartsGross_Pace ==
                                             null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Total_PartsGross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span></td>
@@ -1009,14 +1009,14 @@
                                         serviceInfo.Total_PartsGrossTarget
                                         ==
                                         null||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Total_PartsGrossTarget == 0 ||
                                             serviceInfo.Total_PartsGrossTarget
                                             ==
                                             null||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.Total_PartsGrossTarget | number:'1.0-0') }}
                                         </span>
                                     </span></td>
@@ -1028,13 +1028,13 @@
                                         (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.Total_PartsGross_Diff
                                         ==
                                         null||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Total_PartsGross_Diff == 0 ||
                                             serviceInfo.Total_PartsGross_Diff ==
                                             null||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.Total_PartsGross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span></td>
@@ -1056,12 +1056,12 @@
                                         {{
                                         (serviceInfo.ServiceGross_Pace == 0 || serviceInfo.ServiceGross_Pace == null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.ServiceGross_Pace == 0 || serviceInfo.ServiceGross_Pace ==
                                             null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.ServiceGross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1074,13 +1074,13 @@
                                         ==
                                         null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{ (serviceInfo.ServiceGross_Target == 0 ||
                                             serviceInfo.ServiceGross_Target ==
                                             null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.ServiceGross_Target | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1092,13 +1092,13 @@
                                         (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.ServiceGross_Diff ==
                                         null
                                         ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.ServiceGross_Diff
                                             == null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' :
                                             serviceInfo.ServiceGross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1121,11 +1121,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.CPgross_Pace == 0 || serviceInfo.CPgross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.CPgross_Pace == 0 || serviceInfo.CPgross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.CPgross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1135,12 +1135,12 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.CPgross_Target == 0 || serviceInfo.CPgross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.CPgross_Target == 0 || serviceInfo.CPgross_Target == null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.CPgross_Target | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1150,11 +1150,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.CPgross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1179,11 +1179,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Wgross_Pace == 0 || serviceInfo.Wgross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Wgross_Pace == 0 || serviceInfo.Wgross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Wgross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1193,11 +1193,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Wgross_Target == 0 || serviceInfo.Wgross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Wgross_Target == 0 || serviceInfo.Wgross_Target == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.Wgross_Target | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1207,11 +1207,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Wgross_Diff == 0 || serviceInfo.Wgross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Wgross_Diff == 0 || serviceInfo.Wgross_Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Wgross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1234,11 +1234,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Egross_Pace == 0 || serviceInfo.Egross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Egross_Pace == 0 || serviceInfo.Egross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Egross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1248,12 +1248,12 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Egross_Target == 0 || serviceInfo.Egross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Egross_Target == 0 || serviceInfo.Egross_Target == null
                                             ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.Egross_Target | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1263,11 +1263,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Egross_Diff == 0 || serviceInfo.Egross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Egross_Diff == 0 || serviceInfo.Egross_Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Egross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1291,11 +1291,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Igross_Pace == 0 || serviceInfo.Igross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Igross_Pace == 0 || serviceInfo.Igross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Igross_Pace | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1306,11 +1306,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Igross_Target == 0 || serviceInfo.Igross_Target == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Igross_Target == 0 || serviceInfo.Igross_Target == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                             serviceInfo.Igross_Target | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1320,11 +1320,11 @@
                                     <span class="d-flex justify-content-between">
                                         {{
                                         (serviceInfo.Igross_Diff == 0 || serviceInfo.Igross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? ' ' : '$') }}
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? ' ' : '$') }}
                                         <span>
                                             {{
                                             (serviceInfo.Igross_Diff == 0 || serviceInfo.Igross_Diff == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                             serviceInfo.Igross_Diff | number:'1.0-0') }}
                                         </span>
                                     </span>
@@ -1432,11 +1432,11 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$') }}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$') }}
                                             <span>
                                                 {{
                                                 (data2.ServiceGross_Pace == 0 || data2.ServiceGross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.ServiceGross_Pace | number:'1.0-0' ) }}
                                             </span>
                                         </span></td>
@@ -1445,13 +1445,13 @@
                                             {{
                                             (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null ||
                                             data2.ServiceGross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' ) }}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' ) }}
                                             <span>
                                                 {{
                                                 (data2.ServiceGross_Target == 0 || data2.ServiceGross_Target == null
                                                 ||
                                                 data2.ServiceGross_Target == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.ServiceGross_Target | number:'1.0-0' ) }}
                                             </span>
                                         </span></td>
@@ -1460,12 +1460,12 @@
                                             {{
                                             (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
                                             data2.ServiceGross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' ) }}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' ) }}
                                             <span>
                                                 {{
                                                 (data2.ServiceGross_Diff == 0 || data2.ServiceGross_Diff == null ||
                                                 data2.ServiceGross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.ServiceGross_Diff | number:'1.0-0' ) }}
                                             </span>
                                         </span></td>
@@ -1487,11 +1487,11 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             (data2.CPgross_Pace == 0 || data2.CPgross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.CPgross_Pace == 0 || data2.CPgross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.CPgross_Pace | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1500,12 +1500,12 @@
                                             {{
                                             (data2.CPgross_Target == 0 || data2.CPgross_Target == null ||
                                             data2.CPgross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.CPgross_Target == 0 || data2.CPgross_Target == null ||
                                                 data2.CPgross_Target == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.CPgross_Target | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1514,12 +1514,12 @@
                                             {{
                                             (data2.CPgross_Diff == 0 || data2.CPgross_Diff == null ||
                                             data2.CPgross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.CPgross_Diff == 0 || data2.CPgross_Diff == null ||
                                                 data2.CPgross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.CPgross_Diff | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1544,11 +1544,11 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             (data2.Wgross_Pace == 0 || data2.Wgross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Wgross_Pace == 0 || data2.Wgross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Wgross_Pace | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1557,12 +1557,12 @@
                                             {{
                                             (data2.Wgross_Target == 0 || data2.Wgross_Target == null ||
                                             data2.Wgross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$')}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$')}}
                                             <span>
                                                 {{
                                                 (data2.Wgross_Target == 0 || data2.Wgross_Target == null ||
                                                 data2.Wgross_Target == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Wgross_Target | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1571,12 +1571,12 @@
                                             {{
                                             (data2.Wgross_Diff == 0 || data2.Wgross_Diff == null ||
                                             data2.Wgross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ?' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ?' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Wgross_Diff == 0 || data2.Wgross_Diff == null ||
                                                 data2.Wgross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Wgross_Diff | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1598,11 +1598,11 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             (data2.Egross_Pace == 0 || data2.Egross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Egross_Pace == 0 || data2.Egross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Egross_Pace | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1611,12 +1611,12 @@
                                             {{
                                             (data2.Egross_Target == 0 || data2.Egross_Target == null ||
                                             data2.Egross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Egross_Target == 0 || data2.Egross_Target == null ||
                                                 data2.Egross_Target == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Egross_Target | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1625,12 +1625,12 @@
                                             {{
                                             (data2.Egross_Diff == 0 || data2.Egross_Diff == null ||
                                             data2.Egross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Egross_Diff == 0 || data2.Egross_Diff == null ||
                                                 data2.Egross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Egross_Diff | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1652,11 +1652,11 @@
                                             class="d-flex justify-content-between">
                                             {{
                                             (data2.Igross_Pace == 0 || data2.Igross_Pace == null ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Igross_Pace == 0 || data2.Igross_Pace == null ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Igross_Pace | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1665,12 +1665,12 @@
                                             {{
                                             (data2.Igross_Target == 0 || data2.Igross_Target == null ||
                                             data2.Igross_Target == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Igross_Target == 0 || data2.Igross_Target == null ||
                                                 data2.Igross_Target == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Igross_Target | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1679,12 +1679,12 @@
                                             {{
                                             (data2.Igross_Diff == 0 || data2.Igross_Diff == null ||
                                             data2.Igross_Diff == '-' ||
-                                            (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? ' ' : '$' )}}
+                                            (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? ' ' : '$' )}}
                                             <span>
                                                 {{
                                                 (data2.Igross_Diff == 0 || data2.Igross_Diff == null ||
                                                 data2.Igross_Diff == '-' ||
-                                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                                 data2.Igross_Diff | number:'1.0-0' )}}
                                             </span>
                                         </span></td>
@@ -1711,8 +1711,8 @@
                 <table class="table mb-0 w-100 partsdetails-tbl">
                     <thead>
                         <tr>
-                            <th class="text-center">{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th class="text-center">{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                     |date:'MMMM'}} </span></th>
 
 
@@ -1737,13 +1737,13 @@
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th rowspan="2">{{FromDate |date:'dd'}} <span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th rowspan="2">{{DupFromDate |date:'dd'}} <span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
-                                - {{ToDate |date:'dd'}}<span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                - {{DupToDate |date:'dd'}}<span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</span><span
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">, {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span></th>
 
 
@@ -1847,7 +1847,7 @@
                                     (serviceInfo.Total_PartsGross_Pace == 0 || serviceInfo.Total_PartsGross_Pace ==
                                     null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.Total_PartsGross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7"
@@ -1855,14 +1855,14 @@
                                     (serviceInfo.Total_PartsGrossTarget == 0 || serviceInfo.Total_PartsGrossTarget
                                     ==
                                     null||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     serviceInfo.Total_PartsGrossTarget | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7"
                                     [ngClass]="{ negative: !inTheGreen(serviceInfo.Total_PartsGross_Diff)}"> {{
                                     (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.Total_PartsGross_Diff ==
                                     null||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     serviceInfo.Total_PartsGross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
 
 
@@ -1873,21 +1873,21 @@
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Pace)}">
                                     {{
                                     (serviceInfo.PartsGross_Pace == 0 || serviceInfo.PartsGross_Pace == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.PartsGross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Target)}">
                                     {{ (serviceInfo.PartsGross_Target == 0 || serviceInfo.PartsGross_Target ==
                                     null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.PartsGross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.PartsGross_Diff)}">
                                     {{
                                     (serviceInfo.Total_PartsGross_Diff == 0 || serviceInfo.PartsGross_Diff == null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.PartsGross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
 
 
@@ -1899,20 +1899,20 @@
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Retailgross_Pace)}">
                                     {{
                                     (serviceInfo.Retailgross_Pace == 0 || serviceInfo.Retailgross_Pace == null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.Retailgross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7" [ngClass]="{ negative: !inTheGreen(serviceInfo.Retailgross_Target)}">
                                     {{
                                     (serviceInfo.Retailgross_Target == 0 || serviceInfo.Retailgross_Target == null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     serviceInfo.Retailgross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7">-
                                     <!-- {{
                                 (serviceInfo.CPgross_Diff == 0 || serviceInfo.CPgross_Diff == null ||
-                                (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                 serviceInfo.CPgross_Diff | currency:'USD':'symbol':'1.0-0') }} -->
                                 </td>
 
@@ -1927,7 +1927,7 @@
                                     {{
                                     (serviceInfo.Wholesalegross_Pace == 0 || serviceInfo.Wholesalegross_Pace == null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.Wholesalegross_Pace | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7"
@@ -1935,7 +1935,7 @@
                                     {{
                                     (serviceInfo.Wholesalegross_Target == 0 || serviceInfo.Wholesalegross_Target ==
                                     null ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                     serviceInfo.Wholesalegross_Target | currency:'USD':'symbol':'1.0-0') }}</td>
 
                                 <td id="DataBody7"
@@ -1943,7 +1943,7 @@
                                     {{
                                     (serviceInfo.Wholesalegross_Diff == 0 || serviceInfo.Wholesalegross_Diff == null
                                     ||
-                                    (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')? '-' :
+                                    (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')? '-' :
                                     serviceInfo.Wholesalegross_Diff | currency:'USD':'symbol':'1.0-0') }}</td>
 
 
@@ -2005,17 +2005,17 @@
                                         currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Pace)}">{{
                                         (data2.PartsGross_Pace == 0 || data2.PartsGross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.PartsGross_Pace | currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Target)}">{{
                                         (data2.PartsGross_Target == 0 || data2.PartsGross_Target == null ||
                                         data2.PartsGross_Target == '-' ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.PartsGross_Target | currency:'USD':'symbol':'1.0-0' ) }}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.PartsGross_Diff)}">{{
                                         (data2.PartsGross_Diff == 0 || data2.PartsGross_Diff == null ||
                                         data2.PartsGross_Diff == '-' ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.PartsGross_Diff | currency:'USD':'symbol':'1.0-0' ) }}</td>
 
 
@@ -2026,12 +2026,12 @@
                                         currency:'USD':'symbol':'1.0-0' )}}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Retailgross_Pace)}">{{
                                         (data2.Retailgross_Pace == 0 || data2.Retailgross_Pace == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.Retailgross_Pace | currency:'USD':'symbol':'1.0-0' )}}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Retailgross_Target)}">{{
                                         (data2.Retailgross_Target == 0 || data2.Retailgross_Target == null ||
                                         data2.Retailgross_Target == '-' ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.Retailgross_Target | currency:'USD':'symbol':'1.0-0' )}}</td>
                                     <td>-</td>
 
@@ -2044,16 +2044,16 @@
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Pace)}">{{
                                         (data2.Wholesalegross_Pace == 0 || data2.Wholesalegross_Pace == null ||
                                         data2.Wholesalegross_Pace == '-' ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.Wholesalegross_Pace | currency:'USD':'symbol':'1.0-0' )}}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Target)}">{{
                                         (data2.Wholesalegross_Target == 0 || data2.Wholesalegross_Target == null ||
                                         data2.Wholesalegross_Target == '-' ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.Wholesalegross_Target | currency:'USD':'symbol':'1.0-0' )}}</td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Wholesalegross_Diff)}">{{
                                         (data2.Wholesalegross_Diff == 0 || data2.Wholesalegross_Diff == null ||
-                                        (FromDate | date: 'MMMM') != (ToDate | date: 'MMMM') ? '-' :
+                                        (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ? '-' :
                                         data2.Wholesalegross_Diff | currency:'USD':'symbol':'1.0-0' )}}</td>
 
 

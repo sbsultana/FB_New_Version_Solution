@@ -54,8 +54,10 @@ otherStoresArray: any = [];
   minDate!: Date;
   maxDate!: Date;
   DateType: any = 'MTD';
+  DupDateType: any = 'MTD';
   displaytime: any = '';
-
+DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -183,6 +185,11 @@ otherStoresArray: any = [];
     console.log(this.columnName, this.columnState);
   }
   GetData(sortdata?: any, sortstate?: any) {
+
+      this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.DupDateType= this.DateType
+
     this.ServiceAdvisorData = [];
     this.shared.spinner.show();
     const obj = {

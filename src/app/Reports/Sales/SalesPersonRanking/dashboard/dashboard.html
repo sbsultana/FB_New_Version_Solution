@@ -97,12 +97,12 @@
         <table class="table mb-0 w-100">
           <thead>
             <tr>
-              <th class="text-center bg-white" colspan="4" *ngIf="dateType==''">{{FromDate |date:'MMMM'}} ({{FromDate
-                |date:'dd'}}-{{ToDate |date:'dd'}},
-                {{FromDate | date:'yyyy'}})</th>
+              <th class="text-center bg-white" colspan="4" *ngIf="DupDateType==''">{{DupFromDate |date:'MMMM'}} ({{DupFromDate
+                |date:'dd'}}-{{DupToDate |date:'dd'}},
+                {{DupFromDate | date:'yyyy'}})</th>
               <!-- <th class="spacer"></th> -->
-              <th colspan="4" *ngIf="dateType!=''">{{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD"
-                ? "QTD" : dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" - "+ ToDate}}</th>
+              <th colspan="4" *ngIf="DupDateType!=''">{{DupDateType=="MTD" ? "MTD" : DupDateType=="YTD" ? "YTD" : DupDateType=="QTD"
+                ? "QTD" : DupDateType=="LM" ? "LAST MONTH" : DupDateType=="LY" ? "LAST YEAR" : DupFromDate +" - "+ DupToDate}}</th>
               <th colspan="5">Unit Count</th>
               <th colspan="4" class="boxshadow-none">Total Gross</th>
               <!-- <th colspan="2"></th> -->

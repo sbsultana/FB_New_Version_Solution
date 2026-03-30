@@ -21,6 +21,8 @@ export class Dashboard {
   Report: any = '';
   FromDate: any = '';
   ToDate: any = '';
+  DupFromDate: any = '';
+  DupToDate: any = ''
   TotalReport: any = 'T';
   StoreIds = 2;
   Headings: any = [];
@@ -204,6 +206,8 @@ export class Dashboard {
     this.GetTotalData();
   }
   GetData() {
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.TotalData = [];
     this.nodata = ''
     this.shared.spinner.show();

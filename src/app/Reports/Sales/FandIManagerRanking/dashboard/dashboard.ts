@@ -21,6 +21,8 @@ export class Dashboard {
   TotalSalesPersonsData: any = [];
   FromDate: any;
   ToDate: any;
+  DupFromDate: any = '';
+  DupToDate: any = ''
   NoData: boolean = false;
   path1: any = '';
   path2: any = '';
@@ -29,6 +31,8 @@ export class Dashboard {
   storeIds: any = '0';
   CompleteComponentState: boolean = true;
   dateType: any = 'MTD';
+  DupDateType: any = 'MTD';
+
   dealType: any = 'New,Used';
   saleType: any = 'Retail,Lease,Misc,Special Order';
   financeType: any = 'Finance,Cash,Lease';
@@ -167,6 +171,9 @@ export class Dashboard {
 
   GetData(sortdata?: any, sortstate?: any) {
     this.FIManagerData = [];
+      this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.DupDateType= this.DateType
     this.shared.spinner.show();
     const obj = {
       StartDate: this.FromDate,

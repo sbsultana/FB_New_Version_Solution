@@ -111,8 +111,8 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th> <span>{{FromDate |date:'MMMM'}} <span
-                                        *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">- {{ToDate
+                            <th> <span>{{DupFromDate |date:'MMMM'}} <span
+                                        *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">- {{DupToDate
                                         |date:'MMMM'}} </span>
                                 </span></th>
                             <th> </th>
@@ -120,13 +120,13 @@
                             <th colspan="8">Gross</th>
                         </tr>
                         <tr>
-                            <th><span>{{FromDate |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th><span>{{DupFromDate |date:'dd'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
                             </th>
@@ -137,9 +137,9 @@
                         <th (click)="sort('SALES_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
                         <th (click)="sort('SALES_FORECAST',ServiceData)" style="cursor: pointer;"> % of Forecast</th> -->
                             <th (click)="sort('SALES_LY',ServiceData)" style="cursor: pointer;">
-                                <span>{{FromDate
-                                    |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                        {{ToDate
+                                <span>{{DupFromDate
+                                    |date:'MMM'}} <span *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
                                         |date:'MMM'}} </span>
                                 </span> {{lastyearDate |
                                 date:'YYYY'}}
@@ -147,7 +147,7 @@
                             </th>
                             <th (click)="sort('LY_GROSS_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
                             <th (click)="sort('GROSS_MTD',ServiceData)" style="cursor: pointer;">
-                                <span *ngIf="datetype() == 'C'"> {{FromDate | date:'MM.dd.yyyy'}} <div>-</div> {{ ToDate
+                                <span *ngIf="datetype() == 'C'"> {{DupFromDate | date:'MM.dd.yyyy'}} <div>-</div> {{ DupToDate
                                     | date:'MM.dd.yyyy'}} </span>
 
                                 <span *ngIf="datetype() != 'C'">{{datetype()}}</span>
@@ -156,9 +156,9 @@
                             <th (click)="sort('GROSS_TARGET',ServiceData)" style="cursor: pointer;">Forecast</th>
                             <th (click)="sort('GROSS_DIFF',ServiceData)" style="cursor: pointer;">Var</th>
                             <th (click)="sort('GROSS_FORECAST',ServiceData)" style="cursor: pointer;">% of Forecast</th>
-                            <th (click)="sort('GROSS_LY',ServiceData)" style="cursor: pointer;"> <span>{{FromDate
-                                    |date:'MMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                        {{ToDate
+                            <th (click)="sort('GROSS_LY',ServiceData)" style="cursor: pointer;"> <span>{{DupFromDate
+                                    |date:'MMM'}} <span *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
                                         |date:'MMM'}} </span>
                                 </span> {{lastyearDate |
                                 date:'YYYY'}}</th>

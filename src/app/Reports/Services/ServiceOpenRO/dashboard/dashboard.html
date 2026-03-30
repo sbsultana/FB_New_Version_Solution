@@ -183,12 +183,12 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th class="text-center"><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
-                                    |date:'MMMM'}} <span *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                        {{ToDate
+                            <th class="text-center"><span *ngIf="DupFromDate != '' && DupToDate != ''">{{DupFromDate
+                                    |date:'MMMM'}} <span *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                        {{DupToDate
                                         |date:'MMMM'}} </span>
                                 </span>
-                                <span *ngIf="FromDate == '' && ToDate == ''">
+                                <span *ngIf="DupFromDate == '' && DupToDate == ''">
                                     All Open RO's
                                 </span>
                             </th>
@@ -198,17 +198,17 @@
                             <th colspan="4"></th>
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span *ngIf="FromDate != '' && ToDate != ''">{{FromDate
+                            <th><span *ngIf="DupFromDate != '' && DupToDate != ''">{{DupFromDate
                                     |date:'dd'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
-                                    - {{ToDate |date:'dd'}},
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}},
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</span>
-                                    <span *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">{{FromDate |
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
-                                <span *ngIf="FromDate == '' && ToDate == ''">&nbsp;</span>
+                                <span *ngIf="DupFromDate == '' && DupToDate == ''">&nbsp;</span>
                             </th>
                             <!-- <th></th> -->
                             <!-- <th (click)="openComments()" style="cursor: pointer;">

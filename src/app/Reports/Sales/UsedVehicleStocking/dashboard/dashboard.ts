@@ -65,8 +65,10 @@ export class Dashboard {
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
 
-
+  DupFromDate: any = '';
+  DupToDate: any = ''
   month!: Date;
+  dupMonth: any='';
   DuplicatDate!: Date;
   minDate!: Date;
   maxDate!: Date;
@@ -104,16 +106,16 @@ export class Dashboard {
 
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
-      // this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
+      this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
     }
-    if (this.shared.common.groupsandstoresAll.length > 0) {
-      this.groupsArray = this.shared.common.groupsandstoresAll.filter((val: any) => val.sg_id != this.shared.common.reconID);
-      this.stores = this.shared.common.groupsandstoresAll.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
-      this.storeIds = this.stores.map(function (a: any) { return a.ID; })
-      this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
-      this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
-      this.getStoresandGroupsValues()
-    }
+    // if (this.shared.common.groupsandstoresAll.length > 0) {
+    //   this.groupsArray = this.shared.common.groupsandstoresAll.filter((val: any) => val.sg_id != this.shared.common.reconID);
+    //   this.stores = this.shared.common.groupsandstoresAll.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
+    //   this.storeIds = this.stores.map(function (a: any) { return a.ID; })
+    //   this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
+    //   this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
+    //   this.getStoresandGroupsValues()
+    // }
 
 
     this.setHeaderData();
@@ -149,8 +151,9 @@ export class Dashboard {
     this.DuplicatDate = new Date(this.month)
     this.lastyear = new Date()
     this.lastyear.setFullYear(this.DuplicatDate.getFullYear() - 1);
-
-
+ this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.dupMonth = this.month
     console.log(this.month, this.FromDate, this.lastyear, this.selectedBlock, '...................................');
 
     this.CIBlock = this.ShowHideCI
@@ -290,7 +293,7 @@ export class Dashboard {
           this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_name : this.groupName = ''
           this.storeIds.length == 1 ? this.storename = this.stores.filter((e: any) => e.ID == this.storeIds)[0].storename : this.storename = ''
           this.getStoresandGroupsValues();
-          this.getInventoryData()
+          // this.getInventoryData()
         }
       }
     })

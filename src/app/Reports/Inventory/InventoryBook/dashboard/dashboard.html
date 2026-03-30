@@ -179,17 +179,17 @@
                             </th>
 
                             <th class="bdr-rt"
-                                *ngIf="status.indexOf('Hold')>=0 || status.indexOf('Production')>=0 || status.indexOf('Retired')>=0 || status.indexOf('Ordered')>=0">
-                                In {{status}}
+                                *ngIf="DupStatus.indexOf('Hold')>=0 || DupStatus.indexOf('Production')>=0 || DupStatus.indexOf('Retired')>=0 || DupStatus.indexOf('Ordered')>=0">
+                                In {{DupStatus}}
                             </th>
 
                             <th class="bdr-rt" (click)="sort('InStock',order)"
-                                *ngIf="status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0">
+                                *ngIf="DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                 In Stock
                             </th>
 
                             <th class="bdr-rt"
-                                *ngIf="status.indexOf('Transit')>=0 || status.indexOf('Stock_Transit')>=0">
+                                *ngIf="DupStatus.indexOf('Transit')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                 In Transit
                             </th>
 
@@ -219,14 +219,14 @@
                             <th class="bdr-rt"></th>
 
                             <th class="bdr-rt"
-                                *ngIf="status.indexOf('Hold')>=0 || status.indexOf('Production')>=0 || status.indexOf('Retired')>=0 || status.indexOf('Ordered')>=0">
+                                *ngIf="DupStatus.indexOf('Hold')>=0 || DupStatus.indexOf('Production')>=0 || DupStatus.indexOf('Retired')>=0 || DupStatus.indexOf('Ordered')>=0">
                             </th>
 
-                            <th class="bdr-rt" *ngIf="status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0">
+                            <th class="bdr-rt" *ngIf="DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                             </th>
 
                             <th class="bdr-rt"
-                                *ngIf="status.indexOf('Transit')>=0 || status.indexOf('Stock_Transit')>=0">
+                                *ngIf="DupStatus.indexOf('Transit')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                             </th>
 
                             <th class="bdr-rt"></th>
@@ -264,15 +264,15 @@
                                     <td></td>
 
                                     <td class="bdr-rt"
-                                        *ngIf="status.indexOf('Hold')>=0 || status.indexOf('Production')>=0 || status.indexOf('Retired')>=0 || status.indexOf('Ordered')>=0">
+                                        *ngIf="DupStatus.indexOf('Hold')>=0 || DupStatus.indexOf('Production')>=0 || DupStatus.indexOf('Retired')>=0 || DupStatus.indexOf('Ordered')>=0">
                                     </td>
 
                                     <td class="bdr-rt"
-                                        *ngIf="status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0">
+                                        *ngIf="DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                     </td>
 
                                     <td class="bdr-rt"
-                                        *ngIf="status.indexOf('Transit')>=0 || status.indexOf('Stock_Transit')>=0">
+                                        *ngIf="DupStatus.indexOf('Transit')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                     </td>
 
                                     <td></td>
@@ -310,28 +310,28 @@
                                         </td>
 
                                         <td
-                                            *ngIf="status.indexOf('Hold')>=0 || status.indexOf('Production')>=0 || status.indexOf('Retired')>=0 || status.indexOf('Ordered')>=0">
+                                            *ngIf="DupStatus.indexOf('Hold')>=0 || DupStatus.indexOf('Production')>=0 || DupStatus.indexOf('Retired')>=0 || DupStatus.indexOf('Ordered')>=0">
                                             {{dt3.Unit}}
                                         </td>
 
-                                        <td *ngIf="status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0"
+                                        <td *ngIf="DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0"
                                             (click)="openDetails(dt2.data2,dt3.data3,dt3.StoreID,'N',dt3.NewAgeCategory,dt3.UsedAgeCategory)"
                                             class="deal-link">
                                             {{dt3.InStock}}
                                         </td>
 
-                                        <td *ngIf="status.indexOf('Transit')>=0 || status.indexOf('Stock_Transit')>=0">
+                                        <td *ngIf="DupStatus.indexOf('Transit')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                             {{dt3.InTransit}}
                                         </td>
 
                                         <td>
-                                            {{status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0 ?
+                                            {{DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0 ?
                                             dt3.Target : '-'}}
                                         </td>
 
                                         <td [style.background-color]="getBackgroundColor(dt3.OUValue)"
                                             style="text-align:right">
-                                            {{status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0 ?
+                                            {{DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0 ?
                                             dt3.OUValue : '-'}}
                                         </td>
 
@@ -389,11 +389,11 @@
                                     <td></td>
 
                                     <td
-                                        *ngIf="status.indexOf('Hold')>=0 || status.indexOf('Production')>=0 || status.indexOf('Retired')>=0 || status.indexOf('Ordered')>=0">
+                                        *ngIf="DupStatus.indexOf('Hold')>=0 || DupStatus.indexOf('Production')>=0 || DupStatus.indexOf('Retired')>=0 || DupStatus.indexOf('Ordered')>=0">
                                         {{getTotal('Unit') | number:'1.0-0'}}
                                     </td>
 
-                                    <td *ngIf="status.indexOf('Stock')>=0 || status.indexOf('Stock_Transit')>=0">
+                                    <td *ngIf="DupStatus.indexOf('Stock')>=0 || DupStatus.indexOf('Stock_Transit')>=0">
                                         {{getTotal('InStock') | number:'1.0-0'}}
                                     </td>
 

@@ -178,26 +178,26 @@
             <table class="table mb-0 w-100">
                 <thead>
                     <tr>
-                        <!-- <th><span>{{FromDate |date:'MMMM'}} <span
-                                *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                {{ToDate
+                        <!-- <th><span>{{DupFromDate |date:'MMMM'}} <span
+                                *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                {{DupToDate
                                 |date:'MMMM'}} </span></span></th> -->
                         <!-- <th class="text-start bdr-rt">
-                            <span> Date </span>: {{FromDate |date:'MMMM'}} <label
-                                *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                {{ToDate
-                                |date:'MMMM'}} </label> <label>{{FromDate |date:'dd'}} <label
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <span> Date </span>: {{DupFromDate |date:'MMMM'}} <label
+                                *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                {{DupToDate
+                                |date:'MMMM'}} </label> <label>{{DupFromDate |date:'dd'}} <label
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</label>
-                                - {{ToDate |date:'dd'}}<label
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                - {{DupToDate |date:'dd'}}<label
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</label><label
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                    {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                    {{DupFromDate |
                                     date:'yyyy'}}</label></label>
 
                         </th> -->
-                        <th>{{FromDate |date:'MMMM'}}</th>
+                        <th>{{DupFromDate |date:'MMMM'}}</th>
 
                         <th colspan="7" class="bdr-rt">Product Totals</th>
                         <ng-container *ngFor="let heads of Headings;let i=index">
@@ -209,17 +209,17 @@
                     </tr>
                     <tr class="bdr-btm">
                         <!-- <th>
-                            <span>{{FromDate |date:'dd'}} <span
-                                *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <span>{{DupFromDate |date:'dd'}} <span
+                                *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                 |date:'yyyy'}}</span>
-                            - {{ToDate |date:'dd'}}<span
-                                *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                            - {{DupToDate |date:'dd'}}<span
+                                *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                 |date:'yyyy'}}</span><span
-                                *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                {{FromDate |
+                                *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                {{DupFromDate |
                                 date:'yyyy'}}</span></span>
                         </th> -->
-                        <th class="text-center">{{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy'
+                        <th class="text-center">{{ DupFromDate | date:'MM.dd.yyyy' }} - {{ DupToDate | date:'MM.dd.yyyy'
                             }}</th>
                         <th (click)="sort('toatlBG')" style="cursor: pointer;">Gross</th>
                         <th (click)="sort('TotalPVR')" style="cursor: pointer;">PVR</th>

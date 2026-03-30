@@ -14,7 +14,7 @@ import { NgbModalModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores,NgbModalModule],
+  imports: [SharedModule, BsDatepickerModule, DateRangePicker, Stores, NgbModalModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
@@ -50,7 +50,7 @@ export class Dashboard {
   groupName: any = '';
   groupId: any = 0;
   storeIds: any = 0;
-otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
 
   storesFilterData: any = {
@@ -64,7 +64,8 @@ otherStoresArray: any = [];
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+  DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -102,12 +103,12 @@ otherStoresArray: any = [];
     if (localStorage.getItem('userInfo') != null && localStorage.getItem('userInfo') != undefined) {
       this.groupId = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Preferences
       this.storeIds = JSON.parse(localStorage.getItem('userInfo')!).user_Info.Storeids.split(',')
-        this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
+      this.otherStoreIds = JSON.parse(localStorage.getItem('otherstoreids')!);
 
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -161,7 +162,7 @@ otherStoresArray: any = [];
       fromdate: this.FromDate,
       todate: this.ToDate,
       groups: this.groupId,
-   otherstoreids: this.otherStoreIds
+      otherstoreids: this.otherStoreIds
     };
     this.shared.api.SetHeaderData({
       obj: data,
@@ -179,6 +180,8 @@ otherStoresArray: any = [];
     }
   }
   GetData() {
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.IndividualServiceGross = [];
     const obj = {
       startdate: this.FromDate.replaceAll('/', '-'),

@@ -56,6 +56,10 @@ export class Dashboard {
     'groupName': this.groupName, 'storename': this.storename, storecount: null, 'storedisplayname': this.storedisplayname
   };
 
+  DupFromDate: any = '';
+  DupToDate: any = ''
+
+
   FromDate: any = '';
   ToDate: any = '';
   minDate!: Date;
@@ -142,7 +146,8 @@ export class Dashboard {
   }
   GetData() {
     // this.comm.redirectionFrom.flag = 'M'
-
+  this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     const obj = {
       "store": this.storeIds.toString(),
       "startdate": this.FromDate,

@@ -112,7 +112,8 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime, custom: 'N',
@@ -250,6 +251,8 @@ export class Dashboard {
     }
   }
   GetData() {
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.IndividualServiceGross = [];
     const obj = {
       startdate: this.FromDate,

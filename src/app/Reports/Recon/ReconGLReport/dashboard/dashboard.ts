@@ -671,7 +671,7 @@ export class Dashboard {
       this.storeIds = [];
     } else if (state == 'Y') {
       this.storeIds = this.stores.map(function (a: any) {
-        return a.ID;
+        return a.companyid;
       });
       this.groupName = 'Recon Centers';
     }

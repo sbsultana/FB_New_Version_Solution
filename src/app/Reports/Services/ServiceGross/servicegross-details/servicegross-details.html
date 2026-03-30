@@ -72,8 +72,8 @@
                             </div>
                         </div>
                         <div class="scorecard-double-header mb-3"
-                            style="overflow: auto;max-height: calc(100vh - 200px);"
-                            (scroll)="updateVerticalScroll($event)" #scrollOne>
+                            style="overflow: auto;max-height: calc(100vh - 200px);"   (mouseenter)="updateCurrentElement('scrollOne')"
+                            (scroll)="updateVerticalScroll($event)" id="scrollOne" #scrollOne>
                             <div *ngIf="spinnerLoader"
                                 class="graph-loader d-flex align-items-center justify-content-center">
                                 <div class="spinner-border text-primary" role="status">

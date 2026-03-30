@@ -193,16 +193,16 @@
               <!-- <th></th> -->
 
 
-              <th class="text-center box-shadow" colspan="4" *ngIf="dateType==''">
-                {{FromDate
-                |date:'MMMM'}} ({{FromDate |date:'dd'}}-{{ToDate |date:'dd'}},
-                {{FromDate | date:'yyyy'}})
+              <th class="text-center box-shadow" colspan="4" *ngIf="DupDateType==''">
+                {{DupFromDate
+                |date:'MMMM'}} ({{DupFromDate |date:'dd'}}-{{DupToDate |date:'dd'}},
+                {{DupFromDate | date:'yyyy'}})
               </th>
-              <th colspan="4" class="box-shadow" *ngIf="dateType!=''">
+              <th colspan="4" class="box-shadow" *ngIf="DupDateType!=''">
                 &nbsp;
-                {{dateType=="MTD" ? "MTD" : dateType=="YTD" ? "YTD" : dateType=="QTD" ? "QTD" :
-                dateType=="LM" ? "LAST MONTH" : dateType=="LY" ? "LAST YEAR" : FromDate +" to "+
-                ToDate}}
+                {{DupDateType=="MTD" ? "MTD" : DupDateType=="YTD" ? "YTD" : DupDateType=="QTD" ? "QTD" :
+                DupDateType=="LM" ? "LAST MONTH" : DupDateType=="LY" ? "LAST YEAR" : DupFromDate +" to "+
+                DupToDate}}
               </th>
               <!-- <th class="spacer"></th> -->
 

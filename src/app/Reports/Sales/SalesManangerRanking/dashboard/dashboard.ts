@@ -35,6 +35,8 @@ export class Dashboard {
   storeIds: any = '0';
   CompleteComponentState: boolean = true;
   dateType: any = 'MTD';
+  DupDateType: any = 'MTD';
+
   dealType: any = 'New,Used';
   saleType: any = 'Retail,Lease,Misc,Special Order';
   financeType: any = 'Finance,Cash,Lease';
@@ -74,7 +76,8 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -268,6 +271,10 @@ export class Dashboard {
 
 
   GetData(sortdata?: any, sortstate?: any) {
+      this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.DupDateType= this.DateType
+
     this.FIManagerData = [];
     this.shared.spinner.show();
     const obj = {

@@ -24,6 +24,8 @@ export class Dashboard {
   IndividualSalesPersonsData: any = [];
   FromDate: any = '';
   ToDate: any = '';
+  DupFromDate: any = '';
+  DupToDate: any = ''
   minDate!: Date;
   maxDate!: Date;
   DateType: any = 'MTD';
@@ -64,6 +66,8 @@ export class Dashboard {
   TotalReport: any = 'T';
   storeIds!: any;
   dateType: any = 'MTD';
+  DupDateType: any = 'MTD';
+
   groups: any = 0;
   storeorgrp: any = 'S';
   saleType: any = 'Retail,Lease';
@@ -294,6 +298,9 @@ export class Dashboard {
   }
   GetData(sortdata?: any, sortstate?: any) {
     console.log(sortdata, sortstate, this.storeIds);
+  this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.DupDateType= this.DateType
 
     this.IndividualSalesPersonsData = [];
     this.shared.spinner.show();

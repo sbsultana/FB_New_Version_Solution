@@ -37,7 +37,7 @@
                                 'Last 60 Days' :
                                 (DateType == 'MTD' ? 'Current Month' : 'YTD'))}} )</span>
 
-                            <span class="light-font" *ngIf="DateType == 'C'">( {{FromDate
+                            <span class="light-font" *ngIf="DateType == 'C'">( {{DupFromDate
                                 | date:
                                 'MM/dd/yyyy' }}-{{ToDate | date: 'MM/dd/yyyy' }} )</span>
                             <span class="arrow"></span>
@@ -116,11 +116,11 @@
                         <th class="bdr-rt"></th>
                         <ng-container *ngIf="DupDateType != 'YTD'">
                             <th colspan="3" class="bdr-rt">
-                                <span *ngIf="DateType == 'MTD'">{{month | date:'MMM'}}</span>
-                                <span *ngIf="DateType != 'MTD'">
-                                    {{FromDate | date:'MMM'}}
-                                    <span *ngIf="(FromDate | date: 'yyyy') != (month | date: 'yyyy')"> {{FromDate |
-                                        date:'yyyy'}}</span> - {{month | date:'MMM'}} {{month | date:'yyyy'}}
+                                <span *ngIf="DupDateType == 'MTD'">{{dupMonth | date:'MMM'}}</span>
+                                <span *ngIf="DupDateType != 'MTD'">
+                                    {{DupFromDate | date:'MMM'}}
+                                    <span *ngIf="(DupFromDate | date: 'yyyy') != (dupMonth | date: 'yyyy')"> {{DupFromDate |
+                                        date:'yyyy'}}</span> - {{dupMonth | date:'MMM'}} {{dupMonth | date:'yyyy'}}
                                     <!-- {{lastyear | date:'yyyy'}} -->
                                 </span>
                             </th>
@@ -149,7 +149,7 @@
                         <th (click)="sort('ad_model',InventoryData)" style="cursor: pointer;" class="bdr-rt">Model
                         </th>
                         <ng-container *ngIf="DupDateType != 'YTD'">
-                            <th (click)="sort('Count1',InventoryData)" style="cursor: pointer;">{{month |
+                            <th (click)="sort('Count1',InventoryData)" style="cursor: pointer;">{{dupMonth |
                                 date:'yyyy'}}
                             </th>
                             <th (click)="sort('Count2',InventoryData)" style="cursor: pointer;">{{lastyear |
@@ -158,21 +158,21 @@
                                 Change
                             </th>
                         </ng-container>
-                        <th (click)="sort('Count3',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
+                        <th (click)="sort('Count3',InventoryData)" style="cursor: pointer;">{{dupMonth | date:'yyyy'}}
                         </th>
                         <th (click)="sort('Count4',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>
                         <th (click)="sort('YTDChange',InventoryData)" style="cursor: pointer;" class="bdr-rt">Change
                         </th>
 
-                        <th (click)="sort('Count5F',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
+                        <th (click)="sort('Count5F',InventoryData)" style="cursor: pointer;">{{dupMonth | date:'yyyy'}}
                         </th>
                         <th (click)="sort('Count6F',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>
                         <th (click)="sort('AVGFrontGrossChange',InventoryData)" style="cursor: pointer;" class="bdr-rt">
                             Change</th>
 
-                        <th (click)="sort('Count5B',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
+                        <th (click)="sort('Count5B',InventoryData)" style="cursor: pointer;">{{dupMonth | date:'yyyy'}}
                         </th>
                         <th (click)="sort('Count6B',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>
@@ -180,14 +180,14 @@
                             Change</th>
 
 
-                        <th (click)="sort('Count5T',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
+                        <th (click)="sort('Count5T',InventoryData)" style="cursor: pointer;">{{dupMonth | date:'yyyy'}}
                         </th>
                         <th (click)="sort('Count6T',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>
                         <th (click)="sort('AVGTotalGrossChange',InventoryData)" style="cursor: pointer;" class="bdr-rt">
                             Change</th>
 
-                        <th (click)="sort('Count7',InventoryData)" style="cursor: pointer;">{{month | date:'yyyy'}}
+                        <th (click)="sort('Count7',InventoryData)" style="cursor: pointer;">{{dupMonth | date:'yyyy'}}
                         </th>
                         <th (click)="sort('Count8',InventoryData)" style="cursor: pointer;">{{lastyear |
                             date:'yyyy'}}</th>

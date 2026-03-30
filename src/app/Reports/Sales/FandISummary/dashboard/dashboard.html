@@ -159,9 +159,9 @@
                 <thead>
                     <tr class="bdr-btm">
                         <th class="text-center px-3 w-50">
-                            <span>{{FromDate |date:'MMMM'}} <span
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                    {{ToDate
+                            <span>{{DupFromDate |date:'MMMM'}} <span
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                    {{DupToDate
                                     |date:'MMMM'}} </span>
                             </span>
                         </th>
@@ -169,14 +169,14 @@
                     </tr>
                     <tr class="bdr-btm">
                         <th class="text-center">
-                            <span>{{FromDate |date:'dd'}} <span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <span>{{DupFromDate |date:'dd'}} <span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
-                                - {{ToDate |date:'dd'}}<span
-                                    *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                - {{DupToDate |date:'dd'}}<span
+                                    *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                     |date:'yyyy'}}</span><span
-                                    *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                    {{FromDate |
+                                    *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                    {{DupFromDate |
                                     date:'yyyy'}}</span></span>
                         </th>
                         <!-- <th class="spacer" style="background-color:#cfd6de !important ;"></th> -->

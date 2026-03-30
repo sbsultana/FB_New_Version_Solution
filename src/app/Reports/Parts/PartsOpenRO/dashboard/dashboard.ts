@@ -105,7 +105,8 @@ otherStoresArray: any = [];
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -209,7 +210,8 @@ otherstoreids: this.otherStoreIds
   }
   GetData() {
     console.log(this.selectedDataGrouping,'........');
-    
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     this.IndividualPartsGross = [];
     this.shared.spinner.show();
     const obj = {

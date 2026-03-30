@@ -47,7 +47,7 @@ export class Stores {
       this.storedisplayname = changes['storesFilterData'].currentValue.storedisplayname;
       this.Defaultload = changes['storesFilterData'].currentValue.DefaultLoad;
       this.otherstoresArray = changes['storesFilterData'].currentValue.otherStoresArray;
-      this.otherStoreIds = changes['storesFilterData'].currentValue.otherStoreIds;
+      this.otherStoreIds = changes['storesFilterData'].currentValue.otherStoreIds ? changes['storesFilterData'].currentValue.otherStoreIds : [];
 
       if (this.storesFilterData.storesArray && this.storesFilterData.storesArray.length > 0) {
         this.getGroupBaseStores(this.groupId.toString())
@@ -66,11 +66,13 @@ export class Stores {
     this.getGroupBaseStores(this.groupId.toString())
   }
   getGroupBaseStores(id: any) {
+    this.comm.pageName == 'Used Vehicle Stocking' ? 
+    this.stores = this.comm.groupsandstoresAll.filter((v: any) => v.sg_id == id)[0]?.Stores : 
     this.stores = this.comm.groupsandstores.filter((v: any) => v.sg_id == id)[0]?.Stores;
     console.log(this.storeIds, 'Store IDs');
     let singleid = this.storeIds
     this.storeIds = []
-    this.type == 'S' ? this.storeIds.push(parseInt(singleid)) : (this.Defaultload == 'E' ? this.storeIds = [] : this.storeIds = this.stores.map(function (a: any) {
+    this.type == 'S' ? this.storeIds.push(parseInt(singleid)) : (this.Defaultload == 'E' ? this.storeIds = [] : this.storeIds = this.stores?.map(function (a: any) {
       return a.ID;
     }))
     console.log(this.storeIds, 'After condition');

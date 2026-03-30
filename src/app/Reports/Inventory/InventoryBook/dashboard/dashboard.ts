@@ -123,6 +123,7 @@ export class Dashboard {
     });
   }
   GetInventorySummaryReport() {
+    this.DupStatus=[...this.status]
     localStorage.removeItem('childCalling')
     localStorage.removeItem('childDetailData')
     this.shared.spinner.show();
@@ -558,6 +559,7 @@ export class Dashboard {
   aged: any = ['MNM'];
   wholesale: any = ['N'];
   status: any = ['Stock_Transit'];
+  DupStatus: any = [];
   multipleorsingle(block: any, e: any) {
     if (block == 'ST') {
       const index = this.stockType.findIndex((i: any) => i == e);

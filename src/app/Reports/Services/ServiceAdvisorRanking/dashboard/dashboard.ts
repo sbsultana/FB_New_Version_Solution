@@ -39,7 +39,7 @@ export class Dashboard {
   storeorgrp: any = 'G';
   zeroro: any = 'E';
   LaborState: any = 'S';
-  
+
 
   reportOpenSub!: Subscription;
   reportGetting!: Subscription;
@@ -60,7 +60,7 @@ export class Dashboard {
   storedisplayname: any = '';
   groupName: any = '';
   groupId: any = 0;
-		  otherStoresArray: any = [];
+  otherStoresArray: any = [];
   otherStoreIds: any = [];
   storesFilterData: any = {
     'groupsArray': this.groupsArray, 'groupId': this.groupId, 'storesArray': this.stores, 'storeids': '1', 'type': 'M', 'others': 'Y',
@@ -68,6 +68,10 @@ export class Dashboard {
     otherStoresArray: this.otherStoresArray, otherStoreIds: this.otherStoreIds
 
   };
+
+  DupDateType: any = 'MTD';
+  DupFromDate: any = '';
+  DupToDate: any = ''
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
     Types: [
@@ -81,7 +85,7 @@ export class Dashboard {
     ]
   }
 
-  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private toast: ToastService,private ngbmodal: NgbModal) {
+  constructor(public shared: Sharedservice, public setdates: Setdates, private comm: common, private toast: ToastService, private ngbmodal: NgbModal) {
     this.initializeDates(this.DateType)
     let today = new Date();
     if (localStorage.getItem('flag') == 'V') {
@@ -102,7 +106,7 @@ export class Dashboard {
     }
     if (this.shared.common.groupsandstores.length > 0) {
       this.groupsArray = this.shared.common.groupsandstores.filter((val: any) => val.sg_id != this.shared.common.reconID);
-          this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
+      this.otherStoresArray = this.shared.common.OtherStoresData[0].Stores
 
       this.stores = this.shared.common.groupsandstores.filter((v: any) => v.sg_id == this.groupId)[0].Stores;
       this.storeIds.length == this.stores.length ? this.groupName = this.stores[0].sg_Name : this.groupName = ''
@@ -211,7 +215,7 @@ export class Dashboard {
     this.groupName = data.groupName;
     this.storecount = data.storecount;
     this.storedisplayname = data.storedisplayname;
-	      this.otherStoreIds = data.otherStoreIds;
+    this.otherStoreIds = data.otherStoreIds;
 
   }
   getlaborData() {
@@ -246,12 +250,15 @@ export class Dashboard {
   }
 
   GetData(sortdata?: any, sortstate?: any) {
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
+    this.DupDateType = this.DateType
     this.ServiceAdvisorData = [];
     this.shared.spinner.show();
     const obj = {
       StartDate: this.FromDate,
       EndDate: this.ToDate,
-      StoreID:[...this.storeIds, ...this.otherStoreIds],
+      StoreID: [...this.storeIds, ...this.otherStoreIds],
       Exp: sortdata,
       OrderType: sortstate,
       RankBy: this.storeorgrp,
@@ -473,7 +480,7 @@ export class Dashboard {
         }
       }
     })
- 
+
 
 
 
@@ -878,7 +885,7 @@ export class Dashboard {
     //   return;
     // }
 
-    if ((!this.storeIds || this.storeIds.length === 0) && this.otherStoreIds.length ==0) {
+    if ((!this.storeIds || this.storeIds.length === 0) && this.otherStoreIds.length == 0) {
 
       this.toast.show('Please Select Atleast One Store', 'warning', 'Warning');
     }

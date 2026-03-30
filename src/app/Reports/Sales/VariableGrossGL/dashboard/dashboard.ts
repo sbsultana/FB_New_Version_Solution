@@ -23,6 +23,7 @@ export class Dashboard implements OnInit {
   saleType: any = ['Retail'];
   Department: any = ['New', 'Used'];
   date: any = '';
+  DupDate:any=''
   CurrentDate = new Date();
   NoData: boolean = false;
 
@@ -119,6 +120,7 @@ export class Dashboard implements OnInit {
   Datebinding: any = ''
   GetData() {
     this.IndividualSalesGross = [];
+    this.DupDate=this.date
     let date = new Date()
     let enddate = new Date(date.setDate(date.getDate() - 1));
     this.shared.datePipe.transform(this.date, 'yyyy-MM') == this.shared.datePipe.transform(enddate, 'yyyy-MM') ? this.Datebinding = 'MTD' : this.Datebinding = this.shared.datePipe.transform(this.date, 'MMM yy')

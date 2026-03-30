@@ -48,6 +48,7 @@ export class ServicegrossDetails {
   details: any = [];
   GetDetails() {
     // this.shared.spinner.show()
+    this.spinnerLoader=true
     const obj = {
       startdealdate: this.Servicedetails[0].StartDate,
       enddealdate: this.Servicedetails[0].EndDate,
@@ -81,6 +82,7 @@ export class ServicegrossDetails {
       .postmethod(this.shared.common.routeEndpoint + 'GetServicesGrossSummaryDetailsV2', obj)
       .subscribe((res) => {
         if (res.status == 200) {
+          this.spinnerLoader=false
           this.details = res.response;
           this.ServicePersonDetails = [
             ...this.ServicePersonDetails,
@@ -109,38 +111,13 @@ export class ServicegrossDetails {
   @ViewChild('scrollTwo') scrollTwo!: ElementRef;
   count = 0
   updateVerticalScroll(event: any): void {
-    if (this.currentElement === 'scrollTwo') {
+      console.log(event.target.scrollTop , '....' ,event.target.clientHeight,'....',event.target.scrollHeight );
+ if (this.currentElement === 'scrollOne') {
+      
       this.scrollOne.nativeElement.scrollTop = event.target.scrollTop;
       if (
         event.target.scrollTop + event.target.clientHeight >=
-        event.target.scrollHeight - 2
-      ) {
-        // alert("reached at bottom");
-        if (this.count % 2 == 0) {
-          if (this.pageNumber == 0) {
-            if (this.details.length == 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-            // this.spinnerLoadersec = true;
-            // this.pageNumber++;
-            // this.GetDetails();
-          } else {
-            if (this.details.length >= 100) {
-              this.spinnerLoadersec = true;
-              this.pageNumber++;
-              this.GetDetails();
-            }
-          }
-        }
-      }
-    }
-    else if (this.currentElement === 'scrollOne') {
-      this.scrollTwo.nativeElement.scrollTop = event.target.scrollTop;
-      if (
-        event.target.scrollTop + event.target.clientHeight >=
-        event.target.scrollHeight - 2
+        event.target.scrollHeight 
       ) {
         this.count++
         if (this.count % 2 == 0) {
