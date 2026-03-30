@@ -29,7 +29,7 @@ export class Dashboard {
   Department: any = ['Parts', 'Service'];
   Paytype: any = ['R', 'W'];
   partsSource: any = 'All';
-
+DupPartsSource:any = 'All'
   responcestatus: any = '';
   groups: any = 1;
   servicetype: any = ['C', 'T', 'I', 'E']
@@ -73,7 +73,7 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-DupFromDate: any = '';
+  DupFromDate: any = '';
   DupToDate: any = ''
 
 
@@ -206,7 +206,7 @@ DupFromDate: any = '';
     }
   }
   GetData() {
-     this.DupFromDate = this.FromDate;
+    this.DupFromDate = this.FromDate;
     this.DupToDate = this.ToDate
     this.IndividualPartsGross = [];
     this.shared.spinner.show();
@@ -1121,7 +1121,9 @@ DupFromDate: any = '';
     console.log(this.selectedDataGrouping, '........... Values');
 
     this.setHeaderData();
-
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate;
+    this.DupPartsSource = this.partsSource
     switch (this.GridView) {
       case 'Global':
         this.getPartsData();

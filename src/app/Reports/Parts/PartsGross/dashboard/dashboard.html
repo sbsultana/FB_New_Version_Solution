@@ -222,7 +222,7 @@
 
                         </tr>
                         <tr class="bdr-btm">
-                            <th><span>{{DupFromDate |date:'dd'}} </span> <span
+                         <th><span>{{DupFromDate |date:'dd'}} </span> <span
                                     *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                     |date:'yyyy'}}</span>
                                 <span>
@@ -232,10 +232,10 @@
                                     |date:'yyyy'}}</span><span
                                     *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">, {{DupFromDate |
                                     date:'yyyy'}}</span>
+                            </th> 
+                            <!-- <th class="text-center">
+                                {{ DupFromDate | date:'MM.dd.yyyy' }} - {{ DupToDate | date:'MM.dd.yyyy' }}
                             </th> -->
-                            <th class="text-center">
-                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
-                            </th>
 
                             <!-- <th></th> -->
                             <th (click)="sort('Total_PartsSale')" style="cursor: pointer;" class="bdr-rt">Sales</th>
@@ -383,7 +383,7 @@
                                         (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
-                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
+                                            || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource == 'N' ? ' '
                                             :
                                             '$') }}
                                             <span>
@@ -395,7 +395,7 @@
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
-                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource ==
                                                     'N' ? '-' :
                                                     PartsInfo.Total_PartsGrossTarget | number:'1.0-0') }}
                                             </span>
@@ -454,7 +454,7 @@
                                         (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
-                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ? ' '
+                                            || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource == 'N' ? ' '
                                             : '$') }}
                                             <span>
                                                 {{ (PartsInfo.ServiceGross_Target == 0 ||
@@ -464,7 +464,7 @@
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
-                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource ==
                                                     'N' ? '-' :
                                                     PartsInfo.ServiceGross_Target | number:'1.0-0') }}
                                             </span>
@@ -519,7 +519,7 @@
                                         (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                         (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                             (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
-                                            || partsSource == 'B' || partsSource == 'T' || partsSource == 'N' ?' ' :
+                                            || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource == 'N' ?' ' :
                                             '$') }}
                                             <span>
                                                 {{
@@ -529,7 +529,7 @@
                                                 (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 )
                                                     || (Department.indexOf('Service') < 0 &&
                                                     Department.indexOf('Parts')>= 0 )
-                                                    || partsSource == 'B' || partsSource == 'T' || partsSource ==
+                                                    || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource ==
                                                     'N' ? '-' :
                                                     PartsInfo.PartsGross_Target | number:'1.0-0') }}
                                             </span>
@@ -681,7 +681,7 @@
                                             (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                             (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                                 (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
-                                                || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
+                                                || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource == 'N'? '
                                                 ' :'$' ) }}
                                                 <span>
 
@@ -693,7 +693,7 @@
                                                     (Department.indexOf('Service') >= 0 &&
                                                     Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
                                                         < 0 && Department.indexOf('Parts')>= 0 )
-                                                        || partsSource == 'B' || partsSource == 'T' || partsSource
+                                                        || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource
                                                         == 'N'? '-' :
                                                         data2.ServiceGross_Target | number:'1.0-0' ) }}
                                                 </span>
@@ -753,7 +753,7 @@
                                             (DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM') ||
                                             (Department.indexOf('Service') >= 0 && Department.indexOf('Parts') < 0 ) ||
                                                 (Department.indexOf('Service') < 0 && Department.indexOf('Parts')>= 0 )
-                                                || partsSource == 'B' || partsSource == 'T' || partsSource == 'N'? '
+                                                || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource == 'N'? '
                                                 ' :'$' )}}
                                                 <span>
                                                     {{
@@ -764,7 +764,7 @@
                                                     (Department.indexOf('Service') >= 0 &&
                                                     Department.indexOf('Parts') < 0 ) || (Department.indexOf('Service')
                                                         < 0 && Department.indexOf('Parts')>= 0 )
-                                                        || partsSource == 'B' || partsSource == 'T' || partsSource
+                                                        || DupPartsSource == 'B' || DupPartsSource == 'T' || DupPartsSource
                                                         == 'N'? '-' :
                                                         data2.PartsGross_Target | number:'1.0-0' )}}
                                                 </span>

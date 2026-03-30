@@ -80,17 +80,17 @@
                 <table class="table mb-0 w-100">
                     <thead>
                         <tr>
-                            <th colspan="2" style="text-align: justify;box-shadow: none;">{{FromDate |date:'MMMM'}} <label
-                                    *ngIf="(FromDate | date: 'MMMM') != (ToDate | date: 'MMMM')">-
-                                    {{ToDate
-                                    |date:'MMMM'}} </label> <label>{{FromDate |date:'dd'}} <label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{FromDate
+                            <th colspan="2" style="text-align: justify;box-shadow: none;">{{DupFromDate |date:'MMMM'}} <label
+                                    *ngIf="(DupFromDate | date: 'MMMM') != (DupToDate | date: 'MMMM')">-
+                                    {{DupToDate
+                                    |date:'MMMM'}} </label> <label>{{DupFromDate |date:'dd'}} <label
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</label>
-                                    - {{ToDate |date:'dd'}}<label
-                                        *ngIf="(FromDate | date: 'yyyy') != (ToDate | date: 'yyyy')">{{ToDate
+                                    - {{DupToDate |date:'dd'}}<label
+                                        *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupToDate
                                         |date:'yyyy'}}</label><label
-                                        *ngIf="(FromDate | date: 'yyyy') == (ToDate | date: 'yyyy')">,
-                                        {{FromDate |
+                                        *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">,
+                                        {{DupFromDate |
                                         date:'yyyy'}}</label></label></th>
                             <th colspan="4" style="text-align: justify;">Mobile Service Profit and Loss</th>
                         </tr>

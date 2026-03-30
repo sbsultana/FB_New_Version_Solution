@@ -47,7 +47,8 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+  DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -114,6 +115,8 @@ export class Dashboard {
   }
   incomeGrossTotal: any = 0;
   GetData(block: any) {
+      this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     const obj = {
       Startdate: this.FromDate.replaceAll('/', '-'),
       Enddate: this.ToDate.replaceAll('/', '-'),

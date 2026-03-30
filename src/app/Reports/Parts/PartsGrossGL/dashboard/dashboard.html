@@ -149,10 +149,10 @@
                                     <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
-                            </th> -->
-                            <th class="text-center">
+                            </th> 
+                            <!-- <th class="text-center">
                                 {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
-                            </th>
+                            </th> -->
 
                             <th (click)="sort('totalsale',ServiceData)" style="cursor: pointer;">Total</th>
 

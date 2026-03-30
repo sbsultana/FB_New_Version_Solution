@@ -91,7 +91,7 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-DupFromDate: any = '';
+  DupFromDate: any = '';
   DupToDate: any = ''
 
 
@@ -276,7 +276,7 @@ DupFromDate: any = '';
 
   }
   GetData() {
-     this.DupFromDate = this.FromDate;
+    this.DupFromDate = this.FromDate;
     this.DupToDate = this.ToDate
     this.IndividualServiceGross = [];
     const obj = {
@@ -1704,7 +1704,8 @@ DupFromDate: any = '';
     }
     this.getState = '';
     this.headervalues();
-
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     switch (this.GridView) {
       case 'Global':
         this.getServiceData();

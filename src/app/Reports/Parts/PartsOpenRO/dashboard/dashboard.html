@@ -193,7 +193,7 @@
                                     date:'yyyy'}}</span>
                             </th> -->
                             <th class="text-center">
-                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
+                                {{ DupFromDate | date:'MM.dd.yyyy' }} - {{ DupToDate | date:'MM.dd.yyyy' }}
                             </th>
 
                             <!-- <th></th> -->
@@ -641,41 +641,79 @@
                                         </span>
                                     </td>
                                     <td>-</td>
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['0TO3'])}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '' : '$'}}
-                                            <span>
-                                                {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '-' :
-                                                data2['0TO3'] | number:'1.0-0'}}
-                                            </span>
-                                        </span>
+                                    <td id="DataBody5">
+                                        <div class="grid-container">
+                                            <div class="quantity">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['0TO3QTY']) }">
+                                                    {{ data2['0TO3QTY'] == 0 || data2['0TO3QTY'] == null ? '-' :
+                                                    data2['0TO3QTY'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                            <div class="price">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['0TO3']) }">
+                                                    {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '' : '$' }}
+                                                    {{ data2['0TO3'] == 0 || data2['0TO3'] == null ? '-' :
+                                                    data2['0TO3'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['4TO10'])}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '' : '$'}}
-                                            <span>
-                                                {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '-' :
-                                                data2['4TO10'] | number:'1.0-0'}}
-                                            </span>
-                                        </span>
+                                    <td id="DataBody5">
+                                        <div class="grid-container">
+                                            <div class="quantity">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['4TO10QTY']) }">
+                                                    {{ data2['4TO10QTY'] == 0 || data2['4TO10QTY'] == null ? '-'
+                                                    :
+                                                    data2['4TO10QTY'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                            <div class="price">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['4TO10']) }">
+                                                    {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '' : '$'
+                                                    }}
+                                                    {{ data2['4TO10'] == 0 || data2['4TO10'] == null ? '-' :
+                                                    data2['4TO10'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['11TO30'])}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '' : '$'}}
-                                            <span>
-                                                {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '-' :
-                                                data2['11TO30'] | number:'1.0-0'}}
-                                            </span>
-                                        </span>
+                                    <td id="DataBody5">
+                                        <div class="grid-container">
+                                            <div class="quantity">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['11TO30QTY']) }">
+                                                    {{ data2['11TO30QTY'] == 0 || data2['11TO30QTY'] == null ?
+                                                    '-' :
+                                                    data2['11TO30QTY'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                            <div class="price">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['11TO30']) }">
+                                                    {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '' :
+                                                    '$' }}
+                                                    {{ data2['11TO30'] == 0 || data2['11TO30'] == null ? '-' :
+                                                    data2['11TO30'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td id="DataBody5" [ngClass]="{ negative: !inTheGreen(data2['30ABOVE'])}">
-                                        <span class="d-flex justify-content-between">
-                                            {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '' : '$'}}
-                                            <span>
-                                                {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '-' :
-                                                data2['30ABOVE'] | number:'1.0-0'}}
-                                            </span>
-                                        </span>
+                                    <td id="DataBody5">
+                                        <div class="grid-container">
+                                            <div class="quantity">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['30ABOVEQTY']) }">
+                                                    {{ data2['30ABOVEQTY'] == 0 || data2['30ABOVEQTY'] == null ?
+                                                    '-' :
+                                                    data2['30ABOVEQTY'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                            <div class="price">
+                                                <span [ngClass]="{ negative: !inTheGreen(data2['30ABOVE']) }">
+                                                    {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '' :
+                                                    '$' }}
+                                                    {{ data2['30ABOVE'] == 0 || data2['30ABOVE'] == null ? '-' :
+                                                    data2['30ABOVE'] | number:'1.0-0'}}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td [ngClass]="{ negative: !inTheGreen(data2.Total_PartsGross)}">
                                         <span class="d-flex justify-content-between">

@@ -131,7 +131,7 @@
                             <th colspan="3">Performance</th>
                         </tr>
                         <tr>
-                         <--   <th><span>{{DupFromDate |date:'dd'}}
+                   <!-- <th><span>{{DupFromDate |date:'dd'}}
                                     <span *ngIf="(DupFromDate | date: 'yyyy') != (DupToDate | date: 'yyyy')">{{DupFromDate
                                         |date:'yyyy'}}</span>
                                     - {{DupToDate |date:'dd'}},
@@ -140,9 +140,9 @@
                                     <span *ngIf="(DupFromDate | date: 'yyyy') == (DupToDate | date: 'yyyy')">{{DupFromDate |
                                         date:'yyyy'}}</span>
                                 </span>
-                            </th> -->
+                            </th>  -->
                             <th class="text-center">
-                                {{ FromDate | date:'MM.dd.yyyy' }} - {{ ToDate | date:'MM.dd.yyyy' }}
+                                {{ DupFromDate | date:'MM.dd.yyyy' }} - {{ DupToDate | date:'MM.dd.yyyy' }}
                             </th>
                             <th (click)="sort('totalsale',ServiceData)" style="cursor: pointer;">Total</th>
                             <th (click)="sort('Total',ServiceData)" style="cursor: pointer;">Total</th>

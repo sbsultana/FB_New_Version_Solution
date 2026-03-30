@@ -252,7 +252,7 @@ export class Dashboard {
       DEALERID: this.StoreValues.toString(),
       StartDate: this.shared.datePipe.transform(this.FromDate, 'dd-MMM-yyyy'),
       EndDate: this.shared.datePipe.transform(this.ToDate, 'dd-MMM-yyyy'),
-      UserID: JSON.parse(localStorage.getItem('UserDetails')!).userid || 0,
+      UserID: JSON.parse(localStorage.getItem('userInfo')!).user_Info.userid || 0,
     };
     console.log(obj);
     // const curl = this.shared.getEnviUrl() +this.shared.common.routeEndpoint+'GetDrivecentricAppointments';

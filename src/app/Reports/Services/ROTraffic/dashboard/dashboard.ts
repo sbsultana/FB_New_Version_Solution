@@ -62,7 +62,8 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-
+  DupFromDate: any = '';
+  DupToDate: any = ''
 
   Dates: any = {
     'FromDate': this.FromDate, 'ToDate': this.ToDate, "MaxDate": this.maxDate, 'MinDate': this.minDate, 'DateType': this.DateType, 'DisplayTime': this.displaytime,
@@ -150,9 +151,10 @@ export class Dashboard {
 
   }
   GetData() {
-
+    this.DupFromDate = this.FromDate;
+    this.DupToDate = this.ToDate
     const obj = {
-      "StartDate": this.shared.datePipe.transform(this.currentDate,'MM-dd-yyyy'),
+      "StartDate": this.shared.datePipe.transform(this.currentDate, 'MM-dd-yyyy'),
       "Count": "2",
       "StoreID": this.storeIds.toString(),
       "PayType": "C,W,I",
@@ -566,7 +568,7 @@ export class Dashboard {
       column.width = maxLength + 2;
     });
 
-      this.shared.exportToExcel(workbook, 'RO Traffic_' + '.xlsx');
+    this.shared.exportToExcel(workbook, 'RO Traffic_' + '.xlsx');
 
   }
 

@@ -105,7 +105,7 @@ export class Dashboard {
   maxDate!: Date;
   DateType: any = 'MTD';
   displaytime: any = '';
-DupFromDate: any = '';
+  DupFromDate: any = '';
   DupToDate: any = ''
 
   Dates: any = {
@@ -209,14 +209,9 @@ DupFromDate: any = '';
     }
   }
   GetData() {
-<<<<<<< HEAD
-    console.log(this.selectedDataGrouping,'........');
+    console.log(this.selectedDataGrouping, '........');
     this.DupFromDate = this.FromDate;
     this.DupToDate = this.ToDate
-=======
-    console.log(this.selectedDataGrouping, '........');
-
->>>>>>> 73c5b8f67d47181ccb06e1773d255618fb8c023b
     this.IndividualPartsGross = [];
     this.shared.spinner.show();
     const obj = {
@@ -709,6 +704,7 @@ DupFromDate: any = '';
 
         this.setHeaderData()
         this.getPartsData()
+        this.PartsData=[]
 
       }
     }
